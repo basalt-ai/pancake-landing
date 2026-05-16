@@ -242,9 +242,12 @@ export const pricing = {
    *  the pack." */
   basePlan: {
     kicker: "Always-on",
-    /** Value-oriented title — "your AI agent" is the value (a worker
-     *  you don't have to hire), "fully equipped" is the bundle promise. */
-    title: "Your AI agent, fully equipped",
+    /** "Your own X" structure (echoes "Your own cloud computer"), with
+     *  a value-loaded noun. Cofounder = the strongest value Pancake
+     *  delivers and aligns with the homepage hero's "AI Co-Founder"
+     *  positioning — what you actually get for $49 is a partner who
+     *  ships work for you, not a server. */
+    title: "Your own AI cofounder",
     body: "Always on. Every feature below included.",
   },
   /** Tokens card framing. */
