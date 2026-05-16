@@ -232,8 +232,9 @@ export const pricing = {
   title: "No tiers. No tricks.",
   /** Reflects the bundle: a $49 always-on cloud (the machine + the
    *  tools that run on it) plus a monthly token allocation. One slider,
-   *  one total. */
-  subtitle: "$49 always-on cloud + tokens. One slider, one total.",
+   *  one total. Doubles as the SEO meta description. */
+  subtitle:
+    "Pancake is $49/month flat for an always-on AI agent — Slack, iMessage, phone, email, browser, model-agnostic harness, and more. Pick your token pack. No tiers, no tricks.",
   perMonth: "/ month",
   /** Two-card hero. LEFT card = the fixed-price promise; RIGHT card =
    *  the variable token pack the user picks. Reads as "Pancake is $49
@@ -241,12 +242,16 @@ export const pricing = {
    *  the pack." */
   basePlan: {
     kicker: "Always-on",
-    title: "Your own cloud computer",
+    /** Value-oriented title — "your AI agent" is the value (a worker
+     *  you don't have to hire), "fully equipped" is the bundle promise. */
+    title: "Your AI agent, fully equipped",
     body: "Always on. Every feature below included.",
   },
   /** Tokens card framing. */
   tokenPickLabel: "Pick your token pack",
-  tokenPickCaption: "Bigger pack, more output.",
+  /** Caption sells the radical honesty of token pricing — passed
+   *  through at the labs' public price, we don't mark up. */
+  tokenPickCaption: "Charged at public price. No markup.",
   totalLabel: "/ month total",
   /** Two-part breakdown — kept for back-office/aria use; the visible
    *  hero no longer shows them as inline math. */
@@ -267,21 +272,22 @@ export const pricing = {
    *    R4 — capabilities: search · sub-agents · credit-card */
   included: {
     title: "Everything your $49 buys",
-    subtitle:
-      "All bundled. No add-ons, no upgrade tiers — every plan gets the full kit.",
+    /** Subtitle shortened so "full kit" lands on the same first line
+     *  as "All bundled" at common viewport widths. */
+    subtitle: "All bundled — full kit. No add-ons, no upgrade tiers.",
     items: [
-      { name: "Always-on compute",        detail: "Private cloud computer, 50GB storage", icon: "linux" },
-      { name: "Encrypted secrets",        detail: "API keys + credentials, E2E",          icon: "vault" },
-      { name: "Any LLM, your choice",     detail: "Claude, GPT, Gemini — model-agnostic", icon: "harness" },
-      { name: "Slack-native",             detail: "Lives in your channels and DMs",       icon: "slack" },
-      { name: "iMessage access",          detail: "Real iMessage threads",                icon: "imessage" },
-      { name: "Real phone number",        detail: "SMS + voice",                          icon: "phone" },
-      { name: "Dedicated inbox",          detail: "Send and receive email",               icon: "mail" },
-      { name: "Authenticated browsing",   detail: "Signed into your accounts",            icon: "browser" },
-      { name: "Live web access",          detail: "Real-time fetch from any URL",         icon: "globe" },
-      { name: "Deep web search",          detail: "Agentic research + crawling",          icon: "search" },
-      { name: "Unlimited sub-agents",     detail: "Run multiple agents in parallel",      icon: "subagents" },
-      { name: "Credit card for agents",   detail: "For real-world purchases", soon: true, icon: "creditcard" },
+      { name: "Always-on compute",            detail: "Private cloud computer, 50GB storage", icon: "linux" },
+      { name: "Encrypted secrets",            detail: "API keys + credentials, E2E",          icon: "vault" },
+      { name: "Any LLM, your choice",         detail: "Claude, GPT, Gemini — model-agnostic", icon: "harness" },
+      { name: "Slack-native",                 detail: "Lives in your channels and DMs",       icon: "slack" },
+      { name: "iMessage access",              detail: "Real iMessage threads",                icon: "imessage" },
+      { name: "Phone number for your Pancake", detail: "SMS + voice",                         icon: "phone" },
+      { name: "Email inbox for your Pancake", detail: "Send and receive email",               icon: "mail" },
+      { name: "Authenticated browsing",       detail: "Signed into your accounts",            icon: "browser" },
+      { name: "Live web access",              detail: "Real-time fetch from any URL",         icon: "globe" },
+      { name: "Deep web search",              detail: "Agentic research + crawling",          icon: "search" },
+      { name: "Unlimited sub-agents",         detail: "Run multiple agents in parallel",      icon: "subagents" },
+      { name: "Credit card for agents",       detail: "For real-world purchases", soon: true, icon: "creditcard" },
     ],
   } as const,
   // Trial CTA below the widget.
@@ -383,23 +389,35 @@ export const pricing = {
     items: [
       {
         q: "What is the $49 for?",
-        a: "Your always-on cloud computer — the machine your agents live in. A small box in the cloud that holds your context, runs your jobs, and reports back. Includes harness, phone, email, vault, browser, and 50GB storage. Think Mac mini in the cloud, with everything your agents need preinstalled.",
+        a: "Your AI agent's full setup — an always-on cloud computer with 50GB storage, a real phone number for SMS and voice, an email inbox, Slack and iMessage access, an encrypted secret vault, a model-agnostic harness (Claude, GPT, Gemini), authenticated browser automation, live web fetch, agentic deep search, and unlimited sub-agents. No tiers, no upgrades — every account gets the full kit for $49/month.",
       },
       {
-        q: "Does my usage roll over?",
-        a: "No. It resets on your billing day. Leftovers don't carry into next month.",
+        q: "How do token packs work?",
+        a: "You pick one of five monthly packs at signup — $50, $100, $250, $500, or $1000 — and that pack covers your agent's LLM and tool usage for the month. Bump up or down any time from your settings; changes take effect immediately, prorated. We pass tokens through at the labs' public price, no markup — our margin is the volume discount we get for buying in bulk.",
+      },
+      {
+        q: "Which LLMs can I use?",
+        a: "Any of them. The harness is model-agnostic — Claude, GPT, Gemini, and others. Your agents can pick the best model for each task, or you can pin a default in your config.",
+      },
+      {
+        q: "Does my token allocation roll over?",
+        a: "No. The monthly token pack resets on your billing day. Leftovers don't carry into next month.",
       },
       {
         q: "How do seats work?",
-        a: "Unlimited. Your whole team shares one workspace and one pool of usage.",
+        a: "Unlimited. Your whole team shares one workspace and one pool of tokens. No per-seat pricing, ever.",
       },
       {
         q: "What if I run out mid-month?",
-        a: "Bump the slider from your settings. The new tier takes effect immediately and you only pay the difference, prorated.",
+        a: "Bump the slider to a larger pack from your settings. The new pack takes effect immediately and you only pay the difference, prorated for the remaining days.",
       },
       {
-        q: "What are tokens? (and why don't you show them?)",
-        a: "Tokens are the unit the underlying labs (OpenAI, Anthropic) bill in. We pay for them at cost and pass them through, but we don't make you do the math — the slider shows you team-size scale instead.",
+        q: "Can I cancel anytime?",
+        a: "Yes. Cancel from your settings and it takes effect immediately. No long-term commitment, no cancellation fee.",
+      },
+      {
+        q: "What about the credit card for agents?",
+        a: "Coming soon. Your agents will get a real virtual credit card to make real-world purchases (book travel, buy SaaS subscriptions, order supplies) within limits you set. Bundled with the $49 plan when it ships.",
       },
     ],
   },

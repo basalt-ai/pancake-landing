@@ -2351,17 +2351,11 @@
     cursor: pointer;
     transition: color 120ms ease;
     white-space: nowrap;
-    /* Middle stops are centred on their tick; first/last are anchored to
-       the track edges so they don't visually leak past the slider. */
+    /* All stops are centred on their tick (translateX(-50%)). The inline
+       `left` already compensates for the thumb radius so the first/last
+       labels don't visually leak past the track — see the JSX comment in
+       PricingHero. */
     transform: translateX(-50%);
-  }
-
-  .pricing-hero__slider-stop:first-child {
-    transform: translateX(0);
-  }
-
-  .pricing-hero__slider-stop:last-child {
-    transform: translateX(-100%);
   }
 
   .pricing-hero__slider-stop:hover {

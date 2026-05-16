@@ -80,19 +80,32 @@ export function PricingHero({ pricing }: { pricing: Pricing }) {
             }
           />
           <div className="pricing-hero__slider-stops" aria-hidden>
-            {tiers.map((t, i) => (
-              <button
-                key={t.planName}
-                type="button"
-                className="pricing-hero__slider-stop"
-                data-active={i === tierIndex ? "true" : undefined}
-                onClick={() => setTierIndex(i)}
-                style={{ left: `${(i / (tiers.length - 1)) * 100}%` }}
-              >
-                {pricing.currencySymbol}
-                {t.totalDollars - pricing.infrastructureDollars}
-              </button>
-            ))}
+            {tiers.map((t, i) => {
+              /* Compensate for the slider thumb radius: a native range
+                 input's thumb CENTER can't actually reach 0% or 100% —
+                 it ranges from `radius` to (width − radius). So labels
+                 placed naively at 0% / 100% drift away from the visible
+                 thumb position at the extremes. The shift below moves
+                 each label so its centre lines up exactly under where
+                 the thumb centre lands at that value, giving all four
+                 inter-label gaps equal visual width. */
+              const THUMB_RADIUS = 14;
+              const progress = i / (tiers.length - 1);
+              const offsetPx = THUMB_RADIUS - 2 * THUMB_RADIUS * progress;
+              return (
+                <button
+                  key={t.planName}
+                  type="button"
+                  className="pricing-hero__slider-stop"
+                  data-active={i === tierIndex ? "true" : undefined}
+                  onClick={() => setTierIndex(i)}
+                  style={{ left: `calc(${progress * 100}% + ${offsetPx}px)` }}
+                >
+                  {pricing.currencySymbol}
+                  {t.totalDollars - pricing.infrastructureDollars}
+                </button>
+              );
+            })}
           </div>
         </div>
 
