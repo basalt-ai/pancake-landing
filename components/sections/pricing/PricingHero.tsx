@@ -113,31 +113,36 @@ export function PricingHero({ pricing }: { pricing: Pricing }) {
           </div>
         </div>
 
-        {/* Bottom cluster — result readout sits above the CTA, both
-            pinned to the bottom of the info column. */}
-        <div className="pricing-hero__foot">
-          <div className="pricing-hero__result" aria-live="polite">
-            <p className="pricing-hero__result-amount">
-              {pricing.currencySymbol}
-              {tier.totalDollars}
-              {pricing.totalLabel}
-            </p>
-            <p className="pricing-hero__result-audience">
-              {tier.forAudience}
-            </p>
-          </div>
+        {/* Result block — sits at the y of "any AI model" (h2 on base
+            card) so "$X total" aligns with h2 and "For audience" aligns
+            with h3 ("browses and researches the web"). Margin-top is
+            tuned to skip exactly one highlight row off the top of the
+            highlights list. NOT inside the foot cluster — that would
+            pin it to the card bottom. */}
+        <div className="pricing-hero__result" aria-live="polite">
+          <p className="pricing-hero__result-amount">
+            {pricing.currencySymbol}
+            {tier.totalDollars}
+            {pricing.totalLabel}
+          </p>
+          <p className="pricing-hero__result-audience">
+            {tier.forAudience}
+          </p>
+        </div>
 
-          <div className="pricing-hero__cta">
-            <Link
-              href={pricing.trialHref}
-              className="button inline-flex items-center justify-center no-underline"
-              data-size="lg"
-              prefetch={false}
-            >
-              {pricing.trialCta}
-            </Link>
-            <p className="pricing-hero__cta-caption">{pricing.trialCaption}</p>
-          </div>
+        {/* CTA pinned to the bottom of the info column via margin-top:
+            auto so its caption lines up with "More details below" on
+            the base card. */}
+        <div className="pricing-hero__cta">
+          <Link
+            href={pricing.trialHref}
+            className="button inline-flex items-center justify-center no-underline"
+            data-size="lg"
+            prefetch={false}
+          >
+            {pricing.trialCta}
+          </Link>
+          <p className="pricing-hero__cta-caption">{pricing.trialCaption}</p>
         </div>
       </div>
 
