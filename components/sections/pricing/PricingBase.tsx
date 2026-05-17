@@ -4,9 +4,11 @@
  * No interactivity, no slider — the price never moves regardless of
  * what the user does next door.
  *
- * Layout: kicker pill → big price → "including" title → 5-item
- * highlight list (with branded icons that match the included
- * section) → small footnote pointing to the full list below.
+ * Layout: kicker pill → big price → "Your autonomous company" title
+ * → "Everything it needs to run:" subtitle → 4-item highlight list
+ * with branded icons. The detailed 12-item bundle lives in
+ * PricingIncluded just below the hero; the 4 lines here are the
+ * marketing distillation.
  */
 import type { pricing as pricingCopy } from "@/lib/copy";
 
@@ -32,6 +34,8 @@ export function PricingBase({ pricing }: { pricing: Pricing }) {
         {pricing.basePlan.title}
       </h2>
 
+      <p className="pricing-base__subtitle">{pricing.basePlan.subtitle}</p>
+
       <ul className="pricing-base__highlights">
         {pricing.basePlan.highlights.map((h) => (
           <li key={h.name} className="pricing-base__highlight">
@@ -42,8 +46,6 @@ export function PricingBase({ pricing }: { pricing: Pricing }) {
           </li>
         ))}
       </ul>
-
-      <p className="pricing-base__body">{pricing.basePlan.body}</p>
     </article>
   );
 }

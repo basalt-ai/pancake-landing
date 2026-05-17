@@ -242,19 +242,20 @@ export const pricing = {
    *  the pack." */
   basePlan: {
     kicker: "Always-on",
-    /** Title sets up a list of 5 representative highlights — the most
-     *  marketable features of the bundle. The full list (12 items) is
-     *  shown in the PricingIncluded section below the hero, and the
-     *  footnote `body` points the user there. */
-    title: "Your autonomous company, including",
+    /** Title + subtitle frame a 4-item highlight list that COMBINES
+     *  related features in plain language (e.g. "browses and
+     *  researches the web" = browser automation + Exa search; "its
+     *  own inbox and iMessage" = email + iMessage access). The
+     *  detailed 12-item breakdown still lives in PricingIncluded just
+     *  below — the highlights here are the marketing distillation. */
+    title: "Your autonomous company",
+    subtitle: "Everything it needs to run:",
     highlights: [
-      { name: "Private cloud compute", icon: "linux" },
-      { name: "Any LLM access",        icon: "harness" },
-      { name: "Deep web search",       icon: "search" },
-      { name: "Agent inbox",           icon: "mail" },
-      { name: "Agent iMessage number", icon: "imessage" },
+      { name: "private cloud computer",         icon: "linux" },
+      { name: "any AI model",                   icon: "harness" },
+      { name: "browses and researches the web", icon: "browser" },
+      { name: "its own inbox and iMessage",     icon: "imessage" },
     ],
-    body: "(+ everything in the section below)",
   },
   /** Tokens card framing. */
   tokenPickLabel: "Pick your token pack",
