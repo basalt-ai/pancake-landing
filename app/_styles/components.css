@@ -2056,16 +2056,17 @@
     width: 100%;
   }
 
-  /* Same typography as `.pricing-base__title` — both cards' second-
-     tier headings now share ONE size (22px), so the two cards rhyme
-     at the section title level instead of using two different sizes. */
+  /* "Pick your token pack" stays at 28px — the right card's primary
+     action label needs more visual weight than the left card's title
+     ("Your autonomous company") since it's what the user is being
+     asked to DO. Hierarchy > size-rationalization here. */
   .pricing-hero__choice-label {
     margin: 0;
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: 22px;
-    line-height: 1.2;
-    letter-spacing: -0.3px;
+    font-size: 28px;
+    line-height: 1.1;
+    letter-spacing: -0.4px;
     color: var(--text);
   }
 
