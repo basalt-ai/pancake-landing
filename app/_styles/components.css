@@ -2056,17 +2056,16 @@
     width: 100%;
   }
 
-  /* "Pick your token pack" stays at 28px — the right card's primary
-     action label needs more visual weight than the left card's title
-     ("Your autonomous company") since it's what the user is being
-     asked to DO. Hierarchy > size-rationalization here. */
+  /* Same typography as `.pricing-base__title` — both one-liners now
+     share ONE size (22px / 1.2 / -0.3px) so the two cards' primary
+     headings read as a matched pair across the section. */
   .pricing-hero__choice-label {
     margin: 0;
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: 28px;
-    line-height: 1.1;
-    letter-spacing: -0.4px;
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: -0.3px;
     color: var(--text);
   }
 
