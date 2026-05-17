@@ -316,17 +316,17 @@ export const pricing = {
       {
         title: "No platform markup.",
         body:
-          "Most AI tools mark up tokens 3x or 5x. We charge exactly what OpenAI and Anthropic charge their direct customers. Our margin is the volume discount the labs give us for buying in bulk.",
+          "Most AI tools mark up tokens 3x or 5x. We charge what the labs charge. Our margin is the volume discount they give us.",
       },
       {
         title: "Your own cloud computer.",
         body:
-          "$49 buys a small machine in the cloud with everything your agents need — harness, phone, email, vault, browser, 50GB storage. Always on, always yours, never shared.",
+          "$49 buys a small machine in the cloud. Always on, always yours, never shared.",
       },
       {
         title: "No surprises.",
         body:
-          "Tokens reset monthly. Hit the limit, bump the slider — the new tier takes effect immediately, prorated. Cancel anytime.",
+          "Tokens reset monthly. Bump the slider any time, prorated. Cancel anytime.",
       },
     ],
   },
