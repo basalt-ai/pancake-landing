@@ -61,23 +61,10 @@ export function PricingHero({ pricing }: { pricing: Pricing }) {
             space-between layout would spread them too far apart). */}
         <div className="pricing-hero__head">
           <div className="pricing-hero__slider-wrap">
-            <label htmlFor={sliderId} className="sr-only">
-              token pack size
-            </label>
-            <input
-              id={sliderId}
-              type="range"
-              min={0}
-              max={tiers.length - 1}
-              step={1}
-              value={tierIndex}
-              onChange={(e) => setTierIndex(Number(e.target.value))}
-              aria-valuetext={`${pricing.currencySymbol}${tokenPortion} token pack, ${pricing.currencySymbol}${tier.totalDollars} per month total`}
-              className="pricing-hero__slider"
-              style={
-                { "--progress": tierIndex / (tiers.length - 1) } as React.CSSProperties
-              }
-            />
+            {/* Stops above the slider — labels read first, then the thumb
+                under them visualises the current pick. aria-hidden because
+                the slider input itself owns the accessible value
+                announcement (via aria-valuetext). */}
             <div className="pricing-hero__slider-stops" aria-hidden>
               {tiers.map((t, i) => {
                 /* Compensate for the slider thumb radius: a native range
@@ -106,6 +93,23 @@ export function PricingHero({ pricing }: { pricing: Pricing }) {
                 );
               })}
             </div>
+            <label htmlFor={sliderId} className="sr-only">
+              token pack size
+            </label>
+            <input
+              id={sliderId}
+              type="range"
+              min={0}
+              max={tiers.length - 1}
+              step={1}
+              value={tierIndex}
+              onChange={(e) => setTierIndex(Number(e.target.value))}
+              aria-valuetext={`${pricing.currencySymbol}${tokenPortion} token pack, ${pricing.currencySymbol}${tier.totalDollars} per month total`}
+              className="pricing-hero__slider"
+              style={
+                { "--progress": tierIndex / (tiers.length - 1) } as React.CSSProperties
+              }
+            />
           </div>
 
           <div className="pricing-hero__choice">

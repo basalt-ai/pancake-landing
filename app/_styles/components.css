@@ -2037,27 +2037,27 @@
     flex-direction: column;
     align-items: flex-start;
     min-width: 0;
-    /* Padding-top lifts the slider so the "Pick your token pack…"
-       heading lands at the EXACT same y as "Everything needed…" on
-       the base card. The 4px subtraction compensates for the
-       slider-wrap (36px) being 28px shorter than \$49 (64px) — at
-       equal gap to the next element, the heading would otherwise
-       sit 4px below the base title. Tuned via getBoundingClientRect
-       (delta now 0). */
-    padding-top: calc(5 * var(--spacing-xl) - var(--spacing-sm));
+    /* Padding-top tuned so the slider TRACK's vertical centre lands
+       on the same horizontal line as the CENTRE of "\$49" on the
+       base card (now that stops sit ABOVE the track, the track
+       itself is at the bottom of the wrap). Combined with the
+       larger head cluster gap below, this also keeps the heading
+       top at the same y as "Everything needed…" on the base card. */
+    padding-top: calc(3 * var(--spacing-xl) + var(--spacing-sm));
     text-align: left;
   }
 
-  /* Head cluster — slider stacked tightly above the heading so the
-     two read as a single picker-with-label unit. Gap matches the
-     base card's price→title gap (spacing-lg = 12px) so the right
-     card's heading lands on the same baseline as the left card's
-     "Everything needed…" title. */
+  /* Head cluster — slider-wrap above heading. The gap is large
+     (spacing-xxl + spacing-xl = 40px) because the slider TRACK
+     itself sits at the BOTTOM of the wrap (stops above it), so a
+     small gap would put the heading too high. Tuned so the heading
+     top aligns exactly with the base card's title top while the
+     slider track centre aligns with \$49 centre. */
   .pricing-hero__head {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--spacing-lg);
+    gap: calc(var(--spacing-xxl) + var(--spacing-xl));
     width: 100%;
   }
 
@@ -2437,11 +2437,13 @@
      middle labels at column centres (30%, 50%, 70%) — off by 5 points from
      the actual slider thumb positions. Each label gets its `left: X%` via
      inline style; the transform anchors it relative to that point. */
+  /* Stops sit ABOVE the slider track (DOM order: stops then slider
+     inside the wrap). The wrap's flex gap provides the spacing
+     between the labels and the track — no extra margin needed. */
   .pricing-hero__slider-stops {
     position: relative;
     width: 100%;
     height: 16px;
-    margin-top: 4px;
   }
 
   .pricing-hero__slider-stop {
