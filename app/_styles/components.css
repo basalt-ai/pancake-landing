@@ -2032,10 +2032,11 @@
     justify-content: space-between;
     align-items: flex-start;
     min-width: 0;
-    /* Padding-top clears the absolutely-positioned tier kicker; less
-       than before because the right card no longer leads with a big
-       price block (that's the left card's job now). */
-    padding-top: calc(2 * var(--spacing-xl));
+    /* Bumped padding-top so the "Pick your token pack" heading drops
+       down to roughly match the vertical position of "$49" on the
+       neighbouring base card. The two cards now read with the same
+       horizontal eye-line: $49 ↔ Pick your token pack. */
+    padding-top: calc(5 * var(--spacing-xl));
     text-align: left;
   }
 
@@ -2060,16 +2061,18 @@
     color: var(--text);
   }
 
+  /* Same typography as `.pricing-base__subtitle` on the left card so
+     "Charged at public price. No markup." and "Everything it needs to
+     run:" read as the SAME caption style across the two cards. */
   .pricing-hero__choice-caption {
     margin: 0;
     font-family: var(--font-body);
     font-size: var(--font-size-body-regular);
+    font-weight: 400;
     line-height: 1.4;
     color: var(--subtle-text);
-    /* Force the caption ("Charged at public price. No markup.") to
-       stay on a single line. The two sentences read as one promise;
-       wrapping mid-phrase breaks the rhythm. Container has enough
-       room at every supported viewport for this 35-char string. */
+    /* Force the caption to stay on a single line — the two sentences
+       read as one promise; wrapping mid-phrase breaks the rhythm. */
     white-space: nowrap;
   }
 
@@ -2198,8 +2201,9 @@
     margin-top: calc(-1 * var(--spacing-sm));
     font-family: var(--font-body);
     font-size: var(--font-size-body-regular);
-    color: var(--subtle-text);
+    font-weight: 400;
     line-height: 1.4;
+    color: var(--subtle-text);
   }
 
   /* Highlights list — 5 representative features picked from the full
