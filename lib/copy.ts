@@ -258,7 +258,7 @@ export const pricing = {
     /** Italic footnote rendered with extra line-break spacing below
      *  the highlights list — softly points the user to the full
      *  12-item PricingIncluded section just below the hero. */
-    footnote: "(more details below)",
+    footnote: "More details below",
   },
   /** Single-line label combines the action ("Pick your token pack")
    *  with the radical-honesty signal ("at labs' public price") so the

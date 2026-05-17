@@ -2128,25 +2128,42 @@
 
   /* ─── Base plan card (LEFT) ─── The fixed $49/month promise. Same
      surface treatment as the right card (border, radius, padding,
-     squircle) so the two read as a balanced pair. Content centred
-     vertically because the card has less content than the right one
-     — centering puts the big $49 at the optical mid-point, aligning
-     visually with the slider on the right card. position: relative
-     so the "Always-on" kicker can anchor to the top-left corner the
-     same way the SYRUP kicker does on the right card. */
+     squircle). Layout MIRRORS the right card: padding-top pushes
+     the main cluster (price + title + highlights) down so the price
+     sits at the same eye-line as the slider/heading on the right
+     card, and `justify-content: space-between` pins the italic
+     footnote ("More details below") to the bottom of the card so
+     it horizontally aligns with the CTA caption ("7-day free trial …")
+     on the right card. */
   .pricing-base {
     position: relative;
     width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: flex-start;
-    gap: var(--spacing-lg);
     padding: calc(2 * var(--spacing-xl));
+    /* Push main cluster down to match the right card's padding-top so
+       $49 lands at the slider's eye-line. */
+    padding-top: calc(5 * var(--spacing-xl));
     background-color: var(--surface);
     border: 1px solid rgba(0, 0, 0, 0.16);
     border-radius: 32px;
     corner-shape: squircle;
+  }
+
+  /* Main cluster — price + title + highlights stacked at the top.
+     Shares the same gap rhythm the card used to have when all four
+     children were direct flex items, so the inner spacing of price
+     →title→highlights looks identical. The footnote lives outside
+     this wrapper so the parent's space-between can pin it to the
+     bottom regardless of card height. */
+  .pricing-base__main {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+    width: 100%;
   }
 
   /* Always-on kicker — neutral-tinted pill (no tier accent here; the
@@ -2260,14 +2277,13 @@
     line-height: 1.3;
   }
 
-  /* Italic footnote under the highlights list — "(more details
-     below)". Uses the standard body-small token so all the small
-     captions across the section (footnote, cta-caption) share ONE
-     size. margin-top adds an extra line-break of space on top of the
-     card's spacing-lg gap so the footnote reads as a distinct beat. */
+  /* Italic footnote pinned to the bottom of the card by the parent's
+     `justify-content: space-between`. Shares EXACT typography with
+     `.pricing-hero__cta-caption` (font-body, body-small, italic,
+     line-height 1.4) so the two small captions across the two cards
+     read as one voice AND land on the same horizontal line. */
   .pricing-base__footnote {
     margin: 0;
-    margin-top: var(--spacing-md);
     font-family: var(--font-body);
     font-size: var(--font-size-body-small);
     color: var(--subtle-text);
@@ -2521,9 +2537,18 @@
       align-items: center;
       text-align: center;
       padding: calc(1.5 * var(--spacing-xl));
+      /* Mobile: reset the desktop padding-top + space-between layout
+         so price hugs the kicker naturally on stacked cards. */
+      padding-top: calc(4 * var(--spacing-xl));
+      justify-content: flex-start;
+      gap: var(--spacing-lg);
+    }
+    .pricing-base__main {
+      align-items: center;
     }
     .pricing-base__footnote {
       text-align: center;
+      margin-top: var(--spacing-md);
     }
   }
 

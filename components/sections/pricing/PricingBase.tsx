@@ -24,26 +24,33 @@ export function PricingBase({ pricing }: { pricing: Pricing }) {
     >
       <p className="pricing-base__kicker">{pricing.basePlan.kicker}</p>
 
-      <p className="pricing-base__price">
-        <span className="pricing-base__symbol">{pricing.currencySymbol}</span>
-        {pricing.infrastructureDollars}
-        <span className="pricing-base__suffix">{pricing.perMonth}</span>
-      </p>
+      {/* Main cluster — price → title → highlights, stacked at the top
+          of the card. The footnote sits as a sibling pinned to the
+          bottom by the parent's `justify-content: space-between`, so
+          it horizontally aligns with the CTA caption on the right
+          card regardless of card height. */}
+      <div className="pricing-base__main">
+        <p className="pricing-base__price">
+          <span className="pricing-base__symbol">{pricing.currencySymbol}</span>
+          {pricing.infrastructureDollars}
+          <span className="pricing-base__suffix">{pricing.perMonth}</span>
+        </p>
 
-      <h2 id="pricing-base-title" className="pricing-base__title">
-        {pricing.basePlan.title}
-      </h2>
+        <h2 id="pricing-base-title" className="pricing-base__title">
+          {pricing.basePlan.title}
+        </h2>
 
-      <ul className="pricing-base__highlights">
-        {pricing.basePlan.highlights.map((h) => (
-          <li key={h.name} className="pricing-base__highlight">
-            <span className="pricing-base__highlight-icon" aria-hidden>
-              <IncludedIcon name={h.icon} />
-            </span>
-            <span className="pricing-base__highlight-name">{h.name}</span>
-          </li>
-        ))}
-      </ul>
+        <ul className="pricing-base__highlights">
+          {pricing.basePlan.highlights.map((h) => (
+            <li key={h.name} className="pricing-base__highlight">
+              <span className="pricing-base__highlight-icon" aria-hidden>
+                <IncludedIcon name={h.icon} />
+              </span>
+              <span className="pricing-base__highlight-name">{h.name}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       <p className="pricing-base__footnote">{pricing.basePlan.footnote}</p>
     </article>
