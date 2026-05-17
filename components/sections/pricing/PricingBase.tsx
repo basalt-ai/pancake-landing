@@ -30,12 +30,11 @@ export function PricingBase({ pricing }: { pricing: Pricing }) {
         <span className="pricing-base__suffix">{pricing.perMonth}</span>
       </p>
 
-      <div className="pricing-base__heading">
-        <h2 id="pricing-base-title" className="pricing-base__title">
-          {pricing.basePlan.title}
-        </h2>
-        <p className="pricing-base__subtitle">{pricing.basePlan.subtitle}</p>
-      </div>
+      <h2 id="pricing-base-title" className="pricing-base__title">
+        {pricing.basePlan.title}
+      </h2>
+
+      <p className="pricing-base__subtitle">{pricing.basePlan.subtitle}</p>
 
       <ul className="pricing-base__highlights">
         {pricing.basePlan.highlights.map((h) => (

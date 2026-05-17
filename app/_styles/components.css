@@ -2104,24 +2104,21 @@
 
   /* ─── Base plan card (LEFT) ─── The fixed $49/month promise. Same
      surface treatment as the right card (border, radius, padding,
-     squircle) so the two read as a balanced pair. Three flex children
-     — price, heading-cluster, highlights — distributed via
-     space-between so the content fills the card height (which is
-     driven by the taller right card via grid stretch) instead of
-     pooling in the middle with empty bands top and bottom.
-     position: relative so the "Always-on" kicker anchors top-left
-     exactly like the SYRUP kicker on the right card. padding-top
-     is generous so the price clears the absolutely-positioned
-     kicker pill. */
+     squircle) so the two read as a balanced pair. Content centred
+     vertically because the card has less content than the right one
+     — centering puts the big $49 at the optical mid-point, aligning
+     visually with the slider on the right card. position: relative
+     so the "Always-on" kicker can anchor to the top-left corner the
+     same way the SYRUP kicker does on the right card. */
   .pricing-base {
     position: relative;
     width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     align-items: flex-start;
     gap: var(--spacing-lg);
-    padding: calc(2 * var(--spacing-xxl)) calc(2 * var(--spacing-xl)) calc(2 * var(--spacing-xl));
+    padding: calc(2 * var(--spacing-xl));
     background-color: var(--surface);
     border: 1px solid rgba(0, 0, 0, 0.16);
     border-radius: 32px;
@@ -2192,22 +2189,13 @@
     color: var(--text);
   }
 
-  /* Heading cluster — wraps the title + subtitle as ONE flex item so
-     space-between on the parent doesn't push them apart. They read as
-     a single phrase ("Your autonomous company / Everything it needs
-     to run:"); tight gap keeps them visually fused. */
-  .pricing-base__heading {
-    display: flex;
-    flex-direction: column;
-    align-items: inherit;
-    gap: var(--spacing-xs);
-    width: 100%;
-  }
-
   /* Subtitle — "Everything it needs to run:" — small body label
-     that introduces the highlights list. */
+     that introduces the highlights list. Sits TIGHT under the title
+     (overriding the card-level spacing-lg gap with a negative-ish
+     margin) so the two read as one phrase. */
   .pricing-base__subtitle {
     margin: 0;
+    margin-top: calc(-1 * var(--spacing-sm));
     font-family: var(--font-body);
     font-size: var(--font-size-body-regular);
     color: var(--subtle-text);
