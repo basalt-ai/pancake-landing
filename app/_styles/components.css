@@ -2092,21 +2092,16 @@
      exactly (font-body, body-regular, weight regular) AND each line
      is sized to a 22px row with a 4px gap so the two-line block
      occupies the same vertical grid as two highlight rows on the
-     base card. Margin-top offsets the block down by one full
-     highlight row off the top of the highlights list, so line 1
-     lands on "any AI model" (h2) and line 2 on "browses and
-     researches the web" (h3).
+     base card. Margin-top puts the block at the SAME starting y
+     as the highlights list — line 1 lands on "private cloud
+     computer" (h1) and line 2 on "any AI model" (h2).
        margin-top breakdown:
          spacing-lg  (12) — parent gap, like title→highlights
          spacing-md   (8) — highlights extra margin-top on base card
-         22px             — skip one highlight row (h1)
-         spacing-sm   (4) — h1→h2 gap
-       total: 46px */
+       total: 20px */
   .pricing-hero__result {
     margin: 0;
-    margin-top: calc(
-      var(--spacing-lg) + var(--spacing-md) + 22px + var(--spacing-sm)
-    );
+    margin-top: calc(var(--spacing-lg) + var(--spacing-md));
     display: flex;
     flex-direction: column;
     gap: var(--spacing-sm);
