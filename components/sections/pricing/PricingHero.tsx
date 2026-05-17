@@ -56,9 +56,6 @@ export function PricingHero({ pricing }: { pricing: Pricing }) {
       <div className="pricing-hero__info">
         <div className="pricing-hero__choice">
           <p className="pricing-hero__choice-label">{pricing.tokenPickLabel}</p>
-          <p className="pricing-hero__choice-caption">
-            {pricing.tokenPickCaption}
-          </p>
         </div>
 
         <div className="pricing-hero__slider-wrap">

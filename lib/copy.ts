@@ -260,11 +260,10 @@ export const pricing = {
      *  12-item PricingIncluded section just below the hero. */
     footnote: "(more details below)",
   },
-  /** Tokens card framing. */
-  tokenPickLabel: "Pick your token pack",
-  /** Caption sells the radical honesty of token pricing — passed
-   *  through at the labs' public price, we don't mark up. */
-  tokenPickCaption: "Charged at public price. No markup.",
+  /** Single-line label combines the action ("Pick your token pack")
+   *  with the radical-honesty signal ("at the labs' public price") so
+   *  the right card mirrors the left card's one-line title format. */
+  tokenPickLabel: "Pick your token pack at the labs' public price",
   totalLabel: "/ month total",
   /** Two-part breakdown — kept for back-office/aria use; the visible
    *  hero no longer shows them as inline math. */

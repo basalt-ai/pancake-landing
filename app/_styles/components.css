@@ -2070,21 +2070,6 @@
     color: var(--text);
   }
 
-  /* Body caption — kept aligned with the body-regular size used in
-     highlight names on the left card so the two cards share the
-     same secondary-text scale. */
-  .pricing-hero__choice-caption {
-    margin: 0;
-    font-family: var(--font-body);
-    font-size: var(--font-size-body-regular);
-    font-weight: 400;
-    line-height: 1.4;
-    color: var(--subtle-text);
-    /* Force the caption to stay on a single line — the two sentences
-       read as one promise; wrapping mid-phrase breaks the rhythm. */
-    white-space: nowrap;
-  }
-
   /* Result block — "$X / month total" on line 1, audience persona
      on line 2. Stacked (not inline) so the audience NEVER wraps onto
      a second line on its own, regardless of whether the total is
@@ -2490,9 +2475,6 @@
       gap: var(--spacing-lg);
       justify-content: flex-start;
       padding-top: 0;
-    }
-    .pricing-hero__choice-caption {
-      text-align: center;
     }
     .pricing-hero__result {
       align-items: center;
