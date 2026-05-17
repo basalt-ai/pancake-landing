@@ -2040,11 +2040,14 @@
     justify-content: space-between;
     align-items: flex-start;
     min-width: 0;
-    /* Padding-top lifts the slider so its TRACK sits at the vertical
-       centre of "$49" on the base card. Tuned empirically — bump up
-       or down by spacing-xl (16px) to nudge the slider band higher
-       or lower in the card. */
-    padding-top: calc(5 * var(--spacing-xl));
+    /* Padding-top lifts the slider so the "Pick your token pack…"
+       heading lands at the EXACT same y as "Everything needed…" on
+       the base card. The 4px subtraction compensates for the
+       slider-wrap (36px) being 28px shorter than $49 (64px) — at
+       equal gap to the next element, the heading would otherwise
+       sit 4px below the base title. Tuned via getBoundingClientRect
+       (delta now 0). */
+    padding-top: calc(5 * var(--spacing-xl) - var(--spacing-sm));
     text-align: left;
   }
 
