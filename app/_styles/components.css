@@ -2022,33 +2022,57 @@
     corner-shape: squircle;
   }
 
-  /* Left column — three direct children stacked vertically and spread
-     with `justify-content: space-between`:
-       1. readout (price + breakdown + audience cluster)
-       2. slider (track + stops)
-       3. CTA (button + caption)
-     Stretches to the card height (mascot drives). Generous padding-top
-     descends the price-block: instead of the price hugging the SYRUP
-     kicker at top, there's breathing room above so the price sits in
-     the upper-third rather than pinned to the corner. */
+  /* Info column — two clusters spread top/bottom with
+     `justify-content: space-between`:
+       1. HEAD cluster (top)    — slider + "Pick your token pack…" heading
+       2. FOOT cluster (bottom) — $X total readout + CTA
+     The slider sits where "$49" sits on the neighbouring base card so
+     the two primary visuals (price / picker) read on the same eye-line.
+     The heading falls directly below the slider so it lands at the
+     same vertical position as "Everything needed to make your company
+     autonomous" on the base card. Clustering matters: a flat
+     space-between of all four elements would spread slider→heading
+     and heading→readout to identical large gaps, breaking the
+     intended pairing of slider+heading and readout+CTA. */
   .pricing-hero__info {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-start;
     min-width: 0;
-    /* Generous padding-top so the BASELINE of the "Pick your token
-       pack at labs' public price" heading (which wraps to 2 lines at
-       22px in this column) lands on the same horizontal line as the
-       baseline of "$49" on the neighbouring base card. The eye-line
-       running across the two cards matches at the primary heading. */
-    padding-top: calc(10 * var(--spacing-xl));
+    /* Padding-top lifts the slider so its TRACK sits at the vertical
+       centre of "$49" on the base card. Tuned empirically — bump up
+       or down by spacing-xl (16px) to nudge the slider band higher
+       or lower in the card. */
+    padding-top: calc(5 * var(--spacing-xl));
     text-align: left;
   }
 
-  /* Choice block — "Pick your token pack" heading + caption stacked
-     tightly above the slider. The choice card (right) is entirely
-     about this single decision: how big a token pack to subscribe to. */
+  /* Head cluster — slider stacked tightly above the heading so the
+     two read as a single picker-with-label unit. Gap matches the
+     base card's price→title gap (spacing-lg = 12px) so the right
+     card's heading lands on the same baseline as the left card's
+     "Everything needed…" title. */
+  .pricing-hero__head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+    width: 100%;
+  }
+
+  /* Foot cluster — readout above CTA, pinned to the bottom of the
+     info column by the parent's space-between. */
+  .pricing-hero__foot {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+    width: 100%;
+  }
+
+  /* Choice block — wraps just the heading so the cluster's column
+     flow can still pad/grow the heading independently if needed. */
   .pricing-hero__choice {
     display: flex;
     flex-direction: column;
@@ -2467,6 +2491,8 @@
       max-width: 200px;
     }
     .pricing-hero__info,
+    .pricing-hero__head,
+    .pricing-hero__foot,
     .pricing-hero__choice,
     .pricing-hero__cta,
     .pricing-hero__cta-caption {

@@ -54,79 +54,90 @@ export function PricingHero({ pricing }: { pricing: Pricing }) {
       </p>
 
       <div className="pricing-hero__info">
-        <div className="pricing-hero__choice">
-          <p className="pricing-hero__choice-label">{pricing.tokenPickLabel}</p>
-        </div>
+        {/* Top cluster — slider sits at $49's baseline on the left card,
+            then the "Pick your token pack…" heading falls directly below
+            it so it aligns with "Everything needed…" on the left card.
+            Grouped so the inter-element gap stays tight (a flat
+            space-between layout would spread them too far apart). */}
+        <div className="pricing-hero__head">
+          <div className="pricing-hero__slider-wrap">
+            <label htmlFor={sliderId} className="sr-only">
+              token pack size
+            </label>
+            <input
+              id={sliderId}
+              type="range"
+              min={0}
+              max={tiers.length - 1}
+              step={1}
+              value={tierIndex}
+              onChange={(e) => setTierIndex(Number(e.target.value))}
+              aria-valuetext={`${pricing.currencySymbol}${tokenPortion} token pack, ${pricing.currencySymbol}${tier.totalDollars} per month total`}
+              className="pricing-hero__slider"
+              style={
+                { "--progress": tierIndex / (tiers.length - 1) } as React.CSSProperties
+              }
+            />
+            <div className="pricing-hero__slider-stops" aria-hidden>
+              {tiers.map((t, i) => {
+                /* Compensate for the slider thumb radius: a native range
+                   input's thumb CENTER can't actually reach 0% or 100% —
+                   it ranges from `radius` to (width − radius). So labels
+                   placed naively at 0% / 100% drift away from the visible
+                   thumb position at the extremes. The shift below moves
+                   each label so its centre lines up exactly under where
+                   the thumb centre lands at that value, giving all four
+                   inter-label gaps equal visual width. */
+                const THUMB_RADIUS = 14;
+                const progress = i / (tiers.length - 1);
+                const offsetPx = THUMB_RADIUS - 2 * THUMB_RADIUS * progress;
+                return (
+                  <button
+                    key={t.planName}
+                    type="button"
+                    className="pricing-hero__slider-stop"
+                    data-active={i === tierIndex ? "true" : undefined}
+                    onClick={() => setTierIndex(i)}
+                    style={{ left: `calc(${progress * 100}% + ${offsetPx}px)` }}
+                  >
+                    {pricing.currencySymbol}
+                    {t.totalDollars - pricing.infrastructureDollars}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-        <div className="pricing-hero__slider-wrap">
-          <label htmlFor={sliderId} className="sr-only">
-            token pack size
-          </label>
-          <input
-            id={sliderId}
-            type="range"
-            min={0}
-            max={tiers.length - 1}
-            step={1}
-            value={tierIndex}
-            onChange={(e) => setTierIndex(Number(e.target.value))}
-            aria-valuetext={`${pricing.currencySymbol}${tokenPortion} token pack, ${pricing.currencySymbol}${tier.totalDollars} per month total`}
-            className="pricing-hero__slider"
-            style={
-              { "--progress": tierIndex / (tiers.length - 1) } as React.CSSProperties
-            }
-          />
-          <div className="pricing-hero__slider-stops" aria-hidden>
-            {tiers.map((t, i) => {
-              /* Compensate for the slider thumb radius: a native range
-                 input's thumb CENTER can't actually reach 0% or 100% —
-                 it ranges from `radius` to (width − radius). So labels
-                 placed naively at 0% / 100% drift away from the visible
-                 thumb position at the extremes. The shift below moves
-                 each label so its centre lines up exactly under where
-                 the thumb centre lands at that value, giving all four
-                 inter-label gaps equal visual width. */
-              const THUMB_RADIUS = 14;
-              const progress = i / (tiers.length - 1);
-              const offsetPx = THUMB_RADIUS - 2 * THUMB_RADIUS * progress;
-              return (
-                <button
-                  key={t.planName}
-                  type="button"
-                  className="pricing-hero__slider-stop"
-                  data-active={i === tierIndex ? "true" : undefined}
-                  onClick={() => setTierIndex(i)}
-                  style={{ left: `calc(${progress * 100}% + ${offsetPx}px)` }}
-                >
-                  {pricing.currencySymbol}
-                  {t.totalDollars - pricing.infrastructureDollars}
-                </button>
-              );
-            })}
+          <div className="pricing-hero__choice">
+            <p className="pricing-hero__choice-label">{pricing.tokenPickLabel}</p>
           </div>
         </div>
 
-        <div className="pricing-hero__result" aria-live="polite">
-          <p className="pricing-hero__result-amount">
-            {pricing.currencySymbol}
-            {tier.totalDollars}
-            {pricing.totalLabel}
-          </p>
-          <p className="pricing-hero__result-audience">
-            {tier.forAudience}
-          </p>
-        </div>
+        {/* Bottom cluster — result readout sits above the CTA, both
+            pinned to the bottom of the info column. */}
+        <div className="pricing-hero__foot">
+          <div className="pricing-hero__result" aria-live="polite">
+            <p className="pricing-hero__result-amount">
+              {pricing.currencySymbol}
+              {tier.totalDollars}
+              {pricing.totalLabel}
+            </p>
+            <p className="pricing-hero__result-audience">
+              {tier.forAudience}
+            </p>
+          </div>
 
-        <div className="pricing-hero__cta">
-          <Link
-            href={pricing.trialHref}
-            className="button inline-flex items-center justify-center no-underline"
-            data-size="lg"
-            prefetch={false}
-          >
-            {pricing.trialCta}
-          </Link>
-          <p className="pricing-hero__cta-caption">{pricing.trialCaption}</p>
+          <div className="pricing-hero__cta">
+            <Link
+              href={pricing.trialHref}
+              className="button inline-flex items-center justify-center no-underline"
+              data-size="lg"
+              prefetch={false}
+            >
+              {pricing.trialCta}
+            </Link>
+            <p className="pricing-hero__cta-caption">{pricing.trialCaption}</p>
+          </div>
         </div>
       </div>
 
