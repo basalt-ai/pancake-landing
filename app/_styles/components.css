@@ -2240,10 +2240,17 @@
   /* Highlights list — 5 representative features picked from the full
      bundle (the complete 12-item list lives in PricingIncluded just
      below the hero). Each line is a small icon + name, sharing the
-     icon family with the included section for visual continuity. */
+     icon family with the included section for visual continuity.
+     `margin-top` compensates for the title's line-height — the title
+     ("Everything needed…") has line-height 1.2 so its bounding box
+     extends below the visible descender, eating into the parent's
+     12px flex gap and making the visual gap to "private cloud
+     computer" look smaller than the visual gap from "$49" to the
+     title above. Extra 8px restores parity with the price→title gap. */
   .pricing-base__highlights {
     list-style: none;
     margin: 0;
+    margin-top: var(--spacing-md);
     padding: 0;
     display: flex;
     flex-direction: column;
