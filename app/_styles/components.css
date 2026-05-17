@@ -2121,9 +2121,12 @@
     font-variant-numeric: tabular-nums;
   }
 
+  /* Same `--text` colour as the amount so both lines read as one
+     uniform result block — matches the highlight-name colour on
+     the base card. */
   .pricing-hero__result-audience {
     margin: 0;
-    color: var(--subtle-text);
+    color: var(--text);
   }
 
   /* ─── Base plan card (LEFT) ─── The fixed $49/month promise. Same
