@@ -321,7 +321,7 @@ export const pricing = {
       {
         title: "Your own cloud computer.",
         body:
-          "$49 buys a small machine in the cloud. Always on, always yours, never shared.",
+          "Everything above. $49 a month. Always yours, never shared, never throttled.",
       },
       {
         title: "No surprises.",
