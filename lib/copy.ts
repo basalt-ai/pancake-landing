@@ -200,7 +200,9 @@ export const talkToHuman = {
  */
 export const pricing = {
   // Hard pricing numbers — source of truth.
-  infrastructureDollars: 29,
+  // $49 always-on setup + a token usage pack. Five discrete pack sizes:
+  // $50, $100, $250, $500, $1000 — visible as the slider stops.
+  infrastructureDollars: 49,
   /** 5 discrete slider stops. Each tier has a pancake-universe plan name
    *  used as the active kicker above the price, plus an audience line
    *  shown where the old "X hours of agent work a week" sat. `pancakes`
@@ -211,29 +213,96 @@ export const pricing = {
    *  golden → purple → mint → orange → pink. So each tier's accent maps
    *  to the colour that lands at the bottom of its stack. */
   tiers: [
-    { totalDollars: 49,  tokens: 5_000_000,   pancakes: 1, planName: "Syrup",      forAudience: "For side projects",        accent: "#F38F43" }, // golden → yellow-40
-    { totalDollars: 129, tokens: 25_000_000,  pancakes: 2, planName: "Flapjack",   forAudience: "For solopreneurs",         accent: "#8D43FD" }, // purple-40
-    { totalDollars: 229, tokens: 50_000_000,  pancakes: 3, planName: "Stack",      forAudience: "For small founding teams", accent: "#037D48" }, // green-30 (mint)
-    { totalDollars: 329, tokens: 75_000_000,  pancakes: 4, planName: "Tower",      forAudience: "For startups",             accent: "#D43900" }, // orange-30
-    { totalDollars: 529, tokens: 125_000_000, pancakes: 5, planName: "Skyscraper", forAudience: "For scaleups",             accent: "#E33A6A" }, // pink-40
+    { totalDollars: 99,   tokens: 12_500_000,  pancakes: 1, planName: "Syrup",      forAudience: "For side projects",        accent: "#F38F43" }, // $49 setup + $50 pack — golden → yellow-40
+    { totalDollars: 149,  tokens: 25_000_000,  pancakes: 2, planName: "Flapjack",   forAudience: "For solopreneurs",         accent: "#8D43FD" }, // $49 setup + $100 pack — purple-40
+    { totalDollars: 299,  tokens: 62_500_000,  pancakes: 3, planName: "Stack",      forAudience: "For small founding teams", accent: "#037D48" }, // $49 setup + $250 pack — green-30 (mint)
+    { totalDollars: 549,  tokens: 125_000_000, pancakes: 4, planName: "Tower",      forAudience: "For startups",             accent: "#D43900" }, // $49 setup + $500 pack — orange-30
+    { totalDollars: 1049, tokens: 250_000_000, pancakes: 5, planName: "Skyscraper", forAudience: "For scaleups",             accent: "#E33A6A" }, // $49 setup + $1000 pack — pink-40
   ],
   defaultTierIndex: 0,
   trial: {
     days: 7,
-    freeTokensDollars: 20,
+    /** $100 token usage cap for the 7-day trial. Surfaced verbatim in
+     *  `trialCaption`; kept as a number for back-office math. */
+    freeTokensDollars: 100,
   },
   currency: "USD" as const,
   currencySymbol: "$",
   // Hero copy.
   title: "No tiers. No tricks.",
-  subtitle: "$29 for the always-on setup. Usage at cost.",
+  /** Reflects the bundle: a $49 always-on cloud (the machine + the
+   *  tools that run on it) plus a monthly token allocation. One slider,
+   *  one total. Doubles as the SEO meta description. */
+  subtitle:
+    "Pancake is $49/month flat for an always-on AI agent — Slack, iMessage, phone, email, browser, model-agnostic harness, and more. Pick your token pack. No tiers, no tricks.",
   perMonth: "/ month",
-  /** Two-part breakdown shown as small math under the big price. */
-  breakdownFixedLabel: "always-on setup",
-  breakdownTokensLabel: "token usage",
+  /** Two-card hero. LEFT card = the fixed-price promise; RIGHT card =
+   *  the variable token pack the user picks. Reads as "Pancake is $49
+   *  for the always-on cloud. Tokens are bought separately, you pick
+   *  the pack." */
+  basePlan: {
+    kicker: "Always-on",
+    /** Single-line title — benefit-led, frames the 4-item highlight
+     *  list that combines related features in plain language (e.g.
+     *  "browses and researches the web" = browser automation + Exa
+     *  search; "its own inbox and iMessage" = email + iMessage
+     *  access). The detailed 12-item breakdown still lives in
+     *  PricingIncluded just below. */
+    title: "Everything needed to make your company autonomous",
+    highlights: [
+      { name: "private cloud computer",         icon: "linux" },
+      { name: "any AI model",                   icon: "harness" },
+      { name: "browses and researches the web", icon: "browser" },
+      { name: "its own inbox and iMessage",     icon: "imessage" },
+    ],
+    /** Italic footnote rendered with extra line-break spacing below
+     *  the highlights list — softly points the user to the full
+     *  12-item PricingIncluded section just below the hero. */
+    footnote: "More details below",
+  },
+  /** Single-line label combines the action ("Pick your token pack")
+   *  with the radical-honesty signal ("at labs' public price") so the
+   *  right card mirrors the left card's one-line title format. */
+  tokenPickLabel: "Pick your token pack at labs' public price",
+  totalLabel: "/ month total",
+  /** Two-part breakdown — kept for back-office/aria use; the visible
+   *  hero no longer shows them as inline math. */
+  breakdownFixedLabel: "always-on cloud",
+  breakdownTokensLabel: "tokens",
+  /** Everything bundled into the $49 always-on cloud — shown as a
+   *  dedicated section right under the hero. 12 punchy items, each
+   *  with a marketing-ready label + a one-line detail + an `icon`
+   *  key mapped in IncludedIcons. The "Soon" flag tags features
+   *  shipping later so the roadmap stays honest.
+   *
+   *  Order is row-grouped (3 cols × 4 rows) so related items sit next
+   *  to each other in the grid:
+   *    R1 — foundation:  compute · secrets · LLM
+   *    R2 — messaging:   Slack · iMessage · phone   ← iMessage + phone
+   *                                                   adjacent (linked)
+   *    R3 — written/web: inbox · browsing · live web
+   *    R4 — capabilities: search · sub-agents · credit-card */
+  included: {
+    title: "Everything your $49 buys",
+    subtitle: "All bundled. No add-ons, no upgrade tiers.",
+    items: [
+      { name: "Always-on compute",            detail: "Private cloud computer, 50GB storage", icon: "linux" },
+      { name: "Encrypted secrets",            detail: "API keys + credentials, E2E",          icon: "vault" },
+      { name: "Any LLM, your choice",         detail: "Claude, GPT, Gemini — model-agnostic", icon: "harness" },
+      { name: "Slack-native",                 detail: "Lives in your channels and DMs",       icon: "slack" },
+      { name: "iMessage access",              detail: "Real iMessage threads",                icon: "imessage" },
+      { name: "Phone number for your Pancake", detail: "SMS + voice",                         icon: "phone" },
+      { name: "Email inbox for your Pancake", detail: "Send and receive email",               icon: "mail" },
+      { name: "Authenticated browsing",       detail: "Signed into your accounts",            icon: "browser" },
+      { name: "Live web access",              detail: "Real-time fetch from any URL",         icon: "globe" },
+      { name: "Deep web search",              detail: "Agentic research + crawling",          icon: "search" },
+      { name: "Unlimited sub-agents",         detail: "Run multiple agents in parallel",      icon: "subagents" },
+      { name: "Credit card for agents",       detail: "For real-world purchases", soon: true, icon: "creditcard" },
+    ],
+  } as const,
   // Trial CTA below the widget.
   trialCta: "Start your free trial",
-  trialCaption: "7 days free. No card required.",
+  trialCaption: "7-day free trial · $100 token cap",
   trialHref: "/signup",
   // 3-column manifesto (shown BEFORE the buys cards — trust before value:
   // the user needs to believe the price is fair before they care what it
@@ -245,17 +314,17 @@ export const pricing = {
       {
         title: "No platform markup.",
         body:
-          "Most AI tools mark up tokens 3x or 5x. We charge exactly what OpenAI and Anthropic charge their direct customers. Our margin is the volume discount the labs give us for buying in bulk.",
+          "Most AI tools mark up tokens 3x or 5x. We charge what the labs charge. Our margin is the volume discount they give us.",
       },
       {
         title: "Your own cloud computer.",
         body:
-          "$29 buys a small machine in the cloud. Always on, always yours, never shared.",
+          "Everything above. $49 a month. Always yours, never shared, never throttled.",
       },
       {
         title: "No surprises.",
         body:
-          "Tokens reset monthly. Hit the limit, bump the slider. Cancel anytime, takes effect immediately.",
+          "Tokens reset monthly. Bump the slider any time, prorated. Cancel anytime.",
       },
     ],
   },
@@ -329,24 +398,36 @@ export const pricing = {
     title: "Questions",
     items: [
       {
-        q: "What is the $29 for?",
-        a: "The always-on machine your agents live in. A small cloud computer that holds your context, runs your jobs, and reports back. Think Mac mini in the cloud.",
+        q: "What is the $49 for?",
+        a: "Your AI agent's full setup — an always-on cloud computer with 50GB storage, a real phone number for SMS and voice, an email inbox, Slack and iMessage access, an encrypted secret vault, a model-agnostic harness (Claude, GPT, Gemini), authenticated browser automation, live web fetch, agentic deep search, and unlimited sub-agents. No tiers, no upgrades — every account gets the full kit for $49/month.",
       },
       {
-        q: "Does my usage roll over?",
-        a: "No. It resets on your billing day. Leftovers don't carry into next month.",
+        q: "How do token packs work?",
+        a: "You pick one of five monthly packs at signup — $50, $100, $250, $500, or $1000 — and that pack covers your agent's LLM and tool usage for the month. Bump up or down any time from your settings; changes take effect immediately, prorated. We pass tokens through at the labs' public price, no markup — our margin is the volume discount we get for buying in bulk.",
+      },
+      {
+        q: "Which LLMs can I use?",
+        a: "Any of them. The harness is model-agnostic — Claude, GPT, Gemini, and others. Your agents can pick the best model for each task, or you can pin a default in your config.",
+      },
+      {
+        q: "Does my token allocation roll over?",
+        a: "No. The monthly token pack resets on your billing day. Leftovers don't carry into next month.",
       },
       {
         q: "How do seats work?",
-        a: "Unlimited. Your whole team shares one workspace and one pool of usage.",
+        a: "Unlimited. Your whole team shares one workspace and one pool of tokens. No per-seat pricing, ever.",
       },
       {
         q: "What if I run out mid-month?",
-        a: "Bump the slider from your settings. The new tier takes effect immediately and you only pay the difference, prorated.",
+        a: "Bump the slider to a larger pack from your settings. The new pack takes effect immediately and you only pay the difference, prorated for the remaining days.",
       },
       {
-        q: "What are tokens? (and why don't you show them?)",
-        a: "Tokens are the unit the underlying labs (OpenAI, Anthropic) bill in. We pay for them at cost and pass them through, but we don't make you do the math — the slider shows you team-size scale instead.",
+        q: "Can I cancel anytime?",
+        a: "Yes. Cancel from your settings and it takes effect immediately. No long-term commitment, no cancellation fee.",
+      },
+      {
+        q: "What about the credit card for agents?",
+        a: "Coming soon. Your agents will get a real virtual credit card to make real-world purchases (book travel, buy SaaS subscriptions, order supplies) within limits you set. Bundled with the $49 plan when it ships.",
       },
     ],
   },

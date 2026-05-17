@@ -1891,21 +1891,26 @@
      room above and below the card. */
   .pricing-section {
     width: 100%;
-    /* No min-height: previously the section claimed `100dvh - navbar` and
-       vertical-centred the card, but that pushed the card down toward the
-       middle of the screen and left a wide empty band beneath the navbar.
-       Now the section is content-sized — the card sits immediately under
-       the navbar with just enough top padding to breathe. Bottom padding
-       carries the eye into the next section. */
+    /* Fill the viewport below the navbar (~68px on small screens,
+       ~140px from lg up) so the two-card hero owns the first screen
+       — no scrolling needed to see price + token-pack picker. Below
+       880px the cards stack, so the section grows past 100dvh and
+       the user scrolls naturally. */
+    min-height: calc(100dvh - 68px);
     padding-top: var(--spacing-xl);
     padding-bottom: calc(2 * var(--spacing-xxl));
     background-color: var(--surface);
     color: var(--text);
+    /* Flex row with align-items: center vertically centres the inner
+       grid so the cards sit in the optical middle of the viewport
+       instead of pinned to the top. */
     display: flex;
+    align-items: center;
   }
 
   @media (min-width: 1024px) {
     .pricing-section {
+      min-height: calc(100dvh - 140px);
       padding-top: calc(1.5 * var(--spacing-xl));
       padding-bottom: calc(3 * var(--spacing-xxl));
     }
@@ -1914,14 +1919,25 @@
   .pricing-section__inner {
     margin-inline: auto;
     width: 100%;
-    /* Wider than the old 720px to fit the card + mascot side-by-side. */
-    max-width: 1080px;
+    /* Bumped from 1080 → 1200 to fit the two-card hero (base on the
+       left, token-pack on the right) side-by-side with breathing room. */
+    max-width: 1200px;
     padding-inline: var(--spacing-home-page-inline);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: calc(2 * var(--spacing-xxl));
+    /* Two-card grid. Left card (base $49 plan) gets 1fr; right card
+       (token slider + pancake mascot) gets 1.5fr because it has more
+       content stacked vertically. align-items: stretch keeps both
+       cards the same height. Collapses to a single column below
+       880px so each card takes the full width on tablets/phones. */
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    align-items: stretch;
+    gap: var(--spacing-xl);
+  }
+
+  @media (max-width: 880px) {
+    .pricing-section__inner {
+      grid-template-columns: 1fr;
+    }
   }
 
   .pricing-section__header {
@@ -2006,40 +2022,278 @@
     corner-shape: squircle;
   }
 
-  /* Left column — three direct children stacked vertically and spread
-     with `justify-content: space-between`:
-       1. readout (price + breakdown + audience cluster)
-       2. slider (track + stops)
-       3. CTA (button + caption)
-     Stretches to the card height (mascot drives). Generous padding-top
-     descends the price-block: instead of the price hugging the SYRUP
-     kicker at top, there's breathing room above so the price sits in
-     the upper-third rather than pinned to the corner. */
+  /* Info column — three direct children, positioned to mirror the
+     base card row-for-row:
+       1. HEAD cluster (slider + heading)     — at the price/title row
+       2. RESULT block (\$X total + audience) — at h2/h3 of the highlights
+       3. CTA (button + caption)              — pinned to the bottom
+     `flex-start` flow with `margin-top: auto` on the CTA pins it to
+     the bottom while keeping result at a precise y above (set via
+     its own margin-top). Avoids `justify-content: space-between`
+     which would auto-spread the middle child instead of pinning it
+     at a meaningful row on the base card. */
   .pricing-hero__info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    /* Padding-top tuned so the slider TRACK's vertical centre lands
+       on the same horizontal line as the CENTRE of "\$49" on the
+       base card (now that stops sit ABOVE the track, the track
+       itself is at the bottom of the wrap). Combined with the
+       larger head cluster gap below, this also keeps the heading
+       top at the same y as "Everything needed…" on the base card. */
+    padding-top: calc(3 * var(--spacing-xl) + var(--spacing-sm));
+    text-align: left;
+  }
+
+  /* Head cluster — slider-wrap above heading. The gap is large
+     (spacing-xxl + spacing-xl = 40px) because the slider TRACK
+     itself sits at the BOTTOM of the wrap (stops above it), so a
+     small gap would put the heading too high. Tuned so the heading
+     top aligns exactly with the base card's title top while the
+     slider track centre aligns with \$49 centre. */
+  .pricing-hero__head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(var(--spacing-xxl) + var(--spacing-xl));
+    width: 100%;
+  }
+
+  /* Choice block — wraps just the heading so the cluster's column
+     flow can still pad/grow the heading independently if needed. */
+  .pricing-hero__choice {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+    width: 100%;
+  }
+
+  /* Same typography as `.pricing-base__title` — both one-liners
+     share ONE size (22px / 1.2 / -0.3px) so the two cards' primary
+     headings read as a matched pair. text-wrap: balance evens out
+     the two line lengths when the heading wraps (otherwise the
+     break lands at an awkward word like "labs'"). */
+  .pricing-hero__choice-label {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: -0.3px;
+    color: var(--text);
+    text-wrap: balance;
+  }
+
+  /* Result block — "$X / month total" on line 1, audience persona
+     on line 2. Typography matches `.pricing-base__highlight-name`
+     exactly (font-body, body-regular, weight regular) AND each line
+     is sized to a 22px row with a 4px gap so the two-line block
+     occupies the same vertical grid as two highlight rows on the
+     base card. Margin-top puts the block at the SAME starting y
+     as the highlights list — line 1 lands on "private cloud
+     computer" (h1) and line 2 on "any AI model" (h2).
+       margin-top breakdown:
+         spacing-lg  (12) — parent gap, like title→highlights
+         spacing-md   (8) — highlights extra margin-top on base card
+       total: 20px */
+  .pricing-hero__result {
+    margin: 0;
+    margin-top: calc(var(--spacing-lg) + var(--spacing-md));
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    line-height: 22px;
+  }
+
+  .pricing-hero__result-amount {
+    margin: 0;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Same `--text` colour as the amount so both lines read as one
+     uniform result block — matches the highlight-name colour on
+     the base card. */
+  .pricing-hero__result-audience {
+    margin: 0;
+    color: var(--text);
+  }
+
+  /* ─── Base plan card (LEFT) ─── The fixed $49/month promise. Same
+     surface treatment as the right card (border, radius, padding,
+     squircle). Layout MIRRORS the right card: padding-top pushes
+     the main cluster (price + title + highlights) down so the price
+     sits at the same eye-line as the slider/heading on the right
+     card, and `justify-content: space-between` pins the italic
+     footnote ("More details below") to the bottom of the card so
+     it horizontally aligns with the CTA caption ("7-day free trial …")
+     on the right card. */
+  .pricing-base {
+    position: relative;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-start;
-    min-width: 0;
-    padding-top: calc(4 * var(--spacing-xl));
-    text-align: left;
+    padding: calc(2 * var(--spacing-xl));
+    /* Push main cluster down to match the right card's padding-top so
+       $49 lands at the slider's eye-line. */
+    padding-top: calc(5 * var(--spacing-xl));
+    background-color: var(--surface);
+    border: 1px solid rgba(0, 0, 0, 0.16);
+    border-radius: 32px;
+    corner-shape: squircle;
   }
 
-  /* Readout cluster — price + breakdown stacked tightly together as
-     ONE pricing beat, then audience caption below as a soft second
-     beat. Order is: $229/mo → $29 + $200 → "For small founding teams".
-     Internal spacing: tight (8px) inside the price+breakdown pair to
-     keep them visually fused; larger (12px) to the audience line so it
-     reads as a related-but-distinct caption rather than a third stat. */
-  .pricing-hero__readout {
+  /* Main cluster — price + title + highlights stacked at the top.
+     Shares the same gap rhythm the card used to have when all four
+     children were direct flex items, so the inner spacing of price
+     →title→highlights looks identical. The footnote lives outside
+     this wrapper so the parent's space-between can pin it to the
+     bottom regardless of card height. */
+  .pricing-base__main {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    gap: var(--spacing-lg);
+    width: 100%;
+  }
+
+  /* Always-on kicker — neutral-tinted pill (no tier accent here; the
+     base price never changes so it doesn't need to colour-shift).
+     Absolutely positioned at the top-left corner with the SAME offset
+     as the SYRUP kicker on the right card (top/left: spacing-xxl) so
+     the two kickers line up perfectly across the section. */
+  .pricing-base__kicker {
+    position: absolute;
+    top: var(--spacing-xxl);
+    left: var(--spacing-xxl);
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-family: var(--font-body);
+    font-size: var(--font-size-eyebrow);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--subtle-text);
+    background-color: rgba(0, 0, 0, 0.06);
+  }
+
+  /* Big $49 — same display typography as the old hero __total. The
+     scale signals "this is THE price". */
+  .pricing-base__price {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 64px;
+    line-height: 1;
+    letter-spacing: -2px;
+    color: var(--text);
+  }
+
+  .pricing-base__symbol {
+    font-size: 0.62em;
+    vertical-align: 0.18em;
+    margin-right: 2px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+
+  /* "/ month" inherits the display font from the parent .pricing-
+     base__price so the whole price line ("$49 / month") reads as
+     ONE typographic unit — the suffix used to switch to monospace
+     and felt like a different font sitting next to the big number. */
+  .pricing-base__suffix {
+    margin-left: var(--spacing-sm);
+    font-size: var(--font-size-body-regular);
+    font-weight: 400;
+    color: var(--subtle-text);
+    letter-spacing: 0;
+  }
+
+  /* Headline under the price — "Your autonomous company". Display
+     face for character, smaller than the price so it reads as a
+     subtitle. */
+  .pricing-base__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+
+  /* Highlights list — 5 representative features picked from the full
+     bundle (the complete 12-item list lives in PricingIncluded just
+     below the hero). Each line is a small icon + name, sharing the
+     icon family with the included section for visual continuity.
+     `margin-top` compensates for the title's line-height — the title
+     ("Everything needed…") has line-height 1.2 so its bounding box
+     extends below the visible descender, eating into the parent's
+     12px flex gap and making the visual gap to "private cloud
+     computer" look smaller than the visual gap from "$49" to the
+     title above. Extra 8px restores parity with the price→title gap. */
+  .pricing-base__highlights {
+    list-style: none;
+    margin: 0;
+    margin-top: var(--spacing-md);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    width: 100%;
+  }
+
+  .pricing-base__highlight {
+    display: flex;
+    align-items: center;
     gap: var(--spacing-md);
   }
 
-  .pricing-hero__readout .pricing-hero__audience {
-    margin-top: var(--spacing-xxl);
+  .pricing-base__highlight-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    color: var(--text);
+  }
+
+  .pricing-base__highlight-icon > svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+  }
+
+  .pricing-base__highlight-name {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  /* Italic footnote pinned to the bottom of the card by the parent's
+     `justify-content: space-between`. Shares EXACT typography with
+     `.pricing-hero__cta-caption` (font-body, body-small, italic,
+     line-height 1.4) so the two small captions across the two cards
+     read as one voice AND land on the same horizontal line. */
+  .pricing-base__footnote {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    color: var(--subtle-text);
+    font-style: italic;
+    line-height: 1.4;
   }
 
   /* Right column — pancake stack only. No padding tricks: the SVG fills
@@ -2104,100 +2358,6 @@
     color: var(--plan-accent);
     background-color: color-mix(in srgb, var(--plan-accent) 14%, transparent);
     transition: color 280ms ease, background-color 280ms ease;
-  }
-
-  .pricing-hero__total {
-    margin: 0;
-    font-family: var(--font-display);
-    font-weight: 500;
-    font-size: 64px;
-    line-height: 1;
-    letter-spacing: -2px;
-    color: var(--text);
-  }
-
-  /* Aeonik renders the $ glyph noticeably taller than its lining digits;
-     scale the symbol down and lift it a bit so it reads as a prefix, not a
-     dominant character. */
-  .pricing-hero__total-symbol {
-    font-size: 0.62em;
-    vertical-align: 0.18em;
-    margin-right: 2px;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-  }
-
-  .pricing-hero__total-suffix {
-    margin-left: var(--spacing-sm);
-    font-size: var(--font-size-body-regular);
-    font-weight: 400;
-    color: var(--subtle-text);
-    letter-spacing: 0;
-  }
-
-  /* Audience caption directly under the price — anchors the tier to a
-     buyer persona ("For side projects", "For startups", …). Body face,
-     full text colour, regular weight; sized like body copy so the price
-     stays the visual anchor. */
-  .pricing-hero__audience {
-    margin: 0;
-    font-family: var(--font-body);
-    font-size: var(--font-size-body-regular);
-    font-weight: 400;
-    color: var(--text);
-    max-width: 32ch;
-    text-align: left;
-    line-height: 1.4;
-  }
-
-  /* Cost breakdown — `$29 always-on setup  +  $X in tokens`.
-     Apple-style rigor: one typeface (body), one size (13px). Hierarchy
-     comes from weight + color only, not face mixing. The `+` floats with
-     extra horizontal air so the two halves read as discrete components. */
-  .pricing-hero__breakdown {
-    margin: 0;
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    /* No horizontal gap on the row — the "+" span owns the spacing on
-       both sides via its own width, so any optical offset from glyph side
-       bearings is cancelled. */
-    gap: 4px 0;
-    font-family: var(--font-body);
-    font-size: 13px;
-    line-height: 1.4;
-    color: var(--subtle-text);
-  }
-
-  .pricing-hero__breakdown-part {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 6px;
-  }
-
-  .pricing-hero__breakdown-amount {
-    font-weight: 600;
-    color: var(--text);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .pricing-hero__breakdown-label {
-    font-weight: 400;
-    color: var(--subtle-text);
-  }
-
-  .pricing-hero__breakdown-plus {
-    /* Fixed-width centered box owns the spacing between the two halves so
-       the symbol is optically centered regardless of font side bearings.
-       40px = ~18px of breathing room on each side of the glyph. */
-    display: inline-flex;
-    justify-content: center;
-    align-items: baseline;
-    width: 40px;
-    text-align: center;
-    font-weight: 400;
-    color: var(--disabled-text);
   }
 
   .pricing-hero__slider-wrap {
@@ -2272,11 +2432,13 @@
      middle labels at column centres (30%, 50%, 70%) — off by 5 points from
      the actual slider thumb positions. Each label gets its `left: X%` via
      inline style; the transform anchors it relative to that point. */
+  /* Stops sit ABOVE the slider track (DOM order: stops then slider
+     inside the wrap). The wrap's flex gap provides the spacing
+     between the labels and the track — no extra margin needed. */
   .pricing-hero__slider-stops {
     position: relative;
     width: 100%;
     height: 16px;
-    margin-top: 4px;
   }
 
   .pricing-hero__slider-stop {
@@ -2293,17 +2455,11 @@
     cursor: pointer;
     transition: color 120ms ease;
     white-space: nowrap;
-    /* Middle stops are centred on their tick; first/last are anchored to
-       the track edges so they don't visually leak past the slider. */
+    /* All stops are centred on their tick (translateX(-50%)). The inline
+       `left` already compensates for the thumb radius so the first/last
+       labels don't visually leak past the track — see the JSX comment in
+       PricingHero. */
     transform: translateX(-50%);
-  }
-
-  .pricing-hero__slider-stop:first-child {
-    transform: translateX(0);
-  }
-
-  .pricing-hero__slider-stop:last-child {
-    transform: translateX(-100%);
   }
 
   .pricing-hero__slider-stop:hover {
@@ -2315,7 +2471,11 @@
     font-weight: 600;
   }
 
+  /* CTA — pinned to the bottom of the info column via margin-top:
+     auto so its caption ("7-day free trial …") lands on the same
+     baseline as "More details below" on the base card. */
   .pricing-hero__cta {
+    margin-top: auto;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -2327,11 +2487,16 @@
     width: 100%;
   }
 
+  /* CTA caption — "7-day free trial · $100 token cap". Matches
+     `.pricing-base__footnote` exactly (italic body-small) so the two
+     small captions across the two cards read as one consistent voice. */
   .pricing-hero__cta-caption {
     margin: 0;
     font-family: var(--font-body);
     font-size: var(--font-size-body-small);
     color: var(--subtle-text);
+    font-style: italic;
+    line-height: 1.4;
     text-align: left;
   }
 
@@ -2358,8 +2523,8 @@
       max-width: 200px;
     }
     .pricing-hero__info,
-    .pricing-hero__readout,
-    .pricing-hero__breakdown,
+    .pricing-hero__head,
+    .pricing-hero__choice,
     .pricing-hero__cta,
     .pricing-hero__cta-caption {
       align-items: center;
@@ -2371,14 +2536,37 @@
       justify-content: flex-start;
       padding-top: 0;
     }
-    .pricing-hero__readout .pricing-hero__audience {
+    .pricing-hero__result {
+      align-items: center;
+      text-align: center;
+      /* Reset desktop offset — stacked cards don't need to align
+         with highlights rows. */
       margin-top: 0;
     }
-    .pricing-hero__audience {
-      text-align: center;
+    .pricing-hero__cta {
+      /* Reset margin-top: auto on mobile so CTA sits naturally
+         after result rather than pushing to card bottom. */
+      margin-top: 0;
     }
     .pricing-hero__slider-stop {
       font-size: 10px;
+    }
+    .pricing-base {
+      align-items: center;
+      text-align: center;
+      padding: calc(1.5 * var(--spacing-xl));
+      /* Mobile: reset the desktop padding-top + space-between layout
+         so price hugs the kicker naturally on stacked cards. */
+      padding-top: calc(4 * var(--spacing-xl));
+      justify-content: flex-start;
+      gap: var(--spacing-lg);
+    }
+    .pricing-base__main {
+      align-items: center;
+    }
+    .pricing-base__footnote {
+      text-align: center;
+      margin-top: var(--spacing-md);
     }
   }
 
@@ -2390,7 +2578,8 @@
       padding: var(--spacing-xl);
       border-radius: 24px;
     }
-    .pricing-hero__plan-kicker {
+    .pricing-hero__plan-kicker,
+    .pricing-base__kicker {
       top: var(--spacing-xl);
       left: var(--spacing-xl);
       padding: 4px 10px;
@@ -2401,9 +2590,12 @@
     .pricing-hero__mascot-stack {
       max-width: 160px;
     }
-    .pricing-hero__total {
+    .pricing-base__price {
       font-size: 48px;
       letter-spacing: -1.5px;
+    }
+    .pricing-base__title {
+      font-size: 20px;
     }
     .pricing-hero__slider-stops {
       /* On tiny screens the 5 tick labels start to crowd. Hide the in-
@@ -2780,6 +2972,148 @@
   }
 
   /* ─── "how this works" 3-column manifesto ─── */
+  /* ─── "Everything your $49 buys" — receipt section ─── Sits directly
+     under the hero on an alt-surface background so the alternating
+     rhythm (surface → alt → surface → alt → surface) carries through
+     the page. Each line is a single included feature as bold name + a
+     subtle one-line detail. "Soon" pill marks roadmap items. */
+  .pricing-included {
+    width: 100%;
+    padding: calc(2 * var(--spacing-xxl)) var(--spacing-home-page-inline);
+    background-color: var(--alt-surface);
+  }
+
+  .pricing-included__inner {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 1080px;
+    display: flex;
+    flex-direction: column;
+    gap: calc(2 * var(--spacing-xl));
+  }
+
+  .pricing-included__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    text-align: center;
+  }
+
+  .pricing-included__title {
+    margin: 0;
+    font-size: var(--font-size-header-03);
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+
+  .pricing-included__subtitle {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    color: var(--subtle-text);
+    max-width: 56ch;
+    line-height: 1.5;
+  }
+
+  /* 11 items split across the grid: 3 cols on desktop reads as a
+     short receipt without dense crowding (4 rows; last row has 2
+     items left-aligned). Below 768px collapses to 2 cols, then 1 on
+     small phones. */
+  .pricing-included__grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: calc(1.5 * var(--spacing-xl)) calc(2 * var(--spacing-xl));
+  }
+
+  @media (min-width: 560px) {
+    .pricing-included__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (min-width: 880px) {
+    .pricing-included__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .pricing-included__item {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: var(--spacing-md);
+    align-items: start;
+    /* Soft top border-line for each item — gives the grid a
+       checklist/receipt feel without heavy card chrome. */
+    padding-top: var(--spacing-md);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .pricing-included__icon {
+    /* 28px slot centers a 24px SVG. inline-flex so the SVG sits
+       at the top of the cell — aligned with the first line of text. */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    color: var(--text);
+    flex-shrink: 0;
+  }
+
+  .pricing-included__icon > svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+  }
+
+  .pricing-included__text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .pricing-included__name {
+    margin: 0;
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--text);
+  }
+
+  .pricing-included__detail {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--subtle-text);
+  }
+
+  /* "Soon" badge — tiny tinted pill inside the feature name so the
+     roadmap-status is co-located with the feature itself, never a
+     separate column the eye has to search for. */
+  .pricing-included__soon {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--subtle-text);
+    background-color: rgba(0, 0, 0, 0.06);
+  }
+
   .pricing-manifesto {
     width: 100%;
     padding: calc(2 * var(--spacing-xxl)) var(--spacing-home-page-inline);
