@@ -1891,21 +1891,26 @@
      room above and below the card. */
   .pricing-section {
     width: 100%;
-    /* No min-height: previously the section claimed `100dvh - navbar` and
-       vertical-centred the card, but that pushed the card down toward the
-       middle of the screen and left a wide empty band beneath the navbar.
-       Now the section is content-sized — the card sits immediately under
-       the navbar with just enough top padding to breathe. Bottom padding
-       carries the eye into the next section. */
+    /* Fill the viewport below the navbar (~68px on small screens,
+       ~140px from lg up) so the two-card hero owns the first screen
+       — no scrolling needed to see price + token-pack picker. Below
+       880px the cards stack, so the section grows past 100dvh and
+       the user scrolls naturally. */
+    min-height: calc(100dvh - 68px);
     padding-top: var(--spacing-xl);
     padding-bottom: calc(2 * var(--spacing-xxl));
     background-color: var(--surface);
     color: var(--text);
+    /* Flex row with align-items: center vertically centres the inner
+       grid so the cards sit in the optical middle of the viewport
+       instead of pinned to the top. */
     display: flex;
+    align-items: center;
   }
 
   @media (min-width: 1024px) {
     .pricing-section {
+      min-height: calc(100dvh - 140px);
       padding-top: calc(1.5 * var(--spacing-xl));
       padding-bottom: calc(3 * var(--spacing-xxl));
     }
