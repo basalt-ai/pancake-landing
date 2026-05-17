@@ -242,13 +242,11 @@ export const pricing = {
    *  the pack." */
   basePlan: {
     kicker: "Always-on",
-    /** "Your own X" structure (echoes "Your own cloud computer"), with
-     *  a value-loaded noun. Cofounder = the strongest value Pancake
-     *  delivers and aligns with the homepage hero's "AI Co-Founder"
-     *  positioning — what you actually get for $49 is a partner who
-     *  ships work for you, not a server. */
-    title: "Your own AI cofounder",
-    body: "Always on. Every feature below included.",
+    /** Value-loaded title — "autonomous cofounder" frames the $49 as
+     *  buying a partner that runs on its own, not a tool you have to
+     *  drive. Aligns with the homepage hero's "autonomous" framing. */
+    title: "Your autonomous cofounder",
+    body: "Always on. Everything below included.",
   },
   /** Tokens card framing. */
   tokenPickLabel: "Pick your token pack",
