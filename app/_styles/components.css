@@ -2037,11 +2037,12 @@
     justify-content: space-between;
     align-items: flex-start;
     min-width: 0;
-    /* Bumped padding-top so the "Pick your token pack" heading drops
-       down to roughly match the vertical position of "$49" on the
-       neighbouring base card. The two cards now read with the same
-       horizontal eye-line: $49 ↔ Pick your token pack. */
-    padding-top: calc(5 * var(--spacing-xl));
+    /* Generous padding-top so the BASELINE of the "Pick your token
+       pack at labs' public price" heading (which wraps to 2 lines at
+       22px in this column) lands on the same horizontal line as the
+       baseline of "$49" on the neighbouring base card. The eye-line
+       running across the two cards matches at the primary heading. */
+    padding-top: calc(10 * var(--spacing-xl));
     text-align: left;
   }
 
@@ -2056,9 +2057,11 @@
     width: 100%;
   }
 
-  /* Same typography as `.pricing-base__title` — both one-liners now
+  /* Same typography as `.pricing-base__title` — both one-liners
      share ONE size (22px / 1.2 / -0.3px) so the two cards' primary
-     headings read as a matched pair across the section. */
+     headings read as a matched pair. text-wrap: balance evens out
+     the two line lengths when the heading wraps (otherwise the
+     break lands at an awkward word like "labs'"). */
   .pricing-hero__choice-label {
     margin: 0;
     font-family: var(--font-display);
@@ -2067,6 +2070,7 @@
     line-height: 1.2;
     letter-spacing: -0.3px;
     color: var(--text);
+    text-wrap: balance;
   }
 
   /* Result block — "$X / month total" on line 1, audience persona
