@@ -2051,13 +2051,16 @@
     width: 100%;
   }
 
+  /* Same typography as `.pricing-base__title` — both cards' second-
+     tier headings now share ONE size (22px), so the two cards rhyme
+     at the section title level instead of using two different sizes. */
   .pricing-hero__choice-label {
     margin: 0;
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: 28px;
-    line-height: 1.1;
-    letter-spacing: -0.4px;
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: -0.3px;
     color: var(--text);
   }
 
@@ -2171,6 +2174,10 @@
     letter-spacing: -0.02em;
   }
 
+  /* "/ month" inherits the display font from the parent .pricing-
+     base__price so the whole price line ("$49 / month") reads as
+     ONE typographic unit — the suffix used to switch to monospace
+     and felt like a different font sitting next to the big number. */
   .pricing-base__suffix {
     margin-left: var(--spacing-sm);
     font-size: var(--font-size-body-regular);
@@ -2250,14 +2257,15 @@
   }
 
   /* Italic footnote under the highlights list — "(more details
-     below)". margin-top adds an extra line-break worth of space on
-     top of the card's spacing-lg gap so the footnote reads as a
-     visually distinct beat, not a sixth highlight. */
+     below)". Uses the standard body-small token so all the small
+     captions across the section (footnote, cta-caption) share ONE
+     size. margin-top adds an extra line-break of space on top of the
+     card's spacing-lg gap so the footnote reads as a distinct beat. */
   .pricing-base__footnote {
     margin: 0;
     margin-top: var(--spacing-md);
     font-family: var(--font-body);
-    font-size: 13px;
+    font-size: var(--font-size-body-small);
     color: var(--subtle-text);
     font-style: italic;
     line-height: 1.4;
