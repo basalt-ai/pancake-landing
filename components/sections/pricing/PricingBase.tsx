@@ -46,6 +46,8 @@ export function PricingBase({ pricing }: { pricing: Pricing }) {
           </li>
         ))}
       </ul>
+
+      <p className="pricing-base__footnote">{pricing.basePlan.footnote}</p>
     </article>
   );
 }

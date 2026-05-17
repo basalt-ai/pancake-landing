@@ -256,6 +256,10 @@ export const pricing = {
       { name: "browses and researches the web", icon: "browser" },
       { name: "its own inbox and iMessage",     icon: "imessage" },
     ],
+    /** Italic footnote rendered with extra line-break spacing below
+     *  the highlights list — softly points the user to the full
+     *  12-item PricingIncluded section just below the hero. */
+    footnote: "(more details below)",
   },
   /** Tokens card framing. */
   tokenPickLabel: "Pick your token pack",
