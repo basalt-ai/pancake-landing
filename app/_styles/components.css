@@ -2066,7 +2066,11 @@
     font-size: var(--font-size-body-regular);
     line-height: 1.4;
     color: var(--subtle-text);
-    max-width: 42ch;
+    /* Force the caption ("Charged at public price. No markup.") to
+       stay on a single line. The two sentences read as one promise;
+       wrapping mid-phrase breaks the rhythm. Container has enough
+       room at every supported viewport for this 35-char string. */
+    white-space: nowrap;
   }
 
   /* Result block — "$X / month total" on line 1, audience persona
