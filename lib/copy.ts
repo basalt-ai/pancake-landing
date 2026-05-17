@@ -242,11 +242,19 @@ export const pricing = {
    *  the pack." */
   basePlan: {
     kicker: "Always-on",
-    /** Value-loaded title — "autonomous cofounder" frames the $49 as
-     *  buying a partner that runs on its own, not a tool you have to
-     *  drive. Aligns with the homepage hero's "autonomous" framing. */
-    title: "Your autonomous cofounder",
-    body: "Always on. Everything below included.",
+    /** Title sets up a list of 5 representative highlights — the most
+     *  marketable features of the bundle. The full list (12 items) is
+     *  shown in the PricingIncluded section below the hero, and the
+     *  footnote `body` points the user there. */
+    title: "Your autonomous company, including",
+    highlights: [
+      { name: "Private cloud compute", icon: "linux" },
+      { name: "Any LLM access",        icon: "harness" },
+      { name: "Deep web search",       icon: "search" },
+      { name: "Agent inbox",           icon: "mail" },
+      { name: "Agent iMessage number", icon: "imessage" },
+    ],
+    body: "(+ everything in the section below)",
   },
   /** Tokens card framing. */
   tokenPickLabel: "Pick your token pack",

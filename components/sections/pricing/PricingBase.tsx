@@ -1,16 +1,16 @@
 /**
  * Base-plan card — the LEFT of the two pricing cards. Communicates
- * the fixed promise: "$49/month for the always-on cloud computer".
+ * the fixed promise: "$49/month for your autonomous company".
  * No interactivity, no slider — the price never moves regardless of
- * what the user does next door. The eye reads here first, anchors
- * on $49, then moves right to size the token pack.
+ * what the user does next door.
  *
- * Layout: kicker pill → big price → title → body. Whole card centred
- * vertically so the price sits at the optical centre, balancing the
- * token card (right) which has slider + mascot + CTA stacked top-to-
- * bottom.
+ * Layout: kicker pill → big price → "including" title → 5-item
+ * highlight list (with branded icons that match the included
+ * section) → small footnote pointing to the full list below.
  */
 import type { pricing as pricingCopy } from "@/lib/copy";
+
+import { IncludedIcon } from "./IncludedIcons";
 
 type Pricing = typeof pricingCopy;
 
@@ -31,6 +31,17 @@ export function PricingBase({ pricing }: { pricing: Pricing }) {
       <h2 id="pricing-base-title" className="pricing-base__title">
         {pricing.basePlan.title}
       </h2>
+
+      <ul className="pricing-base__highlights">
+        {pricing.basePlan.highlights.map((h) => (
+          <li key={h.name} className="pricing-base__highlight">
+            <span className="pricing-base__highlight-icon" aria-hidden>
+              <IncludedIcon name={h.icon} />
+            </span>
+            <span className="pricing-base__highlight-name">{h.name}</span>
+          </li>
+        ))}
+      </ul>
 
       <p className="pricing-base__body">{pricing.basePlan.body}</p>
     </article>
