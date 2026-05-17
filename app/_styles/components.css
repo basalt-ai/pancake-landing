@@ -2098,12 +2098,13 @@
   }
 
   /* Result block — "$X / month total" on line 1, audience persona
-     on line 2. Stacked (not inline) so the audience NEVER wraps onto
-     a second line on its own, regardless of whether the total is
-     "$99" (short) or "$1049" (long). Previously the inline-flex +
-     flex-wrap layout was inconsistent: at small totals both fit on
-     one line; at large totals the audience dropped to a new line —
-     felt like a layout glitch when scrubbing the slider. */
+     on line 2. Typography matches `.pricing-base__highlight-name`
+     exactly (font-body, body-regular, line-height 1.3, regular
+     weight) so the right card's result reads with the same quiet
+     voice as a highlight bullet on the left card. Stacked (not
+     inline) so the audience NEVER wraps onto a second line on its
+     own, regardless of whether the total is "$99" (short) or "$1049"
+     (long). */
   .pricing-hero__result {
     margin: 0;
     display: flex;
@@ -2111,12 +2112,11 @@
     gap: var(--spacing-xs);
     font-family: var(--font-body);
     font-size: var(--font-size-body-regular);
-    line-height: 1.4;
+    line-height: 1.3;
   }
 
   .pricing-hero__result-amount {
     margin: 0;
-    font-weight: 600;
     color: var(--text);
     font-variant-numeric: tabular-nums;
   }
