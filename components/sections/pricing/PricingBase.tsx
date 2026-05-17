@@ -34,8 +34,6 @@ export function PricingBase({ pricing }: { pricing: Pricing }) {
         {pricing.basePlan.title}
       </h2>
 
-      <p className="pricing-base__subtitle">{pricing.basePlan.subtitle}</p>
-
       <ul className="pricing-base__highlights">
         {pricing.basePlan.highlights.map((h) => (
           <li key={h.name} className="pricing-base__highlight">

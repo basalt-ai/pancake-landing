@@ -242,14 +242,13 @@ export const pricing = {
    *  the pack." */
   basePlan: {
     kicker: "Always-on",
-    /** Title + subtitle frame a 4-item highlight list that COMBINES
-     *  related features in plain language (e.g. "browses and
-     *  researches the web" = browser automation + Exa search; "its
-     *  own inbox and iMessage" = email + iMessage access). The
-     *  detailed 12-item breakdown still lives in PricingIncluded just
-     *  below — the highlights here are the marketing distillation. */
-    title: "Your autonomous company",
-    subtitle: "Everything it needs to run:",
+    /** Single-line title — benefit-led, frames the 4-item highlight
+     *  list that combines related features in plain language (e.g.
+     *  "browses and researches the web" = browser automation + Exa
+     *  search; "its own inbox and iMessage" = email + iMessage
+     *  access). The detailed 12-item breakdown still lives in
+     *  PricingIncluded just below. */
+    title: "Everything needed to make your company autonomous",
     highlights: [
       { name: "private cloud computer",         icon: "linux" },
       { name: "any AI model",                   icon: "harness" },

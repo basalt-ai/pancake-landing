@@ -2070,9 +2070,9 @@
     color: var(--text);
   }
 
-  /* Same typography as `.pricing-base__subtitle` on the left card so
-     "Charged at public price. No markup." and "Everything it needs to
-     run:" read as the SAME caption style across the two cards. */
+  /* Body caption — kept aligned with the body-regular size used in
+     highlight names on the left card so the two cards share the
+     same secondary-text scale. */
   .pricing-hero__choice-caption {
     margin: 0;
     font-family: var(--font-body);
@@ -2203,20 +2203,6 @@
     line-height: 1.2;
     letter-spacing: -0.3px;
     color: var(--text);
-  }
-
-  /* Subtitle — "Everything it needs to run:" — small body label
-     that introduces the highlights list. Sits TIGHT under the title
-     (overriding the card-level spacing-lg gap with a negative-ish
-     margin) so the two read as one phrase. */
-  .pricing-base__subtitle {
-    margin: 0;
-    margin-top: calc(-1 * var(--spacing-sm));
-    font-family: var(--font-body);
-    font-size: var(--font-size-body-regular);
-    font-weight: 400;
-    line-height: 1.4;
-    color: var(--subtle-text);
   }
 
   /* Highlights list — 5 representative features picked from the full
