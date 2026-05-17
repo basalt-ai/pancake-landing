@@ -286,9 +286,7 @@ export const pricing = {
    *    R4 — capabilities: search · sub-agents · credit-card */
   included: {
     title: "Everything your $49 buys",
-    /** Subtitle shortened so "full kit" lands on the same first line
-     *  as "All bundled" at common viewport widths. */
-    subtitle: "All bundled — full kit. No add-ons, no upgrade tiers.",
+    subtitle: "All bundled. No add-ons, no upgrade tiers.",
     items: [
       { name: "Always-on compute",            detail: "Private cloud computer, 50GB storage", icon: "linux" },
       { name: "Encrypted secrets",            detail: "API keys + credentials, E2E",          icon: "vault" },
