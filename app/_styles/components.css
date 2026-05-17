@@ -2460,11 +2460,16 @@
     width: 100%;
   }
 
+  /* CTA caption — "7-day free trial · $100 token cap". Matches
+     `.pricing-base__footnote` exactly (italic body-small) so the two
+     small captions across the two cards read as one consistent voice. */
   .pricing-hero__cta-caption {
     margin: 0;
     font-family: var(--font-body);
     font-size: var(--font-size-body-small);
     color: var(--subtle-text);
+    font-style: italic;
+    line-height: 1.4;
     text-align: left;
   }
 
