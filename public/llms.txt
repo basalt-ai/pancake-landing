@@ -25,6 +25,7 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 
 - [The next unicorns will have five employees](https://getpancake.ai/blog/the-next-unicorns-will-have-five-employees) — how AI agents that work while you sleep are about to change who can build a billion-dollar company. May 15, 2026.
 - [Pancake vs Polsia vs Nanocorp: which autonomous company platform is right for you?](https://getpancake.ai/blog/best-ai-cofounder-tools-2026) — a direct comparison of the three main autonomous company platforms in 2026. May 15, 2026.
+- [What is an autonomous company?](https://getpancake.ai/blog/what-is-an-autonomous-company) — the definitive guide to what autonomous companies are, how they work, and why the category is growing fast. May 19, 2026.
 
 ## Positioning
 
