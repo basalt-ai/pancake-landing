@@ -63,6 +63,13 @@ export function Footer() {
             Blog
           </Link>
           <Link
+            href="/creators"
+            prefetch={false}
+            className="whitespace-nowrap transition-colors hover:text-[var(--text-on-inverted-surface)]"
+          >
+            Creators
+          </Link>
+          <Link
             href="/privacy"
             prefetch={false}
             className="whitespace-nowrap transition-colors hover:text-[var(--text-on-inverted-surface)]"
