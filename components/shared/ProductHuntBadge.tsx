@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/Badge";
 
 const PH_URL =
   "https://www.producthunt.com/products/pancake-6?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-pancake-6";
@@ -50,34 +51,21 @@ export function ProductHuntBadge({
       aria-label={preLaunch ? "Pancake — launching soon on Product Hunt" : "Find Pancake on Product Hunt"}
     >
       {preLaunch && (
-        <span
+        <Badge
           aria-hidden
+          variant="brand-alt-2"
           className="product-hunt-badge__soon"
           style={{
             position: "absolute",
-            top: -10,
+            top: -8,
             left: "50%",
-            transform: "translateX(-50%) rotate(-4deg)",
-            transformOrigin: "center",
-            padding: "2px 10px 3px",
-            borderRadius: 9999,
-            background: "#fde68a",
-            color: "#1f1147",
-            border: "1.5px solid #1f1147",
-            fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
-            fontSize: 10,
-            fontWeight: 700,
-            letterSpacing: "0.14em",
-            textTransform: "lowercase",
-            lineHeight: 1.2,
-            whiteSpace: "nowrap",
-            boxShadow: "0 2px 0 #1f1147",
+            transform: "translateX(-50%)",
             zIndex: 1,
             pointerEvents: "none",
           }}
         >
-          soon
-        </span>
+          Soon
+        </Badge>
       )}
       {/* eslint-disable-next-line @next/next/no-img-element -- external badge served by Product Hunt CDN */}
       <img
