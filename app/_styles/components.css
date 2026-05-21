@@ -4800,9 +4800,60 @@
     color: var(--text);
   }
 
-  .creators-rules {
+  .creators-rules-block {
     width: 100%;
-    max-width: calc(720 / 16 * 1rem);
+    max-width: calc(1040 / 16 * 1rem);
+    display: flex;
+    flex-direction: column;
+    gap: calc(2 * var(--spacing-xl));
+  }
+
+  .creators-rules-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+  }
+
+  @media (min-width: 768px) {
+    .creators-rules-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .creators-rules-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+    padding: calc(2 * var(--spacing-xl));
+    background-color: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius-lg);
+    corner-shape: squircle;
+  }
+
+  .creators-rules-col__chip {
+    align-self: flex-start;
+    padding: var(--spacing-xs) var(--spacing-lg);
+    border-radius: 999px;
+    font-family: var(--font-display);
+    font-size: var(--font-size-body-small);
+    font-weight: var(--font-semibold);
+    color: var(--text);
+  }
+
+  .creators-rules-col__chip[data-tone="brand"] {
+    background-color: var(--weak-branded-surface);
+  }
+
+  .creators-rules-col__chip[data-tone="brand-alt-1"] {
+    background-color: var(--alt-weak-branded-surface-01);
+  }
+
+  .creators-rules-col__chip[data-tone="brand-alt-2"] {
+    background-color: var(--alt-weak-branded-surface-02);
+  }
+
+  .creators-rules-col__list {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -4811,7 +4862,7 @@
     gap: var(--spacing-lg);
   }
 
-  .creators-rules__item {
+  .creators-rules-col__item {
     display: flex;
     align-items: flex-start;
     gap: var(--spacing-lg);
@@ -4821,12 +4872,20 @@
     color: var(--text);
   }
 
-  .creators-rules__dot {
+  .creators-rules-col__item[data-highlight] {
+    font-weight: var(--font-semibold);
+  }
+
+  .creators-rules-col__dot {
     flex-shrink: 0;
     margin-top: calc(var(--spacing-sm) + var(--spacing-xs));
     width: var(--spacing-md);
     height: var(--spacing-md);
     border-radius: 999px;
     background-color: var(--strong-branded-surface);
+  }
+
+  .creators-rules-col__item[data-highlight] .creators-rules-col__dot {
+    background-color: var(--interactive-text);
   }
 }

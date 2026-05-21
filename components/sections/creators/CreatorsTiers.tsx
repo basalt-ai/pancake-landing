@@ -5,34 +5,47 @@ import { FaLinkedin } from "react-icons/fa6";
 import { SiX } from "react-icons/si";
 
 /**
- * Reward tiers with an X / LinkedIn toggle. Thresholds match Viktor's
- * (same on both platforms) so the toggle is honest: same tiers, different
- * icon — picking your platform doesn't change the math.
+ * Reward tiers with an X / LinkedIn toggle. The metric and thresholds
+ * differ per platform (X counts Views with higher numbers; LinkedIn
+ * counts Impressions with lower numbers) — credits + surprises stay
+ * the same, so the table swaps only the reach column when toggled.
  */
 type Platform = "x" | "linkedin";
 
-const TIERS = [
+type Tier = {
+  credits: string;
+  surprise: string;
+  /** Reach range per platform — X uses Views, LinkedIn uses Impressions. */
+  reach: Record<Platform, string>;
+};
+
+const TIERS: Tier[] = [
   {
-    reach: "1k – 5k",
     credits: "$300",
     surprise: "A founder calls you and tells you a joke. In their own words.",
+    reach: { x: "2,000 – 9,999", linkedin: "1,000 – 4,999" },
   },
   {
-    reach: "5k – 20k",
     credits: "$900",
     surprise: "We ship actual pancakes to your office.",
+    reach: { x: "10,000 – 34,999", linkedin: "5,000 – 19,999" },
   },
   {
-    reach: "20k – 100k",
     credits: "$1,500",
     surprise: "Dinner for two at a one-star Michelin restaurant.",
+    reach: { x: "35,000 – 174,999", linkedin: "20,000 – 99,999" },
   },
   {
-    reach: "100k+",
     credits: "$3,000",
     surprise: "A real Thermomix TM6 shipped to your door.",
+    reach: { x: "175,000+", linkedin: "100,000+" },
   },
-] as const;
+];
+
+const METRIC_LABEL: Record<Platform, string> = {
+  x: "Views on X",
+  linkedin: "Impressions on LinkedIn",
+};
 
 export function CreatorsTiers() {
   const [platform, setPlatform] = useState<Platform>("x");
@@ -67,15 +80,15 @@ export function CreatorsTiers() {
       <table className="creators-tiers__table">
         <thead>
           <tr>
-            <th scope="col">Impressions on {platform === "x" ? "X" : "LinkedIn"}</th>
+            <th scope="col">{METRIC_LABEL[platform]}</th>
             <th scope="col">Pancake credits</th>
             <th scope="col">Surprise</th>
           </tr>
         </thead>
         <tbody>
           {TIERS.map((t) => (
-            <tr key={t.reach}>
-              <th scope="row">{t.reach}</th>
+            <tr key={t.credits}>
+              <th scope="row">{t.reach[platform]}</th>
               <td>
                 <span className="creators-tiers__credits">{t.credits}</span>
               </td>
@@ -86,8 +99,8 @@ export function CreatorsTiers() {
       </table>
 
       <p className="creators-tiers__note">
-        Same thresholds on X and LinkedIn. Credits stack — the more you post,
-        the more agents you can run, the more Pancake there is to post about.
+        X counts views, LinkedIn counts impressions — different metrics,
+        different bars, same prizes.
       </p>
     </div>
   );

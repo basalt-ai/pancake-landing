@@ -12,6 +12,7 @@ import Link from "next/link";
 
 import { HOME_PAGE_CONTAINER_CLASS } from "@/components/sections/home/home-layout";
 import { HomeNav } from "@/components/sections/home/HomeNav";
+import { CreatorsRules } from "@/components/sections/creators/CreatorsRules";
 import { CreatorsTiers } from "@/components/sections/creators/CreatorsTiers";
 import { Footer } from "@/components/shared/Footer";
 import { Badge } from "@/components/ui/Badge";
@@ -61,14 +62,6 @@ const steps = [
     title: "Get the goods",
     body: "Credits applied instantly. Surprises shipped: phone call, pancakes, a Michelin reservation, or a kitchen robot.",
   },
-];
-
-const rules = [
-  "Post on X or LinkedIn. Tag @getpancake_ai. Organic reach only.",
-  "Real Pancake output. Blur anything sensitive. No staged screenshots.",
-  "One post per week, four per month. Don't flood the feed.",
-  "Pancake should be the subject of the post, not a footnote in a tool roundup.",
-  "Credits applied within 48h of you sending analytics. Surprises take a bit longer (especially the Thermomix).",
 ];
 
 const creatorProgramJsonLd = {
@@ -246,18 +239,11 @@ export default function CreatorsPage() {
               House rules
             </H2>
             <p className="home-landing-section__lede text-center">
-              Short list. We trust you.
+              Mostly shared. X lets you post more, LinkedIn wants you to chill.
             </p>
           </header>
 
-          <ul className="creators-rules">
-            {rules.map((r) => (
-              <li key={r} className="creators-rules__item">
-                <span aria-hidden className="creators-rules__dot" />
-                <span>{r}</span>
-              </li>
-            ))}
-          </ul>
+          <CreatorsRules />
         </div>
       </section>
 
