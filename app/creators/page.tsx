@@ -119,71 +119,12 @@ export default function CreatorsPage() {
         </div>
       </section>
 
-      {/* The reward ladder */}
+      {/* Tier table with X / LinkedIn toggle */}
       <section
         id="prizes"
         className="home-landing-section home-landing-section--alt"
-        aria-labelledby="creators-prizes-heading"
+        aria-labelledby="creators-tiers-heading"
       >
-        <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
-          <header className="home-landing-section__header">
-            <H2 id="creators-prizes-heading" className="heading home-landing-section__title text-center">
-              The reward ladder
-            </H2>
-            <p className="home-landing-section__lede text-center">
-              Credits every time. Surprises that get progressively less rational
-              the further you climb.
-            </p>
-          </header>
-
-          <ul className="creators-ladder">
-            <li>
-              <div className="creators-ladder__step">
-                <span className="creators-ladder__rung">01</span>
-                <H3 className="heading creators-ladder__title">A founder calls you</H3>
-                <p className="creators-ladder__body">
-                  Picks up the phone, tells you a joke. In their own words. No
-                  script, no PR rehearsal. Quality not guaranteed.
-                </p>
-              </div>
-            </li>
-            <li>
-              <div className="creators-ladder__step">
-                <span className="creators-ladder__rung">02</span>
-                <H3 className="heading creators-ladder__title">Pancakes to your office</H3>
-                <p className="creators-ladder__body">
-                  We send actual pancakes. The edible kind. Delivered to whatever
-                  address you call &ldquo;the office&rdquo;.
-                </p>
-              </div>
-            </li>
-            <li>
-              <div className="creators-ladder__step">
-                <span className="creators-ladder__rung">03</span>
-                <H3 className="heading creators-ladder__title">Michelin dinner for two</H3>
-                <p className="creators-ladder__body">
-                  Invitation for two at a one-star Michelin restaurant. Bring a
-                  cofounder. Bring your mum. Up to you.
-                </p>
-              </div>
-            </li>
-            <li>
-              <div className="creators-ladder__step creators-ladder__step--top">
-                <span className="creators-ladder__rung">04</span>
-                <H3 className="heading creators-ladder__title">A real Thermomix</H3>
-                <p className="creators-ladder__body">
-                  Top tier. We ship you a brand-new Thermomix TM6. Because if
-                  Pancake can run your company, the least we can do is run your
-                  kitchen.
-                </p>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      {/* Unified tier table with X / LinkedIn toggle */}
-      <section className="home-landing-section" aria-labelledby="creators-tiers-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             <H2 id="creators-tiers-heading" className="heading home-landing-section__title text-center">
@@ -200,7 +141,7 @@ export default function CreatorsPage() {
 
       {/* How it works */}
       <section
-        className="home-landing-section home-landing-section--alt"
+        className="home-landing-section"
         aria-labelledby="creators-howto-heading"
       >
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
@@ -230,7 +171,7 @@ export default function CreatorsPage() {
       {/* House rules */}
       <section
         id="rules"
-        className="home-landing-section"
+        className="home-landing-section home-landing-section--alt"
         aria-labelledby="creators-rules-heading"
       >
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
@@ -249,7 +190,7 @@ export default function CreatorsPage() {
 
       {/* Closing */}
       <section
-        className="home-landing-section home-landing-section--alt"
+        className="home-landing-section"
         aria-labelledby="creators-closing-heading"
       >
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner home-landing-section__inner--closing`}>
