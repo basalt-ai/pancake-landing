@@ -131,7 +131,7 @@ export default function CreatorsPage() {
               How big you go = what you get
             </H2>
             <p className="home-landing-section__lede text-center">
-              Same thresholds on both platforms. Pick yours.
+              Each post, pick one: take the credits, or take the surprise.
             </p>
           </header>
 

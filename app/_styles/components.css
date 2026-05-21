@@ -4667,6 +4667,42 @@
     font-weight: var(--font-semibold);
   }
 
+  /* Thin spacer column between Credits and Surprise, holding an "or" pill
+     in each row so the table reads as a choice, not a bundle. */
+  .creators-tiers__or-col {
+    width: calc(2 * var(--spacing-xxl));
+    padding: 0 !important;
+    text-align: center;
+    vertical-align: middle;
+    color: var(--subtle-text);
+    border-bottom-color: transparent !important;
+  }
+
+  .creators-tiers__or {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-md);
+    background-color: var(--alt-surface);
+    border: 1px solid var(--subtle-stroke);
+    border-radius: 999px;
+    font-family: var(--font-display);
+    font-size: var(--font-size-eyebrow);
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.453px;
+    color: var(--subtle-text);
+  }
+
+  @media (max-width: 640px) {
+    .creators-tiers__or-col {
+      width: var(--spacing-xl);
+    }
+    .creators-tiers__or {
+      padding: 0;
+      background-color: transparent;
+      border: 0;
+    }
+  }
+
   .creators-tiers__note {
     margin: 0;
     font-family: var(--font-body);

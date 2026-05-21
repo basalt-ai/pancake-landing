@@ -81,8 +81,9 @@ export function CreatorsTiers() {
         <thead>
           <tr>
             <th scope="col">{METRIC_LABEL[platform]}</th>
-            <th scope="col">Pancake credits</th>
-            <th scope="col">Surprise</th>
+            <th scope="col">Take credits</th>
+            <th scope="col" aria-hidden className="creators-tiers__or-col" />
+            <th scope="col">Or take a surprise</th>
           </tr>
         </thead>
         <tbody>
@@ -92,6 +93,9 @@ export function CreatorsTiers() {
               <td>
                 <span className="creators-tiers__credits">{t.credits}</span>
               </td>
+              <td aria-hidden className="creators-tiers__or-col">
+                <span className="creators-tiers__or">or</span>
+              </td>
               <td>{t.surprise}</td>
             </tr>
           ))}
@@ -99,8 +103,8 @@ export function CreatorsTiers() {
       </table>
 
       <p className="creators-tiers__note">
-        X counts views, LinkedIn counts impressions — different metrics,
-        different bars, same prizes.
+        Pick one per post — credits or the surprise, not both. X counts views,
+        LinkedIn counts impressions; the prizes are the same.
       </p>
     </div>
   );
