@@ -46,29 +46,37 @@ export function ProductHuntBadge({
       href={PH_URL}
       target="_blank"
       rel="noopener noreferrer"
-      className={`inline-flex shrink-0 items-center gap-2 transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${className ?? ""}`}
+      className={`product-hunt-badge relative inline-flex shrink-0 items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${preLaunch ? "is-pre-launch" : ""} ${className ?? ""}`}
       aria-label={preLaunch ? "Pancake — launching soon on Product Hunt" : "Find Pancake on Product Hunt"}
     >
       {preLaunch && (
         <span
           aria-hidden
+          className="product-hunt-badge__soon"
           style={{
-            display: "inline-flex",
-            alignItems: "center",
-            padding: "0.2rem 0.55rem",
-            borderRadius: "9999px",
+            position: "absolute",
+            top: -10,
+            left: "50%",
+            transform: "translateX(-50%) rotate(-4deg)",
+            transformOrigin: "center",
+            padding: "2px 10px 3px",
+            borderRadius: 9999,
             background: "#fde68a",
             color: "#1f1147",
-            border: "1px solid #1f1147",
-            fontSize: "0.62rem",
+            border: "1.5px solid #1f1147",
+            fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+            fontSize: 10,
             fontWeight: 700,
-            letterSpacing: "0.06em",
-            textTransform: "uppercase",
+            letterSpacing: "0.14em",
+            textTransform: "lowercase",
+            lineHeight: 1.2,
             whiteSpace: "nowrap",
-            lineHeight: 1,
+            boxShadow: "0 2px 0 #1f1147",
+            zIndex: 1,
+            pointerEvents: "none",
           }}
         >
-          Launching Soon
+          soon
         </span>
       )}
       {/* eslint-disable-next-line @next/next/no-img-element -- external badge served by Product Hunt CDN */}
@@ -77,7 +85,14 @@ export function ProductHuntBadge({
         width={width}
         height={height}
         src={PH_IMG}
-        style={{ width, height }}
+        className="product-hunt-badge__img"
+        style={{
+          width,
+          height,
+          filter: preLaunch ? "grayscale(1) contrast(0.85)" : "none",
+          opacity: preLaunch ? 0.5 : 1,
+          transition: "filter 220ms ease, opacity 220ms ease",
+        }}
         decoding="async"
         loading="lazy"
       />
