@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { SiDiscord } from "react-icons/si";
 
 import { HOME_PAGE_CONTAINER_CLASS } from "@/components/sections/home/home-layout";
+import { ProductHuntBadge } from "@/components/shared/ProductHuntBadge";
 import { Button } from "@/components/ui/Button";
 
 /** Same Discord invite as `main`'s Nav. */
@@ -108,6 +109,7 @@ export function HomeNav() {
           </div>
 
           <nav className="hidden items-center lg:flex" style={{ gap: "calc(2 * var(--spacing-xl))" }} aria-label="Primary">
+            <ProductHuntBadge />
             <a
               href={DISCORD_INVITE_URL}
               target="_blank"
@@ -156,6 +158,7 @@ export function HomeNav() {
             </button>
           </div>
           <nav className="home-nav-mobile-drawer__nav" aria-label="Mobile primary">
+            <ProductHuntBadge className="self-start" />
             {/* "Product" link removed — points to /build-in-public, which is
                 an empty page today. Match the desktop nav (Discord + Pricing
                 only) until the Product page exists. */}
