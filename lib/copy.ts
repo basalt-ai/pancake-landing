@@ -253,7 +253,7 @@ export const pricing = {
       { name: "private cloud computer",         icon: "linux" },
       { name: "any AI model",                   icon: "harness" },
       { name: "browses and researches the web", icon: "browser" },
-      { name: "its own inbox and iMessage",     icon: "imessage" },
+      { name: "its own inbox and iMessage (coming soon)", icon: "imessage" },
     ],
     /** Italic footnote rendered with extra line-break spacing below
      *  the highlights list — softly points the user to the full
@@ -278,10 +278,12 @@ export const pricing = {
    *  Order is row-grouped (3 cols × 4 rows) so related items sit next
    *  to each other in the grid:
    *    R1 — foundation:  compute · secrets · LLM
-   *    R2 — messaging:   Slack · iMessage · phone   ← iMessage + phone
-   *                                                   adjacent (linked)
-   *    R3 — written/web: inbox · browsing · live web
-   *    R4 — capabilities: search · sub-agents · credit-card */
+   *    R2 — messaging:   Slack · phone · inbox
+   *    R3 — web:         browsing · live web · deep search
+   *    R4 — capabilities: sub-agents · iMessage · credit-card
+   *                                     ↑ both "Soon" — roadmap row sits
+   *                                       last so the live capabilities
+   *                                       read first. */
   included: {
     title: "Everything your $49 buys",
     subtitle: "All bundled. No add-ons, no upgrade tiers.",
@@ -290,13 +292,13 @@ export const pricing = {
       { name: "Encrypted secrets",            detail: "API keys + credentials, E2E",          icon: "vault" },
       { name: "Any LLM, your choice",         detail: "Claude, GPT, Gemini — model-agnostic", icon: "harness" },
       { name: "Slack-native",                 detail: "Lives in your channels and DMs",       icon: "slack" },
-      { name: "iMessage access",              detail: "Real iMessage threads",                icon: "imessage" },
       { name: "Phone number for your Pancake", detail: "SMS + voice",                         icon: "phone" },
       { name: "Email inbox for your Pancake", detail: "Send and receive email",               icon: "mail" },
       { name: "Authenticated browsing",       detail: "Signed into your accounts",            icon: "browser" },
       { name: "Live web access",              detail: "Real-time fetch from any URL",         icon: "globe" },
       { name: "Deep web search",              detail: "Agentic research + crawling",          icon: "search" },
       { name: "Unlimited sub-agents",         detail: "Run multiple agents in parallel",      icon: "subagents" },
+      { name: "iMessage access",              detail: "Discuss with Pancake on iMessage", soon: true, icon: "imessage" },
       { name: "Credit card for agents",       detail: "For real-world purchases", soon: true, icon: "creditcard" },
     ],
   } as const,
@@ -399,7 +401,7 @@ export const pricing = {
     items: [
       {
         q: "What is the $49 for?",
-        a: "Your AI agent's full setup — an always-on cloud computer with 50GB storage, a real phone number for SMS and voice, an email inbox, Slack and iMessage access, an encrypted secret vault, a model-agnostic harness (Claude, GPT, Gemini), authenticated browser automation, live web fetch, agentic deep search, and unlimited sub-agents. No tiers, no upgrades — every account gets the full kit for $49/month.",
+        a: "Your AI agent's full setup — an always-on cloud computer with 50GB storage, a real phone number for SMS and voice, an email inbox, Slack and iMessage (coming soon) access, an encrypted secret vault, a model-agnostic harness (Claude, GPT, Gemini), authenticated browser automation, live web fetch, agentic deep search, and unlimited sub-agents. No tiers, no upgrades — every account gets the full kit for $49/month.",
       },
       {
         q: "How do token packs work?",
