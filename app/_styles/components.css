@@ -3733,34 +3733,67 @@
   }
 
   /* ─────────────────── Mobile nav drawer (Figma `451:20140`) ───────────────────
-     Full-bleed inverted-surface overlay with the Pancake wordmark on top
-     and stacked nav links. Opens from the hamburger button (only at <lg).
-     The overlay covers the page including the header so the X button can
-     replace the hamburger visually. */
+     Animated pull-down sheet from the top + soft blurred backdrop. Auto-height,
+     so the 48px rounded bottom corners read as a curtain edge instead of a
+     clipped full-screen takeover. Visibility is delayed on close so the exit
+     transform can play out before the drawer leaves the a11y tree. */
   .home-nav-mobile-drawer {
     position: fixed;
     inset: 0;
     z-index: 50;
-    background-color: var(--inverted-surface);
-    color: var(--text-on-inverted-surface);
-    display: none;
-    overflow-y: auto;
-    border-bottom-left-radius: 48px;
-    border-bottom-right-radius: 48px;
+    visibility: hidden;
+    pointer-events: none;
+    transition: visibility 0s linear 480ms;
   }
 
   .home-nav-mobile-drawer--open {
-    display: block;
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
   }
 
-  .home-nav-mobile-drawer__inner {
+  .home-nav-mobile-drawer__backdrop {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    background-color: rgba(15, 8, 20, 0.45);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    transition: opacity 360ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__backdrop {
+    opacity: 1;
+  }
+
+  .home-nav-mobile-drawer__panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
     box-sizing: border-box;
-    width: 100%;
-    min-height: 100%;
-    padding: var(--spacing-xl) calc(var(--spacing-xl) + var(--spacing-md));
+    padding: var(--spacing-xl) calc(var(--spacing-xl) + var(--spacing-md)) calc(2 * var(--spacing-xxl));
     display: flex;
     flex-direction: column;
     gap: calc(2 * var(--spacing-xxl));
+    background-color: var(--inverted-surface);
+    color: var(--text-on-inverted-surface);
+    border-bottom-left-radius: 48px;
+    border-bottom-right-radius: 48px;
+    box-shadow: 0 24px 56px -16px rgba(0, 0, 0, 0.45);
+    transform: translate3d(0, -100%, 0);
+    transition: transform 460ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__panel {
+    transform: translate3d(0, 0, 0);
   }
 
   .home-nav-mobile-drawer__top {
@@ -3805,6 +3838,41 @@
     font-size: 18px;
     font-weight: var(--font-semibold);
     padding-block: var(--spacing-md);
+  }
+
+  /* Staggered entrance of inner content — keeps the slide-down from feeling
+     mechanical. Children start translated up + transparent; the open class
+     resolves them with per-row delays. */
+  .home-nav-mobile-drawer__top,
+  .home-nav-mobile-drawer__nav > * {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition:
+      opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__top,
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__top { transition-delay: 140ms; }
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > *:nth-child(1) { transition-delay: 200ms; }
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > *:nth-child(2) { transition-delay: 250ms; }
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > *:nth-child(3) { transition-delay: 300ms; }
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > *:nth-child(4) { transition-delay: 350ms; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-nav-mobile-drawer,
+    .home-nav-mobile-drawer__backdrop,
+    .home-nav-mobile-drawer__panel,
+    .home-nav-mobile-drawer__top,
+    .home-nav-mobile-drawer__nav > * {
+      transition-duration: 1ms !important;
+      transition-delay: 0s !important;
+    }
   }
 
   /* ─────────────────── Mobile org diagram (Figma `596:2940`) ───────────────────

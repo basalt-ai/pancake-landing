@@ -129,21 +129,33 @@ export function HomeNav() {
         </div>
       </div>
 
-      {/* Mobile drawer (Figma `451:20140`). */}
+      {/* Mobile drawer (Figma `451:20140`).
+          Stays in the DOM so CSS transitions can play on both enter and
+          exit; the `--open` modifier drives visibility, transform, and
+          per-row stagger. */}
       <div
         id="home-mobile-nav-drawer"
         className={`home-nav-mobile-drawer ${drawerOpen ? "home-nav-mobile-drawer--open" : ""}`}
         role="dialog"
         aria-modal={drawerOpen}
         aria-label="Mobile navigation"
-        hidden={!drawerOpen}
+        aria-hidden={!drawerOpen}
       >
-        <div className="home-nav-mobile-drawer__inner">
+        {/* Backdrop is a mouse/touch convenience only — the X button and
+            Escape key already cover keyboard a11y, so we hide this from
+            assistive tech instead of duplicating "Close menu". */}
+        <div
+          className="home-nav-mobile-drawer__backdrop"
+          aria-hidden="true"
+          onClick={() => setDrawerOpen(false)}
+        />
+        <div className="home-nav-mobile-drawer__panel">
           <div className="home-nav-mobile-drawer__top">
             <Link
               href="/"
               className="home-nav-mobile-drawer__logo"
               aria-label="Pancake home"
+              tabIndex={drawerOpen ? 0 : -1}
               onClick={() => setDrawerOpen(false)}
             >
               <span className="home-nav-mobile-drawer__wordmark">Pancake</span>
@@ -152,6 +164,7 @@ export function HomeNav() {
               type="button"
               className="home-nav-mobile-drawer__close"
               aria-label="Close menu"
+              tabIndex={drawerOpen ? 0 : -1}
               onClick={() => setDrawerOpen(false)}
             >
               <CloseIcon />
@@ -167,6 +180,7 @@ export function HomeNav() {
               target="_blank"
               rel="noopener noreferrer"
               className="home-nav-mobile-drawer__link"
+              tabIndex={drawerOpen ? 0 : -1}
               onClick={() => setDrawerOpen(false)}
             >
               Resources
@@ -174,6 +188,7 @@ export function HomeNav() {
             <Link
               href="/blog"
               className="home-nav-mobile-drawer__link"
+              tabIndex={drawerOpen ? 0 : -1}
               onClick={() => setDrawerOpen(false)}
             >
               Blog
@@ -181,6 +196,7 @@ export function HomeNav() {
             <Link
               href={sideLinkHref}
               className="home-nav-mobile-drawer__link"
+              tabIndex={drawerOpen ? 0 : -1}
               onClick={() => setDrawerOpen(false)}
             >
               {sideLinkLabel}
