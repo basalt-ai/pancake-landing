@@ -46,8 +46,13 @@ export function Footer() {
     >
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-12 sm:px-6 lg:py-16">
         <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
-          <Link href="/" aria-label="Pancake home" prefetch={false}>
-            <PancakeLogo />
+          <Link
+            href="/"
+            aria-label="Pancake home"
+            prefetch={false}
+            className="text-[var(--text-on-inverted-surface,#fff7ec)]"
+          >
+            <PancakeLogo variant="inverted" className="h-12 sm:h-14" />
           </Link>
 
           <div className="flex flex-col items-center gap-5 sm:flex-row sm:gap-8">
