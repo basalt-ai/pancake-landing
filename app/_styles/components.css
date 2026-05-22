@@ -3864,12 +3864,52 @@
   .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > *:nth-child(3) { transition-delay: 300ms; }
   .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > *:nth-child(4) { transition-delay: 350ms; }
 
+  /* Tactile press feedback for the hamburger toggle + drawer close button.
+     Without this, taps register only when the drawer starts moving — the
+     :active scale fires the moment the finger lands so the button feels
+     alive. Snappy easing on press-down, softer on release. */
+  .home-nav-menu-toggle {
+    transition:
+      transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 160ms ease-out,
+      box-shadow 160ms ease-out;
+    will-change: transform;
+  }
+
+  .home-nav-menu-toggle:hover {
+    box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.15);
+  }
+
+  .home-nav-menu-toggle:active {
+    transform: scale(0.9);
+    transition-duration: 70ms;
+  }
+
+  .home-nav-mobile-drawer__close {
+    transition:
+      transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 160ms ease-out;
+    will-change: transform;
+  }
+
+  .home-nav-mobile-drawer__close:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .home-nav-mobile-drawer__close:active {
+    transform: scale(0.88) rotate(90deg);
+    background-color: rgba(255, 255, 255, 0.14);
+    transition-duration: 80ms;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .home-nav-mobile-drawer,
     .home-nav-mobile-drawer__backdrop,
     .home-nav-mobile-drawer__panel,
     .home-nav-mobile-drawer__top,
-    .home-nav-mobile-drawer__nav > * {
+    .home-nav-mobile-drawer__nav > *,
+    .home-nav-menu-toggle,
+    .home-nav-mobile-drawer__close {
       transition-duration: 1ms !important;
       transition-delay: 0s !important;
     }

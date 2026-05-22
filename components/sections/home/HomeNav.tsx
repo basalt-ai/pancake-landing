@@ -99,6 +99,7 @@ export function HomeNav() {
               iconOnly
               size="lg"
               variant="ghost"
+              className="home-nav-menu-toggle"
               aria-label="Menu"
               aria-expanded={drawerOpen}
               aria-controls="home-mobile-nav-drawer"
