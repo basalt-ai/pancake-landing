@@ -159,7 +159,15 @@ export function HomeNav() {
               tabIndex={drawerOpen ? 0 : -1}
               onClick={() => setDrawerOpen(false)}
             >
-              <span className="home-nav-mobile-drawer__wordmark">Pancake</span>
+              {/* eslint-disable-next-line @next/next/no-img-element -- vector logo, inverted via CSS filter on dark bg */}
+              <img
+                src="/pancake-logo.svg"
+                alt=""
+                className="home-nav-mobile-drawer__wordmark"
+                width={156}
+                height={44}
+                decoding="async"
+              />
             </Link>
             <button
               type="button"

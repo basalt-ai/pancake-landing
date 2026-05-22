@@ -3745,17 +3745,17 @@
   }
 
   /* ─────────────────── Mobile nav drawer (Figma `451:20140`) ───────────────────
-     Animated pull-down sheet from the top + soft blurred backdrop. Auto-height,
-     so the 48px rounded bottom corners read as a curtain edge instead of a
-     clipped full-screen takeover. Visibility is delayed on close so the exit
-     transform can play out before the drawer leaves the a11y tree. */
+     Side sheet that slides in from the right with a soft blurred backdrop.
+     Narrower than the viewport so the page stays partially visible behind
+     the blur. Visibility is delayed on close so the exit transform can play
+     out before the drawer leaves the a11y tree. */
   .home-nav-mobile-drawer {
     position: fixed;
     inset: 0;
     z-index: 50;
     visibility: hidden;
     pointer-events: none;
-    transition: visibility 0s linear 480ms;
+    transition: visibility 0s linear 260ms;
   }
 
   .home-nav-mobile-drawer--open {
@@ -3775,7 +3775,7 @@
     -webkit-backdrop-filter: blur(6px);
     backdrop-filter: blur(6px);
     opacity: 0;
-    transition: opacity 360ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 200ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .home-nav-mobile-drawer--open .home-nav-mobile-drawer__backdrop {
@@ -3785,8 +3785,9 @@
   .home-nav-mobile-drawer__panel {
     position: absolute;
     top: 0;
-    left: 0;
     right: 0;
+    bottom: 0;
+    width: min(86vw, 340px);
     box-sizing: border-box;
     padding: var(--spacing-xl) calc(var(--spacing-xl) + var(--spacing-md)) calc(2 * var(--spacing-xxl));
     display: flex;
@@ -3794,13 +3795,12 @@
     gap: calc(2 * var(--spacing-xxl));
     background-color: var(--inverted-surface);
     color: var(--text-on-inverted-surface);
-    border-bottom-left-radius: 48px;
-    border-bottom-right-radius: 48px;
-    box-shadow: 0 24px 56px -16px rgba(0, 0, 0, 0.45);
-    transform: translate3d(0, -100%, 0);
-    transition: transform 460ms cubic-bezier(0.22, 1, 0.36, 1);
+    border-top-left-radius: 32px;
+    border-bottom-left-radius: 32px;
+    box-shadow: -16px 0 48px -12px rgba(0, 0, 0, 0.45);
+    transform: translate3d(100%, 0, 0);
+    transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
     will-change: transform;
-    max-height: 92vh;
     overflow-y: auto;
   }
 
@@ -3822,10 +3822,12 @@
   }
 
   .home-nav-mobile-drawer__wordmark {
-    font-family: var(--font-display);
-    font-weight: var(--font-semibold);
-    font-size: 26px;
-    color: var(--text-on-inverted-surface);
+    display: block;
+    height: 32px;
+    width: auto;
+    /* Logo paths are #2C002A (near-black) on transparent — flatten to black
+       then invert so the wordmark reads white on the dark drawer surface. */
+    filter: brightness(0) invert(1);
   }
 
   .home-nav-mobile-drawer__close {
@@ -3852,29 +3854,28 @@
     padding-block: var(--spacing-md);
   }
 
-  /* Staggered entrance of inner content — keeps the slide-down from feeling
-     mechanical. Children start translated up + transparent; the open class
-     resolves them with per-row delays. */
+  /* Staggered entrance — items slide in from the right, in step with the
+     panel. Tight delays keep total open feel under ~350ms. */
   .home-nav-mobile-drawer__top,
   .home-nav-mobile-drawer__nav > * {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateX(12px);
     transition:
-      opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
-      transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+      opacity 200ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .home-nav-mobile-drawer--open .home-nav-mobile-drawer__top,
   .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > * {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
   }
 
-  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__top { transition-delay: 140ms; }
-  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > *:nth-child(1) { transition-delay: 200ms; }
-  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > *:nth-child(2) { transition-delay: 250ms; }
-  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > *:nth-child(3) { transition-delay: 300ms; }
-  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > *:nth-child(4) { transition-delay: 350ms; }
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__top { transition-delay: 60ms; }
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > *:nth-child(1) { transition-delay: 90ms; }
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > *:nth-child(2) { transition-delay: 120ms; }
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > *:nth-child(3) { transition-delay: 150ms; }
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > *:nth-child(4) { transition-delay: 180ms; }
 
   /* Tactile press feedback for the hamburger toggle + drawer close button.
      Without this, taps register only when the drawer starts moving — the
