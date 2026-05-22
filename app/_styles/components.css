@@ -1421,7 +1421,9 @@
     font-size: var(--font-size-body-regular);
     font-weight: var(--font-normal);
     line-height: var(--line-height-home-hero-cta-note);
-    color: var(--text);
+    /* Match the hero CTA note (subtle, faded) — same role on the page,
+       same visual weight. */
+    color: var(--subtle-text);
   }
 
   /* Decorative pancakes around the closing CTA — mobile-only (Figma `451:20112`).
