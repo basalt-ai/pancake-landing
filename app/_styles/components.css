@@ -1410,7 +1410,10 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-md);
+    /* Match the outer section gap so the button sits visually centered
+       between the lede above and the note below — same breathing room
+       on both sides instead of 32px / 8px asymmetry. */
+    gap: var(--spacing-home-hero-after-title);
     width: 100%;
     text-align: center;
   }
@@ -4652,7 +4655,7 @@
     .home-landing-closing-cta {
       flex-direction: column;
       align-items: center;
-      gap: var(--spacing-md);
+      gap: var(--spacing-home-hero-after-title);
       width: 100%;
     }
 
