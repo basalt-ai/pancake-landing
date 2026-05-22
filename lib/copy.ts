@@ -253,7 +253,7 @@ export const pricing = {
       { name: "private cloud computer",         icon: "linux" },
       { name: "any AI model",                   icon: "harness" },
       { name: "browses and researches the web", icon: "browser" },
-      { name: "its own inbox and iMessage (coming soon)", icon: "imessage" },
+      { name: "its own inbox (and iMessage coming soon)", icon: "imessage" },
     ],
     /** Italic footnote rendered with extra line-break spacing below
      *  the highlights list — softly points the user to the full
@@ -401,7 +401,7 @@ export const pricing = {
     items: [
       {
         q: "What is the $49 for?",
-        a: "Your AI agent's full setup — an always-on cloud computer with 50GB storage, a real phone number for SMS and voice, an email inbox, Slack and iMessage (coming soon) access, an encrypted secret vault, a model-agnostic harness (Claude, GPT, Gemini), authenticated browser automation, live web fetch, agentic deep search, and unlimited sub-agents. No tiers, no upgrades — every account gets the full kit for $49/month.",
+        a: "Your AI agent's full setup — an always-on cloud computer with 50GB storage, a real phone number for SMS and voice, an email inbox, Slack (and iMessage coming soon) access, an encrypted secret vault, a model-agnostic harness (Claude, GPT, Gemini), authenticated browser automation, live web fetch, agentic deep search, and unlimited sub-agents. No tiers, no upgrades — every account gets the full kit for $49/month.",
       },
       {
         q: "How do token packs work?",
