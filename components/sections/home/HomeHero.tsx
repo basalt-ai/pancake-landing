@@ -45,7 +45,7 @@ export function HomeHero() {
             >
               Try for free
             </Link>
-            <p className="home-hero-cta-note">No credit card required • $100 in free credits • SOC 2 compliant</p>
+            <p className="home-hero-cta-note">No credit card required • SOC 2 compliant</p>
           </div>
         </div>
 
