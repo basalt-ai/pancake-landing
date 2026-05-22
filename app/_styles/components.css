@@ -415,7 +415,7 @@
        impression" treatment. Subtracting the nav is what keeps the
        hero+nav combined from overflowing the viewport. */
     .home-hero {
-      min-height: calc(100vh - 144px);
+      min-height: calc(75vh - 144px);
       display: flex;
       flex-direction: column;
       justify-content: center;
