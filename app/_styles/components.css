@@ -691,8 +691,8 @@
   .home-landing-section__title {
     margin: 0;
     font-size: var(--font-size-home-landing-section-title);
-    line-height: var(--line-height-home-landing-section-title);
-    letter-spacing: -0.9px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
     font-weight: var(--font-semibold);
   }
 

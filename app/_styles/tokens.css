@@ -230,10 +230,13 @@
     --line-height-nav-primary-link: 40px;
 
     /*
-     * Home landing below hero — Figma `428:14366` (`-> V0.3`), desktop vs 1920px canvas.
-     * Section titles use ~45.23px; ledes ~24px; centered heading block width 752px.
+     * Home landing below hero — Figma `428:14923` (marketing/title-md).
+     * `.home-landing-section__title`: 39.816px Aeonik Medium with 1.2 line-height
+     *   and -2% tracking (set on the class). Other `*-section__title` classes
+     *   still reference the legacy 52px line-height var paired with header-02.
+     * Ledes 24px / 32px; centered heading block width 752px.
      */
-    --font-size-home-landing-section-title: calc(4523 * var(--font-size-base) / 1000);
+    --font-size-home-landing-section-title: calc(39816 * var(--font-size-base) / 16000);
     --line-height-home-landing-section-title: 52px;
     --font-size-home-landing-section-lede: calc(24 * var(--font-size-base) / 16);
     --line-height-home-landing-section-lede: 32px;
