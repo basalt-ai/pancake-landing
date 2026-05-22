@@ -1006,6 +1006,18 @@
     border-color: var(--branded-stroke-01);
   }
 
+  /**
+   * Progressive enhancement: where supported (Chromium 139+), render the dept
+   * cards as a squircle for a softer corner falloff. Safari/Firefox keep the
+   * baseline rounded-rect via `--radius-xl` above.
+   */
+  @supports (corner-shape: squircle) {
+    .home-org-diagram__dept {
+      corner-shape: squircle;
+      border-radius: 88px;
+    }
+  }
+
   .home-org-diagram__dept-title {
     margin: 0;
     width: 100%;
