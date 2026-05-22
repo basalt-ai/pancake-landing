@@ -302,7 +302,7 @@ export const pricing = {
   } as const,
   // Trial CTA below the widget.
   trialCta: "Start your free trial",
-  trialCaption: "7-day free trial · $100 token cap",
+  trialCaption: "7-day free trial · $100 in free credits",
   trialHref: "/signup",
   // 3-column manifesto (shown BEFORE the buys cards — trust before value:
   // the user needs to believe the price is fair before they care what it
