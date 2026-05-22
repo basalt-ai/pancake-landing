@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/Badge";
 
 const PH_URL =
   "https://www.producthunt.com/products/pancake-6?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-pancake-6";
@@ -10,7 +9,7 @@ const PH_IMG =
 const PH_ALT =
   "Pancake - OpenClaw in Slack that makes your company autonomous | Product Hunt";
 
-// PDT (UTC-7) on launch day → 00:01 PT = 07:01 UTC.
+// 00:01 PT on launch day. May is PDT (UTC-7), so 00:01 PT = 07:01 UTC.
 const LAUNCH_AT_MS = Date.UTC(2026, 4, 28, 7, 1, 0);
 
 type ProductHuntBadgeProps = {
@@ -24,16 +23,16 @@ export function ProductHuntBadge({
   width = 250,
   height = 54,
 }: ProductHuntBadgeProps) {
-  // Optimistic default: SSR renders the pre-launch pill. Client useEffect
-  // re-checks against the real clock and hides the pill once the threshold
-  // passes, so the UI flips on its own with no redeploy.
+  // Optimistic SSR default: pre-launch. Client useEffect re-checks against
+  // the real clock and flips to live once the threshold passes, so the
+  // badge un-greys itself with no redeploy.
   const [preLaunch, setPreLaunch] = useState(true);
 
   useEffect(() => {
     const sync = () => {
-      const now = Date.now();
-      setPreLaunch(now < LAUNCH_AT_MS);
-      return now < LAUNCH_AT_MS;
+      const isPre = Date.now() < LAUNCH_AT_MS;
+      setPreLaunch(isPre);
+      return isPre;
     };
     if (!sync()) return;
     const id = setInterval(() => {
@@ -47,26 +46,9 @@ export function ProductHuntBadge({
       href={PH_URL}
       target="_blank"
       rel="noopener noreferrer"
-      className={`product-hunt-badge relative inline-flex shrink-0 items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${preLaunch ? "is-pre-launch" : ""} ${className ?? ""}`}
+      className={`product-hunt-badge inline-flex shrink-0 items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${className ?? ""}`}
       aria-label={preLaunch ? "Pancake — launching soon on Product Hunt" : "Find Pancake on Product Hunt"}
     >
-      {preLaunch && (
-        <Badge
-          aria-hidden
-          variant="brand-alt-2"
-          className="product-hunt-badge__soon"
-          style={{
-            position: "absolute",
-            top: -8,
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 1,
-            pointerEvents: "none",
-          }}
-        >
-          Soon
-        </Badge>
-      )}
       {/* eslint-disable-next-line @next/next/no-img-element -- external badge served by Product Hunt CDN */}
       <img
         alt={PH_ALT}
