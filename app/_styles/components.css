@@ -407,15 +407,16 @@
       transform: translateX(var(--spacing-home-nav-logo-nudge-x));
     }
     /* Hero fills the viewport *under* the fixed-position nav header on
-       desktop — `100vh` minus the nav's measured height (144px = 2×xxl
-       padding top/bottom + ~44px logo, see HomeNav.tsx). The inner grid
-       (with its own padding-top + row-gap) is vertically centered inside
-       the section so the headline + monster ensemble sits in the middle
-       of the screen instead of the top, matching the comp's "first
-       impression" treatment. Subtracting the nav is what keeps the
-       hero+nav combined from overflowing the viewport. */
+       desktop — `100vh` minus the nav's measured height (150px = 2×xxl
+       padding top/bottom + 54px Product Hunt badge, which is now the
+       tallest item in the nav row; see HomeNav.tsx + ProductHuntBadge).
+       The inner grid (with its own padding-top + row-gap) is vertically
+       centered inside the section so the headline + monster ensemble
+       sits in the middle of the screen instead of the top, matching the
+       comp's "first impression" treatment. Subtracting the nav is what
+       keeps the hero+nav combined from overflowing the viewport. */
     .home-hero {
-      min-height: calc(100vh - 144px);
+      min-height: calc(100vh - 150px);
       display: flex;
       flex-direction: column;
       justify-content: center;
