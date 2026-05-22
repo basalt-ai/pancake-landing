@@ -47,16 +47,31 @@ export default function BlogIndex() {
                   className="group block no-underline"
                   prefetch={false}
                 >
-                  <time
-                    dateTime={post.date}
-                    style={{ fontSize: "var(--font-scale-min-1)", color: "var(--subtle-text)" }}
-                  >
-                    {new Date(post.date).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </time>
+                  <div className="flex items-center gap-2">
+                    <time
+                      dateTime={post.date}
+                      style={{ fontSize: "var(--font-scale-min-1)", color: "var(--subtle-text)" }}
+                    >
+                      {new Date(post.date).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </time>
+                    {post.pinned && (
+                      <span
+                        style={{
+                          fontSize: "var(--font-scale-min-1)",
+                          color: "var(--accent, var(--subtle-text))",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.06em",
+                          fontWeight: 600,
+                        }}
+                      >
+                        · Pinned
+                      </span>
+                    )}
+                  </div>
                   <h2
                     className="mt-1 mb-2 transition-opacity group-hover:opacity-70"
                     style={{ fontFamily: "var(--font-display)", fontSize: "var(--font-scale-2)", fontWeight: 600 }}
