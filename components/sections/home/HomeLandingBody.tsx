@@ -171,7 +171,7 @@ export function HomeLandingBody() {
             >
               Try for free
             </Link>
-            <p className="home-landing-closing-cta__note">No credit card needed</p>
+            <p className="home-landing-closing-cta__note">No credit card required • $100 in free credits • SOC 2 compliant</p>
           </div>
         </div>
       </section>

@@ -1410,7 +1410,10 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-md);
+    /* Match the outer section gap so the button sits visually centered
+       between the lede above and the note below — same breathing room
+       on both sides instead of 32px / 8px asymmetry. */
+    gap: var(--spacing-home-hero-after-title);
     width: 100%;
     text-align: center;
   }
@@ -1421,7 +1424,9 @@
     font-size: var(--font-size-body-regular);
     font-weight: var(--font-normal);
     line-height: var(--line-height-home-hero-cta-note);
-    color: var(--text);
+    /* Match the hero CTA note (subtle, faded) — same role on the page,
+       same visual weight. */
+    color: var(--subtle-text);
   }
 
   /* Decorative pancakes around the closing CTA — mobile-only (Figma `451:20112`).
@@ -3745,34 +3750,67 @@
   }
 
   /* ─────────────────── Mobile nav drawer (Figma `451:20140`) ───────────────────
-     Full-bleed inverted-surface overlay with the Pancake wordmark on top
-     and stacked nav links. Opens from the hamburger button (only at <lg).
-     The overlay covers the page including the header so the X button can
-     replace the hamburger visually. */
+     Side sheet that slides in from the right with a soft blurred backdrop.
+     Narrower than the viewport so the page stays partially visible behind
+     the blur. Visibility is delayed on close so the exit transform can play
+     out before the drawer leaves the a11y tree. */
   .home-nav-mobile-drawer {
     position: fixed;
     inset: 0;
     z-index: 50;
-    background-color: var(--inverted-surface);
-    color: var(--text-on-inverted-surface);
-    display: none;
-    overflow-y: auto;
-    border-bottom-left-radius: 48px;
-    border-bottom-right-radius: 48px;
+    visibility: hidden;
+    pointer-events: none;
+    transition: visibility 0s linear 260ms;
   }
 
   .home-nav-mobile-drawer--open {
-    display: block;
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
   }
 
-  .home-nav-mobile-drawer__inner {
+  .home-nav-mobile-drawer__backdrop {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    background-color: rgba(15, 8, 20, 0.45);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    transition: opacity 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__backdrop {
+    opacity: 1;
+  }
+
+  .home-nav-mobile-drawer__panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(86vw, 340px);
     box-sizing: border-box;
-    width: 100%;
-    min-height: 100%;
-    padding: var(--spacing-xl) calc(var(--spacing-xl) + var(--spacing-md));
+    padding: var(--spacing-xl) calc(var(--spacing-xl) + var(--spacing-md)) calc(2 * var(--spacing-xxl));
     display: flex;
     flex-direction: column;
     gap: calc(2 * var(--spacing-xxl));
+    background-color: var(--inverted-surface);
+    color: var(--text-on-inverted-surface);
+    border-top-left-radius: 32px;
+    border-bottom-left-radius: 32px;
+    box-shadow: -16px 0 48px -12px rgba(0, 0, 0, 0.45);
+    transform: translate3d(100%, 0, 0);
+    transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+    overflow-y: auto;
+  }
+
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__panel {
+    transform: translate3d(0, 0, 0);
   }
 
   .home-nav-mobile-drawer__top {
@@ -3789,10 +3827,12 @@
   }
 
   .home-nav-mobile-drawer__wordmark {
-    font-family: var(--font-display);
-    font-weight: var(--font-semibold);
-    font-size: 26px;
-    color: var(--text-on-inverted-surface);
+    display: block;
+    height: 32px;
+    width: auto;
+    /* Logo paths are #2C002A (near-black) on transparent — flatten to black
+       then invert so the wordmark reads white on the dark drawer surface. */
+    filter: brightness(0) invert(1);
   }
 
   .home-nav-mobile-drawer__close {
@@ -3817,6 +3857,80 @@
     font-size: 18px;
     font-weight: var(--font-semibold);
     padding-block: var(--spacing-md);
+  }
+
+  /* Staggered entrance — items slide in from the right, in step with the
+     panel. Tight delays keep total open feel under ~350ms. */
+  .home-nav-mobile-drawer__top,
+  .home-nav-mobile-drawer__nav > * {
+    opacity: 0;
+    transform: translateX(12px);
+    transition:
+      opacity 200ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__top,
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > * {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__top { transition-delay: 60ms; }
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > *:nth-child(1) { transition-delay: 90ms; }
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > *:nth-child(2) { transition-delay: 120ms; }
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > *:nth-child(3) { transition-delay: 150ms; }
+  .home-nav-mobile-drawer--open .home-nav-mobile-drawer__nav > *:nth-child(4) { transition-delay: 180ms; }
+
+  /* Tactile press feedback for the hamburger toggle + drawer close button.
+     Without this, taps register only when the drawer starts moving — the
+     :active scale fires the moment the finger lands so the button feels
+     alive. Snappy easing on press-down, softer on release. */
+  .home-nav-menu-toggle {
+    transition:
+      transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 160ms ease-out,
+      box-shadow 160ms ease-out;
+    will-change: transform;
+  }
+
+  .home-nav-menu-toggle:hover {
+    box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.15);
+  }
+
+  .home-nav-menu-toggle:active {
+    transform: scale(0.9);
+    transition-duration: 70ms;
+  }
+
+  .home-nav-mobile-drawer__close {
+    transition:
+      transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 160ms ease-out;
+    will-change: transform;
+  }
+
+  .home-nav-mobile-drawer__close:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .home-nav-mobile-drawer__close:active {
+    transform: scale(0.88) rotate(90deg);
+    background-color: rgba(255, 255, 255, 0.14);
+    transition-duration: 80ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-nav-mobile-drawer,
+    .home-nav-mobile-drawer__backdrop,
+    .home-nav-mobile-drawer__panel,
+    .home-nav-mobile-drawer__top,
+    .home-nav-mobile-drawer__nav > *,
+    .home-nav-menu-toggle,
+    .home-nav-mobile-drawer__close {
+      transition-duration: 1ms !important;
+      transition-delay: 0s !important;
+    }
   }
 
   /* ─────────────────── Mobile org diagram (Figma `596:2940`) ───────────────────
@@ -4541,7 +4655,7 @@
     .home-landing-closing-cta {
       flex-direction: column;
       align-items: center;
-      gap: var(--spacing-md);
+      gap: var(--spacing-home-hero-after-title);
       width: 100%;
     }
 
