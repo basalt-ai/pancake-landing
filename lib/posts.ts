@@ -9,6 +9,7 @@ export interface PostFrontmatter {
   last_updated: string;
   author: string;
   slug: string;
+  pinned?: boolean;
   faq?: { question: string; answer: string }[];
 }
 
@@ -30,7 +31,11 @@ export function getAllPosts(): PostMeta[] {
         slug: file.replace(/\.mdx$/, ""),
       };
     })
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    .sort((a, b) => {
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
 }
 
 export function getPostBySlug(slug: string): { meta: PostMeta; content: string } | null {
