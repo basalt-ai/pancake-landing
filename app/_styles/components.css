@@ -690,10 +690,12 @@
 
   .home-landing-section__title {
     margin: 0;
+    font-family: var(--font-display);
     font-size: var(--font-size-home-landing-section-title);
-    line-height: 1.2;
-    letter-spacing: -0.02em;
+    line-height: var(--line-height-home-landing-section-title);
+    letter-spacing: var(--letter-spacing-home-landing-section-title);
     font-weight: var(--font-semibold);
+    color: var(--text);
   }
 
   .home-landing-section__lede {
@@ -1962,9 +1964,11 @@
 
   .pricing-section__title {
     margin: 0;
-    font-size: var(--font-size-header-02);
+    font-family: var(--font-display);
+    font-size: var(--font-size-home-landing-section-title);
     line-height: var(--line-height-home-landing-section-title);
-    letter-spacing: -0.905px;
+    letter-spacing: var(--letter-spacing-home-landing-section-title);
+    font-weight: var(--font-semibold);
     color: var(--text);
   }
 
@@ -1973,6 +1977,7 @@
     font-family: var(--font-body);
     font-size: var(--font-size-home-landing-section-lede);
     line-height: var(--line-height-home-landing-section-lede);
+    font-weight: var(--font-normal);
     color: var(--text);
   }
 
@@ -3307,9 +3312,11 @@
 
   .signup-section__title {
     margin: 0;
-    font-size: var(--font-size-header-02);
+    font-family: var(--font-display);
+    font-size: var(--font-size-home-landing-section-title);
     line-height: var(--line-height-home-landing-section-title);
-    letter-spacing: -0.905px;
+    letter-spacing: var(--letter-spacing-home-landing-section-title);
+    font-weight: var(--font-semibold);
     color: var(--text);
   }
 
@@ -3521,9 +3528,11 @@
 
   .build-in-public-section__title {
     margin: 0;
-    font-size: var(--font-size-header-02);
+    font-family: var(--font-display);
+    font-size: var(--font-size-home-landing-section-title);
     line-height: var(--line-height-home-landing-section-title);
-    letter-spacing: -0.905px;
+    letter-spacing: var(--letter-spacing-home-landing-section-title);
+    font-weight: var(--font-semibold);
     color: var(--text);
   }
 
@@ -3532,6 +3541,7 @@
     font-family: var(--font-body);
     font-size: var(--font-size-home-landing-section-lede);
     line-height: var(--line-height-home-landing-section-lede);
+    font-weight: var(--font-normal);
     color: var(--text);
   }
 
@@ -4161,9 +4171,11 @@
 
   .legal-section__title {
     margin: 0;
-    font-size: var(--font-size-header-02);
+    font-family: var(--font-display);
+    font-size: var(--font-size-home-landing-section-title);
     line-height: var(--line-height-home-landing-section-title);
-    letter-spacing: -0.905px;
+    letter-spacing: var(--letter-spacing-home-landing-section-title);
+    font-weight: var(--font-semibold);
     color: var(--text);
   }
 

@@ -230,14 +230,16 @@
     --line-height-nav-primary-link: 40px;
 
     /*
-     * Home landing below hero — Figma `428:14923` (marketing/title-md).
-     * `.home-landing-section__title`: 39.816px Aeonik Medium with 1.2 line-height
-     *   and -2% tracking (set on the class). Other `*-section__title` classes
-     *   still reference the legacy 52px line-height var paired with header-02.
-     * Ledes 24px / 32px; centered heading block width 752px.
+     * Section header marketing typography — Figma `428:14923` (marketing/title-md).
+     * Title: 39.816px Aeonik Medium, 1.2 line-height, -2% tracking.
+     * Lede:  24px / 32px Aeonik Fono Regular.
+     * Centered heading block width 752px. Used by every `*-section__title` /
+     * `*-section__lede` pair (home landing, creators, pricing, signup,
+     * build-in-public, legal) so section headers stay typographically consistent.
      */
     --font-size-home-landing-section-title: calc(39816 * var(--font-size-base) / 16000);
-    --line-height-home-landing-section-title: 52px;
+    --line-height-home-landing-section-title: 1.2;
+    --letter-spacing-home-landing-section-title: -0.02em;
     --font-size-home-landing-section-lede: calc(24 * var(--font-size-base) / 16);
     --line-height-home-landing-section-lede: 32px;
     --width-home-landing-heading: calc(752 / 16 * 1rem);
