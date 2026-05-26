@@ -75,7 +75,7 @@ export function Footer() {
                 className="basis-full whitespace-nowrap text-center text-base font-medium transition-colors hover:opacity-80"
                 style={{ color: "var(--text-on-inverted-surface, #fff7ec)" }}
               >
-                Book a meeting · teams of 10+ only
+                Book a meeting (teams 10+)
               </a>
             </nav>
 
