@@ -98,7 +98,7 @@ export default function CreatorsPage() {
               id="creators-hero-heading"
               className="heading home-landing-section__title text-center"
             >
-              Post a Pancake. Get cash… or a Thermomix.
+              Post a Pancake.<br />Get cash… or a Thermomix.
             </h1>
             <p className="home-landing-section__lede text-center">
               Show the internet what your AI cofounder is doing. We pay you back
