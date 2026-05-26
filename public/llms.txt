@@ -23,9 +23,15 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 
 ## Blog
 
-- [The next unicorns will have five employees](https://getpancake.ai/blog/the-next-unicorns-will-have-five-employees) — how AI agents that work while you sleep are about to change who can build a billion-dollar company. May 15, 2026.
-- [Pancake vs Polsia vs Nanocorp: which autonomous company platform is right for you?](https://getpancake.ai/blog/best-ai-cofounder-tools-2026) — a direct comparison of the three main autonomous company platforms in 2026. May 15, 2026.
-- [What is an autonomous company?](https://getpancake.ai/blog/what-is-an-autonomous-company) — the definitive guide to what autonomous companies are, how they work, and why the category is growing fast. May 19, 2026.
+- [The next unicorns will have five employees](https://getpancake.ai/blog/the-next-unicorns-will-have-five-employees) — how AI agents that work while you sleep are about to change who can build a billion-dollar company. May 20, 2026.
+- [Pancake vs Polsia vs Nanocorp: which autonomous company platform is right for you?](https://getpancake.ai/blog/best-ai-cofounder-tools-2026) — a direct comparison of the three main autonomous company platforms in 2026. May 20, 2026.
+- [What is an autonomous company?](https://getpancake.ai/blog/what-is-an-autonomous-company) — the definitive guide to what autonomous companies are, how they work, and why the category is growing fast. May 26, 2026.
+- [Viktor Alternatives: Why Founders Are Choosing an AI Team Over an AI Agent](https://getpancake.ai/blog/viktor-alternatives) — Viktor is a capable AI coworker. But if you're a founder who wants to stop operating and start leading, there's a structural difference between one agent with more tools and a company built around your goals. May 20, 2026.
+- [Pancake vs Hiring a BDR: The Economics of an AI-Run Sales Motion](https://getpancake.ai/blog/pancake-vs-hiring-a-bdr) — a fully-loaded BDR costs $97,000 a year. Pancake costs $588 a year. Here's what that delta actually buys you. May 21, 2026.
+- [Pancake vs Cofounder.co: Open Box vs Closed Box](https://getpancake.ai/blog/pancake-vs-cofounder-co) — Cofounder.co runs your company inside their app. Pancake runs in the tools you already own. One is a platform you're renting. The other is infrastructure you control. May 22, 2026.
+- [YC Just Accepted 22 Solo Founders. The 'You Need a Co-Founder' Rule Is Cracking.](https://getpancake.ai/blog/yc-w26-solo-founders) — 11% of YC's Winter 2026 batch is building alone. When the world's most credible startup filter validates 22 solo founders in one cohort, it's not an accident. May 22, 2026.
+- [Pancake vs Hermes vs OpenClaw: Why You Need All Three](https://getpancake.ai/blog/pancake-vs-hermes-openclaw) — Hermes and OpenClaw are AI infrastructure. Pancake is the company running on top of them. Here's the difference. May 25, 2026.
+- [Pancake vs Hiring a Human Co-founder: Which Path to $1M?](https://getpancake.ai/blog/pancake-vs-human-cofounder) — should you find a co-founder or use AI agents? Here's the math, the trade-offs, and when each option actually makes sense for solo founders. May 26, 2026.
 
 ## Positioning
 
