@@ -56,7 +56,7 @@ export function Footer() {
           </Link>
 
           <div className="flex flex-col items-center gap-5 sm:flex-row sm:gap-8">
-            <nav aria-label="Footer" className="flex items-center gap-6">
+            <nav aria-label="Footer" className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
               {navLinks.map(({ href, label }) => (
                 <Link
                   key={href}
@@ -68,6 +68,15 @@ export function Footer() {
                   {label}
                 </Link>
               ))}
+              <a
+                href="https://zcal.co/i/4mlnC2bQ"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="basis-full whitespace-nowrap text-center text-base font-medium transition-colors hover:opacity-80"
+                style={{ color: "var(--text-on-inverted-surface, #fff7ec)" }}
+              >
+                Book a meeting (teams 10+)
+              </a>
             </nav>
 
             <span
