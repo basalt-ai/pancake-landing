@@ -114,9 +114,6 @@ export default function CreatorsPage() {
             >
               Show me the prizes
             </a>
-            <p className="creators-hero__cta-note">
-              There&apos;s no application form. That&apos;s the whole bit.
-            </p>
           </div>
         </div>
       </section>
