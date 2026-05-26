@@ -34,6 +34,7 @@ export function HomeHero() {
         style={{ rowGap: "var(--spacing-xl)" }}
       >
         <div className="home-hero-text-stack relative z-[1] lg:pr-[var(--spacing-md)]">
+          <span className="home-hero-eyebrow-badge">Pancake raises $5M</span>
           <H1 className="whitespace-pre-line">{HERO_TITLE}</H1>
           <p className="home-hero-body whitespace-pre-line">{HERO_SUB}</p>
           <div className="home-hero-cta-row">
