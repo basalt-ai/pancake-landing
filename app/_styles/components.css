@@ -405,7 +405,7 @@
   .home-hero-eyebrow-badge {
     display: inline-flex;
     align-items: center;
-    gap: var(--spacing-xs);
+    gap: var(--spacing-md);
     padding: var(--spacing-xs) var(--spacing-md);
     margin: 0 0 var(--spacing-home-hero-after-title) 0;
     border: 1px solid var(--stroke);
