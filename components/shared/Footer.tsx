@@ -97,9 +97,22 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col items-center gap-3 text-[13px] sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-          <span className="whitespace-nowrap">
-            © {year} Pancake. All rights reserved.
-          </span>
+          <div className="flex flex-col items-center gap-1 sm:items-start">
+            <span className="whitespace-nowrap">
+              © {year} Pancake. All rights reserved.
+            </span>
+            <span className="whitespace-nowrap text-center sm:text-left">
+              Team of 10+?{" "}
+              <a
+                href="https://zcal.co/i/4mlnC2bQ"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline transition-colors hover:text-[var(--text-on-inverted-surface)]"
+              >
+                Book a meeting
+              </a>
+            </span>
+          </div>
 
           <div className="flex flex-col items-center gap-1 sm:items-end">
             <span className="whitespace-nowrap text-center sm:text-right">
