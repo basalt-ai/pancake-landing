@@ -405,8 +405,9 @@
   .home-hero-eyebrow-badge {
     display: inline-flex;
     align-items: center;
+    gap: var(--spacing-xs);
     padding: var(--spacing-xs) var(--spacing-md);
-    margin: 0 0 var(--spacing-md) 0;
+    margin: 0 0 var(--spacing-home-hero-after-title) 0;
     border: 1px solid var(--stroke);
     border-radius: 999px;
     background-color: var(--surface);
@@ -416,6 +417,35 @@
     font-weight: 500;
     line-height: 1.2;
     white-space: nowrap;
+  }
+
+  .home-hero-eyebrow-badge::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--positive-text);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--positive-text) 60%, transparent);
+    animation: home-hero-eyebrow-badge-pulse 1.8s ease-out infinite;
+  }
+
+  @keyframes home-hero-eyebrow-badge-pulse {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--positive-text) 60%, transparent);
+    }
+    70% {
+      box-shadow: 0 0 0 6px color-mix(in srgb, var(--positive-text) 0%, transparent);
+    }
+    100% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--positive-text) 0%, transparent);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-hero-eyebrow-badge::before {
+      animation: none;
+    }
   }
 
   @media (min-width: 1024px) {
