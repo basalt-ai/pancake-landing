@@ -402,6 +402,22 @@
     min-width: 0;
   }
 
+  .home-hero-eyebrow-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--spacing-xs) var(--spacing-md);
+    margin: 0 0 var(--spacing-md) 0;
+    border: 1px solid var(--stroke);
+    border-radius: 999px;
+    background-color: var(--surface);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
   @media (min-width: 1024px) {
     .home-hero-text-stack {
       transform: translateX(var(--spacing-home-nav-logo-nudge-x));
@@ -4401,6 +4417,9 @@
     .home-hero-text-stack .home-hero-body {
       text-align: center;
       white-space: normal !important;
+    }
+    .home-hero-text-stack .home-hero-eyebrow-badge {
+      align-self: center;
     }
 
     /* Tablet (>=768 and <lg): the headline is centered + free to span the
