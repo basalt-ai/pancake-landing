@@ -1,11 +1,12 @@
 /**
  * /creators — the Pancake Creator Program.
  *
- * Show off your AI cofounder, get Pancake credits + an escalating ladder
- * of surprise gifts (founder joke → pancakes to your office → 1-star
- * Michelin dinner → Thermomix). Structure intentionally diverges from
- * comparable creator pages: no cash, no application form, no platform-
- * by-platform tables — one toggle (X / LinkedIn), one ladder, no gate.
+ * Show off your AI cofounder, get cash, Pancake credits (50% richer),
+ * or an escalating ladder of surprise gifts (founder joke → pancakes
+ * to your office → 1-star Michelin dinner → Thermomix). Structure
+ * intentionally diverges from comparable creator pages: no application
+ * form, no platform-by-platform tables — one toggle (X / LinkedIn),
+ * one ladder, no gate.
  */
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -19,24 +20,24 @@ import { Badge } from "@/components/ui/Badge";
 import { H2, H3 } from "@/components/ui/Headings";
 
 export const metadata: Metadata = {
-  title: "Creator Program — Post a Pancake, get a Thermomix · Pancake",
+  title: "Creator Program — Post a Pancake, get cash or a Thermomix · Pancake",
   description:
-    "Show what your AI cofounder is doing. Get Pancake credits — and surprise gifts from a bad-joke phone call all the way up to a Thermomix.",
+    "Show what your AI cofounder is doing. Get cash, Pancake credits (50% richer), or surprise gifts from a bad-joke phone call all the way up to a Thermomix.",
   alternates: { canonical: "https://www.getpancake.ai/creators" },
   openGraph: {
     type: "website",
     url: "https://www.getpancake.ai/creators",
-    title: "Pancake Creator Program — Post a Pancake, get a Thermomix",
+    title: "Pancake Creator Program — Post a Pancake, get cash or a Thermomix",
     description:
-      "Credits + an escalating ladder of surprise gifts: founder joke → pancakes to your office → Michelin dinner → Thermomix.",
+      "Cash, credits (50% richer), or an escalating ladder of surprise gifts: founder joke → pancakes to your office → Michelin dinner → Thermomix.",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake Creator Program" }],
     siteName: "Pancake",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pancake Creator Program — Post a Pancake, get a Thermomix",
+    title: "Pancake Creator Program — Post a Pancake, get cash or a Thermomix",
     description:
-      "Credits + a ladder of stupid gifts. Top tier: an actual Thermomix.",
+      "Cash, credits, or a ladder of stupid gifts. Top tier: an actual Thermomix.",
     images: ["/og-image.png"],
   },
 };
@@ -60,7 +61,7 @@ const steps = [
   {
     n: "04",
     title: "Get the goods",
-    body: "Credits applied instantly. Surprises shipped: phone call, pancakes, a Michelin reservation, or a kitchen robot.",
+    body: "Cash sent or credits applied instantly. Surprises shipped: phone call, pancakes, a Michelin reservation, or a kitchen robot.",
   },
 ];
 
@@ -70,7 +71,7 @@ const creatorProgramJsonLd = {
   name: "Pancake Creator Program",
   url: "https://www.getpancake.ai/creators",
   description:
-    "Earn Pancake credits and surprise gifts (up to a Thermomix TM6) by posting about Pancake on X or LinkedIn.",
+    "Earn cash, Pancake credits (50% richer), or surprise gifts (up to a Thermomix TM6) by posting about Pancake on X or LinkedIn.",
   isPartOf: {
     "@type": "WebSite",
     name: "Pancake",
@@ -97,11 +98,12 @@ export default function CreatorsPage() {
               id="creators-hero-heading"
               className="heading home-landing-section__title text-center"
             >
-              Post a Pancake. Get a Thermomix.
+              Post a Pancake. Get cash… or a Thermomix.
             </h1>
             <p className="home-landing-section__lede text-center">
               Show the internet what your AI cofounder is doing. We pay you back
-              in credits — and a ladder of increasingly suspicious gifts.
+              in cash, credits (50% richer) — or a ladder of increasingly
+              suspicious gifts.
             </p>
           </header>
           <div className="creators-hero__cta">

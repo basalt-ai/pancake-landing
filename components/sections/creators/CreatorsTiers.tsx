@@ -13,29 +13,36 @@ import { SiX } from "react-icons/si";
 type Platform = "x" | "linkedin";
 
 type Tier = {
+  cash: string;
   credits: string;
   surprise: string;
   /** Reach range per platform — X uses Views, LinkedIn uses Impressions. */
   reach: Record<Platform, string>;
 };
 
+// Credits are intentionally 50% richer than cash — pick credits and you
+// get more, pick cash and we eat the spread.
 const TIERS: Tier[] = [
   {
+    cash: "$200",
     credits: "$300",
     surprise: "A founder calls you and tells you a joke. In their own words.",
     reach: { x: "2,000 – 9,999", linkedin: "1,000 – 4,999" },
   },
   {
+    cash: "$600",
     credits: "$900",
     surprise: "We ship actual pancakes to your office.",
     reach: { x: "10,000 – 34,999", linkedin: "5,000 – 19,999" },
   },
   {
+    cash: "$1,000",
     credits: "$1,500",
     surprise: "Dinner for two at a one-star Michelin restaurant.",
     reach: { x: "35,000 – 174,999", linkedin: "20,000 – 99,999" },
   },
   {
+    cash: "$2,000",
     credits: "$3,000",
     surprise: "A real Thermomix TM6 shipped to your door.",
     reach: { x: "175,000+", linkedin: "100,000+" },
@@ -81,15 +88,23 @@ export function CreatorsTiers() {
         <thead>
           <tr>
             <th scope="col">{METRIC_LABEL[platform]}</th>
-            <th scope="col">Take credits</th>
+            <th scope="col">Take cash</th>
             <th scope="col" aria-hidden className="creators-tiers__or-col" />
-            <th scope="col">Or take a surprise</th>
+            <th scope="col">Or credits</th>
+            <th scope="col" aria-hidden className="creators-tiers__or-col" />
+            <th scope="col">Or a surprise</th>
           </tr>
         </thead>
         <tbody>
           {TIERS.map((t) => (
             <tr key={t.credits}>
               <th scope="row">{t.reach[platform]}</th>
+              <td>
+                <span className="creators-tiers__cash">{t.cash}</span>
+              </td>
+              <td aria-hidden className="creators-tiers__or-col">
+                <span className="creators-tiers__or">or</span>
+              </td>
               <td>
                 <span className="creators-tiers__credits">{t.credits}</span>
               </td>
@@ -103,8 +118,9 @@ export function CreatorsTiers() {
       </table>
 
       <p className="creators-tiers__note">
-        Pick one per post — credits or the surprise, not both. X counts views,
-        LinkedIn counts impressions; the prizes are the same.
+        Pick one per post — cash, credits, or the surprise. Credits are 50%
+        richer than cash because we&apos;d rather you spend it on Pancake. X
+        counts views, LinkedIn counts impressions; the prizes are the same.
       </p>
     </div>
   );
