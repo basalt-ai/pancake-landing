@@ -102,7 +102,6 @@ export function Footer() {
               © {year} Pancake. All rights reserved.
             </span>
             <span className="whitespace-nowrap text-center sm:text-left">
-              Team of 10+?{" "}
               <a
                 href="https://zcal.co/i/4mlnC2bQ"
                 target="_blank"
@@ -110,7 +109,8 @@ export function Footer() {
                 className="underline transition-colors hover:text-[var(--text-on-inverted-surface)]"
               >
                 Book a meeting
-              </a>
+              </a>{" "}
+              (teams of 10+ only)
             </span>
           </div>
 
