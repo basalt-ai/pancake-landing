@@ -4743,7 +4743,7 @@
 
   .creators-tiers {
     width: 100%;
-    max-width: calc(880 / 16 * 1rem);
+    max-width: calc(1040 / 16 * 1rem);
     display: flex;
     flex-direction: column;
     gap: var(--spacing-lg);
@@ -4791,6 +4791,11 @@
 
   .creators-tiers__credits {
     color: var(--interactive-text);
+    font-weight: var(--font-semibold);
+  }
+
+  .creators-tiers__cash {
+    color: var(--text);
     font-weight: var(--font-semibold);
   }
 

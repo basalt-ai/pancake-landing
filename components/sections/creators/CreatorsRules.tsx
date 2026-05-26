@@ -37,7 +37,7 @@ export function CreatorsRules() {
   const limits = [
     cadence.perMonth,
     cadence.between,
-    "$3,000 credits cap per post",
+    "$3,000 credits / $2,000 cash cap per post",
     "Pancake should be the subject, not part of a tool roundup",
   ];
 
