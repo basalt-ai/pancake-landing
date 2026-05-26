@@ -56,7 +56,7 @@ export function Footer() {
           </Link>
 
           <div className="flex flex-col items-center gap-5 sm:flex-row sm:gap-8">
-            <nav aria-label="Footer" className="flex items-center gap-6">
+            <nav aria-label="Footer" className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
               {navLinks.map(({ href, label }) => (
                 <Link
                   key={href}
@@ -68,6 +68,15 @@ export function Footer() {
                   {label}
                 </Link>
               ))}
+              <a
+                href="https://zcal.co/i/4mlnC2bQ"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="whitespace-nowrap text-base font-medium transition-colors hover:opacity-80"
+                style={{ color: "var(--text-on-inverted-surface, #fff7ec)" }}
+              >
+                Book a meeting · teams of 10+ only
+              </a>
             </nav>
 
             <span
@@ -97,22 +106,9 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col items-center gap-3 text-[13px] sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-          <div className="flex flex-col items-center gap-1 sm:items-start">
-            <span className="whitespace-nowrap">
-              © {year} Pancake. All rights reserved.
-            </span>
-            <span className="whitespace-nowrap text-center sm:text-left">
-              <a
-                href="https://zcal.co/i/4mlnC2bQ"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline transition-colors hover:text-[var(--text-on-inverted-surface)]"
-              >
-                Book a meeting
-              </a>{" "}
-              · 10+ only
-            </span>
-          </div>
+          <span className="whitespace-nowrap">
+            © {year} Pancake. All rights reserved.
+          </span>
 
           <div className="flex flex-col items-center gap-1 sm:items-end">
             <span className="whitespace-nowrap text-center sm:text-right">
