@@ -110,7 +110,7 @@ export function Footer() {
               >
                 Book a meeting
               </a>{" "}
-              (teams of 10+ only)
+              · 10+ only
             </span>
           </div>
 
