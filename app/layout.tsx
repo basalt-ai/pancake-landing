@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { Lato } from "next/font/google";
 import "./globals.css";
 import "./_styles/components.css";
+import { ProductHuntBadge } from "@/components/shared/ProductHuntBadge";
 
 /**
  * Lato — Slack's UI typeface (SIL Open Font License, served via next/font/google).
@@ -176,6 +177,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           }}
         />
         {children}
+        <ProductHuntBadge />
       </body>
     </html>
   );

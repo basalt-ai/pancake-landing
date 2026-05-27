@@ -13,13 +13,11 @@ const PH_ALT =
 const LAUNCH_AT_MS = Date.UTC(2026, 4, 28, 7, 1, 0);
 
 type ProductHuntBadgeProps = {
-  className?: string;
   width?: number;
   height?: number;
 };
 
 export function ProductHuntBadge({
-  className,
   width = 250,
   height = 54,
 }: ProductHuntBadgeProps) {
@@ -46,7 +44,7 @@ export function ProductHuntBadge({
       href={PH_URL}
       target="_blank"
       rel="noopener noreferrer"
-      className={`product-hunt-badge inline-flex shrink-0 items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${className ?? ""}`}
+      className="product-hunt-badge fixed bottom-4 right-4 z-50 inline-flex shrink-0 items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
       aria-label={preLaunch ? "Pancake — launching soon on Product Hunt" : "Find Pancake on Product Hunt"}
     >
       {/* eslint-disable-next-line @next/next/no-img-element -- external badge served by Product Hunt CDN */}
