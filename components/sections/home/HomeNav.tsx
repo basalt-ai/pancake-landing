@@ -50,7 +50,7 @@ export function HomeNav() {
   // somewhere new instead of being redundant.
   const onPricingPage = pathname === "/pricing";
   const sideLinkLabel = onPricingPage ? "Sign in" : "Pricing";
-  const sideLinkHref = onPricingPage ? "/signup" : "/pricing";
+  const sideLinkHref = onPricingPage ? "https://app.getpancake.ai" : "/pricing";
 
   // Lock body scroll while the drawer is open + close on Escape.
   useEffect(() => {

@@ -1,5 +1,4 @@
 import type { CSSProperties } from "react";
-import Link from "next/link";
 
 import { HOME_PAGE_CONTAINER_CLASS } from "@/components/sections/home/home-layout";
 import { HOME_HERO_ORBIT_LAYERS_OUTER_TO_INNER } from "@/components/sections/home/home-hero-orbit-layers";
@@ -36,14 +35,13 @@ export function HomeHero() {
           <H1 className="whitespace-pre-line">{HERO_TITLE}</H1>
           <p className="home-hero-body whitespace-pre-line">{HERO_SUB}</p>
           <div className="home-hero-cta-row">
-            <Link
-              href="/signup"
+            <a
+              href="https://app.getpancake.ai"
               className="button inline-flex w-fit shrink-0 items-center justify-center no-underline"
               data-size="lg"
-              prefetch={false}
             >
               Try for free
-            </Link>
+            </a>
             <p className="home-hero-cta-note">No credit card required • SOC 2 compliant</p>
           </div>
         </div>

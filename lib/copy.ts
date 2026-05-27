@@ -305,7 +305,7 @@ export const pricing = {
   // Trial CTA below the widget.
   trialCta: "Start your free trial",
   trialCaption: "3-day free trial · $100 in free credits",
-  trialHref: "/signup",
+  trialHref: "https://app.getpancake.ai",
   // 3-column manifesto (shown BEFORE the buys cards — trust before value:
   // the user needs to believe the price is fair before they care what it
   // gets them). Title doubles as the page's main headline since the hero
