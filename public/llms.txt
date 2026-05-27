@@ -19,7 +19,7 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 - [Homepage](https://getpancake.ai/) — what Pancake is and how it works
 - [Pricing](https://getpancake.ai/pricing) — plans and what's included
 - [Blog](https://getpancake.ai/blog) — founder stories and industry analysis
-- [Sign up](https://getpancake.ai/signup) — try for free, no credit card needed
+- [Sign up](https://app.getpancake.ai) — try for free, no credit card needed
 
 ## Blog
 

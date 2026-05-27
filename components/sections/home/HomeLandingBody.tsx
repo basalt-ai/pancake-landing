@@ -3,8 +3,6 @@
  * (regenerate: `FIGMA_ACCESS_TOKEN=… npm run figma:export-landing`). Org diagram is HTML (`HomeOrgDiagram`).
  */
 
-import Link from "next/link";
-
 import { HOME_PAGE_CONTAINER_CLASS } from "@/components/sections/home/home-layout";
 import { HomeIntegrationsCloud } from "@/components/sections/home/HomeIntegrationsCloud";
 import { HomeLandingControl } from "@/components/sections/home/HomeLandingControl";
@@ -163,14 +161,13 @@ export function HomeLandingBody() {
             Sign up and onboard your cofounder now
           </p>
           <div className="home-landing-closing-cta">
-            <Link
-              href="/signup"
+            <a
+              href="https://app.getpancake.ai"
               className="button inline-flex w-fit shrink-0 items-center justify-center no-underline"
               data-size="lg"
-              prefetch={false}
             >
               Try for free
-            </Link>
+            </a>
             <p className="home-landing-closing-cta__note">No credit card required • $100 in free credits • SOC 2 compliant</p>
           </div>
         </div>

@@ -305,7 +305,7 @@ export const pricing = {
   // Trial CTA below the widget.
   trialCta: "Start your free trial",
   trialCaption: "3-day free trial · $100 in free credits",
-  trialHref: "/signup",
+  trialHref: "https://app.getpancake.ai",
   // 3-column manifesto (shown BEFORE the buys cards — trust before value:
   // the user needs to believe the price is fair before they care what it
   // gets them). Title doubles as the page's main headline since the hero
@@ -435,21 +435,3 @@ export const pricing = {
   },
 } as const;
 
-export const signup = {
-  title: "Join the waitlist",
-  subtitle: "Welcome — you're on the list. We'll be in touch soon.",
-  emailPlaceholder: "you@company.com",
-  submit: "Request access",
-  success: "You're in. Watch your inbox for next steps.",
-  successTitle: "You're on the list.",
-  successBody:
-    "We're releasing Pancake to more people each day and we can't wait for you to try it.",
-  referralTitle: "Skip the waitlist.",
-  referralBody:
-    "Refer 2 people. When they sign up, you get immediate access to the early version of Pancake — and so do they.",
-  referralCta: "Get your referral link →",
-  discordLabel: "Or join our Discord",
-  discordBody: "Connect with other Autonomous Company founders sharing best practices.",
-  discordCta: "Join the community →",
-  discordUrl: "https://discord.gg/brJ99Up6ym",
-} as const;
