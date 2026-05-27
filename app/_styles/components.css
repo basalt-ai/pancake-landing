@@ -422,11 +422,11 @@
     .home-hero-text-stack {
       transform: translateX(var(--spacing-home-nav-logo-nudge-x));
     }
-    /* Desktop nav is fixed-position and ~150px tall (2×xxl padding +
-       54px Product Hunt badge — tallest item; see HomeNav.tsx +
-       ProductHuntBadge). Subtract it so hero+nav combined fill the viewport. */
+    /* Desktop nav is ~140px tall (2×xxl padding + 44px logo — tallest
+       item; see HomeNav.tsx). Subtract it so hero+nav combined fill the
+       viewport. */
     .home-hero {
-      min-height: calc(100dvh - 150px);
+      min-height: calc(100dvh - 140px);
     }
   }
 

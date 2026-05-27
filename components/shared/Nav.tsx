@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { hero } from "@/lib/copy";
 import { PancakeLogo } from "./PancakeLogo";
-import { ProductHuntBadge } from "./ProductHuntBadge";
 import { SiDiscord } from "react-icons/si";
 
 type NavProps = {
@@ -27,7 +26,6 @@ export function Nav({ ctaHref = "https://app.getpancake.ai", showCta = true }: N
           <PancakeLogo aria-hidden />
         </Link>
         <div className="flex shrink-0 items-center gap-4 sm:gap-6">
-          <ProductHuntBadge className="hidden sm:inline-flex" />
           <Link
             href="/build-in-public"
             className="text-sm font-medium text-[var(--text)] underline-offset-4 transition hover:underline"
