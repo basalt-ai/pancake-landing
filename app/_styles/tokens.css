@@ -226,6 +226,11 @@
     /* Home nav wordmark — slightly taller than control-sm for upper-left presence */
     --size-home-nav-logo-height: calc(var(--control-size-sm) + var(--spacing-sm));
 
+    /* Mobile nav row total height: logo (44px) + py-lg top + py-lg bottom. Used to
+       subtract the nav from `100dvh` so the hero fills the viewport without overflow
+       on iPhones. Keep in sync with HomeNav.tsx (`py-[var(--spacing-lg)]`). */
+    --size-home-nav-mobile-height: calc(var(--size-home-nav-logo-height) + 2 * var(--spacing-lg));
+
     /* Home nav primary links (Figma: Product / Resources / Pricing) */
     --line-height-nav-primary-link: 40px;
 

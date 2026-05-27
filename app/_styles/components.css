@@ -402,27 +402,31 @@
     min-width: 0;
   }
 
+  /* Hero fills the viewport on every breakpoint. `100dvh` (dynamic viewport
+     height) lets the hero shrink/grow as iOS Safari's URL bar collapses, so
+     the first impression is never clipped on iPhones — `100vh` measures the
+     LARGE viewport (URL bar hidden) and overflows when the bar is showing.
+     Subtract the (non-fixed) mobile nav height so nav+hero combined fit. The
+     inner grid is vertically centered for the "first impression" treatment. */
+  .home-hero {
+    min-height: calc(100dvh - var(--size-home-nav-mobile-height));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .home-hero > div {
+    width: 100%;
+  }
+
   @media (min-width: 1024px) {
     .home-hero-text-stack {
       transform: translateX(var(--spacing-home-nav-logo-nudge-x));
     }
-    /* Hero fills the viewport *under* the fixed-position nav header on
-       desktop — `100vh` minus the nav's measured height (150px = 2×xxl
-       padding top/bottom + 54px Product Hunt badge, which is the
-       tallest item in the nav row; see HomeNav.tsx + ProductHuntBadge).
-       The inner grid (with its own padding-top + row-gap) is vertically
-       centered inside the section so the headline + monster ensemble
-       sits in the middle of the screen instead of the top, matching
-       the comp's "first impression" treatment. Subtracting the nav is
-       what keeps the hero+nav combined from overflowing the viewport. */
+    /* Desktop nav is fixed-position and ~150px tall (2×xxl padding +
+       54px Product Hunt badge — tallest item; see HomeNav.tsx +
+       ProductHuntBadge). Subtract it so hero+nav combined fill the viewport. */
     .home-hero {
-      min-height: calc(100vh - 150px);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    .home-hero > div {
-      width: 100%;
+      min-height: calc(100dvh - 150px);
     }
   }
 
