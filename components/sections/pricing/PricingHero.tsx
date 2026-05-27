@@ -29,7 +29,7 @@ type Pricing = typeof pricingCopy;
  *   $99 / month total · For side projects
  *
  *   [Start your free trial]
- *   7-day free trial · $100 token cap
+ *   3-day free trial · $100 token cap
  *
  *   (pancake mascot column on the right, full height)
  *
