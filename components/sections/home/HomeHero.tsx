@@ -19,9 +19,8 @@ import { H1 } from "@/components/ui/Headings";
  */
 const HERO_TITLE = "The OpenClaw cofounder\nthat makes your\ncompany autonomous";
 
-/** Line 2 must start with “than you” (Figma wrap); explicit `\n` after “better”. */
 const HERO_SUB =
-  "Pancake gets you a cofounder that knows your company better\nthan you and handles 50% of the job.";
+  "Pancake stacks autonomous agents to help your company run itself.";
 
 export function HomeHero() {
   return (
