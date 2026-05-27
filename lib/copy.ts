@@ -435,21 +435,3 @@ export const pricing = {
   },
 } as const;
 
-export const signup = {
-  title: "Join the waitlist",
-  subtitle: "Welcome — you're on the list. We'll be in touch soon.",
-  emailPlaceholder: "you@company.com",
-  submit: "Request access",
-  success: "You're in. Watch your inbox for next steps.",
-  successTitle: "You're on the list.",
-  successBody:
-    "We're releasing Pancake to more people each day and we can't wait for you to try it.",
-  referralTitle: "Skip the waitlist.",
-  referralBody:
-    "Refer 2 people. When they sign up, you get immediate access to the early version of Pancake — and so do they.",
-  referralCta: "Get your referral link →",
-  discordLabel: "Or join our Discord",
-  discordBody: "Connect with other Autonomous Company founders sharing best practices.",
-  discordCta: "Join the community →",
-  discordUrl: "https://discord.gg/brJ99Up6ym",
-} as const;
