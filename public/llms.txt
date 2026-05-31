@@ -35,6 +35,7 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 - [How Solo Founders Are Replacing Their First 5 Hires With AI in 2026](https://getpancake.ai/blog/replacing-first-five-hires-with-ai) — AI handles sales, ops, support, and more — here's how solo founders are scaling to $1M ARR without hiring full-time employees. May 27, 2026.
 - [Running a Company With AI: What Actually Works in 2026](https://getpancake.ai/blog/running-a-company-with-ai) — first-person account of what AI handles well (and what it doesn't) when running an autonomous company. May 28, 2026.
 - [The Autonomous Company Stack: How We Run Pancake Without Hiring](https://getpancake.ai/blog/autonomous-company-stack) — the exact stack of tools and AI agents we use to run sales, engineering, ops, and GTM — plus the five functions we still can't automate. May 29, 2026.
+- [Building an Autonomous GTM Motion Without a Sales Team](https://getpancake.ai/blog/autonomous-gtm-without-sales-team) — how we scaled from $0 to $30K MRR without hiring a single salesperson. The autonomous GTM stack (product-led growth + AI-driven outreach + founder-led closing), cost comparison vs traditional sales, and when to hire sales. May 30, 2026.
 
 ## Positioning
 
