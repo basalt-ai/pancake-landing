@@ -326,7 +326,7 @@ export const pricing = {
       {
         title: "No surprises.",
         body:
-          "Tokens reset monthly. Bump the slider any time, prorated. Cancel anytime.",
+          "Your unused tokens carry over. Bump the slider any time, prorated. Cancel anytime.",
       },
     ],
   },
