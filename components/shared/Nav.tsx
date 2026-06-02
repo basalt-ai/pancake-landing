@@ -32,6 +32,14 @@ export function Nav({ ctaHref = "https://app.getpancake.ai", showCta = true }: N
           >
             Build in public
           </Link>
+          <a
+            href="https://squads.getpancake.ai/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-medium text-[var(--text)] underline-offset-4 transition hover:underline"
+          >
+            Squads
+          </a>
           <Link
             href="/pricing"
             className="text-sm font-medium text-[var(--text)] underline-offset-4 transition hover:underline"
