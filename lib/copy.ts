@@ -413,7 +413,7 @@ export const pricing = {
       },
       {
         q: "Does my token allocation roll over?",
-        a: "No. The monthly token pack resets on your billing day. Leftovers don't carry into next month.",
+        a: "Yes. Unused tokens carry over to the next month, so nothing you've paid for goes to waste.",
       },
       {
         q: "How do seats work?",
