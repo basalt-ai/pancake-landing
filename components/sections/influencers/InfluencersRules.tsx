@@ -30,7 +30,7 @@ const CONTENT = [
   "No pre-approval needed — post first, submit later",
 ];
 
-export function CreatorsRules() {
+export function InfluencersRules() {
   const [platform, setPlatform] = useState<Platform>("x");
   const cadence = CADENCE[platform];
 
@@ -42,14 +42,14 @@ export function CreatorsRules() {
   ];
 
   return (
-    <div className="creators-rules-block" role="region" aria-label="House rules">
-      <div className="creators-toggle" role="tablist" aria-label="Platform">
+    <div className="influencers-rules-block" role="region" aria-label="House rules">
+      <div className="influencers-toggle" role="tablist" aria-label="Platform">
         <button
           type="button"
           role="tab"
           aria-selected={platform === "x"}
           data-active={platform === "x" ? "" : undefined}
-          className="creators-toggle__btn"
+          className="influencers-toggle__btn"
           onClick={() => setPlatform("x")}
         >
           <SiX size={14} aria-hidden />
@@ -60,7 +60,7 @@ export function CreatorsRules() {
           role="tab"
           aria-selected={platform === "linkedin"}
           data-active={platform === "linkedin" ? "" : undefined}
-          className="creators-toggle__btn"
+          className="influencers-toggle__btn"
           onClick={() => setPlatform("linkedin")}
         >
           <FaLinkedin size={14} aria-hidden />
@@ -68,7 +68,7 @@ export function CreatorsRules() {
         </button>
       </div>
 
-      <div className="creators-rules-grid">
+      <div className="influencers-rules-grid">
         <RuleColumn title="Requirements" tone="brand-alt-1" items={REQUIREMENTS} />
         <RuleColumn title="Limits" tone="brand" items={limits} highlightFirstTwo />
         <RuleColumn title="Content" tone="brand-alt-2" items={CONTENT} />
@@ -89,20 +89,20 @@ function RuleColumn({
   highlightFirstTwo?: boolean;
 }) {
   return (
-    <div className="creators-rules-col">
-      <span className="creators-rules-col__chip" data-tone={tone}>
+    <div className="influencers-rules-col">
+      <span className="influencers-rules-col__chip" data-tone={tone}>
         {title}
       </span>
-      <ul className="creators-rules-col__list">
+      <ul className="influencers-rules-col__list">
         {items.map((item, i) => {
           const highlighted = highlightFirstTwo && i < 2;
           return (
             <li
               key={item}
-              className="creators-rules-col__item"
+              className="influencers-rules-col__item"
               data-highlight={highlighted ? "" : undefined}
             >
-              <span aria-hidden className="creators-rules-col__dot" />
+              <span aria-hidden className="influencers-rules-col__dot" />
               <span>{item}</span>
             </li>
           );

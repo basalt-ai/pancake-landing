@@ -4694,16 +4694,16 @@
     }
   }
 
-  /* === /creators — Creator Program page ============================ */
+  /* === /influencers — Influencer Program page ====================== */
 
-  .creators-hero__cta {
+  .influencers-hero__cta {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--spacing-lg);
   }
 
-  .creators-hero__cta-note {
+  .influencers-hero__cta-note {
     margin: 0;
     color: var(--subtle-text);
     font-family: var(--font-body);
@@ -4711,7 +4711,7 @@
   }
 
   /* X / LinkedIn toggle */
-  .creators-toggle {
+  .influencers-toggle {
     display: inline-flex;
     align-self: center;
     padding: var(--spacing-xs);
@@ -4722,7 +4722,7 @@
     gap: var(--spacing-xs);
   }
 
-  .creators-toggle__btn {
+  .influencers-toggle__btn {
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-md);
@@ -4739,13 +4739,13 @@
     transition: background-color 160ms ease, color 160ms ease;
   }
 
-  .creators-toggle__btn[data-active] {
+  .influencers-toggle__btn[data-active] {
     background-color: var(--surface);
     color: var(--text);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   }
 
-  .creators-tiers {
+  .influencers-tiers {
     width: 100%;
     max-width: calc(1040 / 16 * 1rem);
     display: flex;
@@ -4753,7 +4753,7 @@
     gap: var(--spacing-lg);
   }
 
-  .creators-tiers__table {
+  .influencers-tiers__table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
@@ -4765,15 +4765,15 @@
     font-family: var(--font-body);
   }
 
-  .creators-tiers__table th,
-  .creators-tiers__table td {
+  .influencers-tiers__table th,
+  .influencers-tiers__table td {
     padding: var(--spacing-xl);
     text-align: left;
     font-size: var(--font-size-body-regular);
     border-bottom: 1px solid var(--subtle-stroke);
   }
 
-  .creators-tiers__table thead th {
+  .influencers-tiers__table thead th {
     background-color: var(--alt-surface);
     font-family: var(--font-display);
     font-weight: var(--font-semibold);
@@ -4783,29 +4783,29 @@
     color: var(--subtle-text);
   }
 
-  .creators-tiers__table tbody th {
+  .influencers-tiers__table tbody th {
     font-family: var(--font-display);
     font-weight: var(--font-semibold);
   }
 
-  .creators-tiers__table tbody tr:last-child th,
-  .creators-tiers__table tbody tr:last-child td {
+  .influencers-tiers__table tbody tr:last-child th,
+  .influencers-tiers__table tbody tr:last-child td {
     border-bottom: 0;
   }
 
-  .creators-tiers__credits {
+  .influencers-tiers__credits {
     color: var(--interactive-text);
     font-weight: var(--font-semibold);
   }
 
-  .creators-tiers__cash {
+  .influencers-tiers__cash {
     color: var(--text);
     font-weight: var(--font-semibold);
   }
 
-  /* Thin spacer column between Credits and Surprise, holding an "or" pill
+  /* Thin spacer column between Cash and Credits, holding an "or" pill
      in each row so the table reads as a choice, not a bundle. */
-  .creators-tiers__or-col {
+  .influencers-tiers__or-col {
     width: calc(2 * var(--spacing-xxl));
     padding: 0 !important;
     text-align: center;
@@ -4814,7 +4814,7 @@
     border-bottom-color: transparent !important;
   }
 
-  .creators-tiers__or {
+  .influencers-tiers__or {
     display: inline-block;
     padding: var(--spacing-xs) var(--spacing-md);
     background-color: var(--alt-surface);
@@ -4829,17 +4829,17 @@
   }
 
   @media (max-width: 640px) {
-    .creators-tiers__or-col {
+    .influencers-tiers__or-col {
       width: var(--spacing-xl);
     }
-    .creators-tiers__or {
+    .influencers-tiers__or {
       padding: 0;
       background-color: transparent;
       border: 0;
     }
   }
 
-  .creators-tiers__note {
+  .influencers-tiers__note {
     margin: 0;
     font-family: var(--font-body);
     font-size: var(--font-size-body-small);
@@ -4848,14 +4848,14 @@
   }
 
   @media (max-width: 640px) {
-    .creators-tiers__table th,
-    .creators-tiers__table td {
+    .influencers-tiers__table th,
+    .influencers-tiers__table td {
       padding: var(--spacing-lg);
       font-size: var(--font-size-body-small);
     }
   }
 
-  .creators-steps {
+  .influencers-steps {
     width: 100%;
     list-style: none;
     margin: 0;
@@ -4866,12 +4866,12 @@
   }
 
   @media (min-width: 768px) {
-    .creators-steps {
+    .influencers-steps {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  .creators-step {
+  .influencers-step {
     display: flex;
     align-items: flex-start;
     gap: var(--spacing-xl);
@@ -4882,7 +4882,7 @@
     corner-shape: squircle;
   }
 
-  .creators-step__num {
+  .influencers-step__num {
     flex-shrink: 0;
     font-family: var(--font-display);
     font-size: var(--font-size-header-02);
@@ -4892,12 +4892,12 @@
     letter-spacing: -0.905px;
   }
 
-  .creators-step__title {
+  .influencers-step__title {
     margin: 0 0 var(--spacing-md) 0;
     font-size: var(--font-size-header-04);
   }
 
-  .creators-step__body {
+  .influencers-step__body {
     margin: 0;
     font-family: var(--font-body);
     font-size: var(--font-size-body-regular);
@@ -4905,7 +4905,7 @@
     color: var(--text);
   }
 
-  .creators-rules-block {
+  .influencers-rules-block {
     width: 100%;
     max-width: calc(1040 / 16 * 1rem);
     display: flex;
@@ -4913,19 +4913,19 @@
     gap: calc(2 * var(--spacing-xl));
   }
 
-  .creators-rules-grid {
+  .influencers-rules-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--spacing-xl);
   }
 
   @media (min-width: 768px) {
-    .creators-rules-grid {
+    .influencers-rules-grid {
       grid-template-columns: repeat(3, 1fr);
     }
   }
 
-  .creators-rules-col {
+  .influencers-rules-col {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xl);
@@ -4936,7 +4936,7 @@
     corner-shape: squircle;
   }
 
-  .creators-rules-col__chip {
+  .influencers-rules-col__chip {
     align-self: flex-start;
     padding: var(--spacing-xs) var(--spacing-lg);
     border-radius: 999px;
@@ -4946,19 +4946,19 @@
     color: var(--text);
   }
 
-  .creators-rules-col__chip[data-tone="brand"] {
+  .influencers-rules-col__chip[data-tone="brand"] {
     background-color: var(--weak-branded-surface);
   }
 
-  .creators-rules-col__chip[data-tone="brand-alt-1"] {
+  .influencers-rules-col__chip[data-tone="brand-alt-1"] {
     background-color: var(--alt-weak-branded-surface-01);
   }
 
-  .creators-rules-col__chip[data-tone="brand-alt-2"] {
+  .influencers-rules-col__chip[data-tone="brand-alt-2"] {
     background-color: var(--alt-weak-branded-surface-02);
   }
 
-  .creators-rules-col__list {
+  .influencers-rules-col__list {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -4967,7 +4967,7 @@
     gap: var(--spacing-lg);
   }
 
-  .creators-rules-col__item {
+  .influencers-rules-col__item {
     display: flex;
     align-items: flex-start;
     gap: var(--spacing-lg);
@@ -4977,11 +4977,11 @@
     color: var(--text);
   }
 
-  .creators-rules-col__item[data-highlight] {
+  .influencers-rules-col__item[data-highlight] {
     font-weight: var(--font-semibold);
   }
 
-  .creators-rules-col__dot {
+  .influencers-rules-col__dot {
     flex-shrink: 0;
     margin-top: calc(var(--spacing-sm) + var(--spacing-xs));
     width: var(--spacing-md);
@@ -4990,7 +4990,7 @@
     background-color: var(--strong-branded-surface);
   }
 
-  .creators-rules-col__item[data-highlight] .creators-rules-col__dot {
+  .influencers-rules-col__item[data-highlight] .influencers-rules-col__dot {
     background-color: var(--interactive-text);
   }
 }
