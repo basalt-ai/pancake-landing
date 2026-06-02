@@ -31,6 +31,7 @@ const navLinks = [
   { href: "/pricing", label: "Pricing" },
   { href: "/blog", label: "Blog" },
   { href: "/creators", label: "Creators" },
+  { href: "/open-roadmap", label: "Roadmap" },
 ];
 
 export function Footer() {
