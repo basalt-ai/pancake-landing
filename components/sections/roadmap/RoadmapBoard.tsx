@@ -18,7 +18,6 @@ import {
 
 const VOTES_STORAGE_KEY = "pancake-roadmap-votes";
 const VOTER_TOKEN_KEY = "pancake-roadmap-voter";
-const ADMIN_CHECK_KEY = "pancake-roadmap-admin-check";
 /** Ideas shown per page; "Show more" reveals another batch. */
 const PAGE_SIZE = 15;
 
@@ -28,8 +27,6 @@ type Props = {
   backendEnabled: boolean;
   /** Server-resolved: does the current request carry a valid admin cookie? */
   isAdmin: boolean;
-  /** True when an admin password is configured (shows the sign-in affordance). */
-  adminAuthEnabled: boolean;
   /** True when the server fetch hit its row cap (more ideas exist than loaded). */
   truncated?: boolean;
 };
@@ -72,7 +69,6 @@ export function RoadmapBoard({
   initialIdeas,
   backendEnabled,
   isAdmin,
-  adminAuthEnabled,
   truncated = false,
 }: Props) {
   const router = useRouter();
@@ -85,12 +81,6 @@ export function RoadmapBoard({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [notice, setNotice] = useState<string | null>(null);
-
-  // Admin login form state.
-  const [showLogin, setShowLogin] = useState(false);
-  const [password, setPassword] = useState("");
-  const [loginBusy, setLoginBusy] = useState(false);
-  const [loginError, setLoginError] = useState<string | null>(null);
 
   // Restore prior votes (button state) from localStorage.
   useEffect(() => {
@@ -193,44 +183,8 @@ export function RoadmapBoard({
     }
   }
 
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
-    if (loginBusy) return;
-    setLoginBusy(true);
-    setLoginError(null);
-    try {
-      const res = await fetch("/api/roadmap/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        setLoginError(data.error ?? "Login failed.");
-        return;
-      }
-      setPassword("");
-      setShowLogin(false);
-      try {
-        window.sessionStorage.setItem(ADMIN_CHECK_KEY, "1");
-      } catch {
-        /* ignore */
-      }
-      router.refresh(); // re-render server component → isAdmin = true
-    } catch {
-      setLoginError("Network error. Try again.");
-    } finally {
-      setLoginBusy(false);
-    }
-  }
-
   async function handleLogout() {
     await fetch("/api/roadmap/logout", { method: "POST" }).catch(() => {});
-    try {
-      window.sessionStorage.removeItem(ADMIN_CHECK_KEY);
-    } catch {
-      /* ignore */
-    }
     router.refresh();
   }
 
@@ -363,57 +317,24 @@ export function RoadmapBoard({
         </>
       )}
 
-      {/* Admin / auth bar — at the bottom, intentionally understated. */}
-      <div className="roadmap-authbar">
-        {!backendEnabled ? (
-          <span className="roadmap-authbar__note">
-            Preview mode — connect Supabase to enable posting and saved votes.
-          </span>
-        ) : isAdmin ? (
-          <span className="roadmap-authbar__note">
-            Admin mode ·{" "}
-            <button type="button" className="roadmap-authbar__link" onClick={handleLogout}>
-              Sign out
-            </button>
-          </span>
-        ) : adminAuthEnabled ? (
-          showLogin ? (
-            <form className="roadmap-login" onSubmit={handleLogin}>
-              <input
-                type="password"
-                className="input roadmap-login__input"
-                placeholder="Admin password"
-                aria-label="Admin password"
-                value={password}
-                autoFocus
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <Button type="submit" size="sm" disabled={loginBusy}>
-                {loginBusy ? "…" : "Enter"}
-              </Button>
-              <button
-                type="button"
-                className="roadmap-authbar__link"
-                onClick={() => {
-                  setShowLogin(false);
-                  setLoginError(null);
-                }}
-              >
-                Cancel
-              </button>
-              {loginError ? <span className="roadmap-login__error">{loginError}</span> : null}
-            </form>
+      {/* Admin / auth bar — at the bottom, intentionally understated. Sign-in
+          lives on the hidden /open-roadmap/admin page (Google), not here. */}
+      {!backendEnabled || isAdmin ? (
+        <div className="roadmap-authbar">
+          {!backendEnabled ? (
+            <span className="roadmap-authbar__note">
+              Preview mode — connect Supabase to enable posting and saved votes.
+            </span>
           ) : (
-            <button
-              type="button"
-              className="roadmap-authbar__link"
-              onClick={() => setShowLogin(true)}
-            >
-              Admin sign in
-            </button>
-          )
-        ) : null}
-      </div>
+            <span className="roadmap-authbar__note">
+              Admin mode ·{" "}
+              <button type="button" className="roadmap-authbar__link" onClick={handleLogout}>
+                Sign out
+              </button>
+            </span>
+          )}
+        </div>
+      ) : null}
 
       <CreateIdeaModal
         open={createOpen}

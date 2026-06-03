@@ -25,23 +25,36 @@ Then run [`supabase/migrations/0002_comments.sql`](../../supabase/migrations/000
 trigger. (The board degrades gracefully if 0002 hasn't run yet, but comments
 won't work until it has.)
 
-## 3. Set the admin password
+## 3. Set up admin sign-in (Google)
 
-Admins enter a shared password to unlock delete — no accounts, no external IdP,
-no `infrastructure` changes.
+Admins sign in with Google on the **hidden** `/open-roadmap/admin` page (not
+linked anywhere, `noindex`). Only verified emails on an allow-listed company
+domain (default `getpancake.ai`) get admin, which unlocks delete.
 
-1. Set `ROADMAP_ADMIN_PASSWORD` (below) to a long secret (`openssl rand -hex 16`).
-2. On the live board, click **Admin sign in**, enter the password. A signed,
-   HttpOnly cookie (valid 7 days) is set and delete buttons appear. **Sign out**
-   clears it.
+1. In **Google Cloud Console → APIs & Services → Credentials**, create an
+   **OAuth client ID** of type **Web application**. Under *Authorised redirect
+   URIs*, add one per origin:
+   - `http://localhost:3001/api/roadmap/auth/google/callback` (local dev)
+   - `https://www.getpancake.ai/api/roadmap/auth/google/callback` (production)
+2. Copy the **Client ID** → `GOOGLE_OAUTH_CLIENT_ID` and **Client secret** →
+   `GOOGLE_OAUTH_CLIENT_SECRET`.
+3. Set `ROADMAP_AUTH_SECRET` to a long random string (`openssl rand -hex 32`) —
+   it's the HMAC key that signs the admin session cookie.
+4. (Optional) Set `ROADMAP_ALLOWED_EMAIL_DOMAINS` (comma-separated) to change or
+   extend the allowed domains. Defaults to `getpancake.ai`.
+5. Visit `/open-roadmap/admin`, click **Sign in with Google**. On success a
+   signed, HttpOnly cookie (valid 7 days) is set and delete buttons appear on
+   the board. **Sign out** (on the board or the admin page) clears it.
 
-How it's enforced: the login route compares the password (constant-time) and
-sets a cookie signed with the password as the HMAC key, so it can't be forged
-without the password and JS can't read it. The delete route verifies that cookie
-server-side. Login is rate-limited (10 attempts / 10 min per IP).
+How it's enforced: the callback exchanges Google's code for the user's verified
+email server-side, checks the domain, then sets a cookie signed with
+`ROADMAP_AUTH_SECRET`, so it can't be forged and JS can't read it (HttpOnly).
+The delete route verifies that cookie — and re-checks the email domain — on
+every request.
 
-**Fail-closed:** no password set, or no/invalid/expired cookie ⇒ no admin,
-delete denied. Posting and voting work regardless.
+**Fail-closed:** missing config, no/invalid/expired cookie, or an email outside
+the allowed domains ⇒ no admin, delete denied. Posting and voting work
+regardless.
 
 ## 4. Set environment variables
 
@@ -53,7 +66,10 @@ Copy `.env.local.example` → `.env.local` for local dev, and set the same vars 
 | `NEXT_PUBLIC_SUPABASE_URL` | Project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | anon public key |
 | `SUPABASE_SERVICE_ROLE_KEY` | service role key (secret) |
-| `ROADMAP_ADMIN_PASSWORD` | shared admin password (secret) |
+| `GOOGLE_OAUTH_CLIENT_ID` | Google OAuth client ID |
+| `GOOGLE_OAUTH_CLIENT_SECRET` | Google OAuth client secret (secret) |
+| `ROADMAP_AUTH_SECRET` | admin session signing key (secret) |
+| `ROADMAP_ALLOWED_EMAIL_DOMAINS` | optional; allowed email domains (default `getpancake.ai`) |
 
 Redeploy. The board switches from preview mode to live automatically.
 
@@ -64,8 +80,10 @@ limiting in the API routes). Only a request carrying a valid admin cookie can
 delete — enforced server-side in the delete route via `isAdmin()`.
 
 The admin check lives in **one** place: `lib/auth/admin.ts` (`isAdmin` +
-`checkAdminPassword`/`mintAdminCookie`). The routes + page call through it, so
-swapping the auth model later (e.g. real SSO) touches only that module.
+`isAllowedAdminEmail`/`mintAdminCookie`). The Google handshake is isolated in
+`lib/auth/google.ts`, driven by the routes under `app/api/roadmap/auth/google`.
+The routes + page call through `isAdmin()`, so swapping the auth model later
+touches only those modules.
 
 ## Security notes
 

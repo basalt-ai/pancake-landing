@@ -7,8 +7,9 @@ import { isServiceConfigured } from "@/lib/supabase/env";
 export const runtime = "nodejs";
 
 /**
- * Delete an idea. Admin-only: requires a valid admin cookie (set after entering
- * ROADMAP_ADMIN_PASSWORD). Enforced server-side via isAdmin(). See lib/auth/admin.ts.
+ * Delete an idea. Admin-only: requires a valid admin cookie (set after Google
+ * sign-in by an allow-listed company email). Enforced server-side via isAdmin().
+ * See lib/auth/admin.ts.
  */
 export async function DELETE(_request: Request, { params }: { params: { id: string } }) {
   if (!isServiceConfigured()) {

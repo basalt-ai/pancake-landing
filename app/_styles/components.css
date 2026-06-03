@@ -5548,22 +5548,66 @@
     display: inline;
   }
 
-  .roadmap-login {
+  /* Hidden Google sign-in page (/open-roadmap/admin). */
+  .roadmap-admin {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xl);
+    max-width: calc(20 * var(--spacing-xl));
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .roadmap-admin__header {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     gap: var(--spacing-md);
+  }
+
+  .roadmap-admin__title {
+    margin: 0;
+  }
+
+  .roadmap-admin__lede {
+    margin: 0;
+    font-family: var(--font-body);
+    color: var(--subtle-text);
+  }
+
+  .roadmap-admin__panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .roadmap-admin__actions {
+    display: flex;
     flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-md);
   }
 
-  .roadmap-login__input {
-    height: var(--control-size-sm);
-    width: calc(11 * var(--spacing-xl));
-    max-width: 100%;
+  .roadmap-admin__status {
+    margin: 0;
+    font-family: var(--font-body);
+    color: var(--text);
   }
 
-  .roadmap-login__error {
-    color: var(--negative-text);
+  .roadmap-admin__hint {
+    margin: 0;
+    font-family: var(--font-body);
     font-size: var(--font-size-body-small);
+    color: var(--subtle-text);
+  }
+
+  .roadmap-admin__error {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    color: var(--negative-text);
   }
 
   /* ── Idea detail modal ────────────────────────────────────────────── */

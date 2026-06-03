@@ -15,7 +15,7 @@ import { RoadmapBoard } from "@/components/sections/roadmap/RoadmapBoard";
 import { STATUS_META } from "@/components/sections/roadmap/roadmap-data";
 import { Footer } from "@/components/shared/Footer";
 import { Badge } from "@/components/ui/Badge";
-import { isAdmin, isAdminAuthConfigured } from "@/lib/auth/admin";
+import { isAdmin } from "@/lib/auth/admin";
 import { getIdeas } from "@/lib/roadmap/ideas";
 
 // Always render per-request: the board reflects live Supabase data and the
@@ -49,7 +49,6 @@ export const metadata: Metadata = {
 export default async function OpenRoadmapPage() {
   const [{ ideas, source, truncated }, admin] = await Promise.all([getIdeas(), isAdmin()]);
   const backendEnabled = source === "supabase";
-  const adminAuthEnabled = isAdminAuthConfigured();
 
   // ItemList JSON-LD built from the live list so it can't drift from the page.
   const roadmapJsonLd = {
@@ -102,7 +101,6 @@ export default async function OpenRoadmapPage() {
             initialIdeas={ideas}
             backendEnabled={backendEnabled}
             isAdmin={admin}
-            adminAuthEnabled={adminAuthEnabled}
             truncated={truncated}
           />
         </div>

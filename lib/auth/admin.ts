@@ -4,78 +4,108 @@ import crypto from "node:crypto";
 /**
  * Admin identity — the ONE place that decides who may delete ideas.
  *
- * Shared-password model (no accounts, no external IdP): an admin enters
- * ROADMAP_ADMIN_PASSWORD once; we set a signed, HttpOnly cookie that proves
- * "someone who knew the password authenticated, until exp". Every privileged
- * route checks that cookie server-side. A client can't forge it without the
- * password (it's the HMAC key), and the browser can't read it (HttpOnly).
+ * Google sign-in model: an admin signs in with Google on the hidden
+ * /open-roadmap/admin page; we verify their email is verified AND on an
+ * allow-listed company domain (default getpancake.ai), then set a signed,
+ * HttpOnly cookie that proves "a verified company user authenticated, until
+ * exp". Every privileged route checks that cookie server-side. The cookie is
+ * signed with ROADMAP_AUTH_SECRET (the HMAC key), so a client can't forge it,
+ * and the browser can't read it (HttpOnly).
  *
- * Fail-closed: no password configured, no/!valid/expired cookie ⇒ not admin.
- * To swap the auth model later, change ONLY this module — routes + page call
- * through isAdmin().
+ * Fail-closed: missing config, no/invalid/expired cookie, or an email that no
+ * longer matches an allowed domain ⇒ not admin. To swap the auth model later,
+ * change ONLY this module — routes + page call through isAdmin().
  */
 
-const ADMIN_PASSWORD = process.env.ROADMAP_ADMIN_PASSWORD;
+const AUTH_SECRET = process.env.ROADMAP_AUTH_SECRET;
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_OAUTH_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
+
+/** Allow-listed email domains (comma-separated env, defaults to getpancake.ai). */
+const ALLOWED_DOMAINS = (process.env.ROADMAP_ALLOWED_EMAIL_DOMAINS ?? "getpancake.ai")
+  .split(",")
+  .map((d) => d.trim().toLowerCase())
+  .filter(Boolean);
+
 const SESSION_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
 
 export const ADMIN_COOKIE_NAME = "roadmap_admin";
 
-/** True when an admin password is configured (gates the sign-in UI/route). */
+type AdminSession = { email: string };
+
+/**
+ * True when Google sign-in is fully configured (gates the login UI/routes):
+ * client id + secret for the OAuth handshake, and a secret to sign sessions.
+ */
 export function isAdminAuthConfigured(): boolean {
-  return Boolean(ADMIN_PASSWORD);
+  return Boolean(AUTH_SECRET && GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET);
 }
 
-/** Constant-time password check (compares fixed-length SHA-256 digests). */
-export function checkAdminPassword(input: unknown): boolean {
-  if (!ADMIN_PASSWORD || typeof input !== "string" || input.length === 0) return false;
-  const a = crypto.createHash("sha256").update(input).digest();
-  const b = crypto.createHash("sha256").update(ADMIN_PASSWORD).digest();
-  return crypto.timingSafeEqual(a, b);
+/** True when `email` is a string on an allow-listed company domain. */
+export function isAllowedAdminEmail(email: unknown): email is string {
+  if (typeof email !== "string") return false;
+  const at = email.lastIndexOf("@");
+  if (at <= 0 || at === email.length - 1) return false;
+  return ALLOWED_DOMAINS.includes(email.slice(at + 1).toLowerCase());
+}
+
+/** Human-readable allow-list for UI/error copy, e.g. "@getpancake.ai". */
+export function allowedDomainsLabel(): string {
+  return ALLOWED_DOMAINS.map((d) => `@${d}`).join(", ");
 }
 
 /**
- * Mint the signed admin cookie value: base64url({exp}).base64url(HMAC), keyed
- * by the password. Returns the value + maxAge for the Set-Cookie.
+ * Mint the signed admin cookie value: base64url({exp,email}).base64url(HMAC),
+ * keyed by ROADMAP_AUTH_SECRET. Returns the value + maxAge for the Set-Cookie.
  */
-export function mintAdminCookie(): { value: string; maxAge: number } {
-  if (!ADMIN_PASSWORD) return { value: "", maxAge: 0 };
+export function mintAdminCookie(email: string): { value: string; maxAge: number } {
+  if (!AUTH_SECRET) return { value: "", maxAge: 0 };
   const exp = Math.floor(Date.now() / 1000) + SESSION_TTL_SECONDS;
-  const payloadB64 = Buffer.from(JSON.stringify({ exp }), "utf8").toString("base64url");
-  const sig = crypto.createHmac("sha256", ADMIN_PASSWORD).update(payloadB64).digest("base64url");
+  const payloadB64 = Buffer.from(JSON.stringify({ exp, email }), "utf8").toString("base64url");
+  const sig = crypto.createHmac("sha256", AUTH_SECRET).update(payloadB64).digest("base64url");
   return { value: `${payloadB64}.${sig}`, maxAge: SESSION_TTL_SECONDS };
 }
 
-function verifyAdminCookie(value: string | undefined): boolean {
-  if (!value || !ADMIN_PASSWORD) return false;
+/** Validate the cookie (signature + expiry + allowed domain) → session or null. */
+function readAdminCookie(value: string | undefined): AdminSession | null {
+  if (!value || !AUTH_SECRET) return null;
   const dot = value.indexOf(".");
-  if (dot <= 0 || dot === value.length - 1) return false;
+  if (dot <= 0 || dot === value.length - 1) return null;
   const payloadB64 = value.slice(0, dot);
   const sigB64 = value.slice(dot + 1);
 
-  const expected = crypto.createHmac("sha256", ADMIN_PASSWORD).update(payloadB64).digest();
+  const expected = crypto.createHmac("sha256", AUTH_SECRET).update(payloadB64).digest();
   let provided: Buffer;
   try {
     provided = Buffer.from(sigB64, "base64url");
   } catch {
-    return false;
+    return null;
   }
   if (provided.length !== expected.length || !crypto.timingSafeEqual(provided, expected)) {
-    return false;
+    return null;
   }
 
   try {
-    const { exp } = JSON.parse(Buffer.from(payloadB64, "base64url").toString("utf8")) as {
+    const { exp, email } = JSON.parse(Buffer.from(payloadB64, "base64url").toString("utf8")) as {
       exp?: unknown;
+      email?: unknown;
     };
-    if (typeof exp !== "number" || Math.floor(Date.now() / 1000) > exp) return false;
+    if (typeof exp !== "number" || Math.floor(Date.now() / 1000) > exp) return null;
+    // Re-check the domain on every request: revoking a domain (or fixing a typo)
+    // then takes effect immediately, even for already-issued cookies.
+    if (!isAllowedAdminEmail(email)) return null;
+    return { email };
   } catch {
-    return false;
+    return null;
   }
-  return true;
+}
+
+/** The current admin session (verified email), or null. */
+export function getAdminSession(): AdminSession | null {
+  return readAdminCookie(cookies().get(ADMIN_COOKIE_NAME)?.value);
 }
 
 /** True only when the current request carries a valid admin cookie. */
 export async function isAdmin(): Promise<boolean> {
-  const value = cookies().get(ADMIN_COOKIE_NAME)?.value;
-  return verifyAdminCookie(value);
+  return getAdminSession() !== null;
 }
