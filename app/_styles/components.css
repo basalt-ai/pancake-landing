@@ -5223,4 +5223,225 @@
       min-width: 0;
     }
   }
+
+  /* ── Open roadmap: auth bar, notices, delete ──────────────────────── */
+
+  .roadmap-authbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    min-height: var(--control-size-sm);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    color: var(--subtle-text);
+  }
+
+  .roadmap-authbar__note {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+  }
+
+  .roadmap-authbar__signout {
+    display: inline;
+  }
+
+  .roadmap-login {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+  }
+
+  .roadmap-login__input {
+    height: var(--control-size-sm);
+    width: calc(11 * var(--spacing-xl));
+    max-width: 100%;
+  }
+
+  .roadmap-login__error {
+    color: var(--negative-text);
+    font-size: var(--font-size-body-small);
+  }
+
+  .roadmap-authbar__link {
+    appearance: none;
+    border: none;
+    background: none;
+    padding: 0;
+    color: var(--interactive-text);
+    font: inherit;
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .roadmap-authbar__link:hover {
+    opacity: 0.8;
+  }
+
+  .roadmap-notice {
+    margin: 0;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    background-color: var(--warning-surface);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    corner-shape: squircle;
+  }
+
+  .roadmap-card__delete {
+    appearance: none;
+    border: none;
+    background: none;
+    padding: 0;
+    color: var(--negative-text);
+    font: inherit;
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+  }
+
+  .roadmap-card__delete:hover {
+    text-decoration: underline;
+  }
+
+  /* ── Open roadmap: create-idea modal ──────────────────────────────── */
+
+  .roadmap-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+  }
+
+  .roadmap-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: color-mix(in srgb, var(--inverted-surface) 55%, transparent);
+  }
+
+  .roadmap-modal__panel {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: calc(34 * var(--spacing-xl));
+    max-height: calc(100dvh - 2 * var(--spacing-xxl));
+    overflow-y: auto;
+    background-color: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xxl);
+    corner-shape: squircle;
+  }
+
+  .roadmap-modal__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .roadmap-modal__title {
+    margin: 0;
+    font-size: var(--font-size-header-03);
+    font-weight: var(--font-semibold);
+  }
+
+  .roadmap-modal__close {
+    appearance: none;
+    border: none;
+    background: none;
+    display: inline-flex;
+    padding: var(--spacing-sm);
+    color: var(--subtle-text);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+  }
+
+  .roadmap-modal__close:hover {
+    color: var(--text);
+    background-color: var(--alt-surface);
+  }
+
+  .roadmap-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+  }
+
+  .roadmap-form__row {
+    display: flex;
+    gap: var(--spacing-lg);
+  }
+
+  .roadmap-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .roadmap-field__label {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    font-weight: var(--font-semibold);
+    color: var(--text);
+  }
+
+  .roadmap-field__input,
+  .roadmap-field__textarea {
+    width: 100%;
+  }
+
+  .roadmap-field__textarea {
+    min-height: calc(6 * var(--spacing-xl));
+    resize: vertical;
+    font-family: var(--font-body);
+  }
+
+  .roadmap-field__hint {
+    align-self: flex-end;
+    font-family: var(--font-body);
+    font-size: var(--font-size-eyebrow);
+    color: var(--subtle-text);
+  }
+
+  .roadmap-form__error {
+    margin: 0;
+    color: var(--negative-text);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+  }
+
+  .roadmap-form__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-lg);
+  }
+
+  /* Honeypot — keep it in the DOM + focusable-by-bots but invisible to people. */
+  .roadmap-honeypot {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (max-width: 600px) {
+    .roadmap-form__row {
+      flex-direction: column;
+    }
+  }
 }
