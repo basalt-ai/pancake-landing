@@ -76,14 +76,14 @@ export default async function OpenRoadmapPage() {
 
       <HomeNav />
 
-      {/* Hero (compact) */}
-      <section className="home-landing-section roadmap-hero" aria-label="Open roadmap">
+      {/* Hero */}
+      <section className="home-landing-section roadmap-hero" aria-labelledby="roadmap-hero-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             <Badge variant="brand-alt-1">Open roadmap</Badge>
-            <p className="home-landing-section__lede text-center">
+            <h1 id="roadmap-hero-heading" className="heading roadmap-hero__title text-center">
               Tell us what to build next. Make Pancake awesome(r).
-            </p>
+            </h1>
           </header>
         </div>
       </section>
@@ -95,9 +95,9 @@ export default async function OpenRoadmapPage() {
         aria-labelledby="roadmap-board-heading"
       >
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
-          <h1 id="roadmap-board-heading" className="sr-only">
-            Pancake open roadmap
-          </h1>
+          <h2 id="roadmap-board-heading" className="sr-only">
+            Roadmap ideas
+          </h2>
           <RoadmapBoard
             initialIdeas={ideas}
             backendEnabled={backendEnabled}
