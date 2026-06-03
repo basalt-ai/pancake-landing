@@ -13,7 +13,7 @@ import { H3 } from "@/components/ui/Headings";
  * section explains the trade-off rather than repeating the ladder.
  */
 const PASSIONFROOT_SIGNUP_URL =
-  "https://workspace.passionfroot.me/signup/brand-experience";
+  "https://workspace.passionfroot.me/signup?partner=07d9dc3a-0f33-43df-90f8-713ec7d3a578&campaign=8390eb8f-2ad9-48f1-947d-63369ae779dc&pfPlus=true";
 
 const CREDITS_POINTS = [
   "Every $1 in cash becomes $1.50 in credits",
