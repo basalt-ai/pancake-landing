@@ -42,8 +42,15 @@ export function getRedirectUri(request: Request): string {
   const explicit = process.env.ROADMAP_OAUTH_REDIRECT_URI;
   if (explicit) return explicit;
   const url = new URL(request.url);
-  const proto = request.headers.get("x-forwarded-proto") ?? url.protocol.replace(":", "");
-  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host") ?? url.host;
+  // Forwarded headers can be comma-separated lists (e.g. "https,https" behind
+  // chained proxies) — take the first hop and trim, or Google sees a malformed
+  // redirect_uri and rejects it with redirect_uri_mismatch.
+  const first = (value: string | null) => value?.split(",")[0]?.trim() || undefined;
+  const proto = first(request.headers.get("x-forwarded-proto")) ?? url.protocol.replace(":", "");
+  const host =
+    first(request.headers.get("x-forwarded-host")) ??
+    first(request.headers.get("host")) ??
+    url.host;
   return `${proto}://${host}/api/roadmap/auth/google/callback`;
 }
 
