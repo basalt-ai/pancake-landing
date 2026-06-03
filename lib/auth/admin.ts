@@ -49,11 +49,6 @@ export function isAllowedAdminEmail(email: unknown): email is string {
   return ALLOWED_DOMAINS.includes(email.slice(at + 1).toLowerCase());
 }
 
-/** Human-readable allow-list for UI/error copy, e.g. "@getpancake.ai". */
-export function allowedDomainsLabel(): string {
-  return ALLOWED_DOMAINS.map((d) => `@${d}`).join(", ");
-}
-
 /**
  * Mint the signed admin cookie value: base64url({exp,email}).base64url(HMAC),
  * keyed by ROADMAP_AUTH_SECRET. Returns the value + maxAge for the Set-Cookie.

@@ -14,11 +14,7 @@ import { HomeNav } from "@/components/sections/home/HomeNav";
 import { AdminSignOut } from "@/components/sections/roadmap/AdminSignOut";
 import { Footer } from "@/components/shared/Footer";
 import { Badge } from "@/components/ui/Badge";
-import {
-  allowedDomainsLabel,
-  getAdminSession,
-  isAdminAuthConfigured,
-} from "@/lib/auth/admin";
+import { getAdminSession, isAdminAuthConfigured } from "@/lib/auth/admin";
 
 export const dynamic = "force-dynamic";
 
@@ -94,9 +90,6 @@ export default async function RoadmapAdminPage({
                   <GoogleMark />
                   Sign in with Google
                 </a>
-                <p className="roadmap-admin__hint">
-                  Restricted to {allowedDomainsLabel()} accounts.
-                </p>
               </div>
             ) : (
               <p className="roadmap-admin__hint">
