@@ -9,7 +9,7 @@ import {
 import { isBackendConfigured } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-/** Raw `ideas` row shape from Supabase. */
+/** Raw `ideas` row shape from Supabase. (comment_count added in migration 0002.) */
 type IdeaRow = {
   id: string;
   title: string;
@@ -18,6 +18,7 @@ type IdeaRow = {
   status: RoadmapStatus;
   author_name: string | null;
   vote_count: number;
+  comment_count?: number;
 };
 
 export function mapIdeaRow(row: IdeaRow): RoadmapIdea {
@@ -29,6 +30,7 @@ export function mapIdeaRow(row: IdeaRow): RoadmapIdea {
     status: row.status,
     authorName: row.author_name,
     voteCount: row.vote_count,
+    commentCount: row.comment_count ?? 0,
   };
 }
 
@@ -56,14 +58,25 @@ export async function getIdeas(): Promise<IdeasResult> {
   // bounded. The board paginates this set with a "Show more" control. If the
   // board ever outgrows this, move filtering + pagination server-side.
   const FETCH_LIMIT = 500;
-  const { data, error } = await supabase
-    .from("ideas")
-    .select("id, title, description, tag, status, author_name, vote_count")
-    .order("vote_count", { ascending: false })
-    .order("created_at", { ascending: false })
-    .limit(FETCH_LIMIT);
+  const baseCols = "id, title, description, tag, status, author_name, vote_count";
 
-  if (error || !data) {
+  const run = (cols: string) =>
+    supabase
+      .from("ideas")
+      .select(cols)
+      .order("vote_count", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(FETCH_LIMIT);
+
+  let res = await run(`${baseCols}, comment_count`);
+  // Resilience: if migration 0002 (comment_count) hasn't run yet, retry without
+  // it so the board still shows real data instead of falling back to seed.
+  if (res.error) {
+    res = await run(baseCols);
+  }
+
+  const data = res.data as IdeaRow[] | null;
+  if (res.error || !data) {
     return { ideas: SEED_IDEAS, source: "seed", truncated: false };
   }
 

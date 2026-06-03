@@ -20,6 +20,11 @@ It creates the `ideas` + `votes` tables, RLS (public read only — all writes go
 through the service role), the `cast_vote` / `remove_vote` functions, and seeds
 the 10 starter ideas.
 
+Then run [`supabase/migrations/0002_comments.sql`](../../supabase/migrations/0002_comments.sql)
+— it adds the `comments` table and an `ideas.comment_count` kept in sync by a
+trigger. (The board degrades gracefully if 0002 hasn't run yet, but comments
+won't work until it has.)
+
 ## 3. Set the admin password
 
 Admins enter a shared password to unlock delete — no accounts, no external IdP,

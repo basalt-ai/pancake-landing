@@ -5231,15 +5231,25 @@
 
   /* ── Open roadmap (PRD-Fider-Rebuild) ─────────────────────────────── */
 
-  /* Compact hero — a small strip (badge + one line), not a full hero. */
+  /* Compact hero — badge + headline, with room to breathe (not a full hero). */
   .roadmap-hero {
-    padding-top: calc(2 * var(--spacing-xl));
-    padding-bottom: 0;
+    padding-top: calc(3 * var(--spacing-xl));
+    padding-bottom: calc(2 * var(--spacing-xl));
   }
 
-  /* Pull the board up under the compact hero. */
+  .roadmap-hero__title {
+    margin: 0;
+    font-weight: var(--font-semibold);
+    /* Bigger than the lede, smaller than the full-page hero title. */
+    font-size: clamp(1.75rem, 1.1rem + 2.6vw, 2.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    max-width: var(--width-home-landing-heading);
+  }
+
+  /* A little air between the hero and the board. */
   .roadmap-board-section {
-    padding-top: calc(2 * var(--spacing-xl));
+    padding-top: calc(3 * var(--spacing-xl));
   }
 
   .roadmap-board {
@@ -5590,6 +5600,109 @@
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-md);
+  }
+
+  /* ── Comments (in the detail modal) ───────────────────────────────── */
+
+  .roadmap-comments {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-xl);
+    border-top: 1px solid var(--subtle-stroke);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .roadmap-comments__title {
+    margin: 0;
+    font-size: var(--font-size-header-04);
+    font-weight: var(--font-semibold);
+  }
+
+  .roadmap-comments__empty {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    color: var(--subtle-text);
+  }
+
+  .roadmap-comments__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .roadmap-comment {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+
+  .roadmap-comment__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-md);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    color: var(--subtle-text);
+  }
+
+  .roadmap-comment__author {
+    font-weight: var(--font-semibold);
+    color: var(--text);
+  }
+
+  .roadmap-comment__delete {
+    appearance: none;
+    border: none;
+    background: none;
+    padding: 0;
+    margin-left: auto;
+    color: var(--negative-text);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .roadmap-comment__delete:hover {
+    text-decoration: underline;
+  }
+
+  .roadmap-comment__body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    line-height: 1.5;
+    color: var(--text);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .roadmap-comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .roadmap-comment-form__body {
+    width: 100%;
+    min-height: calc(4 * var(--spacing-xl));
+    resize: vertical;
+    font-family: var(--font-body);
+  }
+
+  .roadmap-comment-form__row {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: center;
+  }
+
+  .roadmap-comment-form__name {
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .roadmap-authbar__link {
