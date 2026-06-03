@@ -15,6 +15,8 @@ import { H3 } from "@/components/ui/Headings";
 const PASSIONFROOT_SIGNUP_URL =
   "https://workspace.passionfroot.me/signup?partner=07d9dc3a-0f33-43df-90f8-713ec7d3a578&campaign=8390eb8f-2ad9-48f1-947d-63369ae779dc&pfPlus=true";
 
+const CREDITS_CLAIM_URL = "mailto:support@getpancake.ai";
+
 const CREDITS_POINTS = [
   "Every $1 in cash becomes $1.50 in credits",
   "Applied to your account automatically",
@@ -56,7 +58,12 @@ export function InfluencersRewards() {
           more agents running, more automations, more work out the door.
         </p>
         <PointList points={CREDITS_POINTS} />
-        <p className="influencers-payout__foot">No invoice, no waiting.</p>
+        <div className="influencers-payout__foot-group">
+          <a href={CREDITS_CLAIM_URL} className="influencers-payout__cta">
+            Claim your credits &rarr;
+          </a>
+          <p className="influencers-payout__note">No invoice, no waiting.</p>
+        </div>
       </div>
 
       <div className="influencers-payout__card influencers-payout__card--cash">
@@ -79,7 +86,7 @@ export function InfluencersRewards() {
             rel="noopener noreferrer"
             className="influencers-payout__cta"
           >
-            Set up Passionfroot &rarr;
+            Find us on Passionfroot &rarr;
           </a>
           <p className="influencers-payout__note">
             Cash payouts are in the US and Europe for now.
