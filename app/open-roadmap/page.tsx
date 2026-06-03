@@ -76,18 +76,13 @@ export default async function OpenRoadmapPage() {
 
       <HomeNav />
 
-      {/* Hero */}
-      <section className="home-landing-section" aria-labelledby="roadmap-hero-heading">
+      {/* Hero (compact) */}
+      <section className="home-landing-section roadmap-hero" aria-label="Open roadmap">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             <Badge variant="brand-alt-1">Open roadmap</Badge>
-            <h1 id="roadmap-hero-heading" className="heading home-landing-section__title text-center">
-              You decide what Pancake builds next.
-            </h1>
             <p className="home-landing-section__lede text-center">
-              Upvote the squads, features, and integrations you want most — or
-              post your own. Watch ideas move from open to planned to shipped,
-              out in the open.
+              Upvote what you want next — or post your own idea.
             </p>
           </header>
         </div>
@@ -96,13 +91,13 @@ export default async function OpenRoadmapPage() {
       {/* Board */}
       <section
         id="roadmap"
-        className="home-landing-section home-landing-section--alt"
+        className="home-landing-section home-landing-section--alt roadmap-board-section"
         aria-labelledby="roadmap-board-heading"
       >
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
-          <h2 id="roadmap-board-heading" className="sr-only">
-            Roadmap ideas
-          </h2>
+          <h1 id="roadmap-board-heading" className="sr-only">
+            Pancake open roadmap
+          </h1>
           <RoadmapBoard
             initialIdeas={ideas}
             backendEnabled={backendEnabled}

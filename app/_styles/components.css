@@ -5231,6 +5231,17 @@
 
   /* ── Open roadmap (PRD-Fider-Rebuild) ─────────────────────────────── */
 
+  /* Compact hero — a small strip (badge + one line), not a full hero. */
+  .roadmap-hero {
+    padding-top: calc(2 * var(--spacing-xl));
+    padding-bottom: 0;
+  }
+
+  /* Pull the board up under the compact hero. */
+  .roadmap-board-section {
+    padding-top: calc(2 * var(--spacing-xl));
+  }
+
   .roadmap-board {
     width: 100%;
     max-width: calc(52 * var(--spacing-xl));
