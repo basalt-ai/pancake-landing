@@ -4855,6 +4855,133 @@
     }
   }
 
+  /* Five platforms don't fit with labels on a phone — collapse the toggle
+     to icon-only (each button keeps an aria-label for screen readers). */
+  @media (max-width: 640px) {
+    .influencers-toggle__btn {
+      padding: var(--spacing-md) var(--spacing-lg);
+    }
+    .influencers-toggle__label {
+      display: none;
+    }
+  }
+
+  /* Credits-or-cash explainer cards */
+  .influencers-rewards {
+    width: 100%;
+    max-width: calc(1040 / 16 * 1rem);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+  }
+
+  @media (min-width: 768px) {
+    .influencers-rewards {
+      grid-template-columns: repeat(2, 1fr);
+      align-items: start;
+    }
+  }
+
+  .influencers-reward-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    padding: calc(2 * var(--spacing-xl));
+    background-color: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius-lg);
+    corner-shape: squircle;
+  }
+
+  .influencers-reward-card--credits {
+    background: linear-gradient(
+      135deg,
+      var(--alt-weak-branded-surface-01) 0%,
+      var(--weak-branded-surface) 100%
+    );
+    border-color: var(--subtle-stroke);
+  }
+
+  .influencers-reward-card__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+  }
+
+  .influencers-reward-card__title {
+    margin: 0;
+    font-size: var(--font-size-header-04);
+  }
+
+  .influencers-reward-card__body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  .influencers-reward-ladder {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .influencers-reward-ladder__row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-md);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--subtle-stroke);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+  }
+
+  .influencers-reward-ladder__row:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .influencers-reward-ladder__cash {
+    color: var(--text);
+    font-weight: var(--font-semibold);
+  }
+
+  .influencers-reward-ladder__arrow {
+    color: var(--subtle-text);
+  }
+
+  .influencers-reward-ladder__credits {
+    margin-left: auto;
+    color: var(--interactive-text);
+    font-weight: var(--font-semibold);
+  }
+
+  .influencers-reward-card__cta {
+    align-self: flex-start;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    font-weight: var(--font-semibold);
+    color: var(--interactive-text);
+    text-decoration: none;
+  }
+
+  .influencers-reward-card__cta:hover {
+    text-decoration: underline;
+  }
+
+  .influencers-reward-card__note {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    color: var(--subtle-text);
+  }
+
   .influencers-steps {
     width: 100%;
     list-style: none;

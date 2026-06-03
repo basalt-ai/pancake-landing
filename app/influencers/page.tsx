@@ -11,6 +11,7 @@ import Link from "next/link";
 
 import { HOME_PAGE_CONTAINER_CLASS } from "@/components/sections/home/home-layout";
 import { HomeNav } from "@/components/sections/home/HomeNav";
+import { InfluencersRewards } from "@/components/sections/influencers/InfluencersRewards";
 import { InfluencersRules } from "@/components/sections/influencers/InfluencersRules";
 import { InfluencersTiers } from "@/components/sections/influencers/InfluencersTiers";
 import { Footer } from "@/components/shared/Footer";
@@ -138,9 +139,28 @@ export default function InfluencersPage() {
         </div>
       </section>
 
-      {/* How it works */}
+      {/* Credits or cash */}
       <section
         className="home-landing-section"
+        aria-labelledby="influencers-rewards-heading"
+      >
+        <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
+          <header className="home-landing-section__header">
+            <H2 id="influencers-rewards-heading" className="heading home-landing-section__title text-center">
+              Credits or cash
+            </H2>
+            <p className="home-landing-section__lede text-center">
+              You choose with each submission.
+            </p>
+          </header>
+
+          <InfluencersRewards />
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section
+        className="home-landing-section home-landing-section--alt"
         aria-labelledby="influencers-howto-heading"
       >
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
@@ -170,7 +190,7 @@ export default function InfluencersPage() {
       {/* House rules */}
       <section
         id="rules"
-        className="home-landing-section home-landing-section--alt"
+        className="home-landing-section"
         aria-labelledby="influencers-rules-heading"
       >
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
@@ -189,7 +209,7 @@ export default function InfluencersPage() {
 
       {/* Closing */}
       <section
-        className="home-landing-section"
+        className="home-landing-section home-landing-section--alt"
         aria-labelledby="influencers-closing-heading"
       >
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner home-landing-section__inner--closing`}>
