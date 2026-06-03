@@ -31,6 +31,16 @@ export type RoadmapIdea = {
   status: RoadmapStatus;
   authorName: string | null;
   voteCount: number;
+  commentCount: number;
+};
+
+/** A comment on an idea — mirrors a row of the `comments` table. */
+export type RoadmapComment = {
+  id: string;
+  ideaId: string;
+  authorName: string | null;
+  body: string;
+  createdAt: string;
 };
 
 export const TAGS: RoadmapTag[] = ["squads", "core-features", "integrations"];
@@ -85,7 +95,7 @@ export function isRoadmapStatus(value: unknown): value is RoadmapStatus {
  * Fallback seed (used only when Supabase isn't configured). Ordered by votes;
  * the board re-sorts client-side so this order is just a sensible default.
  */
-export const SEED_IDEAS: RoadmapIdea[] = [
+const SEED_IDEAS_RAW: Omit<RoadmapIdea, "commentCount">[] = [
   {
     id: "seed-ux-research-squad",
     title: "UX research squad",
@@ -187,3 +197,9 @@ export const SEED_IDEAS: RoadmapIdea[] = [
     voteCount: 12,
   },
 ];
+
+/** Preview-mode fallback has no real comments, so every seed gets count 0. */
+export const SEED_IDEAS: RoadmapIdea[] = SEED_IDEAS_RAW.map((idea) => ({
+  ...idea,
+  commentCount: 0,
+}));

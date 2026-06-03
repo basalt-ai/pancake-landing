@@ -131,6 +131,14 @@ export function RoadmapBoard({
     setIdeas((prev) => prev.map((i) => (i.id === id ? { ...i, voteCount } : i)));
   }, []);
 
+  const adjustCommentCount = useCallback((id: string, delta: number) => {
+    setIdeas((prev) =>
+      prev.map((i) =>
+        i.id === id ? { ...i, commentCount: Math.max(0, i.commentCount + delta) } : i,
+      ),
+    );
+  }, []);
+
   async function toggleVote(idea: RoadmapIdea) {
     const hasVoted = votedIds.includes(idea.id);
     const delta = hasVoted ? -1 : 1;
@@ -421,6 +429,7 @@ export function RoadmapBoard({
         onVote={() => selectedIdea && toggleVote(selectedIdea)}
         onDelete={() => selectedIdea && deleteIdea(selectedIdea)}
         onClose={() => setSelectedId(null)}
+        onCommentChange={(delta) => selectedIdea && adjustCommentCount(selectedIdea.id, delta)}
       />
     </div>
   );
@@ -484,6 +493,10 @@ function IdeaCard({
           <span className="roadmap-card__tag">{TAG_LABELS[idea.tag]}</span>
           <span aria-hidden className="roadmap-card__dot">·</span>
           <span>{idea.authorName ?? "Anonymous"}</span>
+          <span aria-hidden className="roadmap-card__dot">·</span>
+          <span>
+            {idea.commentCount} {idea.commentCount === 1 ? "comment" : "comments"}
+          </span>
           {canDelete ? (
             <>
               <span aria-hidden className="roadmap-card__dot">·</span>
