@@ -1,79 +1,90 @@
+import { LuBanknote, LuCheck, LuSparkles } from "react-icons/lu";
+
 import { Badge } from "@/components/ui/Badge";
 import { H3 } from "@/components/ui/Headings";
 
 /**
- * "Credits or cash" explainer — two cards laying out how each payout type
+ * "Credits or cash" explainer — two balanced cards on how each payout
  * works. Credits land automatically and 50% richer; cash is paid through
  * Passionfroot, which doubles as the relationship we keep with influencers
  * for future collaborations. Cash is US + Europe only for now.
  *
- * The ladder mirrors InfluencersTiers — payouts are identical across every
- * platform, so it lives here as a flat cash → credits mapping.
+ * The dollar mapping lives in InfluencersTiers directly above, so this
+ * section explains the trade-off rather than repeating the ladder.
  */
 const PASSIONFROOT_SIGNUP_URL =
   "https://workspace.passionfroot.me/signup/brand-experience";
 
-const LADDER: { cash: string; credits: string }[] = [
-  { cash: "$200 cash", credits: "$300 in credits" },
-  { cash: "$600 cash", credits: "$900 in credits" },
-  { cash: "$1,500 cash", credits: "$2,250 in credits" },
-  { cash: "$5,000 cash", credits: "$7,500 in credits" },
-  { cash: "$10,000 cash", credits: "$15,000 in credits" },
+const CREDITS_POINTS = [
+  "Every $1 in cash becomes $1.50 in credits",
+  "Applied to your account automatically",
+  "Go straight back to building on Pancake",
 ];
+
+const CASH_POINTS = [
+  "Free Passionfroot account, about a minute to set up",
+  "Money clears within 5 business days",
+  "Keeps us in touch for the next collab",
+];
+
+function PointList({ points }: { points: string[] }) {
+  return (
+    <ul className="influencers-payout__list">
+      {points.map((point) => (
+        <li key={point} className="influencers-payout__point">
+          <LuCheck size={16} aria-hidden className="influencers-payout__check" />
+          <span>{point}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export function InfluencersRewards() {
   return (
-    <div className="influencers-rewards" role="region" aria-label="Credits or cash">
-      <div className="influencers-reward-card influencers-reward-card--credits">
-        <div className="influencers-reward-card__head">
-          <H3 className="heading influencers-reward-card__title">Pancake credits</H3>
-          <Badge variant="brand-alt-1">50% more with credits</Badge>
+    <div className="influencers-payout" role="region" aria-label="Credits or cash">
+      <div className="influencers-payout__card influencers-payout__card--credits">
+        <span className="influencers-payout__icon" aria-hidden>
+          <LuSparkles size={20} />
+        </span>
+        <div className="influencers-payout__head">
+          <H3 className="heading influencers-payout__title">Pancake credits</H3>
+          <Badge variant="brand-alt-1">50% richer</Badge>
         </div>
-        <p className="influencers-reward-card__body">
-          We add 1.5&times; the cash equivalent straight to your Pancake account.
-          More tasks, more automations, more AI employee time. Automatic. No
-          strings.
+        <p className="influencers-payout__lead">
+          Take your reward in credits and it lands worth half again as much:
+          more agents running, more automations, more work out the door.
         </p>
-        <ul className="influencers-reward-ladder">
-          {LADDER.map((row) => (
-            <li key={row.cash} className="influencers-reward-ladder__row">
-              <span className="influencers-reward-ladder__cash">{row.cash}</span>
-              <span aria-hidden className="influencers-reward-ladder__arrow">
-                &rarr;
-              </span>
-              <span className="influencers-reward-ladder__credits">
-                {row.credits}
-              </span>
-            </li>
-          ))}
-        </ul>
+        <PointList points={CREDITS_POINTS} />
+        <p className="influencers-payout__foot">No invoice, no waiting.</p>
       </div>
 
-      <div className="influencers-reward-card influencers-reward-card--cash">
-        <div className="influencers-reward-card__head">
-          <H3 className="heading influencers-reward-card__title">Cash</H3>
-          <Badge variant="neutral">Paid through Passionfroot</Badge>
+      <div className="influencers-payout__card influencers-payout__card--cash">
+        <span className="influencers-payout__icon influencers-payout__icon--neutral" aria-hidden>
+          <LuBanknote size={20} />
+        </span>
+        <div className="influencers-payout__head">
+          <H3 className="heading influencers-payout__title">Cash</H3>
+          <Badge variant="neutral">via Passionfroot</Badge>
         </div>
-        <p className="influencers-reward-card__body">
-          Create a free Passionfroot account — it takes about a minute — add your
-          payout details, and get paid within 5 business days. No invoicing.
+        <p className="influencers-payout__lead">
+          Rather have it in the bank? We pay out through Passionfroot — quick to
+          set up, with none of the invoicing on your side.
         </p>
-        <p className="influencers-reward-card__body">
-          It also keeps the door open for future collaborations: we keep a tight
-          circle with Pancake influencers, and Passionfroot is how we stay in
-          touch.
-        </p>
-        <a
-          href={PASSIONFROOT_SIGNUP_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="influencers-reward-card__cta"
-        >
-          Create your Passionfroot account &rarr;
-        </a>
-        <p className="influencers-reward-card__note">
-          Cash payouts are available in the US and Europe for now.
-        </p>
+        <PointList points={CASH_POINTS} />
+        <div className="influencers-payout__foot-group">
+          <a
+            href={PASSIONFROOT_SIGNUP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="influencers-payout__cta"
+          >
+            Set up Passionfroot &rarr;
+          </a>
+          <p className="influencers-payout__note">
+            Cash payouts are in the US and Europe for now.
+          </p>
+        </div>
       </div>
     </div>
   );

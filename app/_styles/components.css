@@ -4866,8 +4866,8 @@
     }
   }
 
-  /* Credits-or-cash explainer cards */
-  .influencers-rewards {
+  /* Credits-or-cash explainer — two balanced cards */
+  .influencers-payout {
     width: 100%;
     max-width: calc(1040 / 16 * 1rem);
     display: grid;
@@ -4876,13 +4876,13 @@
   }
 
   @media (min-width: 768px) {
-    .influencers-rewards {
+    .influencers-payout {
       grid-template-columns: repeat(2, 1fr);
-      align-items: start;
+      align-items: stretch;
     }
   }
 
-  .influencers-reward-card {
+  .influencers-payout__card {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-lg);
@@ -4893,29 +4893,43 @@
     corner-shape: squircle;
   }
 
-  .influencers-reward-card--credits {
-    background: linear-gradient(
-      135deg,
-      var(--alt-weak-branded-surface-01) 0%,
-      var(--weak-branded-surface) 100%
-    );
-    border-color: var(--subtle-stroke);
+  /* Credits is the richer option, so it gets a soft brand tint to nudge
+     toward it — gentler than a full gradient block. */
+  .influencers-payout__card--credits {
+    background-color: var(--weak-branded-surface);
+    border-color: var(--strong-branded-surface);
   }
 
-  .influencers-reward-card__head {
+  .influencers-payout__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--spacing-xxl) + var(--spacing-md));
+    height: calc(var(--spacing-xxl) + var(--spacing-md));
+    border-radius: var(--radius-sm);
+    corner-shape: squircle;
+    background-color: var(--strong-branded-surface);
+    color: var(--text);
+  }
+
+  .influencers-payout__icon--neutral {
+    background-color: var(--alt-surface);
+    color: var(--subtle-text);
+  }
+
+  .influencers-payout__head {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
     gap: var(--spacing-md);
   }
 
-  .influencers-reward-card__title {
+  .influencers-payout__title {
     margin: 0;
     font-size: var(--font-size-header-04);
   }
 
-  .influencers-reward-card__body {
+  .influencers-payout__lead {
     margin: 0;
     font-family: var(--font-body);
     font-size: var(--font-size-body-regular);
@@ -4923,46 +4937,51 @@
     color: var(--text);
   }
 
-  .influencers-reward-ladder {
+  .influencers-payout__list {
     list-style: none;
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-md);
   }
 
-  .influencers-reward-ladder__row {
+  .influencers-payout__point {
     display: flex;
-    align-items: baseline;
+    align-items: flex-start;
     gap: var(--spacing-md);
-    padding-top: var(--spacing-lg);
-    border-top: 1px solid var(--subtle-stroke);
     font-family: var(--font-body);
     font-size: var(--font-size-body-regular);
-  }
-
-  .influencers-reward-ladder__row:first-child {
-    padding-top: 0;
-    border-top: 0;
-  }
-
-  .influencers-reward-ladder__cash {
+    line-height: 1.45;
     color: var(--text);
-    font-weight: var(--font-semibold);
   }
 
-  .influencers-reward-ladder__arrow {
+  .influencers-payout__check {
+    flex-shrink: 0;
+    margin-top: calc(var(--spacing-xs) + 1px);
+    color: var(--interactive-text);
+  }
+
+  /* Footers pin to the bottom so both cards line up despite different
+     body lengths. */
+  .influencers-payout__foot {
+    margin: 0;
+    margin-top: auto;
+    padding-top: var(--spacing-md);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
     color: var(--subtle-text);
   }
 
-  .influencers-reward-ladder__credits {
-    margin-left: auto;
-    color: var(--interactive-text);
-    font-weight: var(--font-semibold);
+  .influencers-payout__foot-group {
+    margin-top: auto;
+    padding-top: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
   }
 
-  .influencers-reward-card__cta {
+  .influencers-payout__cta {
     align-self: flex-start;
     font-family: var(--font-body);
     font-size: var(--font-size-body-regular);
@@ -4971,11 +4990,11 @@
     text-decoration: none;
   }
 
-  .influencers-reward-card__cta:hover {
+  .influencers-payout__cta:hover {
     text-decoration: underline;
   }
 
-  .influencers-reward-card__note {
+  .influencers-payout__note {
     margin: 0;
     font-family: var(--font-body);
     font-size: var(--font-size-body-small);

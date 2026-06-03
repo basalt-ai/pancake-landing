@@ -147,10 +147,10 @@ export default function InfluencersPage() {
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             <H2 id="influencers-rewards-heading" className="heading home-landing-section__title text-center">
-              Credits or cash
+              Two ways to get paid
             </H2>
             <p className="home-landing-section__lede text-center">
-              You choose with each submission.
+              Credits or cash — your call, every post.
             </p>
           </header>
 
