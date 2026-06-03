@@ -1,43 +1,42 @@
 /**
- * /creators — the Pancake Creator Program.
+ * /influencers — the Pancake Influencer Program.
  *
- * Show off your AI cofounder, get cash, Pancake credits (50% richer),
- * or an escalating ladder of surprise gifts (founder joke → pancakes
- * to your office → 1-star Michelin dinner → Thermomix). Structure
- * intentionally diverges from comparable creator pages: no application
- * form, no platform-by-platform tables — one toggle (X / LinkedIn),
- * one ladder, no gate.
+ * Show off your Pancake, get cash or Pancake credits (50% richer).
+ * Structure intentionally diverges from comparable influencer pages: no
+ * application form, no platform-by-platform tables — one toggle
+ * (X / LinkedIn), one ladder, no gate.
  */
 import type { Metadata } from "next";
 import Link from "next/link";
 
 import { HOME_PAGE_CONTAINER_CLASS } from "@/components/sections/home/home-layout";
 import { HomeNav } from "@/components/sections/home/HomeNav";
-import { CreatorsRules } from "@/components/sections/creators/CreatorsRules";
-import { CreatorsTiers } from "@/components/sections/creators/CreatorsTiers";
+import { InfluencersRewards } from "@/components/sections/influencers/InfluencersRewards";
+import { InfluencersRules } from "@/components/sections/influencers/InfluencersRules";
+import { InfluencersTiers } from "@/components/sections/influencers/InfluencersTiers";
 import { Footer } from "@/components/shared/Footer";
 import { Badge } from "@/components/ui/Badge";
 import { H2, H3 } from "@/components/ui/Headings";
 
 export const metadata: Metadata = {
-  title: "Creator Program — Post a Pancake, get cash or a Thermomix · Pancake",
+  title: "Influencer Program — Post a Pancake, get cash or credits · Pancake",
   description:
-    "Show what your AI cofounder is doing. Get cash, Pancake credits (50% richer), or surprise gifts from a bad-joke phone call all the way up to a Thermomix.",
-  alternates: { canonical: "https://www.getpancake.ai/creators" },
+    "Show what your Pancake is doing on X or LinkedIn. Get paid in cash or Pancake credits (50% richer). No application form.",
+  alternates: { canonical: "https://www.getpancake.ai/influencers" },
   openGraph: {
     type: "website",
-    url: "https://www.getpancake.ai/creators",
-    title: "Pancake Creator Program — Post a Pancake, get cash or a Thermomix",
+    url: "https://www.getpancake.ai/influencers",
+    title: "Pancake Influencer Program — Post a Pancake, get cash or credits",
     description:
-      "Cash, credits (50% richer), or an escalating ladder of surprise gifts: founder joke → pancakes to your office → Michelin dinner → Thermomix.",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake Creator Program" }],
+      "Post about Pancake on X or LinkedIn and get paid in cash or credits (50% richer). No application form.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake Influencer Program" }],
     siteName: "Pancake",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pancake Creator Program — Post a Pancake, get cash or a Thermomix",
+    title: "Pancake Influencer Program — Post a Pancake, get cash or credits",
     description:
-      "Cash, credits, or a ladder of stupid gifts. Top tier: an actual Thermomix.",
+      "Post about Pancake, get paid in cash or credits (50% richer). No application form.",
     images: ["/og-image.png"],
   },
 };
@@ -60,18 +59,18 @@ const steps = [
   },
   {
     n: "04",
-    title: "Get the goods",
-    body: "Cash sent or credits applied instantly. Surprises shipped: phone call, pancakes, a Michelin reservation, or a kitchen robot.",
+    title: "Get paid",
+    body: "Pick your reward: cash sent or credits applied instantly.",
   },
 ];
 
-const creatorProgramJsonLd = {
+const influencerProgramJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "Pancake Creator Program",
-  url: "https://www.getpancake.ai/creators",
+  name: "Pancake Influencer Program",
+  url: "https://www.getpancake.ai/influencers",
   description:
-    "Earn cash, Pancake credits (50% richer), or surprise gifts (up to a Thermomix TM6) by posting about Pancake on X or LinkedIn.",
+    "Earn cash or Pancake credits (50% richer) by posting about Pancake on X or LinkedIn.",
   isPartOf: {
     "@type": "WebSite",
     name: "Pancake",
@@ -79,42 +78,41 @@ const creatorProgramJsonLd = {
   },
 };
 
-export default function CreatorsPage() {
+export default function InfluencersPage() {
   return (
-    <main id="main-content" className="creators-page min-h-screen">
+    <main id="main-content" className="influencers-page min-h-screen">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(creatorProgramJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(influencerProgramJsonLd) }}
       />
 
       <HomeNav />
 
       {/* Hero */}
-      <section className="home-landing-section" aria-labelledby="creators-hero-heading">
+      <section className="home-landing-section" aria-labelledby="influencers-hero-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
-            <Badge variant="brand-alt-1">Creator Program</Badge>
+            <Badge variant="brand-alt-1">Influencer Program</Badge>
             <h1
-              id="creators-hero-heading"
+              id="influencers-hero-heading"
               className="heading home-landing-section__title text-center"
             >
-              Post a Pancake.<br />Get cash… or a Thermomix.
+              Post a Pancake.<br />Get paid.
             </h1>
             <p className="home-landing-section__lede text-center">
-              Show the internet what your AI cofounder is doing. We pay you back
-              in cash, credits (50% richer) — or a ladder of increasingly
-              suspicious gifts.
+              Show the internet what your Pancake is doing. We pay you back
+              in cash — or credits, which land 50% richer.
             </p>
           </header>
-          <div className="creators-hero__cta">
+          <div className="influencers-hero__cta">
             <a
               href="#prizes"
               className="button inline-flex w-fit shrink-0 items-center justify-center no-underline"
               data-size="lg"
             >
-              Show me the prizes
+              Show me the payouts
             </a>
-            <p className="creators-hero__cta-note">
+            <p className="influencers-hero__cta-note">
               There&apos;s no application form. That&apos;s the whole bit.
             </p>
           </div>
@@ -125,44 +123,63 @@ export default function CreatorsPage() {
       <section
         id="prizes"
         className="home-landing-section home-landing-section--alt"
-        aria-labelledby="creators-tiers-heading"
+        aria-labelledby="influencers-tiers-heading"
       >
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
-            <H2 id="creators-tiers-heading" className="heading home-landing-section__title text-center">
+            <H2 id="influencers-tiers-heading" className="heading home-landing-section__title text-center">
               How big you go = what you get
             </H2>
             <p className="home-landing-section__lede text-center">
-              Each post, pick one: take the credits, or take the surprise.
+              Each post, pick one: take the cash, or take the credits.
             </p>
           </header>
 
-          <CreatorsTiers />
+          <InfluencersTiers />
+        </div>
+      </section>
+
+      {/* Credits or cash */}
+      <section
+        className="home-landing-section"
+        aria-labelledby="influencers-rewards-heading"
+      >
+        <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
+          <header className="home-landing-section__header">
+            <H2 id="influencers-rewards-heading" className="heading home-landing-section__title text-center">
+              Two ways to get paid
+            </H2>
+            <p className="home-landing-section__lede text-center">
+              Credits or cash — your call, every post.
+            </p>
+          </header>
+
+          <InfluencersRewards />
         </div>
       </section>
 
       {/* How it works */}
       <section
-        className="home-landing-section"
-        aria-labelledby="creators-howto-heading"
+        className="home-landing-section home-landing-section--alt"
+        aria-labelledby="influencers-howto-heading"
       >
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
-            <H2 id="creators-howto-heading" className="heading home-landing-section__title text-center">
+            <H2 id="influencers-howto-heading" className="heading home-landing-section__title text-center">
               Four steps. No paperwork.
             </H2>
             <p className="home-landing-section__lede text-center">
-              From screenshot to surprise in about eight days.
+              From screenshot to payout in about eight days.
             </p>
           </header>
 
-          <ol className="creators-steps">
+          <ol className="influencers-steps">
             {steps.map((s) => (
-              <li key={s.n} className="creators-step">
-                <span className="creators-step__num">{s.n}</span>
+              <li key={s.n} className="influencers-step">
+                <span className="influencers-step__num">{s.n}</span>
                 <div>
-                  <H3 className="heading creators-step__title">{s.title}</H3>
-                  <p className="creators-step__body">{s.body}</p>
+                  <H3 className="heading influencers-step__title">{s.title}</H3>
+                  <p className="influencers-step__body">{s.body}</p>
                 </div>
               </li>
             ))}
@@ -173,12 +190,12 @@ export default function CreatorsPage() {
       {/* House rules */}
       <section
         id="rules"
-        className="home-landing-section home-landing-section--alt"
-        aria-labelledby="creators-rules-heading"
+        className="home-landing-section"
+        aria-labelledby="influencers-rules-heading"
       >
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
-            <H2 id="creators-rules-heading" className="heading home-landing-section__title text-center">
+            <H2 id="influencers-rules-heading" className="heading home-landing-section__title text-center">
               House rules
             </H2>
             <p className="home-landing-section__lede text-center">
@@ -186,18 +203,18 @@ export default function CreatorsPage() {
             </p>
           </header>
 
-          <CreatorsRules />
+          <InfluencersRules />
         </div>
       </section>
 
       {/* Closing */}
       <section
-        className="home-landing-section"
-        aria-labelledby="creators-closing-heading"
+        className="home-landing-section home-landing-section--alt"
+        aria-labelledby="influencers-closing-heading"
       >
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner home-landing-section__inner--closing`}>
           <h2
-            id="creators-closing-heading"
+            id="influencers-closing-heading"
             className="heading home-landing-section__closing-title text-center"
           >
             Your turn.

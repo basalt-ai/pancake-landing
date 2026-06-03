@@ -30,7 +30,7 @@ const socials = [
 const navLinks = [
   { href: "/pricing", label: "Pricing" },
   { href: "/blog", label: "Blog" },
-  { href: "/creators", label: "Creators" },
+  { href: "/influencers", label: "Influencers" },
   { href: "/open-roadmap", label: "Roadmap" },
 ];
 

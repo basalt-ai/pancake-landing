@@ -25,6 +25,7 @@ const nextConfig = {
     ];
     return [
       { source: "/favicon.ico", destination: "/icon.png", permanent: false },
+      { source: "/creators", destination: "/influencers", permanent: true },
       ...dead.map((path) => ({
         source: `/${path}`,
         destination: "/",

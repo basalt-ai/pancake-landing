@@ -1,3 +1,4 @@
+import { HomeDemoVideo } from "@/components/sections/home/HomeDemoVideo";
 import { HomeHero } from "@/components/sections/home/HomeHero";
 import { HomeLandingBody } from "@/components/sections/home/HomeLandingBody";
 import { HomeNav } from "@/components/sections/home/HomeNav";
@@ -36,6 +37,7 @@ export default function Home() {
       />
       <HomeNav />
       <HomeHero />
+      <HomeDemoVideo />
       <HomeLandingBody />
       <Footer />
     </main>

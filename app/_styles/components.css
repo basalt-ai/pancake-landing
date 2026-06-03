@@ -653,6 +653,95 @@
   }
 
   /**
+   * Product demo video below the hero (à la monaco.com). Wide, near-bleed 16:9
+   * player with rounded corners and no chrome frame; a centered play button
+   * overlays the poster until first play. Powers `HomeDemoVideo`.
+   */
+  .home-demo-video {
+    width: 100%;
+    background-color: var(--surface);
+    padding-top: var(--spacing-xxl);
+    padding-bottom: var(--spacing-xxl);
+  }
+
+  .home-demo-video__wrap {
+    width: 100%;
+    max-width: 1600px;
+    margin-inline: auto;
+    padding-inline: var(--spacing-xxl);
+  }
+
+  .home-demo-video__frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+  }
+
+  .home-demo-video__player {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Centered play button overlay — hidden once playback starts. */
+  .home-demo-video__play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(64px, 6vw, 96px);
+    height: clamp(64px, 6vw, 96px);
+    padding: 0;
+    border: none;
+    border-radius: 9999px;
+    background-color: rgba(20, 0, 18, 0.42);
+    color: #fff;
+    cursor: pointer;
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    transition: background-color 140ms ease, transform 140ms ease;
+  }
+
+  .home-demo-video__play:hover {
+    background-color: rgba(20, 0, 18, 0.62);
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+
+  .home-demo-video__play:focus-visible {
+    outline: 3px solid var(--surface);
+    outline-offset: 3px;
+  }
+
+  .home-demo-video__play svg {
+    width: 42%;
+    height: 42%;
+    margin-left: 8%;
+    fill: currentColor;
+  }
+
+  @media (max-width: 640px) {
+    .home-demo-video {
+      padding-top: var(--spacing-xl);
+      padding-bottom: var(--spacing-xl);
+    }
+
+    .home-demo-video__wrap {
+      padding-inline: var(--spacing-xl);
+    }
+
+    .home-demo-video__play {
+      width: 56px;
+      height: 56px;
+    }
+  }
+
+  /**
    * Home landing below hero — Figma `428:14366` (`-> V0.3`). Org block `428:14926` = `HomeOrgDiagram` (HTML).
    * Other rasters: `public/home-landing-*.png` (`npm run figma:export-landing` + token). Does not modify `.home-hero`.
    */
@@ -4694,16 +4783,16 @@
     }
   }
 
-  /* === /creators — Creator Program page ============================ */
+  /* === /influencers — Influencer Program page ====================== */
 
-  .creators-hero__cta {
+  .influencers-hero__cta {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--spacing-lg);
   }
 
-  .creators-hero__cta-note {
+  .influencers-hero__cta-note {
     margin: 0;
     color: var(--subtle-text);
     font-family: var(--font-body);
@@ -4711,7 +4800,7 @@
   }
 
   /* X / LinkedIn toggle */
-  .creators-toggle {
+  .influencers-toggle {
     display: inline-flex;
     align-self: center;
     padding: var(--spacing-xs);
@@ -4722,7 +4811,7 @@
     gap: var(--spacing-xs);
   }
 
-  .creators-toggle__btn {
+  .influencers-toggle__btn {
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-md);
@@ -4739,13 +4828,13 @@
     transition: background-color 160ms ease, color 160ms ease;
   }
 
-  .creators-toggle__btn[data-active] {
+  .influencers-toggle__btn[data-active] {
     background-color: var(--surface);
     color: var(--text);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   }
 
-  .creators-tiers {
+  .influencers-tiers {
     width: 100%;
     max-width: calc(1040 / 16 * 1rem);
     display: flex;
@@ -4753,7 +4842,7 @@
     gap: var(--spacing-lg);
   }
 
-  .creators-tiers__table {
+  .influencers-tiers__table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
@@ -4765,15 +4854,15 @@
     font-family: var(--font-body);
   }
 
-  .creators-tiers__table th,
-  .creators-tiers__table td {
+  .influencers-tiers__table th,
+  .influencers-tiers__table td {
     padding: var(--spacing-xl);
     text-align: left;
     font-size: var(--font-size-body-regular);
     border-bottom: 1px solid var(--subtle-stroke);
   }
 
-  .creators-tiers__table thead th {
+  .influencers-tiers__table thead th {
     background-color: var(--alt-surface);
     font-family: var(--font-display);
     font-weight: var(--font-semibold);
@@ -4783,29 +4872,29 @@
     color: var(--subtle-text);
   }
 
-  .creators-tiers__table tbody th {
+  .influencers-tiers__table tbody th {
     font-family: var(--font-display);
     font-weight: var(--font-semibold);
   }
 
-  .creators-tiers__table tbody tr:last-child th,
-  .creators-tiers__table tbody tr:last-child td {
+  .influencers-tiers__table tbody tr:last-child th,
+  .influencers-tiers__table tbody tr:last-child td {
     border-bottom: 0;
   }
 
-  .creators-tiers__credits {
+  .influencers-tiers__credits {
     color: var(--interactive-text);
     font-weight: var(--font-semibold);
   }
 
-  .creators-tiers__cash {
+  .influencers-tiers__cash {
     color: var(--text);
     font-weight: var(--font-semibold);
   }
 
-  /* Thin spacer column between Credits and Surprise, holding an "or" pill
+  /* Thin spacer column between Cash and Credits, holding an "or" pill
      in each row so the table reads as a choice, not a bundle. */
-  .creators-tiers__or-col {
+  .influencers-tiers__or-col {
     width: calc(2 * var(--spacing-xxl));
     padding: 0 !important;
     text-align: center;
@@ -4814,7 +4903,7 @@
     border-bottom-color: transparent !important;
   }
 
-  .creators-tiers__or {
+  .influencers-tiers__or {
     display: inline-block;
     padding: var(--spacing-xs) var(--spacing-md);
     background-color: var(--alt-surface);
@@ -4829,17 +4918,17 @@
   }
 
   @media (max-width: 640px) {
-    .creators-tiers__or-col {
+    .influencers-tiers__or-col {
       width: var(--spacing-xl);
     }
-    .creators-tiers__or {
+    .influencers-tiers__or {
       padding: 0;
       background-color: transparent;
       border: 0;
     }
   }
 
-  .creators-tiers__note {
+  .influencers-tiers__note {
     margin: 0;
     font-family: var(--font-body);
     font-size: var(--font-size-body-small);
@@ -4848,14 +4937,160 @@
   }
 
   @media (max-width: 640px) {
-    .creators-tiers__table th,
-    .creators-tiers__table td {
+    .influencers-tiers__table th,
+    .influencers-tiers__table td {
       padding: var(--spacing-lg);
       font-size: var(--font-size-body-small);
     }
   }
 
-  .creators-steps {
+  /* Five platforms don't fit with labels on a phone — collapse the toggle
+     to icon-only (each button keeps an aria-label for screen readers). */
+  @media (max-width: 640px) {
+    .influencers-toggle__btn {
+      padding: var(--spacing-md) var(--spacing-lg);
+    }
+    .influencers-toggle__label {
+      display: none;
+    }
+  }
+
+  /* Credits-or-cash explainer — two balanced cards */
+  .influencers-payout {
+    width: 100%;
+    max-width: calc(1040 / 16 * 1rem);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+  }
+
+  @media (min-width: 768px) {
+    .influencers-payout {
+      grid-template-columns: repeat(2, 1fr);
+      align-items: stretch;
+    }
+  }
+
+  .influencers-payout__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    padding: calc(2 * var(--spacing-xl));
+    background-color: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius-lg);
+    corner-shape: squircle;
+  }
+
+  /* Credits is the richer option, so it gets a soft brand tint to nudge
+     toward it — gentler than a full gradient block. */
+  .influencers-payout__card--credits {
+    background-color: var(--weak-branded-surface);
+    border-color: var(--strong-branded-surface);
+  }
+
+  .influencers-payout__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--spacing-xxl) + var(--spacing-md));
+    height: calc(var(--spacing-xxl) + var(--spacing-md));
+    border-radius: var(--radius-sm);
+    corner-shape: squircle;
+    background-color: var(--strong-branded-surface);
+    color: var(--text);
+  }
+
+  .influencers-payout__icon--neutral {
+    background-color: var(--alt-surface);
+    color: var(--subtle-text);
+  }
+
+  .influencers-payout__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .influencers-payout__title {
+    margin: 0;
+    font-size: var(--font-size-header-04);
+  }
+
+  .influencers-payout__lead {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  .influencers-payout__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .influencers-payout__point {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    line-height: 1.45;
+    color: var(--text);
+  }
+
+  .influencers-payout__check {
+    flex-shrink: 0;
+    margin-top: calc(var(--spacing-xs) + 1px);
+    color: var(--interactive-text);
+  }
+
+  /* Footers pin to the bottom so both cards line up despite different
+     body lengths. */
+  .influencers-payout__foot {
+    margin: 0;
+    margin-top: auto;
+    padding-top: var(--spacing-md);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    color: var(--subtle-text);
+  }
+
+  .influencers-payout__foot-group {
+    margin-top: auto;
+    padding-top: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .influencers-payout__cta {
+    align-self: flex-start;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    font-weight: var(--font-semibold);
+    color: var(--interactive-text);
+    text-decoration: none;
+  }
+
+  .influencers-payout__cta:hover {
+    text-decoration: underline;
+  }
+
+  .influencers-payout__note {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    color: var(--subtle-text);
+  }
+
+  .influencers-steps {
     width: 100%;
     list-style: none;
     margin: 0;
@@ -4866,12 +5101,12 @@
   }
 
   @media (min-width: 768px) {
-    .creators-steps {
+    .influencers-steps {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  .creators-step {
+  .influencers-step {
     display: flex;
     align-items: flex-start;
     gap: var(--spacing-xl);
@@ -4882,7 +5117,7 @@
     corner-shape: squircle;
   }
 
-  .creators-step__num {
+  .influencers-step__num {
     flex-shrink: 0;
     font-family: var(--font-display);
     font-size: var(--font-size-header-02);
@@ -4892,12 +5127,12 @@
     letter-spacing: -0.905px;
   }
 
-  .creators-step__title {
+  .influencers-step__title {
     margin: 0 0 var(--spacing-md) 0;
     font-size: var(--font-size-header-04);
   }
 
-  .creators-step__body {
+  .influencers-step__body {
     margin: 0;
     font-family: var(--font-body);
     font-size: var(--font-size-body-regular);
@@ -4905,7 +5140,7 @@
     color: var(--text);
   }
 
-  .creators-rules-block {
+  .influencers-rules-block {
     width: 100%;
     max-width: calc(1040 / 16 * 1rem);
     display: flex;
@@ -4913,19 +5148,19 @@
     gap: calc(2 * var(--spacing-xl));
   }
 
-  .creators-rules-grid {
+  .influencers-rules-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--spacing-xl);
   }
 
   @media (min-width: 768px) {
-    .creators-rules-grid {
+    .influencers-rules-grid {
       grid-template-columns: repeat(3, 1fr);
     }
   }
 
-  .creators-rules-col {
+  .influencers-rules-col {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xl);
@@ -4936,7 +5171,7 @@
     corner-shape: squircle;
   }
 
-  .creators-rules-col__chip {
+  .influencers-rules-col__chip {
     align-self: flex-start;
     padding: var(--spacing-xs) var(--spacing-lg);
     border-radius: 999px;
@@ -4946,19 +5181,19 @@
     color: var(--text);
   }
 
-  .creators-rules-col__chip[data-tone="brand"] {
+  .influencers-rules-col__chip[data-tone="brand"] {
     background-color: var(--weak-branded-surface);
   }
 
-  .creators-rules-col__chip[data-tone="brand-alt-1"] {
+  .influencers-rules-col__chip[data-tone="brand-alt-1"] {
     background-color: var(--alt-weak-branded-surface-01);
   }
 
-  .creators-rules-col__chip[data-tone="brand-alt-2"] {
+  .influencers-rules-col__chip[data-tone="brand-alt-2"] {
     background-color: var(--alt-weak-branded-surface-02);
   }
 
-  .creators-rules-col__list {
+  .influencers-rules-col__list {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -4967,7 +5202,7 @@
     gap: var(--spacing-lg);
   }
 
-  .creators-rules-col__item {
+  .influencers-rules-col__item {
     display: flex;
     align-items: flex-start;
     gap: var(--spacing-lg);
@@ -4977,11 +5212,11 @@
     color: var(--text);
   }
 
-  .creators-rules-col__item[data-highlight] {
+  .influencers-rules-col__item[data-highlight] {
     font-weight: var(--font-semibold);
   }
 
-  .creators-rules-col__dot {
+  .influencers-rules-col__dot {
     flex-shrink: 0;
     margin-top: calc(var(--spacing-sm) + var(--spacing-xs));
     width: var(--spacing-md);
@@ -4990,7 +5225,7 @@
     background-color: var(--strong-branded-surface);
   }
 
-  .creators-rules-col__item[data-highlight] .creators-rules-col__dot {
+  .influencers-rules-col__item[data-highlight] .influencers-rules-col__dot {
     background-color: var(--interactive-text);
   }
 
