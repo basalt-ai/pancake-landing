@@ -4944,6 +4944,152 @@
     }
   }
 
+  /* Five platforms don't fit with labels on a phone — collapse the toggle
+     to icon-only (each button keeps an aria-label for screen readers). */
+  @media (max-width: 640px) {
+    .influencers-toggle__btn {
+      padding: var(--spacing-md) var(--spacing-lg);
+    }
+    .influencers-toggle__label {
+      display: none;
+    }
+  }
+
+  /* Credits-or-cash explainer — two balanced cards */
+  .influencers-payout {
+    width: 100%;
+    max-width: calc(1040 / 16 * 1rem);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+  }
+
+  @media (min-width: 768px) {
+    .influencers-payout {
+      grid-template-columns: repeat(2, 1fr);
+      align-items: stretch;
+    }
+  }
+
+  .influencers-payout__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    padding: calc(2 * var(--spacing-xl));
+    background-color: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius-lg);
+    corner-shape: squircle;
+  }
+
+  /* Credits is the richer option, so it gets a soft brand tint to nudge
+     toward it — gentler than a full gradient block. */
+  .influencers-payout__card--credits {
+    background-color: var(--weak-branded-surface);
+    border-color: var(--strong-branded-surface);
+  }
+
+  .influencers-payout__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--spacing-xxl) + var(--spacing-md));
+    height: calc(var(--spacing-xxl) + var(--spacing-md));
+    border-radius: var(--radius-sm);
+    corner-shape: squircle;
+    background-color: var(--strong-branded-surface);
+    color: var(--text);
+  }
+
+  .influencers-payout__icon--neutral {
+    background-color: var(--alt-surface);
+    color: var(--subtle-text);
+  }
+
+  .influencers-payout__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .influencers-payout__title {
+    margin: 0;
+    font-size: var(--font-size-header-04);
+  }
+
+  .influencers-payout__lead {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  .influencers-payout__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .influencers-payout__point {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    line-height: 1.45;
+    color: var(--text);
+  }
+
+  .influencers-payout__check {
+    flex-shrink: 0;
+    margin-top: calc(var(--spacing-xs) + 1px);
+    color: var(--interactive-text);
+  }
+
+  /* Footers pin to the bottom so both cards line up despite different
+     body lengths. */
+  .influencers-payout__foot {
+    margin: 0;
+    margin-top: auto;
+    padding-top: var(--spacing-md);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    color: var(--subtle-text);
+  }
+
+  .influencers-payout__foot-group {
+    margin-top: auto;
+    padding-top: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .influencers-payout__cta {
+    align-self: flex-start;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    font-weight: var(--font-semibold);
+    color: var(--interactive-text);
+    text-decoration: none;
+  }
+
+  .influencers-payout__cta:hover {
+    text-decoration: underline;
+  }
+
+  .influencers-payout__note {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    color: var(--subtle-text);
+  }
+
   .influencers-steps {
     width: 100%;
     list-style: none;
