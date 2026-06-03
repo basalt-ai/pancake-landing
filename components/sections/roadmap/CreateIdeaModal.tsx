@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
+import { useModalA11y } from "@/components/sections/roadmap/useModalA11y";
 import {
   TAGS,
   TAG_LABELS,
@@ -35,24 +36,15 @@ export function CreateIdeaModal({ open, defaultTag, onClose, onCreated }: Props)
   const [error, setError] = useState<string | null>(null);
   const titleRef = useRef<HTMLInputElement>(null);
 
-  // Reset + focus on open; reflect the active tab as the default category.
+  // Focus trap, scroll lock, Escape, and focus return.
+  const panelRef = useModalA11y(open, onClose, titleRef);
+
+  // Reset the category to the active tab + clear errors each time it opens.
   useEffect(() => {
     if (!open) return;
     setTag(defaultTag);
     setError(null);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const t = window.setTimeout(() => titleRef.current?.focus(), 50);
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
-      window.clearTimeout(t);
-    };
-  }, [open, defaultTag, onClose]);
+  }, [open, defaultTag]);
 
   if (!open) return null;
 
@@ -105,7 +97,7 @@ export function CreateIdeaModal({ open, defaultTag, onClose, onCreated }: Props)
       aria-labelledby="roadmap-modal-title"
     >
       <div className="roadmap-modal__backdrop" aria-hidden onClick={onClose} />
-      <div className="roadmap-modal__panel">
+      <div className="roadmap-modal__panel" ref={panelRef} tabIndex={-1}>
         <div className="roadmap-modal__head">
           <h2 id="roadmap-modal-title" className="heading roadmap-modal__title">
             Share an idea

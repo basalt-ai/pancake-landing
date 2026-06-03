@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { CreateIdeaModal } from "@/components/sections/roadmap/CreateIdeaModal";
+import { IdeaDetailModal } from "@/components/sections/roadmap/IdeaDetailModal";
 import {
   ROADMAP_TABS,
   STATUS_META,
@@ -17,6 +18,9 @@ import {
 
 const VOTES_STORAGE_KEY = "pancake-roadmap-votes";
 const VOTER_TOKEN_KEY = "pancake-roadmap-voter";
+const ADMIN_CHECK_KEY = "pancake-roadmap-admin-check";
+/** Ideas shown per page; "Show more" reveals another batch. */
+const PAGE_SIZE = 15;
 
 type Props = {
   initialIdeas: RoadmapIdea[];
@@ -26,6 +30,8 @@ type Props = {
   isAdmin: boolean;
   /** True when an admin password is configured (shows the sign-in affordance). */
   adminAuthEnabled: boolean;
+  /** True when the server fetch hit its row cap (more ideas exist than loaded). */
+  truncated?: boolean;
 };
 
 function CaretUpIcon() {
@@ -62,14 +68,22 @@ function getVoterToken(): string {
   }
 }
 
-export function RoadmapBoard({ initialIdeas, backendEnabled, isAdmin, adminAuthEnabled }: Props) {
+export function RoadmapBoard({
+  initialIdeas,
+  backendEnabled,
+  isAdmin,
+  adminAuthEnabled,
+  truncated = false,
+}: Props) {
   const router = useRouter();
   const [ideas, setIdeas] = useState<RoadmapIdea[]>(initialIdeas);
   const [activeTab, setActiveTab] = useState<RoadmapTab>("all");
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [votedIds, setVotedIds] = useState<string[]>([]);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [notice, setNotice] = useState<string | null>(null);
 
   // Admin login form state.
@@ -94,13 +108,23 @@ export function RoadmapBoard({ initialIdeas, backendEnabled, isAdmin, adminAuthE
     return () => window.clearTimeout(t);
   }, [query]);
 
-  const persistVoted = useCallback((next: string[]) => {
-    setVotedIds(next);
-    try {
-      window.localStorage.setItem(VOTES_STORAGE_KEY, JSON.stringify(next));
-    } catch {
-      /* ignore */
-    }
+  // Reset pagination whenever the filtered set changes.
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [activeTab, debouncedQuery]);
+
+  // Functional updater so concurrent in-flight votes (and their reverts on
+  // failure) compose instead of clobbering each other via a stale closure.
+  const persistVoted = useCallback((update: (prev: string[]) => string[]) => {
+    setVotedIds((prev) => {
+      const next = update(prev);
+      try {
+        window.localStorage.setItem(VOTES_STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
   }, []);
 
   const setIdeaVotes = useCallback((id: string, voteCount: number) => {
@@ -112,7 +136,13 @@ export function RoadmapBoard({ initialIdeas, backendEnabled, isAdmin, adminAuthE
     const delta = hasVoted ? -1 : 1;
 
     // Optimistic UI.
-    persistVoted(hasVoted ? votedIds.filter((x) => x !== idea.id) : [...votedIds, idea.id]);
+    persistVoted((prev) =>
+      hasVoted
+        ? prev.filter((x) => x !== idea.id)
+        : prev.includes(idea.id)
+          ? prev
+          : [...prev, idea.id],
+    );
     setIdeaVotes(idea.id, Math.max(0, idea.voteCount + delta));
 
     if (!backendEnabled) return; // preview mode: local-only
@@ -127,7 +157,14 @@ export function RoadmapBoard({ initialIdeas, backendEnabled, isAdmin, adminAuthE
       if (!res.ok) throw new Error(data.error ?? "vote failed");
       if (typeof data.voteCount === "number") setIdeaVotes(idea.id, data.voteCount);
     } catch {
-      persistVoted(hasVoted ? [...votedIds] : votedIds.filter((x) => x !== idea.id));
+      // Revert only this idea's vote — leave other in-flight votes intact.
+      persistVoted((prev) =>
+        hasVoted
+          ? prev.includes(idea.id)
+            ? prev
+            : [...prev, idea.id]
+          : prev.filter((x) => x !== idea.id),
+      );
       setIdeaVotes(idea.id, idea.voteCount);
       setNotice("Couldn't save your vote. Try again.");
     }
@@ -136,12 +173,14 @@ export function RoadmapBoard({ initialIdeas, backendEnabled, isAdmin, adminAuthE
   async function deleteIdea(idea: RoadmapIdea) {
     if (!window.confirm(`Delete “${idea.title}”? This can't be undone.`)) return;
     const prev = ideas;
-    setIdeas((list) => list.filter((i) => i.id !== idea.id)); // optimistic
+    setIdeas((list) => list.filter((i) => i.id !== idea.id)); // optimistic (also closes detail modal)
     try {
       const res = await fetch(`/api/roadmap/ideas/${idea.id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("delete failed");
+      setNotice("Idea deleted."); // announce via the live region (modal already closed)
     } catch {
-      setIdeas(prev); // revert
+      setIdeas(prev); // revert (would re-open the detail modal) …
+      setSelectedId(null); // … so close it, otherwise it covers the notice
       setNotice("Couldn't delete that idea — your admin session may have expired.");
     }
   }
@@ -164,6 +203,11 @@ export function RoadmapBoard({ initialIdeas, backendEnabled, isAdmin, adminAuthE
       }
       setPassword("");
       setShowLogin(false);
+      try {
+        window.sessionStorage.setItem(ADMIN_CHECK_KEY, "1");
+      } catch {
+        /* ignore */
+      }
       router.refresh(); // re-render server component → isAdmin = true
     } catch {
       setLoginError("Network error. Try again.");
@@ -174,17 +218,31 @@ export function RoadmapBoard({ initialIdeas, backendEnabled, isAdmin, adminAuthE
 
   async function handleLogout() {
     await fetch("/api/roadmap/logout", { method: "POST" }).catch(() => {});
+    try {
+      window.sessionStorage.removeItem(ADMIN_CHECK_KEY);
+    } catch {
+      /* ignore */
+    }
     router.refresh();
   }
 
   function onCreated(idea: RoadmapIdea) {
     setIdeas((prev) => [idea, ...prev]);
     setNotice(null);
+    // Make the new idea reachable on the board after the modal closes: a 0-vote
+    // idea sorts to the bottom and could be hidden by the active tab/search or
+    // pagination. Switch to its tag, clear search, reset to page 1.
+    setActiveTab(idea.tag);
+    setQuery("");
+    setDebouncedQuery("");
+    setVisibleCount(PAGE_SIZE);
+    // Open it directly as confirmation that it posted.
+    setSelectedId(idea.id);
   }
 
   const defaultTag: RoadmapTag = activeTab === "all" ? "squads" : activeTab;
 
-  const visibleIdeas = useMemo(() => {
+  const filteredIdeas = useMemo(() => {
     return ideas
       .filter((idea) => activeTab === "all" || idea.tag === activeTab)
       .filter((idea) => {
@@ -198,9 +256,106 @@ export function RoadmapBoard({ initialIdeas, backendEnabled, isAdmin, adminAuthE
       .sort((a, b) => b.voteCount - a.voteCount);
   }, [ideas, activeTab, debouncedQuery]);
 
+  const visibleIdeas = filteredIdeas.slice(0, visibleCount);
+  const remaining = filteredIdeas.length - visibleIdeas.length;
+
+  const selectedIdea = selectedId ? ideas.find((i) => i.id === selectedId) ?? null : null;
+
   return (
     <div className="roadmap-board">
-      {/* Admin / auth bar */}
+      {/* Tabs = tags */}
+      <div className="roadmap-tabs" role="tablist" aria-label="Filter ideas by category">
+        {ROADMAP_TABS.map((tab) => {
+          const isActive = tab.id === activeTab;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              className="roadmap-tab"
+              data-active={isActive ? "" : undefined}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Toolbar: search + share */}
+      <div className="roadmap-toolbar">
+        <div className="roadmap-search">
+          <span className="roadmap-search__icon" aria-hidden>
+            <SearchIcon />
+          </span>
+          <input
+            type="search"
+            className="input roadmap-search__input"
+            placeholder="Search ideas…"
+            aria-label="Search ideas"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
+        <Button type="button" className="roadmap-share" onClick={() => setCreateOpen(true)}>
+          + Share an idea
+        </Button>
+      </div>
+
+      {notice ? (
+        <p className="roadmap-notice" role="status">
+          {notice}
+        </p>
+      ) : null}
+
+      {/* Idea list */}
+      {visibleIdeas.length === 0 ? (
+        <p className="roadmap-empty">
+          {query.trim()
+            ? `No ideas match “${query.trim()}”.`
+            : "No ideas yet — be the first to share one."}
+        </p>
+      ) : (
+        <>
+          <ul className="roadmap-list">
+            {visibleIdeas.map((idea) => (
+              <IdeaCard
+                key={idea.id}
+                idea={idea}
+                voted={votedIds.includes(idea.id)}
+                canDelete={isAdmin}
+                onVote={() => toggleVote(idea)}
+                onDelete={() => deleteIdea(idea)}
+                onOpen={() => setSelectedId(idea.id)}
+              />
+            ))}
+          </ul>
+
+          {remaining > 0 ? (
+            <div className="roadmap-showmore">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+              >
+                Show {Math.min(PAGE_SIZE, remaining)} more
+              </Button>
+              <span className="roadmap-showmore__count">
+                Showing {visibleIdeas.length} of {filteredIdeas.length}
+              </span>
+            </div>
+          ) : truncated ? (
+            <p className="roadmap-showmore__count">
+              Showing the top {filteredIdeas.length} — search to find more.
+            </p>
+          ) : filteredIdeas.length > PAGE_SIZE ? (
+            <p className="roadmap-showmore__count">Showing all {filteredIdeas.length}</p>
+          ) : null}
+        </>
+      )}
+
+      {/* Admin / auth bar — at the bottom, intentionally understated. */}
       <div className="roadmap-authbar">
         {!backendEnabled ? (
           <span className="roadmap-authbar__note">
@@ -252,79 +407,20 @@ export function RoadmapBoard({ initialIdeas, backendEnabled, isAdmin, adminAuthE
         ) : null}
       </div>
 
-      {/* Tabs = tags */}
-      <div className="roadmap-tabs" role="tablist" aria-label="Filter ideas by category">
-        {ROADMAP_TABS.map((tab) => {
-          const isActive = tab.id === activeTab;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              className="roadmap-tab"
-              data-active={isActive ? "" : undefined}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Toolbar: search + share */}
-      <div className="roadmap-toolbar">
-        <div className="roadmap-search">
-          <span className="roadmap-search__icon" aria-hidden>
-            <SearchIcon />
-          </span>
-          <input
-            type="search"
-            className="input roadmap-search__input"
-            placeholder="Search ideas…"
-            aria-label="Search ideas"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </div>
-        <Button type="button" className="roadmap-share" onClick={() => setModalOpen(true)}>
-          + Share an idea
-        </Button>
-      </div>
-
-      {notice ? (
-        <p className="roadmap-notice" role="status">
-          {notice}
-        </p>
-      ) : null}
-
-      {/* Idea list */}
-      {visibleIdeas.length === 0 ? (
-        <p className="roadmap-empty">
-          {query.trim()
-            ? `No ideas match “${query.trim()}”.`
-            : "No ideas yet — be the first to share one."}
-        </p>
-      ) : (
-        <ul className="roadmap-list">
-          {visibleIdeas.map((idea) => (
-            <IdeaCard
-              key={idea.id}
-              idea={idea}
-              voted={votedIds.includes(idea.id)}
-              canDelete={isAdmin}
-              onVote={() => toggleVote(idea)}
-              onDelete={() => deleteIdea(idea)}
-            />
-          ))}
-        </ul>
-      )}
-
       <CreateIdeaModal
-        open={modalOpen}
+        open={createOpen}
         defaultTag={defaultTag}
-        onClose={() => setModalOpen(false)}
+        onClose={() => setCreateOpen(false)}
         onCreated={onCreated}
+      />
+
+      <IdeaDetailModal
+        idea={selectedIdea}
+        voted={selectedIdea ? votedIds.includes(selectedIdea.id) : false}
+        canDelete={isAdmin}
+        onVote={() => selectedIdea && toggleVote(selectedIdea)}
+        onDelete={() => selectedIdea && deleteIdea(selectedIdea)}
+        onClose={() => setSelectedId(null)}
       />
     </div>
   );
@@ -336,12 +432,14 @@ function IdeaCard({
   canDelete,
   onVote,
   onDelete,
+  onOpen,
 }: {
   idea: RoadmapIdea;
   voted: boolean;
   canDelete: boolean;
   onVote: () => void;
   onDelete: () => void;
+  onOpen: () => void;
 }) {
   const status = STATUS_META[idea.status];
   return (
@@ -359,13 +457,29 @@ function IdeaCard({
       </button>
 
       <div className="roadmap-card__body">
-        <div className="roadmap-card__head">
-          <h3 className="heading roadmap-card__title">{idea.title}</h3>
-          <Badge variant={status.variant} className="roadmap-card__status">
-            {status.label}
-          </Badge>
+        {/* Clickable region → detail modal. Excludes the vote + delete buttons. */}
+        <div
+          className="roadmap-card__main"
+          role="button"
+          tabIndex={0}
+          aria-label={`Open details for “${idea.title}”`}
+          onClick={onOpen}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onOpen();
+            }
+          }}
+        >
+          <div className="roadmap-card__head">
+            <h3 className="heading roadmap-card__title">{idea.title}</h3>
+            <Badge variant={status.variant} className="roadmap-card__status">
+              {status.label}
+            </Badge>
+          </div>
+          {idea.description ? <p className="roadmap-card__desc">{idea.description}</p> : null}
         </div>
-        {idea.description ? <p className="roadmap-card__desc">{idea.description}</p> : null}
+
         <div className="roadmap-card__meta">
           <span className="roadmap-card__tag">{TAG_LABELS[idea.tag]}</span>
           <span aria-hidden className="roadmap-card__dot">·</span>

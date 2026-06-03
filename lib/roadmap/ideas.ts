@@ -36,6 +36,8 @@ export type IdeasResult = {
   ideas: RoadmapIdea[];
   /** Where the data came from — drives the "preview mode" notice + UI gating. */
   source: "supabase" | "seed";
+  /** True when the fetch hit FETCH_LIMIT (more rows exist than were returned). */
+  truncated: boolean;
 };
 
 /**
@@ -44,21 +46,30 @@ export type IdeasResult = {
  */
 export async function getIdeas(): Promise<IdeasResult> {
   if (!isBackendConfigured()) {
-    return { ideas: SEED_IDEAS, source: "seed" };
+    return { ideas: SEED_IDEAS, source: "seed", truncated: false };
   }
 
   const supabase = createSupabaseServerClient();
-  if (!supabase) return { ideas: SEED_IDEAS, source: "seed" };
+  if (!supabase) return { ideas: SEED_IDEAS, source: "seed", truncated: false };
 
+  // Cap the fetch so the client (which filters/searches/sorts in-memory) stays
+  // bounded. The board paginates this set with a "Show more" control. If the
+  // board ever outgrows this, move filtering + pagination server-side.
+  const FETCH_LIMIT = 500;
   const { data, error } = await supabase
     .from("ideas")
     .select("id, title, description, tag, status, author_name, vote_count")
     .order("vote_count", { ascending: false })
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(FETCH_LIMIT);
 
   if (error || !data) {
-    return { ideas: SEED_IDEAS, source: "seed" };
+    return { ideas: SEED_IDEAS, source: "seed", truncated: false };
   }
 
-  return { ideas: (data as IdeaRow[]).map(mapIdeaRow), source: "supabase" };
+  return {
+    ideas: (data as IdeaRow[]).map(mapIdeaRow),
+    source: "supabase",
+    truncated: data.length >= FETCH_LIMIT,
+  };
 }

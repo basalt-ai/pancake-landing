@@ -47,7 +47,7 @@ export const metadata: Metadata = {
 };
 
 export default async function OpenRoadmapPage() {
-  const [{ ideas, source }, admin] = await Promise.all([getIdeas(), isAdmin()]);
+  const [{ ideas, source, truncated }, admin] = await Promise.all([getIdeas(), isAdmin()]);
   const backendEnabled = source === "supabase";
   const adminAuthEnabled = isAdminAuthConfigured();
 
@@ -82,7 +82,7 @@ export default async function OpenRoadmapPage() {
           <header className="home-landing-section__header">
             <Badge variant="brand-alt-1">Open roadmap</Badge>
             <p className="home-landing-section__lede text-center">
-              Upvote what you want next — or post your own idea.
+              Tell us what to build next. Make Pancake awesome(r).
             </p>
           </header>
         </div>
@@ -103,6 +103,7 @@ export default async function OpenRoadmapPage() {
             backendEnabled={backendEnabled}
             isAdmin={admin}
             adminAuthEnabled={adminAuthEnabled}
+            truncated={truncated}
           />
         </div>
       </section>
