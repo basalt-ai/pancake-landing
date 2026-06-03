@@ -653,6 +653,95 @@
   }
 
   /**
+   * Product demo video below the hero (à la monaco.com). Wide, near-bleed 16:9
+   * player with rounded corners and no chrome frame; a centered play button
+   * overlays the poster until first play. Powers `HomeDemoVideo`.
+   */
+  .home-demo-video {
+    width: 100%;
+    background-color: var(--surface);
+    padding-top: var(--spacing-xxl);
+    padding-bottom: var(--spacing-xxl);
+  }
+
+  .home-demo-video__wrap {
+    width: 100%;
+    max-width: 1600px;
+    margin-inline: auto;
+    padding-inline: var(--spacing-xxl);
+  }
+
+  .home-demo-video__frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+  }
+
+  .home-demo-video__player {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Centered play button overlay — hidden once playback starts. */
+  .home-demo-video__play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(64px, 6vw, 96px);
+    height: clamp(64px, 6vw, 96px);
+    padding: 0;
+    border: none;
+    border-radius: 9999px;
+    background-color: rgba(20, 0, 18, 0.42);
+    color: #fff;
+    cursor: pointer;
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    transition: background-color 140ms ease, transform 140ms ease;
+  }
+
+  .home-demo-video__play:hover {
+    background-color: rgba(20, 0, 18, 0.62);
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+
+  .home-demo-video__play:focus-visible {
+    outline: 3px solid var(--surface);
+    outline-offset: 3px;
+  }
+
+  .home-demo-video__play svg {
+    width: 42%;
+    height: 42%;
+    margin-left: 8%;
+    fill: currentColor;
+  }
+
+  @media (max-width: 640px) {
+    .home-demo-video {
+      padding-top: var(--spacing-xl);
+      padding-bottom: var(--spacing-xl);
+    }
+
+    .home-demo-video__wrap {
+      padding-inline: var(--spacing-xl);
+    }
+
+    .home-demo-video__play {
+      width: 56px;
+      height: 56px;
+    }
+  }
+
+  /**
    * Home landing below hero — Figma `428:14366` (`-> V0.3`). Org block `428:14926` = `HomeOrgDiagram` (HTML).
    * Other rasters: `public/home-landing-*.png` (`npm run figma:export-landing` + token). Does not modify `.home-hero`.
    */
