@@ -4,8 +4,8 @@ import { Badge } from "@/components/ui/Badge";
 import { H3 } from "@/components/ui/Headings";
 
 /**
- * "Credits or cash" explainer — two balanced cards on how each payout
- * works. Credits land automatically and 50% richer; cash is paid through
+ * "Tokens or cash" explainer — two balanced cards on how each payout
+ * works. Tokens land automatically and 50% richer; cash is paid through
  * Passionfroot, which doubles as the relationship we keep with influencers
  * for future collaborations. Cash is US + Europe only for now.
  *
@@ -15,10 +15,10 @@ import { H3 } from "@/components/ui/Headings";
 const PASSIONFROOT_SIGNUP_URL =
   "https://workspace.passionfroot.me/signup?partner=07d9dc3a-0f33-43df-90f8-713ec7d3a578&campaign=8390eb8f-2ad9-48f1-947d-63369ae779dc&pfPlus=true";
 
-const CREDITS_CLAIM_URL = "mailto:support@getpancake.ai";
+const TOKENS_CLAIM_URL = "mailto:support@getpancake.ai";
 
-const CREDITS_POINTS = [
-  "Every $1 in cash becomes $1.50 in credits",
+const TOKENS_POINTS = [
+  "Every $1 in cash becomes $1.50 in tokens",
   "Applied to your account automatically",
   "Go straight back to building on Pancake",
 ];
@@ -44,23 +44,23 @@ function PointList({ points }: { points: string[] }) {
 
 export function InfluencersRewards() {
   return (
-    <div className="influencers-payout" role="region" aria-label="Credits or cash">
-      <div className="influencers-payout__card influencers-payout__card--credits">
+    <div className="influencers-payout" role="region" aria-label="Tokens or cash">
+      <div className="influencers-payout__card influencers-payout__card--tokens">
         <span className="influencers-payout__icon" aria-hidden>
           <LuSparkles size={20} />
         </span>
         <div className="influencers-payout__head">
-          <H3 className="heading influencers-payout__title">Pancake credits</H3>
+          <H3 className="heading influencers-payout__title">Pancake tokens</H3>
           <Badge variant="brand-alt-1">50% richer</Badge>
         </div>
         <p className="influencers-payout__lead">
-          Take your reward in credits and it lands worth half again as much:
+          Take your reward in tokens and it lands worth half again as much:
           more agents running, more automations, more work out the door.
         </p>
-        <PointList points={CREDITS_POINTS} />
+        <PointList points={TOKENS_POINTS} />
         <div className="influencers-payout__foot-group">
-          <a href={CREDITS_CLAIM_URL} className="influencers-payout__cta">
-            Claim your credits &rarr;
+          <a href={TOKENS_CLAIM_URL} className="influencers-payout__cta">
+            Claim your tokens &rarr;
           </a>
           <p className="influencers-payout__note">No invoice, no waiting.</p>
         </div>

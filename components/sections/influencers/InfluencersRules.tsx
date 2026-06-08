@@ -37,7 +37,7 @@ export function InfluencersRules() {
   const limits = [
     cadence.perMonth,
     cadence.between,
-    "$15,000 credits / $10,000 cash cap per post",
+    "$4,500 tokens / $3,000 cash cap per post",
     "Pancake should be the subject, not part of a tool roundup",
   ];
 

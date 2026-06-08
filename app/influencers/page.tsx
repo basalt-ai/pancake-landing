@@ -1,7 +1,7 @@
 /**
  * /influencers — the Pancake Influencer Program.
  *
- * Show off your Pancake, get cash or Pancake credits (50% richer).
+ * Show off your Pancake, get cash or Pancake tokens (50% richer).
  * Structure intentionally diverges from comparable influencer pages: no
  * application form, no platform-by-platform tables — one toggle
  * (X / LinkedIn), one ladder, no gate.
@@ -19,24 +19,24 @@ import { Badge } from "@/components/ui/Badge";
 import { H2, H3 } from "@/components/ui/Headings";
 
 export const metadata: Metadata = {
-  title: "Influencer Program — Post a Pancake, get cash or credits · Pancake",
+  title: "Influencer Program — Post a Pancake, get cash or tokens · Pancake",
   description:
-    "Show what your Pancake is doing on X or LinkedIn. Get paid in cash or Pancake credits (50% richer). No application form.",
+    "Show what your Pancake is doing on X or LinkedIn. Get paid in cash or Pancake tokens (50% richer). No application form.",
   alternates: { canonical: "https://www.getpancake.ai/influencers" },
   openGraph: {
     type: "website",
     url: "https://www.getpancake.ai/influencers",
-    title: "Pancake Influencer Program — Post a Pancake, get cash or credits",
+    title: "Pancake Influencer Program — Post a Pancake, get cash or tokens",
     description:
-      "Post about Pancake on X or LinkedIn and get paid in cash or credits (50% richer). No application form.",
+      "Post about Pancake on X or LinkedIn and get paid in cash or tokens (50% richer). No application form.",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake Influencer Program" }],
     siteName: "Pancake",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pancake Influencer Program — Post a Pancake, get cash or credits",
+    title: "Pancake Influencer Program — Post a Pancake, get cash or tokens",
     description:
-      "Post about Pancake, get paid in cash or credits (50% richer). No application form.",
+      "Post about Pancake, get paid in cash or tokens (50% richer). No application form.",
     images: ["/og-image.png"],
   },
 };
@@ -60,7 +60,7 @@ const steps = [
   {
     n: "04",
     title: "Get paid",
-    body: "Pick your reward: cash sent or credits applied instantly.",
+    body: "Pick your reward: cash sent or tokens applied instantly.",
   },
 ];
 
@@ -70,7 +70,7 @@ const influencerProgramJsonLd = {
   name: "Pancake Influencer Program",
   url: "https://www.getpancake.ai/influencers",
   description:
-    "Earn cash or Pancake credits (50% richer) by posting about Pancake on X or LinkedIn.",
+    "Earn cash or Pancake tokens (50% richer) by posting about Pancake on X or LinkedIn.",
   isPartOf: {
     "@type": "WebSite",
     name: "Pancake",
@@ -101,7 +101,7 @@ export default function InfluencersPage() {
             </h1>
             <p className="home-landing-section__lede text-center">
               Show the internet what your Pancake is doing. We pay you back
-              in cash — or credits, which land 50% richer.
+              in cash — or tokens, which land 50% richer.
             </p>
           </header>
           <div className="influencers-hero__cta">
@@ -131,7 +131,7 @@ export default function InfluencersPage() {
               How big you go = what you get
             </H2>
             <p className="home-landing-section__lede text-center">
-              Each post, pick one: take the cash, or take the credits.
+              Each post, pick one: take the cash, or take the tokens.
             </p>
           </header>
 
@@ -139,7 +139,7 @@ export default function InfluencersPage() {
         </div>
       </section>
 
-      {/* Credits or cash */}
+      {/* Tokens or cash */}
       <section
         className="home-landing-section"
         aria-labelledby="influencers-rewards-heading"
@@ -150,7 +150,7 @@ export default function InfluencersPage() {
               Two ways to get paid
             </H2>
             <p className="home-landing-section__lede text-center">
-              Credits or cash — your call, every post.
+              Tokens or cash — your call, every post.
             </p>
           </header>
 
