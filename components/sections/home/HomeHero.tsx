@@ -12,14 +12,10 @@ import {
 import { HomeHeroPancakeMonster } from "@/components/sections/home/HomeHeroPancakeMonster";
 import { H1 } from "@/components/ui/Headings";
 
-/**
- * H1 line breaks per Figma v3 desktop visual (3 lines). Node `428:16741` stores a
- * single U+2028; browser wrapping did not match the frame — explicit `\n` matches Tristan’s spec.
- */
-const HERO_TITLE = "The OpenClaw cofounder\nthat makes your\ncompany autonomous";
+const HERO_TITLE = "The superagent that makes your company autonomous";
 
 const HERO_SUB =
-  "Pancake stacks autonomous agents to help your company run itself.";
+  "Pancake connects to your tools, creates agents, and starts working for you.";
 
 export function HomeHero() {
   return (
@@ -32,6 +28,10 @@ export function HomeHero() {
         style={{ rowGap: "var(--spacing-xl)" }}
       >
         <div className="home-hero-text-stack relative z-[1] lg:pr-[var(--spacing-md)]">
+          <span className="home-hero-badge">
+            <span className="home-hero-badge-dot" aria-hidden />
+            Runs on Openclaw
+          </span>
           <H1 className="whitespace-pre-line">{HERO_TITLE}</H1>
           <p className="home-hero-body whitespace-pre-line">{HERO_SUB}</p>
           <div className="home-hero-cta-row">
