@@ -1,20 +1,32 @@
 "use client";
 
 import { useState } from "react";
-import { FaLinkedin } from "react-icons/fa6";
+import { FaInstagram, FaLinkedin, FaTiktok, FaYoutube } from "react-icons/fa6";
 import { SiX } from "react-icons/si";
+import type { IconType } from "react-icons";
 
 /**
- * Rules block with an X / LinkedIn toggle. Most rules are shared; the
- * cadence ones differ (X tolerates more frequent posts than LinkedIn,
- * matching the relative half-life of each feed).
+ * Rules block with a platform toggle (X / LinkedIn / Instagram / TikTok /
+ * YouTube). Most rules are shared; the cadence ones differ, matching the
+ * relative half-life of each feed (fast feeds tolerate more frequent posts).
  */
-type Platform = "x" | "linkedin";
+type Platform = "x" | "linkedin" | "instagram" | "tiktok" | "youtube";
 
 const CADENCE: Record<Platform, { perMonth: string; between: string }> = {
   x: { perMonth: "12 posts per month", between: "2 days between posts" },
   linkedin: { perMonth: "4 posts per month", between: "5 days between posts" },
+  instagram: { perMonth: "6 posts per month", between: "4 days between posts" },
+  tiktok: { perMonth: "8 posts per month", between: "3 days between posts" },
+  youtube: { perMonth: "4 posts per month", between: "5 days between posts" },
 };
+
+const PLATFORMS: { id: Platform; label: string; Icon: IconType }[] = [
+  { id: "x", label: "X", Icon: SiX },
+  { id: "linkedin", label: "LinkedIn", Icon: FaLinkedin },
+  { id: "instagram", label: "Instagram", Icon: FaInstagram },
+  { id: "tiktok", label: "TikTok", Icon: FaTiktok },
+  { id: "youtube", label: "YouTube", Icon: FaYoutube },
+];
 
 const REQUIREMENTS = [
   "Tag @getpancake_ai in the post",
@@ -37,35 +49,27 @@ export function InfluencersRules() {
   const limits = [
     cadence.perMonth,
     cadence.between,
-    "$3,000 credits / $2,000 cash cap per post",
+    "$1,050 credits / $700 cash cap per post",
     "Pancake should be the subject, not part of a tool roundup",
   ];
 
   return (
     <div className="influencers-rules-block" role="region" aria-label="House rules">
       <div className="influencers-toggle" role="tablist" aria-label="Platform">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={platform === "x"}
-          data-active={platform === "x" ? "" : undefined}
-          className="influencers-toggle__btn"
-          onClick={() => setPlatform("x")}
-        >
-          <SiX size={14} aria-hidden />
-          <span>X</span>
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={platform === "linkedin"}
-          data-active={platform === "linkedin" ? "" : undefined}
-          className="influencers-toggle__btn"
-          onClick={() => setPlatform("linkedin")}
-        >
-          <FaLinkedin size={14} aria-hidden />
-          <span>LinkedIn</span>
-        </button>
+        {PLATFORMS.map(({ id, label, Icon }) => (
+          <button
+            key={id}
+            type="button"
+            role="tab"
+            aria-selected={platform === id}
+            data-active={platform === id ? "" : undefined}
+            className="influencers-toggle__btn"
+            onClick={() => setPlatform(id)}
+          >
+            <Icon size={14} aria-hidden />
+            <span>{label}</span>
+          </button>
+        ))}
       </div>
 
       <div className="influencers-rules-grid">

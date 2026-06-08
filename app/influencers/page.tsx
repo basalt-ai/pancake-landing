@@ -49,7 +49,7 @@ const steps = [
   {
     n: "02",
     title: "Post it. Tag us.",
-    body: "X or LinkedIn. Tag @getpancake_ai. No paid boosts. No 5-tools-I-use roundups.",
+    body: "X, LinkedIn, Instagram, TikTok or YouTube. Tag @getpancake_ai. No paid boosts. No 5-tools-I-use roundups.",
   },
   {
     n: "03",
@@ -179,7 +179,7 @@ export default function InfluencersPage() {
               House rules
             </H2>
             <p className="home-landing-section__lede text-center">
-              Mostly shared. X lets you post more, LinkedIn wants you to chill.
+              Mostly shared. Fast feeds let you post more, slower ones want you to chill.
             </p>
           </header>
 
@@ -200,7 +200,7 @@ export default function InfluencersPage() {
             Your turn.
           </h2>
           <p className="home-landing-section__lede home-landing-section__lede--closing text-center">
-            Open Pancake. Open X (or LinkedIn). Post. Tag us. That&apos;s it.
+            Open Pancake. Open X, LinkedIn, Instagram, TikTok or YouTube. Post. Tag us. That&apos;s it.
           </p>
           <div className="home-landing-closing-cta">
             <Link
