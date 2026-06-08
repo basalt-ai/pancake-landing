@@ -25,8 +25,8 @@ type Tier = {
 // get more, pick cash and we eat the spread.
 const TIERS: Tier[] = [
   {
-    cash: "$100",
-    credits: "$150",
+    cash: "$50",
+    credits: "$100",
     reach: {
       x: "2,000 – 9,999",
       linkedin: "1,000 – 4,999",
@@ -47,8 +47,8 @@ const TIERS: Tier[] = [
     },
   },
   {
-    cash: "$300",
-    credits: "$450",
+    cash: "$350",
+    credits: "$500",
     reach: {
       x: "35,000 – 174,999",
       linkedin: "20,000 – 99,999",
@@ -58,8 +58,8 @@ const TIERS: Tier[] = [
     },
   },
   {
-    cash: "$700",
-    credits: "$1,050",
+    cash: "$650",
+    credits: "$1,000",
     reach: {
       x: "175,000+",
       linkedin: "100,000+",
