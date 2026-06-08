@@ -12,8 +12,7 @@ import {
 import { HomeHeroPancakeMonster } from "@/components/sections/home/HomeHeroPancakeMonster";
 import { H1 } from "@/components/ui/Headings";
 
-const HERO_TITLE =
-  "The Superagent in Slack that makes your company Autonomous.";
+const HERO_TITLE = "The superagent that makes your company autonomous";
 
 const HERO_SUB =
   "Pancake connects to your tools, creates agents, and starts working for you.";
