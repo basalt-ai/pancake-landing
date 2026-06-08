@@ -8,7 +8,7 @@ import { SiX } from "react-icons/si";
 /**
  * Reward tiers with a platform toggle. The metric and thresholds differ
  * per platform (LinkedIn counts Impressions with lower numbers; everyone
- * else counts Views with higher numbers) — cash + credits stay the same
+ * else counts Views with higher numbers) — cash + tokens stay the same
  * across every platform, so the table swaps only the reach column when
  * toggled.
  */
@@ -16,7 +16,7 @@ type Platform = "linkedin" | "x" | "instagram" | "youtube" | "tiktok";
 
 type Tier = {
   cash: string;
-  credits: string;
+  tokens: string;
   /** Reach range per platform — LinkedIn uses Impressions, the rest use Views. */
   reach: Record<Platform, string>;
 };
@@ -29,13 +29,13 @@ const PLATFORMS: { key: Platform; label: string; Icon: IconType }[] = [
   { key: "tiktok", label: "TikTok", Icon: FaTiktok },
 ];
 
-// Credits are intentionally 50% richer than cash — pick credits and you
+// Tokens are intentionally 50% richer than cash — pick tokens and you
 // get more, pick cash and we eat the spread. Payouts are identical across
 // every platform; only the reach thresholds shift.
 const TIERS: Tier[] = [
   {
-    cash: "$200",
-    credits: "$300",
+    cash: "$100",
+    tokens: "$150",
     reach: {
       linkedin: "1,000 – 4,999",
       x: "3,000 – 14,999",
@@ -45,8 +45,8 @@ const TIERS: Tier[] = [
     },
   },
   {
-    cash: "$600",
-    credits: "$900",
+    cash: "$200",
+    tokens: "$300",
     reach: {
       linkedin: "5,000 – 14,999",
       x: "15,000 – 29,999",
@@ -56,8 +56,8 @@ const TIERS: Tier[] = [
     },
   },
   {
-    cash: "$1,500",
-    credits: "$2,250",
+    cash: "$500",
+    tokens: "$750",
     reach: {
       linkedin: "15,000 – 29,999",
       x: "30,000 – 69,999",
@@ -67,8 +67,8 @@ const TIERS: Tier[] = [
     },
   },
   {
-    cash: "$5,000",
-    credits: "$7,500",
+    cash: "$1,500",
+    tokens: "$2,250",
     reach: {
       linkedin: "30,000 – 99,999",
       x: "70,000 – 299,999",
@@ -78,8 +78,8 @@ const TIERS: Tier[] = [
     },
   },
   {
-    cash: "$10,000",
-    credits: "$15,000",
+    cash: "$3,000",
+    tokens: "$4,500",
     reach: {
       linkedin: "100,000+",
       x: "300,000+",
@@ -127,12 +127,12 @@ export function InfluencersTiers() {
             <th scope="col">{METRIC_LABEL[platform]}</th>
             <th scope="col">Take cash</th>
             <th scope="col" aria-hidden className="influencers-tiers__or-col" />
-            <th scope="col">Or credits</th>
+            <th scope="col">Or tokens</th>
           </tr>
         </thead>
         <tbody>
           {TIERS.map((t) => (
-            <tr key={t.credits}>
+            <tr key={t.tokens}>
               <th scope="row">{t.reach[platform]}</th>
               <td>
                 <span className="influencers-tiers__cash">{t.cash}</span>
@@ -141,7 +141,7 @@ export function InfluencersTiers() {
                 <span className="influencers-tiers__or">or</span>
               </td>
               <td>
-                <span className="influencers-tiers__credits">{t.credits}</span>
+                <span className="influencers-tiers__tokens">{t.tokens}</span>
               </td>
             </tr>
           ))}
@@ -149,7 +149,7 @@ export function InfluencersTiers() {
       </table>
 
       <p className="influencers-tiers__note">
-        Pick one per post — cash or credits. Credits are 50% richer than cash
+        Pick one per post — cash or tokens. Tokens are 50% richer than cash
         because we&apos;d rather you spend it on Pancake. LinkedIn counts
         impressions; X, Instagram, YouTube, and TikTok count views — the payouts
         are the same.

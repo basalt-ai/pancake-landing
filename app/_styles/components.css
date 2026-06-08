@@ -4907,7 +4907,7 @@
     border-bottom: 0;
   }
 
-  .influencers-tiers__credits {
+  .influencers-tiers__tokens {
     color: var(--interactive-text);
     font-weight: var(--font-semibold);
   }
@@ -4917,7 +4917,7 @@
     font-weight: var(--font-semibold);
   }
 
-  /* Thin spacer column between Cash and Credits, holding an "or" pill
+  /* Thin spacer column between Cash and Tokens, holding an "or" pill
      in each row so the table reads as a choice, not a bundle. */
   .influencers-tiers__or-col {
     width: calc(2 * var(--spacing-xxl));
@@ -4980,7 +4980,7 @@
     }
   }
 
-  /* Credits-or-cash explainer — two balanced cards */
+  /* Tokens-or-cash explainer — two balanced cards */
   .influencers-payout {
     width: 100%;
     max-width: calc(1040 / 16 * 1rem);
@@ -5007,9 +5007,9 @@
     corner-shape: squircle;
   }
 
-  /* Credits is the richer option, so it gets a soft brand tint to nudge
+  /* Tokens are the richer option, so they get a soft brand tint to nudge
      toward it — gentler than a full gradient block. */
-  .influencers-payout__card--credits {
+  .influencers-payout__card--tokens {
     background-color: var(--weak-branded-surface);
     border-color: var(--strong-branded-surface);
   }
