@@ -1,6 +1,16 @@
 import type { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/posts";
 
+/**
+ * Parse a frontmatter date, falling back to "now" when missing/unparseable.
+ * Guards the build: an invalid date reaches `Date.toISOString()` during
+ * prerender and throws `RangeError: Invalid time value`, failing the whole deploy.
+ */
+function safeDate(value: string | undefined): Date {
+  const parsed = new Date(value ?? "");
+  return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: "https://www.getpancake.ai", lastModified: new Date(), priority: 1.0 },
@@ -11,7 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: "https://www.getpancake.ai/blog", lastModified: new Date(), priority: 0.8 },
     ...getAllPosts().map((post) => ({
       url: `https://www.getpancake.ai/blog/${post.slug}`,
-      lastModified: new Date(post.last_updated || post.date),
+      lastModified: safeDate(post.last_updated || post.date),
       priority: 0.7 as number,
     })),
   ];
