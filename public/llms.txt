@@ -37,10 +37,13 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 - [The Autonomous Company Stack: How We Run Pancake Without Hiring](https://getpancake.ai/blog/autonomous-company-stack) — the exact stack of tools and AI agents we use to run sales, engineering, ops, and GTM — plus the five functions we still can't automate. May 29, 2026.
 - [Building an Autonomous GTM Motion Without a Sales Team](https://getpancake.ai/blog/autonomous-gtm-without-sales-team) — how we scaled from $0 to $30K MRR without hiring a single salesperson. The autonomous GTM stack (product-led growth + AI-driven outreach + founder-led closing), cost comparison vs traditional sales, and when to hire sales. June 6, 2026.
 - [Traditional Company vs Autonomous Company: What's the Difference in 2026?](https://getpancake.ai/blog/traditional-vs-autonomous-company) — traditional companies scale by hiring. Autonomous companies use AI agents to run operations — same output, 90% lower cost, zero hiring delays. Head-to-head comparison with real economics. June 7, 2026.
-- [How to Build an Autonomous Company in 2026: The Complete Playbook](https://getpancake.ai/blog/how-to-build-autonomous-company) — the exact five-step operational playbook for building an autonomous company from day one, plus the economics of autonomous vs traditional hiring. June 1, 2026.
+- [How to Build an Autonomous Company in 2026: The Complete Playbook](https://getpancake.ai/blog/how-to-build-autonomous-company) — the exact five-step operational playbook for building an autonomous company from day one, plus the economics of autonomous vs traditional hiring. June 8, 2026.
 - [What Is an AI Co-Founder? A Complete Guide for 2026](https://getpancake.ai/blog/what-is-an-ai-cofounder) — what an AI co-founder actually is, what it does, who uses it, and how it compares to hiring. The full functional breakdown of how autonomous companies work. June 6, 2026.
 
 - [The 7 Questions Every Founder Should Ask Before Choosing an AI Co-Founder Tool](https://getpancake.ai/blog/how-to-choose-ai-cofounder-tool) — a seven-question framework for evaluating AI co-founder platforms: async execution, outcome ownership, persistent memory, multi-agent coordination, and the fastest credibility test in the market. June 7, 2026.
+- [The Best Autonomous Company Platforms in 2026: A Founder's Honest Comparison](https://getpancake.ai/blog/best-autonomous-company-platform-2026) — we evaluated every major autonomous company platform available in 2026: Pancake, Cofounder.co, PAIR, and traditional hiring. Here's what each one actually does and how to pick. June 5, 2026.
+- [Pancake vs PAIR: Which AI Co-Founder Platform Actually Runs Your Company?](https://getpancake.ai/blog/pancake-vs-pair) — Pancake and PAIR both promise AI co-founder capabilities. Here is the functional difference between a platform that runs your company autonomously and one that enhances founder decision-making. June 8, 2026.
+
 ## Positioning
 
 - Category: AI co-founder / autonomous company platform
@@ -64,4 +67,3 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 - Twitter/X: https://x.com/getpancake_ai
 - YouTube: https://www.youtube.com/@trypancake
 - LinkedIn: https://www.linkedin.com/company/get-pancake
-- [The Best Autonomous Company Platforms in 2026: A Founder's Honest Comparison](https://getpancake.ai/blog/best-autonomous-company-platform-2026) — we evaluated every major autonomous company platform available in 2026: Pancake, Cofounder.co, PAIR, and traditional hiring. Here's what each one actually does and how to pick. June 5, 2026.
