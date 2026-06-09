@@ -12,10 +12,10 @@ import { H3 } from "@/components/ui/Headings";
  * The dollar mapping lives in InfluencersTiers directly above, so this
  * section explains the trade-off rather than repeating the ladder.
  */
-const PASSIONFROOT_SIGNUP_URL =
-  "https://workspace.passionfroot.me/signup?partner=07d9dc3a-0f33-43df-90f8-713ec7d3a578&campaign=8390eb8f-2ad9-48f1-947d-63369ae779dc&pfPlus=true";
-
-const TOKENS_CLAIM_URL = "mailto:support@getpancake.ai";
+// Both payout CTAs funnel to the submission picker (#submit) — you submit your
+// post first, then the Tally form routes the payout: tokens collect your Pancake
+// account email, cash points to Passionfroot.
+const SUBMIT_URL = "#submit";
 
 const TOKENS_POINTS = [
   "Every $1 in cash becomes $1.50 in tokens",
@@ -59,7 +59,7 @@ export function InfluencersRewards() {
         </p>
         <PointList points={TOKENS_POINTS} />
         <div className="influencers-payout__foot-group">
-          <a href={TOKENS_CLAIM_URL} className="influencers-payout__cta">
+          <a href={SUBMIT_URL} className="influencers-payout__cta">
             Claim your tokens &rarr;
           </a>
           <p className="influencers-payout__note">No invoice, no waiting.</p>
@@ -80,13 +80,8 @@ export function InfluencersRewards() {
         </p>
         <PointList points={CASH_POINTS} />
         <div className="influencers-payout__foot-group">
-          <a
-            href={PASSIONFROOT_SIGNUP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="influencers-payout__cta"
-          >
-            Find us on Passionfroot &rarr;
+          <a href={SUBMIT_URL} className="influencers-payout__cta">
+            Claim your cash &rarr;
           </a>
           <p className="influencers-payout__note">
             Cash payouts are in the US and Europe for now.
