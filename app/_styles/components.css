@@ -5165,6 +5165,70 @@
     color: var(--text);
   }
 
+  /* "Ready to get paid" platform picker → Tally submission form. */
+  .influencers-submit {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .influencers-submit__label {
+    margin: 0 0 var(--spacing-xl) 0;
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    color: var(--subtle-text);
+  }
+
+  .influencers-submit__grid {
+    width: 100%;
+    max-width: calc(640 / 16 * 1rem);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  @media (min-width: 768px) {
+    .influencers-submit__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Override .button's centered layout: icon left, label fills, arrow right. */
+  .influencers-submit__option {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--spacing-md);
+    width: 100%;
+    text-align: left;
+    text-decoration: none;
+  }
+
+  .influencers-submit__option-icon {
+    flex: 0 0 auto;
+    font-size: 20px;
+  }
+
+  .influencers-submit__option-label {
+    flex: 1 1 auto;
+  }
+
+  .influencers-submit__option-arrow {
+    flex: 0 0 auto;
+    font-size: 18px;
+    color: var(--subtle-text);
+  }
+
+  .influencers-submit__note {
+    margin: var(--spacing-xl) 0 0 0;
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    color: var(--subtle-text);
+  }
+
   .influencers-rules-block {
     width: 100%;
     max-width: calc(1040 / 16 * 1rem);

@@ -13,6 +13,7 @@ import { HOME_PAGE_CONTAINER_CLASS } from "@/components/sections/home/home-layou
 import { HomeNav } from "@/components/sections/home/HomeNav";
 import { InfluencersRewards } from "@/components/sections/influencers/InfluencersRewards";
 import { InfluencersRules } from "@/components/sections/influencers/InfluencersRules";
+import { InfluencersSubmit } from "@/components/sections/influencers/InfluencersSubmit";
 import { InfluencersTiers } from "@/components/sections/influencers/InfluencersTiers";
 import { Footer } from "@/components/shared/Footer";
 import { Badge } from "@/components/ui/Badge";
@@ -187,10 +188,32 @@ export default function InfluencersPage() {
         </div>
       </section>
 
+      {/* Ready to get paid — platform picker → Tally submission form */}
+      <section
+        id="submit"
+        className="home-landing-section"
+        aria-labelledby="influencers-submit-heading"
+      >
+        <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
+          <header className="home-landing-section__header">
+            <Badge variant="brand-alt-1">Ready to get paid</Badge>
+            <H2 id="influencers-submit-heading" className="heading home-landing-section__title text-center">
+              You did the work. Now get paid.
+            </H2>
+            <p className="home-landing-section__lede text-center">
+              Send us the post link and an analytics screenshot showing your
+              numbers. Pick tokens or cash — tokens land 50% richer.
+            </p>
+          </header>
+
+          <InfluencersSubmit />
+        </div>
+      </section>
+
       {/* House rules */}
       <section
         id="rules"
-        className="home-landing-section"
+        className="home-landing-section home-landing-section--alt"
         aria-labelledby="influencers-rules-heading"
       >
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
@@ -209,7 +232,7 @@ export default function InfluencersPage() {
 
       {/* Closing */}
       <section
-        className="home-landing-section home-landing-section--alt"
+        className="home-landing-section"
         aria-labelledby="influencers-closing-heading"
       >
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner home-landing-section__inner--closing`}>
