@@ -1,0 +1,116 @@
+---
+title: "The Autonomous Company at $30K MRR: What We Built, What Broke, and What We'd Do Differently"
+description: "Six months into running Pancake on AI agents, here is what $30K MRR without a single employee actually looks like — the operational breakdown, the failures, and the three things we'd change."
+publishedAt: "2026-06-09"
+updatedAt: "2026-06-09"
+author: "François de Fitte"
+category: "autonomous company"
+tags: ["autonomous company", "ai co-founder", "running a company with ai", "founder story"]
+---
+
+Six months ago, we decided to run Pancake the same way we were asking our customers to run their companies: without hiring. No sales team, no ops manager, no customer success hire. Just three co-founders and a set of AI agents doing the work.
+
+We hit $30K MRR. The agents are still running. Here is what actually happened.
+
+**TL;DR:** An autonomous company at $30K MRR runs on roughly $500 to $700 per month in LLM costs, not $300K to $500K in annual salaries. The model works. The two hardest problems are not technical — they are knowing when to let agents make decisions without you, and knowing when to pull them back. We got both wrong before we got them right.
+
+---
+
+## What "Autonomous Company" Actually Means at This Scale
+
+The term gets used loosely. For us, autonomous company means one thing: the agents own the work, not just the output.
+
+Most AI tooling produces outputs. You give it a prompt, it gives you a draft. You still decide whether the draft gets sent. You are the connective tissue between every step.
+
+An autonomous company removes you from the loop. The agent runs the sequence, tracks the result, adjusts, escalates when something is genuinely off, and keeps going. The founders only see exceptions.
+
+At $30K MRR, our setup looks like this:
+
+- Atlas handles GEO and content. Daily blog posts, citation tracking, llms.txt updates, and distribution. No daily prompting.
+- Ledger tracks financial movements. Stripe events, expense categorization, MRR dashboards. Flags anomalies for founder review.
+- Onboard runs new customer activation. Triggered by signup, runs through a qualification and setup sequence, hands off to the founding team only when a conversation needs a human.
+- Scribe maintains internal documentation. Decisions, retrospectives, wiki updates. The stuff that usually never gets written down.
+
+Combined, these agents run on roughly $600 per month. That is the infrastructure cost of an autonomous company at our stage.
+
+---
+
+## What Actually Worked
+
+Three things worked better than we expected.
+
+**The consistency advantage is real.** Agents do not have off days. They do not forget to follow up. They do not skip the Friday afternoon tasks because it is Friday. Six months in, our content cadence has not missed a single day. Our onboarding follow-up rate is effectively 100%. Our documentation is current. That sounds mundane until you compare it against what the same work cost us in human attention twelve months ago.
+
+**Customers do not notice.** We have had hundreds of customer interactions run through Onboard. The escalation rate to a human is under 10%. When customers do escalate, they are not frustrated by the first part of the interaction. They are just asking questions the agent correctly identified as needing a founder.
+
+**The cost structure changes everything.** At a $30K MRR company with a traditional team, you are spending somewhere between $30K and $80K per month on headcount for the functions our agents cover. We are spending $600. That gap does not just affect margins. It changes how you make decisions. We have launched four product experiments in the last six months that we would not have had the runway to test with a traditional cost structure.
+
+---
+
+## What Broke
+
+Two things broke badly. Both were predictable in retrospect.
+
+**We delegated too early on customer-facing decisions.** In month two, we let Onboard handle pricing objection responses without a review gate. The answers were technically accurate. They were also tone-deaf in about 15% of cases. We were losing deals we should have won, and we did not catch it for three weeks because we were not reading the logs.
+
+The fix was adding a review layer for any outbound message that referenced pricing, contract terms, or competitive comparisons. Not a bottleneck. A spot-check. Onboard flags these for a five-second founder review before sending. We have not had a problematic interaction since.
+
+**We underbuilt memory at the start.** Our early agent setup had task execution but no structured memory. Each session started relatively cold. The agents were producing good individual outputs but not learning across sessions. We hit the same customer objections repeatedly without the agents adapting. We documented lessons in one-off notes that the agents could not read.
+
+Rebuilding the memory layer in month three cost us four days of engineering time. It should have been the first thing we built. Every agent now reads from a shared context store that includes customer feedback themes, positioning decisions, and what has been tested before. The improvement in output quality was immediate.
+
+---
+
+## The Three Things We Would Do Differently
+
+**First: build the memory layer before the task layer.** It feels backwards because tasks produce visible output and memory feels like infrastructure. But an agent with good memory and average task execution outperforms an agent with perfect task execution and no memory. We learned this the expensive way.
+
+**Second: define escalation criteria on day one.** We were vague about when agents should escalate to founders. "When in doubt, ask" is not a useful instruction. It produces either too many escalations (agents ask about everything) or too few (agents guess rather than flag). The escalation criteria we use now are specific: escalate on anything involving a named customer dispute, any pricing decision above $500, any outbound content referencing a competitor by name, any workflow failure that repeats three times without resolution. Write these down before you launch the first agent.
+
+**Third: read the logs weekly, not monthly.** Agents do not tell you when something is slightly off. They keep running. The signal that something needs adjustment is usually in the logs, not in an escalation. We started doing a 30-minute weekly log review in month three. We caught three meaningful calibration issues in the first two weeks that would have compounded significantly if we had waited until month-end.
+
+---
+
+## What the Numbers Look Like
+
+We are not going to publish everything, but here is enough to make this useful:
+
+| Metric | Value |
+|---|---|
+| MRR at month 6 | $30K |
+| CAC | $80 |
+| Monthly LLM infrastructure cost | $500 to $700 |
+| Full-time employees | 0 |
+| Agent escalation rate to founders | Under 10% of interactions |
+| Content published without founder review | Over 95% |
+
+The $80 CAC with no sales team is the number we are most proud of. Onboard runs the qualification sequence, the product education, and the initial activation. Founders close deals, but we are not building a sales motion to do it.
+
+---
+
+## Where We Are Going
+
+The $30K MRR milestone validated the model. The next question is whether it holds at $100K MRR, where the surface area of decisions that need human judgment gets bigger.
+
+Our working hypothesis: the model holds, but the agent architecture needs to evolve. At $30K, you have enough revenue to run on four specialized agents. At $100K, you probably need seven or eight, and the coordination layer between them becomes the bottleneck. We are building that now.
+
+If you are building at the same stage, the honest version of the advice is this: the autonomous company model works, it is not plug-and-play, and the setup investment is real. Expect four to six weeks before the system runs reliably without daily supervision. After that, the cost and consistency advantages compound in ways that are hard to fully appreciate until you are six months in.
+
+---
+
+## FAQ
+
+**How much does it actually cost to run an autonomous company at $30K MRR?**
+Our monthly infrastructure cost is $500 to $700 in LLM API usage across four agents. That covers content, finance tracking, customer onboarding, and internal documentation. The comparison point is $30K to $80K per month in equivalent human headcount for the same functions.
+
+**What is the biggest operational risk in an autonomous company?**
+Agents that run confidently in the wrong direction without triggering escalation. The risk is not that agents fail noisily. It is that they fail quietly. The mitigation is clear escalation criteria from day one and a weekly log review. Silence from an agent does not mean everything is fine.
+
+**When should you escalate from AI agents to a human in an autonomous company?**
+Escalate on named customer disputes, pricing decisions above a threshold you set, outbound content referencing competitors by name, and any workflow error that repeats without resolution. The criteria should be written down explicitly before you launch. "Use judgment" is not an instruction an agent can follow reliably.
+
+**Does the autonomous company model work for solo founders?**
+Yes. Solo founders and multiplayer founding teams both use Pancake. For solo founders, the leverage is higher because there is no one else to delegate to. The tradeoff is that you are the only person reviewing escalations, so your escalation criteria need to be tighter.
+
+**What is the first agent a company should build?**
+Build the memory layer first, then the first task agent. Most founders do it backwards. Without structured memory, every agent session starts cold and the system does not learn. Build the context store, populate it with your positioning decisions and customer insight, then deploy the first agent against it.
