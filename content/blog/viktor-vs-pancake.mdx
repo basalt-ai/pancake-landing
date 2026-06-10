@@ -1,0 +1,119 @@
+---
+title: "Viktor vs Pancake: One AI Coworker vs a Whole Company Running Itself"
+description: "Viktor gives you a smart AI coworker. Pancake gives you an entire autonomous team. Here's the real difference — and why it matters for where AI is heading."
+author: "François de Fitte"
+publishedAt: "2026-06-09"
+updatedAt: "2026-06-09"
+tags: ["AI agents", "autonomous company", "Viktor alternative", "Slack AI", "AI workforce"]
+---
+
+Viktor is the fastest-growing AI product of 2026. $75M raised, $15M ARR in 10 weeks, backed by Slack's own co-founders. If you're building a company and you haven't looked at it yet, you should.
+
+We've looked at it closely. We're Pancake — an AI super-agent platform built on top of OpenClaw that runs as a squad of agents inside Slack. Here's our honest read of where Viktor wins, where we win, and why the difference matters.
+
+---
+
+**TL;DR:** Viktor is one excellent AI employee you talk to. Pancake is a team of agents that work without being asked — and the infrastructure to run a company that's partially autonomous by design.
+
+---
+
+## What Viktor actually is
+
+Viktor is a single AI coworker that lives in your Slack or Teams workspace. You message it like a colleague. It connects to 3,200+ tools via OAuth, runs code in a secure cloud sandbox, and delivers real outputs — PDFs, spreadsheets, web apps.
+
+That's genuinely impressive. The zero-friction install, the breadth of integrations, the "just message me" UX — Viktor nailed the prompt-response model for AI workers.
+
+The key word is *prompt-response*. Viktor waits. You ask, it does. You ask again, it does again.
+
+## The three things Pancake does differently
+
+### 1. Squads of agents, not one agent
+
+Viktor is one agent. Pancake is a workforce.
+
+When you deploy Pancake, you're not installing a single bot — you're standing up a squad: a sales agent running outbound while a finance agent monitors your metrics while an ops agent handles onboarding while an engineer agent reviews PRs. Each agent has its own memory, its own tools, its own cron schedule.
+
+They work in parallel, without you prompting them. The sales agent doesn't wait for you to say "run outbound today" — it runs outbound because that's its job, the same way an SDR does.
+
+Viktor explicitly describes itself as a "managed AI coworker" and positions against OpenClaw (our runtime) as the complicated developer alternative. That's a fair framing for what it is. But the category we're building isn't "easier OpenClaw" — it's *squads of agents that make your company partially autonomous*.
+
+The difference: when you stack enough agents, your company starts running itself. Viktor can never say that. Architecturally, it's a single-agent model. There's no concept of a team that divides work and coordinates.
+
+### 2. Company brain, not workspace memory
+
+Viktor builds up "persistent memory of how the organization works." That's table stakes now — any serious AI product has some memory layer.
+
+What we're building is different in kind, not degree. Pancake maintains a live company brain: your goals, your decisions, your org knowledge, your metrics — all structured, all linked, all actively maintained by your agents. When the sales agent closes a deal, that fact propagates. When the engineer agent makes an architectural decision, it's logged and available to every other agent.
+
+It's the difference between a coworker who remembers your name and a coworker who actually understands how your company runs and acts from that understanding.
+
+Viktor agents don't coordinate. Ours do.
+
+### 3. Your own infrastructure, not a shared sandbox
+
+Viktor runs code in what they call a "secure cloud sandbox." That's a shared environment — managed SaaS, nothing to configure, nothing to control.
+
+Every Pancake customer gets their own pod: a dedicated virtual machine where your agents live. You can install libraries, download files, run long-running processes, install CLI tools, pull in whatever infrastructure your company actually needs. It's your environment. Your agents run in it persistently.
+
+This matters for two reasons:
+
+*Control.* If you need a specific Python environment, a custom tool, a local database — you have it. You're not constrained to what Viktor pre-built.
+
+*Depth.* Viktor's browser use and code execution are impressive. But they run ephemerally in a shared sandbox. Our agents use browser with their own persistent profiles, session state, and memory. They're not starting fresh each time — they've been here before.
+
+---
+
+## When Viktor is the right choice
+
+Viktor is genuinely excellent for teams that want a capable AI coworker they can deploy in two minutes with no engineering involvement. If your use case is: "I want help with reports, CRM updates, research, and code reviews without any setup" — Viktor is probably the fastest path.
+
+Their 3,200+ integrations and zero-friction install are real advantages. For a 10-person team that wants AI assistance across every department without touching infrastructure, that's a strong offer.
+
+## When Pancake is the right choice
+
+Pancake is for founders who want more than an assistant — who want a company that runs itself.
+
+If you want agents that work overnight without being asked, that coordinate with each other, that maintain a live understanding of your business and act from it — that's what we're building.
+
+Our thesis: the companies that win over the next five years will be the ones that figure out how to make AI do 50-70% of the work by default. Not by prompting an AI coworker. By deploying an AI workforce with its own goals, memory, and infrastructure.
+
+Viktor helps you ask better. Pancake helps you stop asking.
+
+---
+
+## Side-by-side
+
+| | Viktor | Pancake |
+|---|---|---|
+| Model | Single AI coworker | Squad of coordinating agents |
+| Works without prompting | No — prompt-response | Yes — agents run on their own |
+| Agent coordination | None | Built-in (agents share company brain) |
+| Company memory | Workspace context | Structured org brain across all agents |
+| Infrastructure | Shared managed sandbox | Dedicated pod per customer |
+| Install | Zero-friction (Slack OAuth) | Slack-native, requires brief setup |
+| Integrations | 3,200+ pre-built | Deep integrations + custom tools via your pod |
+| Best for | Teams wanting AI assistance | Founders building partially-autonomous companies |
+
+---
+
+## FAQ
+
+*Is Pancake harder to set up than Viktor?*
+
+Yes, and that's intentional. Viktor is built to be zero-friction for any team member. Pancake is built for founders who want to configure an actual AI workforce. The setup is a few hours, not two minutes. What you get in return is agents that work without being prompted.
+
+*Does Pancake have as many integrations as Viktor?*
+
+Viktor has 3,200+ pre-built OAuth integrations. Pancake has a deep set of native integrations (browser, GitHub, Notion, Google Workspace, Slack, and more) plus the ability to install anything into your pod. The breadth differs; the depth is ours.
+
+*Can I use both?*
+
+Potentially. Viktor is excellent for reactive AI assistance across your whole team. Pancake is for the founder or founding team who wants agents running proactively. They're not mutually exclusive — yet.
+
+*What does "partially autonomous company" actually mean?*
+
+It means AI handles 50-70% of the work by default — GTM motions, engineering tasks, ops workflows — without a human prompting each step. Humans act like board members: they set direction, review decisions, unblock edge cases. Viktor is a step toward that. Pancake is designed to get you there.
+
+*How is Pancake different from just running OpenClaw yourself?*
+
+OpenClaw is the runtime. Pancake is the product built on top of it — pre-configured squads, a company brain architecture, Slack-native UX, and the playbooks to make it actually work. Think of OpenClaw as the engine. Pancake is the car.
