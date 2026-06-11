@@ -1063,7 +1063,9 @@
     display: flex;
     flex-direction: column;
     gap: clamp(var(--spacing-md), 2.2cqi, var(--spacing-xxl));
-    width: calc(368 / 1136 * 100%);
+    /* 4 squad columns: (1136 − 3×16px gutters) / 4 = 272, same gutter rhythm
+       the 3×368 layout had. */
+    width: calc(272 / 1136 * 100%);
     /* No `min-height`: the box now resizes down when agents leave just like
        it resizes up when they're added. The previous 47% floor (332/706)
        kept the dept block tall after removals, leaving empty space at the
@@ -1071,7 +1073,8 @@
        symmetrically to how it grows. */
     height: auto;
     max-height: none;
-    padding: clamp(var(--spacing-md), 2.8cqi, calc(2 * var(--spacing-xl)));
+    /* Max 24px (was 32px) — at 272px wide, 32px padding starves the labels. */
+    padding: clamp(var(--spacing-md), 2.8cqi, var(--spacing-xxl));
     border-radius: var(--radius-xl);
     border-width: 1px;
     border-style: solid;
@@ -1079,25 +1082,34 @@
     z-index: 5;
   }
 
-  .home-org-diagram__dept--growth {
+  /* Staggered tops echo the old 290/320/264 rhythm; the column under the
+     Pancake hub (x≈672 → triage) sits highest, shortest wire. */
+  .home-org-diagram__dept--outreach {
     left: 0;
-    top: calc(290 / 706 * 100%);
+    top: calc(312 / 706 * 100%);
     background-color: var(--alt-weak-branded-surface-02);
     border-color: var(--branded-stroke-03);
   }
 
-  .home-org-diagram__dept--engineering {
-    left: calc(384 / 1136 * 100%);
-    top: calc(320 / 706 * 100%);
+  .home-org-diagram__dept--seo {
+    left: calc(288 / 1136 * 100%);
+    top: calc(340 / 706 * 100%);
     background-color: var(--alt-weak-branded-surface-01);
     border-color: var(--branded-stroke-02);
   }
 
-  .home-org-diagram__dept--operations {
-    left: calc(768 / 1136 * 100%);
-    top: calc(264 / 706 * 100%);
+  .home-org-diagram__dept--triage {
+    left: calc(576 / 1136 * 100%);
+    top: calc(272 / 706 * 100%);
     background-color: var(--weak-branded-surface);
     border-color: var(--branded-stroke-01);
+  }
+
+  .home-org-diagram__dept--ads {
+    left: calc(864 / 1136 * 100%);
+    top: calc(300 / 706 * 100%);
+    background-color: var(--alt-weak-branded-surface-03);
+    border-color: var(--branded-stroke-04);
   }
 
   /**
@@ -1110,6 +1122,44 @@
       corner-shape: squircle;
       border-radius: 88px;
     }
+    .home-org-diagram__build {
+      corner-shape: squircle;
+      border-radius: 88px;
+    }
+  }
+
+  /* "Build your own" — static dashed invitation below the stage. Deliberately
+     unwired and unanimated: it's an invitation, not a fifth squad. */
+  .home-org-diagram__build {
+    box-sizing: border-box;
+    width: calc(560 / 1136 * 100%);
+    margin: var(--spacing-xl) auto 0;
+    padding: var(--spacing-xl) var(--spacing-xxl);
+    border: 1px dashed var(--stroke);
+    border-radius: var(--radius-xl);
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    text-align: center;
+  }
+
+  .home-org-diagram__build-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--font-size-header-04);
+    line-height: 1.2;
+    font-weight: var(--font-semibold);
+    color: var(--text);
+  }
+
+  .home-org-diagram__build-sub {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular, 16px);
+    line-height: 1.4;
+    color: var(--subtle-text);
   }
 
   .home-org-diagram__dept-title {
@@ -1151,16 +1201,20 @@
     background-color: var(--elevated-surface);
   }
 
-  .home-org-diagram__dept--growth .home-org-diagram__row {
+  .home-org-diagram__dept--outreach .home-org-diagram__row {
     border-color: var(--branded-stroke-03);
   }
 
-  .home-org-diagram__dept--engineering .home-org-diagram__row {
+  .home-org-diagram__dept--seo .home-org-diagram__row {
     border-color: var(--branded-stroke-02);
   }
 
-  .home-org-diagram__dept--operations .home-org-diagram__row {
+  .home-org-diagram__dept--triage .home-org-diagram__row {
     border-color: var(--branded-stroke-01);
+  }
+
+  .home-org-diagram__dept--ads .home-org-diagram__row {
+    border-color: var(--branded-stroke-04);
   }
 
   .home-org-diagram__dot {
@@ -1257,24 +1311,9 @@
   }
 
   /**
-   * Pancake content overlays: short JetBrains-Mono labels (".md", "24/7")
-   * sit centred on the pancake top; the network glyph (Figma `Group 47`)
-   * is positioned by absolute px to match its Figma offset inside the chip.
+   * Pancake glyph overlays (lock/shield/key) are positioned by absolute px
+   * per card to sit centred on the pancake top.
    */
-  .home-landing-feature-card__pancake-label {
-    position: absolute;
-    left: 50%;
-    top: 27px;
-    transform: translateX(-50%);
-    font-family: var(--font-mono, ui-monospace, "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace);
-    font-weight: 700;
-    font-size: 29.545px;
-    letter-spacing: -0.5px;
-    color: var(--text);
-    white-space: nowrap;
-    pointer-events: none;
-  }
-
   .home-landing-feature-card__pancake-icon {
     display: block;
     position: absolute;
@@ -1307,6 +1346,151 @@
     line-height: 1.4;
     font-weight: var(--font-normal);
     color: var(--text);
+  }
+
+  /* ─── "three real jobs" use-case triptych ───
+     Headerless cards under the demo video: faux-Slack exchange on top,
+     kicker + headline + body below. Chat recipe matches `.pricing-buys__chat`
+     so the Slack grammar reads identically across the site. */
+  .home-use-cases {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+  }
+
+  @media (min-width: 1024px) {
+    .home-use-cases {
+      grid-template-columns: repeat(3, 1fr);
+      align-items: stretch;
+    }
+  }
+
+  .home-use-case-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-xxl);
+    background-color: var(--surface);
+    border: 1px solid var(--subtle-stroke);
+    border-radius: var(--radius-lg);
+    corner-shape: squircle;
+  }
+
+  /* `flex: 1` lets the chat block absorb height differences so the three
+     copy blocks start on the same baseline across the row. */
+  .home-use-case-card__chat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-xl);
+    background-color: var(--surface);
+    border: 1px solid var(--subtle-stroke);
+    border-radius: var(--radius-md);
+    corner-shape: squircle;
+  }
+
+  /* Same workaround as `.pricing-buys__chat`: `app/_styles/style.css` slams
+     `var(--font-body)` onto every element, so Lato must be re-scoped to the
+     chat block and all descendants. */
+  .home-use-case-card__chat,
+  .home-use-case-card__chat * {
+    font-family: var(--font-lato), "Lato", -apple-system, BlinkMacSystemFont,
+      "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  .home-use-case-card__copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .home-use-case-card__kicker {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--subtle-text);
+  }
+
+  .home-use-case-card__headline {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--font-size-header-04);
+    line-height: 1.15;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+
+  .home-use-case-card__body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.45;
+    font-weight: var(--font-normal);
+    color: var(--subtle-text);
+  }
+
+  /* Slack-attachment-style artifact chip inside the agent reply. Icon tones
+     reuse the site's status palette (positive/warning/negative text). */
+  .home-use-case-artifact {
+    margin: var(--spacing-md) 0 0 0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background-color: var(--surface);
+    border: 1px solid var(--subtle-stroke);
+    border-radius: var(--radius-sm);
+    corner-shape: squircle;
+  }
+
+  .home-use-case-artifact__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 6px;
+  }
+
+  .home-use-case-artifact__icon[data-icon="pr"] {
+    color: var(--positive-text);
+    background-color: rgba(3, 125, 72, 0.1);
+  }
+
+  .home-use-case-artifact__icon[data-icon="leads"] {
+    color: var(--warning-text);
+    background-color: rgba(212, 57, 0, 0.1);
+  }
+
+  .home-use-case-artifact__icon[data-icon="pdf"] {
+    color: var(--negative-text);
+    background-color: rgba(229, 0, 46, 0.1);
+  }
+
+  .home-use-case-artifact__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .home-use-case-artifact__title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1d1c1d;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .home-use-case-artifact__meta {
+    font-size: 12px;
+    color: #616061;
   }
 
   /* Testimonials section — `--testimonials` modifier wires a full-bleed
@@ -1349,17 +1533,26 @@
     padding-block: 4px;
   }
 
+  /* Card is a link to the full post on X. */
   .home-landing-testimonial {
     flex-shrink: 0;
-    width: clamp(320px, 84vw, 559px);
+    width: clamp(320px, 84vw, 480px);
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: var(--spacing-xl);
     padding: 32px;
     border: 1px solid rgba(0, 0, 0, 0.16);
     border-radius: 32px;
     background-color: var(--surface);
     overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: border-color 140ms ease;
+  }
+
+  .home-landing-testimonial:hover {
+    border-color: rgba(0, 0, 0, 0.4);
   }
 
   .home-landing-testimonial__header {
@@ -1402,13 +1595,18 @@
     color: var(--text);
   }
 
+  /* Real handles run long (`@Ambani_Wessley · Jun 9`) — X-style smaller grey
+     line, ellipsized instead of wrapping mid-handle on narrow cards. */
   .home-landing-testimonial__handle {
     margin: 0;
     font-family: var(--font-body);
     font-weight: 400;
-    font-size: 16px;
-    line-height: 24px;
-    color: var(--text);
+    font-size: 15px;
+    line-height: 22px;
+    color: var(--subtle-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .home-landing-testimonial__brand {
@@ -1427,57 +1625,34 @@
     display: block;
   }
 
+  /* Real posts run long — X-like reading size, clamped at 10 lines (the
+     card links to the full post, so the cut is honest). */
   .home-landing-testimonial__quote {
     margin: 0;
     font-family: var(--font-body);
     font-weight: 400;
-    font-size: 22.62px;
-    line-height: 32px;
+    font-size: 17px;
+    line-height: 26px;
     letter-spacing: 0;
     color: var(--text);
     white-space: pre-wrap;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 10;
+    overflow: hidden;
   }
 
   .home-landing-testimonial__mention {
     color: #7418ff;
   }
 
-  .home-landing-testimonial__divider {
+  .home-landing-testimonial__translated {
     margin: 0;
-    width: 100%;
-    height: 0;
-    border: 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.16);
-  }
-
-  .home-landing-testimonial__meta {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    width: 100%;
-  }
-
-  .home-landing-testimonial__stat {
     font-family: var(--font-body);
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 24px;
-    color: var(--text);
-    white-space: nowrap;
-  }
-
-  .home-landing-testimonial__stat strong {
-    font-weight: 700;
-  }
-
-  .home-landing-testimonial__via {
-    margin-left: auto;
-    font-family: var(--font-body);
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 24px;
-    color: rgba(44, 0, 42, 0.64);
-    white-space: nowrap;
+    font-style: italic;
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--subtle-text);
   }
 
   .home-landing-section__closing-title {
@@ -4187,19 +4362,46 @@
     border: 1px solid transparent;
   }
 
-  .home-org-mobile-card--growth {
+  .home-org-mobile-card--outreach {
     background-color: var(--alt-weak-branded-surface-02);
     border-color: var(--branded-stroke-03);
   }
 
-  .home-org-mobile-card--engineering {
+  .home-org-mobile-card--seo {
     background-color: var(--alt-weak-branded-surface-01);
     border-color: var(--branded-stroke-02);
   }
 
-  .home-org-mobile-card--operations {
+  .home-org-mobile-card--triage {
     background-color: var(--weak-branded-surface);
     border-color: var(--branded-stroke-01);
+  }
+
+  .home-org-mobile-card--ads {
+    background-color: var(--alt-weak-branded-surface-03);
+    border-color: var(--branded-stroke-04);
+  }
+
+  /* Static "Build your own" finale slide — dashed invitation, no live rows. */
+  .home-org-mobile-card--build {
+    background-color: var(--surface);
+    border: 1px dashed var(--stroke);
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-sm);
+    text-align: center;
+  }
+
+  .home-org-mobile-card--build .home-org-mobile-card__title {
+    font-size: 20px;
+  }
+
+  .home-org-mobile-card__sub {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--subtle-text);
   }
 
   .home-org-mobile-card__title {
@@ -4266,36 +4468,6 @@
     background-color: var(--inverted-surface);
   }
 
-  .home-org-mobile-tailor {
-    width: 100%;
-    box-sizing: border-box;
-    background-color: var(--surface);
-    border: 1px solid var(--stroke);
-    border-radius: var(--radius-xl);
-    padding: var(--spacing-xxl);
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
-    text-align: left;
-  }
-
-  .home-org-mobile-tailor__title {
-    margin: 0;
-    font-family: var(--font-display);
-    font-weight: var(--font-semibold);
-    font-size: 22.62px;
-    line-height: 28px;
-    color: var(--text);
-  }
-
-  .home-org-mobile-tailor__body {
-    margin: 0;
-    font-family: var(--font-body);
-    font-size: 16px;
-    line-height: 24px;
-    color: var(--text);
-  }
-
   /* Testimonials mobile — snap carousel + dots (Figma `451:19562`). */
   .home-landing-testimonials__mobile {
     display: none;
@@ -4304,6 +4476,12 @@
   .home-landing-testimonials__track--mobile {
     display: flex;
     gap: 16px;
+    /* Override the shared track's `width: max-content` — the mobile track is
+       the scroll container, so it must stay viewport-wide to overflow/snap
+       (and so the centered-card math measures the visible band, not the
+       full content width). */
+    width: 100%;
+    box-sizing: border-box;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-padding-inline: 16%;

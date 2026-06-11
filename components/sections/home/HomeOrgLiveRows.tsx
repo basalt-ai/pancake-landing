@@ -23,11 +23,13 @@ type LiveRow = {
   baseDot?: OrgDotTone;
 };
 
-const ROW_CAP = 6;
+/** 4 (was 6) — squad cards are narrower (4 columns) and must stay inside the 706-tall stage at cap. */
+const ROW_CAP = 4;
 const ROW_FLOOR = 2;
-/** Per-block only — each surface draws a fresh delay in this range every cycle (no master tick). */
-const BLOCK_DELAY_MIN_MS = 880;
-const BLOCK_DELAY_MAX_MS = 1800;
+/** Per-block only — each surface draws a fresh delay in this range every cycle (no master tick).
+ *  Widened from 880–1800ms when the diagram went 3 → 4 surfaces, so total section activity stays flat. */
+const BLOCK_DELAY_MIN_MS = 1200;
+const BLOCK_DELAY_MAX_MS = 2400;
 const PENDING_TO_ACTIVE_S = 0.8;
 const ADD_IN_DURATION = 0.58;
 const ADD_SLIDE_MAX_PX = 168;
@@ -168,7 +170,12 @@ type HomeOrgLiveRowsProps = {
   setDeptRows: Dispatch<SetStateAction<Record<OrgSurface, LiveRow[]>>>;
 };
 
-const SURFACES: OrgSurface[] = ["growth", "engineering", "operations"];
+/** Derived from the data file so it stays the single source of truth for surfaces. */
+const SURFACES: OrgSurface[] = LIVE_INITIAL_DEPTS.map((d) => d.surface);
+
+function makeSurfaceRecord<T>(value: T): Record<OrgSurface, T> {
+  return Object.fromEntries(SURFACES.map((s) => [s, value])) as Record<OrgSurface, T>;
+}
 
 /**
  * Live add/remove ticker shared between the desktop org diagram and the
@@ -224,11 +231,9 @@ function useOrgLiveTickerImpl({
   const liveEnabledRef = useRef(false);
   /** True after this mount's effect cleanup — blocks stray timers/GSAP from a prior Strict/HMR instance. */
   const disposedRef = useRef(false);
-  const timerBySurfaceRef = useRef<Record<OrgSurface, ReturnType<typeof setTimeout> | null>>({
-    growth: null,
-    engineering: null,
-    operations: null,
-  });
+  const timerBySurfaceRef = useRef<Record<OrgSurface, ReturnType<typeof setTimeout> | null>>(
+    makeSurfaceRecord<ReturnType<typeof setTimeout> | null>(null),
+  );
   /** pending→active — plain timeouts (browser number handles) so GSAP never drops promotions. */
   const pendingPromoteTimersRef = useRef<Map<string, number>>(new Map());
 
@@ -254,11 +259,9 @@ function useOrgLiveTickerImpl({
   }, []);
 
   /** If exit GSAP never reaches onComplete, that surface would stop scheduling forever — force finish. */
-  const removeFailsafeBySurfaceRef = useRef<Record<OrgSurface, number | null>>({
-    growth: null,
-    engineering: null,
-    operations: null,
-  });
+  const removeFailsafeBySurfaceRef = useRef<Record<OrgSurface, number | null>>(
+    makeSurfaceRecord<number | null>(null),
+  );
 
   const clearRemoveFailsafe = useCallback((surface: OrgSurface) => {
     const t = removeFailsafeBySurfaceRef.current[surface];

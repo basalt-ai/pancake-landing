@@ -1,0 +1,6 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 34 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="shield">
+<path id="outline" d="M17 2.5L30.5 7.5V18.5C30.5 27.5 24.5 34.3 17 37C9.5 34.3 3.5 27.5 3.5 18.5V7.5L17 2.5Z" stroke="var(--stroke-0, #2C002A)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="check" d="M11 19.5L15.5 24L23.5 15" stroke="var(--stroke-0, #2C002A)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

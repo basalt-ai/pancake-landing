@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FaDiscord, FaLinkedin } from "react-icons/fa6";
+import { FaDiscord, FaInstagram, FaLinkedin, FaTiktok } from "react-icons/fa6";
 import { SiX, SiYoutube } from "react-icons/si";
 
 import { PancakeLogo } from "./PancakeLogo";
@@ -19,6 +19,16 @@ const socials = [
     href: "https://www.youtube.com/@trypancake",
     label: "Pancake on YouTube",
     Icon: SiYoutube,
+  },
+  {
+    href: "https://www.tiktok.com/@getpancake",
+    label: "Pancake on TikTok",
+    Icon: FaTiktok,
+  },
+  {
+    href: "https://www.instagram.com/get.pancake/",
+    label: "Pancake on Instagram",
+    Icon: FaInstagram,
   },
   {
     href: "https://discord.gg/brJ99Up6ym",

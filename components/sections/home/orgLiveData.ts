@@ -1,83 +1,101 @@
-export type OrgSurface = "growth" | "engineering" | "operations";
+export type OrgSurface = "outreach" | "seo" | "triage" | "ads";
 
 export type OrgDotTone = "positive" | "warning" | "negative";
 
-/** Initial rows match the static Figma org (dot tones unchanged from the pre-live diagram). */
+/**
+ * Seeded squad cards — the four flagship squads from Pancake's squad store
+ * (Outreach, AI SEO, GitHub Triage, Google Ads), each staffed by subagents.
+ * Seed 3 rows per squad (ROW_CAP is 4 — seeding at cap would force the first
+ * tick to be a removal everywhere); one warning dot per card keeps the same
+ * mixed-status texture as the original diagram.
+ */
 export const LIVE_INITIAL_DEPTS: readonly {
   title: string;
   surface: OrgSurface;
   rows: readonly { label: string; dot: OrgDotTone }[];
 }[] = [
   {
-    title: "Growth",
-    surface: "growth",
+    title: "Outreach",
+    surface: "outreach",
     rows: [
-      { label: "Copywriter", dot: "positive" },
-      { label: "Ad Manager", dot: "warning" },
-      { label: "Social Media Manager", dot: "negative" },
-      { label: "Email Marketer", dot: "positive" },
+      { label: "Lead Researcher", dot: "positive" },
+      { label: "Sequence Writer", dot: "positive" },
+      { label: "Reply Handler", dot: "warning" },
     ],
   },
   {
-    title: "Engineering",
-    surface: "engineering",
+    title: "AI SEO",
+    surface: "seo",
     rows: [
-      { label: "Full-stack Engineer", dot: "positive" },
-      { label: "DevOps", dot: "positive" },
-      { label: "Performance Monitor", dot: "negative" },
-      { label: "QA Tester", dot: "positive" },
+      { label: "Keyword Analyst", dot: "positive" },
+      { label: "Content Writer", dot: "positive" },
+      { label: "Citation Auditor", dot: "warning" },
     ],
   },
   {
-    title: "Operations",
-    surface: "operations",
+    title: "GitHub Triage",
+    surface: "triage",
     rows: [
-      { label: "Scheduling", dot: "positive" },
-      { label: "Recruiting Screener", dot: "warning" },
-      { label: "Invoicing", dot: "positive" },
-      { label: "Customer Support", dot: "positive" },
+      { label: "Issue Classifier", dot: "positive" },
+      { label: "Duplicate Hunter", dot: "warning" },
+      { label: "Priority Labeler", dot: "positive" },
+    ],
+  },
+  {
+    title: "Google Ads",
+    surface: "ads",
+    rows: [
+      { label: "Budget Optimizer", dot: "positive" },
+      { label: "Ad Copy Tester", dot: "positive" },
+      { label: "Bid Manager", dot: "warning" },
     ],
   },
 ] as const;
 
+/** Subagent pools per squad — labels kept ≤ 19 chars so rows stay one-line at 1024px. */
 export const ROLE_POOLS: Record<OrgSurface, readonly string[]> = {
-  engineering: [
-    "Full-stack Engineer",
-    "DevOps",
-    "Performance Monitor",
-    "QA Tester",
-    "Security Auditor",
-    "Database Architect",
-    "Code Reviewer",
-    "Bug Triager",
-    "Bug Whisperer",
-    "Console.log Detective",
-    "Merge Conflict Mediator",
+  outreach: [
+    "Lead Researcher",
+    "Sequence Writer",
+    "Reply Handler",
+    "LinkedIn Prospector",
+    "Meeting Booker",
+    "ICP Scorer",
+    "Follow-up Chaser",
+    "Domain Warmer",
+    "Objection Handler",
   ],
-  growth: [
-    "Copywriter",
-    "SEO Analyst",
-    "Paid Ads Manager",
-    "Email Marketer",
-    "Conversion Optimizer",
-    "Social Media Strategist",
-    "Affiliate Manager",
-    "Growth Hacker",
-    "A/B Test Gambler",
-    "Hook Engineer",
-    "Cold DM Specialist",
+  seo: [
+    "Keyword Analyst",
+    "Content Writer",
+    "Citation Auditor",
+    "Geo Optimizer",
+    "Internal Linker",
+    "SERP Tracker",
+    "Schema Fixer",
+    "Brief Builder",
+    "Snippet Hunter",
   ],
-  operations: [
-    "Scheduling",
-    "Recruiting Screener",
-    "Vendor Coordinator",
-    "Compliance Reviewer",
-    "Expense Auditor",
-    "Procurement Analyst",
-    "IT Support",
-    "Onboarding Specialist",
-    "Calendar Tetris Master",
-    "Slack Status Inspector",
-    "Standup Saver",
+  triage: [
+    "Issue Classifier",
+    "Duplicate Hunter",
+    "Priority Labeler",
+    "Changelog Writer",
+    "Repro Checker",
+    "Stale Closer",
+    "First Responder",
+    "PR Linker",
+    "Flaky Test Spotter",
+  ],
+  ads: [
+    "Budget Optimizer",
+    "Ad Copy Tester",
+    "Bid Manager",
+    "Performance Auditor",
+    "Keyword Pruner",
+    "Spend Watchdog",
+    "Audience Splitter",
+    "Quality Score Fixer",
+    "Landing Page Grader",
   ],
 };

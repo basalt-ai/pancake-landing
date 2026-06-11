@@ -1,12 +1,16 @@
 "use client";
 
 /**
- * Org diagram wires — Figma `428:14926` (`get_design_context` MCP).
- * • Five elements: You, Pancake (hub for depts + chip for founder wire), Growth, Engineering, Operations.
- * • Founder↔chip path ends classified with chip stage coords vs You (hub anchor alone mislabels short paths).
- * • Several balls run only on founder↔chip (same leg tween + respawn you/pancake); hub traffic uses dept legs only.
- * • Hub ball count (~Pancake↔three blocks) is kept lower than founder-only traffic so the short link can feel busier.
- * • Duration is random and scaled by path length so short founder↔chip legs don’t read slower than long dept wires.
+ * Org diagram wires — squads revamp.
+ * • Six elements: You, Pancake (hub for squads + chip for founder wire), Outreach, AI SEO, GitHub Triage, Google Ads.
+ * • Squad wires are hand-authored cubic béziers DIRECTLY in stage space (1136×706 viewBox, no group
+ *   transforms) — each leaves the monster's underside and enters its squad card top-center with
+ *   vertical tangents (`M hx hy C cx my, ex my, ex ey`, my ≈ midpoint). The `d` strings are plain
+ *   stage numbers; tune them live in devtools. (The old Figma-export wires carried ~80 lines of
+ *   frame/rotation transform plumbing that existed only to replay Figma's coordinate system.)
+ * • Founder↔chip wire keeps its original Figma transform — it is independent of squad count.
+ * • Several balls run only on founder↔chip (same leg tween + respawn you/pancake); hub traffic uses squad legs only.
+ * • Duration is random and scaled by path length so short founder↔chip legs don't read slower than long squad wires.
  *   Stroke-free trail dots.
  */
 
@@ -16,84 +20,42 @@ import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
+type OrgDeptWire = { id: string; d: string };
+
+/** Hub exits fan across the monster's underside (monster box: 608,0 → 736,128). */
+const ORG_DEPT_WIRES: readonly OrgDeptWire[] = [
+  { id: "wire-outreach", d: "M644 130C583 218 136 218 136 306" },
+  { id: "wire-seo", d: "M662 132C633 233 424 233 424 334" },
+  { id: "wire-triage", d: "M682 130C686 198 712 198 712 266" },
+  { id: "wire-ads", d: "M700 127C736 210 1000 210 1000 294" },
+];
+
 type OrgWireFrame = { x: number; y: number; w: number; h: number };
 
-type OrgTransformedWire = {
-  dataNodeId: string;
-  pathIdSuffix: string;
-  vbW: number;
-  vbH: number;
-  d: string;
-  frame: OrgWireFrame;
-  vectorStroke: boolean;
-  transformMode?: "growth211" | "vector210";
-};
-
-const ORG_WIRE_GROWTH: OrgTransformedWire = {
-  dataNodeId: "428:14927",
-  pathIdSuffix: "growth",
-  vbW: 174,
-  vbH: 511.538,
-  d: "M172.5 510C31.0004 520.5 169.5 46.5004 1.50037 1.50037",
-  frame: { x: 206, y: 113, w: 508.672, h: 171 },
-  vectorStroke: true,
-  transformMode: "growth211",
-};
-
-const ORG_WIRE_OPERATIONS: OrgTransformedWire = {
-  dataNodeId: "428:14928",
-  pathIdSuffix: "operations",
-  vbW: 160.501,
-  vbH: 149.501,
-  d: "M159 148C138.5 92.0004 46.0004 21.0004 1.50038 1.50038",
-  frame: { x: 731, y: 91, w: 146.5, h: 157.5 },
-  vectorStroke: false,
-};
-
-const ORG_WIRE_ENGINEERING: OrgTransformedWire = {
-  dataNodeId: "428:14937",
-  pathIdSuffix: "engineering",
-  vbW: 177.412,
-  vbH: 209,
-  d: "M152.086 1.5C255.086 104.5 -9.91415 143.5 1.58568 207.5",
-  frame: { x: 574.14, y: 102, w: 174.691, h: 206 },
-  vectorStroke: true,
-};
-
-const ORG_DEPT_WIRES: readonly OrgTransformedWire[] = [ORG_WIRE_GROWTH, ORG_WIRE_OPERATIONS, ORG_WIRE_ENGINEERING];
-
-const ORG_WIRE_FOUNDER_PANCAKE: OrgTransformedWire = {
+/** Founder↔Pancake wire — original Figma vector (rotated-inner transform preserved). */
+const ORG_WIRE_FOUNDER_PANCAKE = {
   dataNodeId: "428:14936",
-  pathIdSuffix: "founder-pancake",
   vbW: 18.134,
   vbH: 121.501,
   d: "M6.00034 1.50035C22.0003 35.5004 19.5003 83.0004 1.50034 120",
-  frame: { x: 492.5, y: 21.87, w: 118.5, h: 15.135 },
-  vectorStroke: true,
-  transformMode: "vector210",
+  frame: { x: 492.5, y: 21.87, w: 118.5, h: 15.135 } as OrgWireFrame,
 };
 
 const FOUNDER_WIRE_ID = ORG_WIRE_FOUNDER_PANCAKE.dataNodeId;
 
-/** Pancake *chip* end of the founder wire (stage space) — distinct from hub used for dept wires. */
+/** Pancake *chip* end of the founder wire (stage space) — distinct from hub used for squad wires. */
 const FOUNDER_CHIP_STAGE = { x: 862, y: 36 };
 
-/** All wires that carry ball traffic (depts + human↔Pancake). */
-const ORG_WIRES_WITH_BALLS: readonly OrgTransformedWire[] = [...ORG_DEPT_WIRES, ORG_WIRE_FOUNDER_PANCAKE];
+/** All wire ids that carry ball traffic (squads + human↔Pancake). */
+const ORG_WIRE_IDS_WITH_BALLS: readonly string[] = [
+  ...ORG_DEPT_WIRES.map((w) => w.id),
+  FOUNDER_WIRE_ID,
+];
 
-function orgWireTransform(frame: OrgWireFrame, vbW: number, vbH: number): string {
-  const sx = frame.w / vbW;
-  const sy = frame.h / vbH;
-  return `translate(${frame.x} ${frame.y}) scale(${sx} ${sy})`;
-}
-
-function orgWireTransformRotatedInner(
-  frame: OrgWireFrame,
-  vbW: number,
-  vbH: number,
-  innerW: number,
-  innerH: number,
-): string {
+function founderWireGroupTransform(): string {
+  const { frame, vbW, vbH } = ORG_WIRE_FOUNDER_PANCAKE;
+  const innerW = 15.135;
+  const innerH = 118.5;
   const sx = innerW / vbW;
   const sy = innerH / vbH;
   const cx = frame.x + frame.w / 2;
@@ -101,39 +63,28 @@ function orgWireTransformRotatedInner(
   return `translate(${cx} ${cy}) rotate(-90) translate(${-innerW / 2} ${-innerH / 2}) scale(${sx} ${sy})`;
 }
 
-function orgWireGroupTransform(wire: OrgTransformedWire): string {
-  if (wire.transformMode === "growth211") {
-    return orgWireTransformRotatedInner(wire.frame, wire.vbW, wire.vbH, 171, 508.672);
-  }
-  if (wire.transformMode === "vector210") {
-    return orgWireTransformRotatedInner(wire.frame, wire.vbW, wire.vbH, 15.135, 118.5);
-  }
-  return orgWireTransform(wire.frame, wire.vbW, wire.vbH);
-}
-
-/** Figma stage coords for reduced-motion fallback (approx. along each wire). */
-const REDUCED_FALLBACK_BY_WIRE: Record<string, readonly { cx: number; cy: number }[]> = {
-  "428:14927": [{ cx: 330, cy: 201 }],
-  "428:14937": [
-    { cx: 526, cy: 187 },
-    { cx: 656, cy: 173 },
-    { cx: 602, cy: 266 },
-  ],
-  "428:14928": [
-    { cx: 724, cy: 192 },
-    { cx: 828, cy: 173 },
-  ],
-  "428:14936": [{ cx: 506, cy: 28 }],
+/**
+ * Reduced-motion fallback — static balls at fixed fractions of each wire's
+ * length (computed, not hardcoded stage coords, so they survive path tweaks).
+ * Outer wires get one ball, the two inner ones two, founder wire one.
+ */
+const REDUCED_FALLBACK_FRACTIONS: Record<string, readonly number[]> = {
+  "wire-outreach": [0.45],
+  "wire-seo": [0.3, 0.7],
+  "wire-triage": [0.3, 0.7],
+  "wire-ads": [0.45],
+  [FOUNDER_WIRE_ID]: [0.5],
 };
 
 const BALL_R_MIN = 3.2;
 const BALL_R_MAX = 7.8;
-/** Hub/dept legs only (Pancake ↔ Growth, Engineering, Operations) — ~half of previous density. */
+/** Hub/squad legs only (Pancake ↔ four squad cards). Kept at the 3-dept density —
+ *  spread over 4 wires the per-wire traffic calms slightly, which is the point. */
 const TOTAL_BALL_MIN = 6;
 const TOTAL_BALL_MAX = 9;
 /** Departure weight for `you` (<1): only one outgoing leg (→chip), so uniform anchors over-count you→chip. */
 const DEPARTURE_WEIGHT_YOU = 0.5;
-/** When leaving Pancake, chance to pick the founder↔chip leg if dept legs also exist (balances chip↦you vs you↦chip). */
+/** When leaving Pancake, chance to pick the founder↔chip leg if squad legs also exist (balances chip↦you vs you↦chip). */
 const PANCAKE_FOUNDER_LEG_PROB = 0.5;
 /** Balls that only use founder↔chip legs (same u 0→1 + respawn as runBallLeg); always >1 on that wire. */
 const FOUNDER_BALL_MIN = 2;
@@ -141,7 +92,7 @@ const FOUNDER_BALL_MAX = 4;
 /** One-way leg duration (s) before length scaling; clamped after scale. */
 const DURATION_MIN = 1.1;
 const DURATION_MAX = 2.85;
-/** Path length in path user units above which duration is not shortened (dept wires). */
+/** Path length in path user units above which duration is not shortened (squad wires). */
 const DURATION_REF_PATH_LEN = 300;
 const DURATION_FLOOR_AFTER_SCALE = 0.48;
 const LEG_DELAY_MAX = 0.35;
@@ -149,15 +100,16 @@ const LEG_DELAY_MAX = 0.35;
 const EASE_POOL = ["none", "power1.inOut", "power2.inOut", "sine.inOut", "power1.out", "power2.out"] as const;
 
 /** Diagram centres in stage / viewBox space (1136×706) — nearest path end picks semantic node. */
-const ANCHOR_IDS = ["you", "pancake", "growth", "engineering", "operations"] as const;
+const ANCHOR_IDS = ["you", "pancake", "outreach", "seo", "triage", "ads"] as const;
 type AnchorId = (typeof ANCHOR_IDS)[number];
 
 const ANCHORS: Record<AnchorId, { x: number; y: number }> = {
   you: { x: 263, y: 98 },
   pancake: { x: 672, y: 88 },
-  growth: { x: 184, y: 448 },
-  engineering: { x: 568, y: 486 },
-  operations: { x: 952, y: 430 },
+  outreach: { x: 136, y: 460 },
+  seo: { x: 424, y: 488 },
+  triage: { x: 712, y: 420 },
+  ads: { x: 1000, y: 448 },
 };
 
 type DirectedLeg = {
@@ -209,7 +161,7 @@ function pickEase(rng: () => number): string {
   return EASE_POOL[Math.floor(rng() * EASE_POOL.length)] ?? "sine.inOut";
 }
 
-/** Random duration scaled by path length so short founder↔chip legs don’t feel sluggish vs long dept wires. */
+/** Random duration scaled by path length so short founder↔chip legs don't feel sluggish vs long squad wires. */
 function randomLegDuration(pathLen: number, rng: () => number): number {
   const base = rand(rng, DURATION_MIN, DURATION_MAX);
   const lenFactor = gsap.utils.clamp(0.22, 1, pathLen / DURATION_REF_PATH_LEN);
@@ -277,18 +229,12 @@ function buildDirectedLegs(
 }
 
 function pickWeightedDepartureAnchor(rng: () => number): AnchorId {
-  const w: Record<AnchorId, number> = {
-    you: DEPARTURE_WEIGHT_YOU,
-    pancake: 1,
-    growth: 1,
-    engineering: 1,
-    operations: 1,
-  };
+  const weightFor = (id: AnchorId) => (id === "you" ? DEPARTURE_WEIGHT_YOU : 1);
   let sum = 0;
-  for (const id of ANCHOR_IDS) sum += w[id];
+  for (const id of ANCHOR_IDS) sum += weightFor(id);
   let t = rng() * sum;
   for (const id of ANCHOR_IDS) {
-    t -= w[id];
+    t -= weightFor(id);
     if (t <= 0) return id;
   }
   return ANCHOR_IDS[ANCHOR_IDS.length - 1]!;
@@ -439,7 +385,6 @@ function startBallTraffic(
 function mountReducedMotionBalls(
   path: SVGPathElement,
   ballRoot: SVGGElement,
-  svg: SVGSVGElement,
   wireId: string,
   dashRestore: string,
 ): void {
@@ -447,15 +392,16 @@ function mountReducedMotionBalls(
   path.setAttribute("stroke-dasharray", dashRestore);
   path.setAttribute("stroke-dashoffset", "0");
 
-  const fallbacks = REDUCED_FALLBACK_BY_WIRE[wireId] ?? [{ cx: 0, cy: 0 }];
+  const fractions = REDUCED_FALLBACK_FRACTIONS[wireId] ?? [0.5];
+  const len = path.getTotalLength();
   const r = (BALL_R_MIN + BALL_R_MAX) / 2;
 
-  fallbacks.forEach((pt) => {
-    const loc = stagePointToPathLocal(path, svg, pt.cx, pt.cy);
+  fractions.forEach((frac) => {
+    const pt = path.getPointAtLength(frac * len);
     const circle = createTrailCircle(r);
     circle.setAttribute("opacity", "1");
-    circle.setAttribute("cx", String(loc.x));
-    circle.setAttribute("cy", String(loc.y));
+    circle.setAttribute("cx", String(pt.x));
+    circle.setAttribute("cy", String(pt.y));
     ballRoot.appendChild(circle);
   });
 }
@@ -470,11 +416,11 @@ export function OrgConnections() {
 
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      const wireCtx = ORG_WIRES_WITH_BALLS.map((wire) => {
-        const g = svg.querySelector<SVGGElement>(`g[data-node-id="${wire.dataNodeId}"]`);
+      const wireCtx = ORG_WIRE_IDS_WITH_BALLS.map((wireId) => {
+        const g = svg.querySelector<SVGGElement>(`g[data-node-id="${wireId}"]`);
         const path = g?.querySelector<SVGPathElement>("path.home-org-diagram__wire") ?? null;
         const ballRoot = g?.querySelector<SVGGElement>("[data-org-ball-root]") ?? null;
-        return { wireId: wire.dataNodeId, path, ballRoot };
+        return { wireId, path, ballRoot };
       }).filter((c): c is { wireId: string; path: SVGPathElement; ballRoot: SVGGElement } =>
         Boolean(c.path && c.ballRoot),
       );
@@ -498,7 +444,7 @@ export function OrgConnections() {
 
       if (reduced) {
         wireCtx.forEach(({ path, ballRoot, wireId }) => {
-          mountReducedMotionBalls(path, ballRoot, svg, wireId, dashRestore);
+          mountReducedMotionBalls(path, ballRoot, wireId, dashRestore);
         });
         return cleanup;
       }
@@ -535,20 +481,16 @@ export function OrgConnections() {
       focusable="false"
     >
       {ORG_DEPT_WIRES.map((wire) => (
-        <g key={wire.dataNodeId} data-node-id={wire.dataNodeId} data-org-anim="dept" transform={orgWireGroupTransform(wire)}>
-          <path
-            className="home-org-diagram__wire"
-            d={wire.d}
-            vectorEffect={wire.vectorStroke ? "nonScalingStroke" : undefined}
-          />
+        <g key={wire.id} data-node-id={wire.id} data-org-anim="dept">
+          <path className="home-org-diagram__wire" d={wire.d} />
           <g data-org-ball-root aria-hidden />
         </g>
       ))}
-      <g data-node-id={ORG_WIRE_FOUNDER_PANCAKE.dataNodeId} transform={orgWireGroupTransform(ORG_WIRE_FOUNDER_PANCAKE)}>
+      <g data-node-id={ORG_WIRE_FOUNDER_PANCAKE.dataNodeId} transform={founderWireGroupTransform()}>
         <path
           className="home-org-diagram__wire"
           d={ORG_WIRE_FOUNDER_PANCAKE.d}
-          vectorEffect={ORG_WIRE_FOUNDER_PANCAKE.vectorStroke ? "nonScalingStroke" : undefined}
+          vectorEffect="nonScalingStroke"
         />
         <g data-org-ball-root aria-hidden />
       </g>

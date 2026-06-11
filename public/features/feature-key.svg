@@ -1,0 +1,8 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="key">
+<circle id="head" cx="12" cy="28" r="6.8" stroke="var(--stroke-0, #2C002A)" stroke-width="3"/>
+<path id="shaft" d="M16.8 23.2L34 6" stroke="var(--stroke-0, #2C002A)" stroke-width="3" stroke-linecap="round"/>
+<path id="tooth-1" d="M30 10L34 14" stroke="var(--stroke-0, #2C002A)" stroke-width="3" stroke-linecap="round"/>
+<path id="tooth-2" d="M25.5 14.5L28.5 17.5" stroke="var(--stroke-0, #2C002A)" stroke-width="3" stroke-linecap="round"/>
+</g>
+</svg>

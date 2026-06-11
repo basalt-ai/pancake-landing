@@ -6,10 +6,11 @@
 import { HOME_PAGE_CONTAINER_CLASS } from "@/components/sections/home/home-layout";
 import { HomeIntegrationsCloud } from "@/components/sections/home/HomeIntegrationsCloud";
 import { HomeLandingControl } from "@/components/sections/home/HomeLandingControl";
-import { HomeLandingFeatures } from "@/components/sections/home/HomeLandingFeatures";
+import { HomeLandingSecurity } from "@/components/sections/home/HomeLandingSecurity";
 import { HomeLandingTestimonials } from "@/components/sections/home/HomeLandingTestimonials";
 import { HomeOrgDiagram } from "@/components/sections/home/HomeOrgDiagram";
 import { HomeOrgDiagramMobile } from "@/components/sections/home/HomeOrgDiagramMobile";
+import { HomeUseCases } from "@/components/sections/home/HomeUseCases";
 import { SlackUI } from "@/components/shared/SlackUI";
 import { H2 } from "@/components/ui/Headings";
 
@@ -45,12 +46,20 @@ function DecorPancake({ variant, className }: { variant: keyof typeof DECOR_PALE
 export function HomeLandingBody() {
   return (
     <div className="home-landing">
-      {/* Figma `428:14922` org */}
-      <section className="home-landing-section home-landing-section--alt" aria-labelledby="home-landing-org-heading">
+      {/* Three real jobs — headerless use-case triptych, straight after the
+          demo video. The cards self-describe (kicker + headline per card). */}
+      <section className="home-landing-section home-landing-section--alt" aria-label="What Pancake does">
+        <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
+          <HomeUseCases />
+        </div>
+      </section>
+
+      {/* Figma `428:14922` org — revamped into squads */}
+      <section className="home-landing-section" aria-labelledby="home-landing-org-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             <H2 id="home-landing-org-heading" className="heading home-landing-section__title text-center">
-              An entire org working for you
+              Hire squads of agents that work autonomously
             </H2>
             <p className="home-landing-section__lede text-center">Even when you’re asleep</p>
           </header>
@@ -68,7 +77,7 @@ export function HomeLandingBody() {
       </section>
 
       {/* Figma `428:15015` integrations */}
-      <section className="home-landing-section" aria-labelledby="home-landing-integrations-heading">
+      <section className="home-landing-section home-landing-section--alt" aria-labelledby="home-landing-integrations-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             <H2 id="home-landing-integrations-heading" className="heading home-landing-section__title text-center">
@@ -82,16 +91,28 @@ export function HomeLandingBody() {
         </div>
       </section>
 
-      {/* Figma `428:15087` features */}
-      <section className="home-landing-section home-landing-section--alt" aria-labelledby="home-landing-features-heading">
+      {/* Real X posts — full-bleed carousel band (Figma `428:15175` skeleton, real content) */}
+      <section className="home-landing-section home-landing-section--testimonials" aria-labelledby="home-landing-testimonials-heading">
+        <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner home-landing-section__inner--testimonials`}>
+          <header className="home-landing-section__header">
+            <H2 id="home-landing-testimonials-heading" className="heading home-landing-section__title text-center">
+              Take it from them
+            </H2>
+          </header>
+        </div>
+        <HomeLandingTestimonials />
+      </section>
+
+      {/* Security (card skeleton from the former Figma `428:15087` features section) */}
+      <section className="home-landing-section home-landing-section--alt" aria-labelledby="home-landing-security-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
-            <H2 id="home-landing-features-heading" className="heading home-landing-section__title text-center">
-              Naturally works as you’d expect
+            <H2 id="home-landing-security-heading" className="heading home-landing-section__title text-center">
+              Secure by design
             </H2>
-            <p className="home-landing-section__lede text-center">Pancake comes with modern day features.</p>
+            <p className="home-landing-section__lede text-center">Sandboxed, approval-gated, vault-first.</p>
           </header>
-          <HomeLandingFeatures />
+          <HomeLandingSecurity />
         </div>
       </section>
 
@@ -124,26 +145,6 @@ export function HomeLandingBody() {
           </div>
         </div>
       </section>
-
-      {/*
-        Figma `428:15175` testimonials — TEMPORARILY HIDDEN.
-        Re-enable when the testimonial copy is real (the current strings are
-        placeholder fiction). Leaving the markup + the HomeLandingTestimonials
-        component in the repo so this is a single-block uncomment when the
-        real testimonials are ready.
-
-        <section className="home-landing-section home-landing-section--testimonials" aria-labelledby="home-landing-testimonials-heading">
-          <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner home-landing-section__inner--testimonials`}>
-            <header className="home-landing-section__header">
-              <H2 id="home-landing-testimonials-heading" className="heading home-landing-section__title text-center">
-                Take it from them
-              </H2>
-              <p className="home-landing-section__lede text-center">Here's what our customers are saying</p>
-            </header>
-          </div>
-          <HomeLandingTestimonials />
-        </section>
-      */}
 
       {/* Figma `428:15160` closing CTA — mobile variant `451:20112` adds three
           decorative pancakes (purple top-left, half-pink bottom-left,

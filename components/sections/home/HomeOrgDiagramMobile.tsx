@@ -1,16 +1,16 @@
 /**
- * Mobile-only "An entire org working for you" — Figma `596:2940`.
+ * Mobile-only "Hire squads of agents that work autonomously" — squads revamp
+ * of the original Figma `596:2940` layout.
  *
  * Layout (top to bottom):
  *  1. You + Pancake mascot pair, joined by an animated dotted-arc connector
  *     with traveling balls that signal live communication between founder
  *     and co-founder (mirrors the desktop You↔Pancake leg).
- *  2. "The org" eyebrow.
- *  3. Horizontal snap-scroll carousel of dept cards (Growth, Engineering,
- *     Operations). Each card's role rows live-mutate via `useOrgLiveTicker`
- *     — same add / remove / FLIP behavior as desktop, just rendered into
- *     mobile-shaped cards.
- *  4. Dots indicator under the carousel.
+ *  2. Horizontal snap-scroll carousel: four live squad cards (Outreach,
+ *     AI SEO, GitHub Triage, Google Ads) whose subagent rows live-mutate via
+ *     `useOrgLiveTicker` — same add / remove / FLIP behavior as desktop —
+ *     plus a static dashed "Build your own" finale slide.
+ *  3. Dots indicator under the carousel.
  *
  * The desktop component (`HomeOrgDiagram`) is hidden via CSS at <lg.
  */
@@ -178,10 +178,16 @@ function PairConnector() {
   );
 }
 
+/** Carousel slides: the four live squads + the static "Build your own" finale. */
+const SLIDES: readonly { key: string; label: string }[] = [
+  ...LIVE_INITIAL_DEPTS.map((d) => ({ key: d.surface, label: d.title })),
+  { key: "build", label: "Build your own" },
+];
+
 export function HomeOrgDiagramMobile() {
   const rootRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(1); // Engineering middle by default
+  const [activeIndex, setActiveIndex] = useState(1); // second card (AI SEO) centered by default
 
   /**
    * Live row state — same shape as desktop. The hook drives all add /
@@ -219,7 +225,8 @@ export function HomeOrgDiagramMobile() {
       setActiveIndex(best);
     };
     track.addEventListener("scroll", update, { passive: true });
-    // Center the middle (Engineering) card on mount so it matches the comp.
+    // Center the second card (AI SEO) on mount — peek both ways, and the
+    // build card stays the finale rather than the opener.
     requestAnimationFrame(() => {
       const cards = track.querySelectorAll<HTMLElement>(".home-org-mobile-card");
       const target = cards[1];
@@ -270,8 +277,8 @@ export function HomeOrgDiagramMobile() {
       </div>
 
       {/* "The org" eyebrow removed per design feedback — the section H2
-          ("An entire org working for you") already labels the org, and the
-          eyebrow read as redundant noise above the carousel. */}
+          ("Hire squads of agents that work autonomously") already labels the
+          section, and the eyebrow read as redundant noise above the carousel. */}
 
       {/* Horizontal snap carousel — one dept card per viewport, with adjacent peeks. */}
       <div className="home-org-mobile-carousel">
@@ -309,17 +316,23 @@ export function HomeOrgDiagramMobile() {
               </ul>
             </article>
           ))}
+
+          {/* Static "Build your own" finale — no live rows, no registerArticle. */}
+          <article className="home-org-mobile-card home-org-mobile-card--build">
+            <h3 className="home-org-mobile-card__title">+ Build your own</h3>
+            <p className="home-org-mobile-card__sub">Assemble any agents into a squad of your own.</p>
+          </article>
         </div>
 
         {/* Dots indicator. */}
-        <div className="home-org-mobile-dots" role="tablist" aria-label="Departments">
-          {LIVE_INITIAL_DEPTS.map((dept, i) => (
+        <div className="home-org-mobile-dots" role="tablist" aria-label="Squads">
+          {SLIDES.map((slide, i) => (
             <button
-              key={dept.surface}
+              key={slide.key}
               type="button"
               role="tab"
               aria-selected={i === activeIndex}
-              aria-label={dept.title}
+              aria-label={slide.label}
               className={`home-org-mobile-dot ${i === activeIndex ? "home-org-mobile-dot--active" : ""}`}
               onClick={() => scrollToIndex(i)}
             />

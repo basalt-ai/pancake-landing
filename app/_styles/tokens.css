@@ -96,6 +96,7 @@
     --branded-stroke-01: var(--palette-pink-20);
     --branded-stroke-02: var(--palette-purple-20);
     --branded-stroke-03: var(--palette-yellow-20);
+    --branded-stroke-04: var(--palette-orange-20);
 
     --positive-stroke: var(--palette-green-30);
     --warning-stroke: var(--palette-orange-30);
@@ -115,6 +116,7 @@
     --alt-strong-branded-surface-01: var(--palette-purple-30);
     --alt-weak-branded-surface-02: var(--palette-yellow-10);
     --alt-strong-branded-surface-02: var(--palette-yellow-30);
+    --alt-weak-branded-surface-03: var(--palette-orange-10);
 
     /* Control sizes */
     --control-size-sm: 40px;
