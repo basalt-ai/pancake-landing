@@ -742,6 +742,119 @@
   }
 
   /**
+   * Customer logo marquee below the demo video (à la exa.ai's logo strip).
+   * Solid-ink official wordmarks scroll right-to-left in an infinite pure-CSS
+   * loop: the track holds four copies of the set and translates by exactly
+   * one set width (-25%), so the wrap is seamless on any viewport. The edge
+   * mask feathers entry/exit like the testimonials band. Powers `HomeLogoMarquee`.
+   */
+  .home-logo-marquee {
+    --home-logo-marquee-gap: 96px;
+    --home-logo-marquee-scale: 1;
+    width: 100%;
+    background-color: var(--surface);
+    padding-top: calc(2 * var(--spacing-xxl));
+    padding-bottom: calc(3 * var(--spacing-xxl));
+    color: var(--text);
+  }
+
+  .home-logo-marquee__band {
+    position: relative;
+    width: 100%;
+    max-width: 1600px;
+    margin-inline: auto;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 96px,
+      black calc(100% - 96px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 96px,
+      black calc(100% - 96px),
+      transparent 100%
+    );
+  }
+
+  .home-logo-marquee__track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    animation: home-logo-marquee-scroll 36s linear infinite;
+  }
+
+  /* `padding-right` (not track gap) keeps spacing uniform across the seam. */
+  .home-logo-marquee__set {
+    display: flex;
+    align-items: center;
+    gap: var(--home-logo-marquee-gap);
+    padding: 0 var(--home-logo-marquee-gap) 0 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .home-logo-marquee__item {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  /* Wordmark = monochrome asset used as an alpha mask over `currentColor`,
+     so every mark paints the same solid ink regardless of source colors. */
+  .home-logo-marquee__logo {
+    display: block;
+    background-color: currentColor;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+  }
+
+  @keyframes home-logo-marquee-scroll {
+    to {
+      transform: translate3d(-25%, 0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-logo-marquee__track {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .home-logo-marquee {
+      --home-logo-marquee-gap: 56px;
+      --home-logo-marquee-scale: 0.82;
+      padding-top: var(--spacing-xxl);
+      padding-bottom: calc(2 * var(--spacing-xxl));
+    }
+
+    .home-logo-marquee__band {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        black 32px,
+        black calc(100% - 32px),
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        black 32px,
+        black calc(100% - 32px),
+        transparent 100%
+      );
+    }
+  }
+
+  /**
    * Home landing below hero — Figma `428:14366` (`-> V0.3`). Org block `428:14926` = `HomeOrgDiagram` (HTML).
    * Other rasters: `public/home-landing-*.png` (`npm run figma:export-landing` + token). Does not modify `.home-hero`.
    */
