@@ -742,14 +742,16 @@
   }
 
   /**
-   * Customer logo marquee below the demo video (à la exa.ai's logo strip).
-   * Solid-ink official wordmarks scroll right-to-left in an infinite pure-CSS
-   * loop: the track holds four copies of the set and translates by exactly
-   * one set width (-25%), so the wrap is seamless on any viewport. The edge
+   * Logo marquees below the demo video (à la exa.ai's logo strip) — two
+   * labeled groups side by side: "Trusted by" (customers) and "Powered by"
+   * (partners), each an infinite pure-CSS loop. A track holds four copies of
+   * its set and translates by exactly one set width (-25%), so the wrap is
+   * seamless on any viewport; the two tracks run on different durations and
+   * delays so they don't move in lockstep. Groups stack below `lg`. The edge
    * mask feathers entry/exit like the testimonials band. Powers `HomeLogoMarquee`.
    */
   .home-logo-marquee {
-    --home-logo-marquee-gap: 96px;
+    --home-logo-marquee-gap: 72px;
     --home-logo-marquee-scale: 1;
     width: 100%;
     background-color: var(--surface);
@@ -758,24 +760,50 @@
     color: var(--text);
   }
 
-  .home-logo-marquee__band {
-    position: relative;
+  .home-logo-marquee__row {
+    display: flex;
+    gap: calc(3 * var(--spacing-xxl));
     width: 100%;
     max-width: 1600px;
     margin-inline: auto;
+    padding-inline: var(--spacing-xxl);
+  }
+
+  .home-logo-marquee__group {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+  }
+
+  .home-logo-marquee__label {
+    margin: 0;
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--subtle-text);
+  }
+
+  .home-logo-marquee__band {
+    position: relative;
+    width: 100%;
     overflow: hidden;
     -webkit-mask-image: linear-gradient(
       to right,
       transparent 0,
-      black 96px,
-      black calc(100% - 96px),
+      black 48px,
+      black calc(100% - 48px),
       transparent 100%
     );
     mask-image: linear-gradient(
       to right,
       transparent 0,
-      black 96px,
-      black calc(100% - 96px),
+      black 48px,
+      black calc(100% - 48px),
       transparent 100%
     );
   }
@@ -786,6 +814,12 @@
     will-change: transform;
     /* Negative delay starts the loop mid-stream, à la exa.ai. */
     animation: home-logo-marquee-scroll 36s linear -18s infinite;
+  }
+
+  /* Second strip drifts on its own clock so the bands don't move in sync. */
+  .home-logo-marquee__track--powered {
+    animation-duration: 42s;
+    animation-delay: -29s;
   }
 
   /* Hover/focus pauses the loop — doubles as the WCAG 2.2.2 mechanism. */
@@ -849,6 +883,14 @@
         black calc(100% - 96px),
         transparent 100%
       );
+    }
+  }
+
+  /* Below `lg` the two groups stack — half-width marquees get too cramped. */
+  @media (max-width: 1023.98px) {
+    .home-logo-marquee__row {
+      flex-direction: column;
+      gap: calc(2 * var(--spacing-xxl));
     }
   }
 
