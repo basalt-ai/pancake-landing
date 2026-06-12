@@ -829,12 +829,6 @@
     animation-delay: -29s;
   }
 
-  /* Hover/focus pauses the loop — doubles as the WCAG 2.2.2 mechanism. */
-  .home-logo-marquee__band:hover .home-logo-marquee__track,
-  .home-logo-marquee__band:focus-within .home-logo-marquee__track {
-    animation-play-state: paused;
-  }
-
   /* `padding-right` (not track gap) keeps spacing uniform across the seam. */
   .home-logo-marquee__set {
     display: flex;
