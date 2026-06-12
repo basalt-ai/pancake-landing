@@ -57,23 +57,23 @@ const aeonikFono = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.getpancake.ai"),
-  title: "The AI cofounder that makes your company autonomous",
-  description: "Pancake gets you a cofounder that knows your company better than you and handles 50% of the job.",
+  title: "The superagent that makes your company autonomous",
+  description: "Pancake gets you a superagent that knows your company better than you and handles 50% of the job.",
   alternates: {
     canonical: "https://www.getpancake.ai",
   },
   openGraph: {
     type: "website",
     url: "https://www.getpancake.ai",
-    title: "The AI cofounder that makes your company autonomous",
-    description: "Pancake gets you a cofounder that knows your company better than you and handles 50% of the job.",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake — The AI cofounder" }],
+    title: "The superagent that makes your company autonomous",
+    description: "Pancake gets you a superagent that knows your company better than you and handles 50% of the job.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake — The superagent" }],
     siteName: "Pancake",
   },
   twitter: {
     card: "summary_large_image",
-    title: "The AI cofounder that makes your company autonomous",
-    description: "Pancake gets you a cofounder that knows your company better than you and handles 50% of the job.",
+    title: "The superagent that makes your company autonomous",
+    description: "Pancake gets you a superagent that knows your company better than you and handles 50% of the job.",
     images: ["/og-image.png"],
   },
 };
@@ -88,7 +88,7 @@ const organizationJsonLd = {
   url: "https://getpancake.ai",
   logo: "https://getpancake.ai/logo.png",
   description:
-    "Pancake is the AI co-founder that makes your company autonomous. Deploy an org of AI agents — growth, engineering, operations — that run 24/7 and let you go from $1 to $1M in revenue without hiring.",
+    "Pancake is the superagent that makes your company autonomous. Deploy an org of AI agents — growth, engineering, operations — that run 24/7 and let you go from $1 to $1M in revenue without hiring.",
   foundingDate: "2024",
   address: {
     "@type": "PostalAddress",
@@ -158,7 +158,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 url: "https://www.getpancake.ai",
                 logo: "https://www.getpancake.ai/icon.png",
                 description:
-                  "Pancake gets you a cofounder that knows your company better than you and handles 50% of the job.",
+                  "Pancake gets you a superagent that knows your company better than you and handles 50% of the job.",
                 sameAs: [
                   "https://x.com/getpancake_ai",
                   "https://www.linkedin.com/company/getpancake",

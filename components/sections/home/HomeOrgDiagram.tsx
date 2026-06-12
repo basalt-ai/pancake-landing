@@ -76,7 +76,7 @@ export function HomeOrgDiagram() {
           <div className="home-org-diagram__chip-copy">
             <p className="home-org-diagram__chip-title home-org-diagram__chip-title--inverted">Pancake</p>
             <p className="home-org-diagram__chip-sub home-org-diagram__chip-sub--inverted">
-              Your co-founder
+              Your superagent
             </p>
           </div>
         </div>

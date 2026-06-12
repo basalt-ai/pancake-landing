@@ -162,7 +162,7 @@ export function HomeLandingBody() {
             {CLOSING_TITLE}
           </h2>
           <p className="home-landing-section__lede home-landing-section__lede--closing text-center">
-            Sign up and onboard your cofounder now
+            Sign up and onboard Pancake now
           </p>
           <div className="home-landing-closing-cta">
             <a

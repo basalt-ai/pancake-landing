@@ -130,7 +130,7 @@ const SEED_IDEAS_RAW: Omit<RoadmapIdea, "commentCount">[] = [
     id: "seed-voice-briefings",
     title: "Voice briefings",
     description:
-      "A spoken daily standup from your cofounder — what shipped overnight, what's blocked, what needs a decision — playable from your phone before you open the laptop.",
+      "A spoken daily standup from Pancake — what shipped overnight, what's blocked, what needs a decision — playable from your phone before you open the laptop.",
     tag: "core-features",
     status: "open",
     authorName: "Guillaume",

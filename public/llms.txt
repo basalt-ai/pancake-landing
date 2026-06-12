@@ -1,10 +1,10 @@
 # Pancake
 
-> Pancake is the AI co-founder infrastructure that takes you from $1 to $1M in revenue without hiring. It deploys an org of AI agents — growth, engineering, operations — that run 24/7, work while you sleep, and report back in Slack. Solo or multiplayer. Pancake runs on Pancake.
+> Pancake is the superagent infrastructure that takes you from $1 to $1M in revenue without hiring. It deploys an org of AI agents — growth, engineering, operations — that run 24/7, work while you sleep, and report back in Slack. Solo or multiplayer. Pancake runs on Pancake.
 
 ## What Pancake does
 
-Pancake gives you an AI co-founder that knows your company better than you and handles 50% of the job. You hire squads of agents that work autonomously — Outreach, AI SEO, GitHub Triage, Google Ads, or your own — each staffed by subagents. Agents pull context from your Notion, docs, and meeting notes — they know your business. Every tool call, message, and decision is written to an immutable log. You always have the last word. Secure by design: each agent runs sandboxed in your own pod, destructive actions are approval-gated, and credentials live in an encrypted vault — never in the chat.
+Pancake gives you a superagent that knows your company better than you and handles 50% of the job. You hire squads of agents that work autonomously — Outreach, AI SEO, GitHub Triage, Google Ads, or your own — each staffed by subagents. Agents pull context from your Notion, docs, and meeting notes — they know your business. Every tool call, message, and decision is written to an immutable log. You always have the last word. Secure by design: each agent runs sandboxed in your own pod, destructive actions are approval-gated, and credentials live in an encrypted vault — never in the chat.
 
 ## Who it's for
 
@@ -48,7 +48,7 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 
 ## Positioning
 
-- Category: AI co-founder / autonomous company platform
+- Category: AI superagent / autonomous company platform
 - Differentiator: guided autonomy — you stay in the driver's seat while AI multiplies your output
 - Infrastructure layer: Markdown-configured agents, full audit log, human approval for anything consequential
 - Proof: Pancake runs on Pancake — we operate our own company with our own product

@@ -13,7 +13,7 @@ const softwareApplicationJsonLd = {
   operatingSystem: "Web",
   url: "https://getpancake.ai",
   description:
-    "AI co-founder infrastructure. Deploys an org of AI agents — growth, engineering, and operations roles — that run 24/7 in Slack. Built for solo and multiplayer founding teams going from $1 to $1M without hiring.",
+    "Superagent infrastructure. Deploys an org of AI agents — growth, engineering, and operations roles — that run 24/7 in Slack. Built for solo and multiplayer founding teams going from $1 to $1M without hiring.",
   offers: {
     "@type": "Offer",
     url: "https://getpancake.ai/pricing",

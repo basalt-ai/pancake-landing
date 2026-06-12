@@ -271,7 +271,7 @@ export function HomeOrgDiagramMobile() {
           </div>
           <div className="home-org-mobile-mascot__chip">
             <p className="home-org-mobile-mascot__title">Pancake</p>
-            <p className="home-org-mobile-mascot__sub">Your co-founder</p>
+            <p className="home-org-mobile-mascot__sub">Your superagent</p>
           </div>
         </div>
       </div>
