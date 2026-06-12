@@ -160,9 +160,10 @@
     --spacing-home-hero-after-title: calc(2 * var(--spacing-xl));
     --spacing-home-hero-after-subtitle: calc(2 * var(--spacing-xxl));
 
-    /* Space below nav before H1 — Figma shows a wide band (logo → headline) */
+    /* Space below nav before H1 — Figma shows a wide band (logo → headline);
+       tightened from 5×xxl so the logo marquee fits inside the first viewport. */
     --spacing-home-hero-padding-top-mobile: var(--spacing-xxl);
-    --spacing-home-hero-padding-top: calc(5 * var(--spacing-xxl));
+    --spacing-home-hero-padding-top: calc(3 * var(--spacing-xxl));
 
     /* Home hero layout frame (`428:14920` = 160²): ellipse, dotted orbits, satellite math — Figma scale */
     --size-home-hero-monster-max-width: calc(10 * var(--spacing-xl));

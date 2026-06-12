@@ -414,8 +414,12 @@
     flex-direction: column;
     justify-content: center;
   }
+  /* Auto margins center the hero grid in the space ABOVE the logo marquee,
+     which sits as the hero's last child at the bottom of the first viewport
+     (the marquee is a <section>, so this div selector leaves it alone). */
   .home-hero > div {
     width: 100%;
+    margin-block: auto;
   }
 
   @media (min-width: 1024px) {
@@ -738,6 +742,180 @@
     .home-demo-video__play {
       width: 56px;
       height: 56px;
+    }
+  }
+
+  /**
+   * Logo marquees below the demo video (à la exa.ai's logo strip) — two
+   * labeled groups side by side: "Trusted by" (customers) and "Powered by"
+   * (partners), each an infinite pure-CSS loop. A track holds four copies of
+   * its set and translates by exactly one set width (-25%), so the wrap is
+   * seamless on any viewport; the two tracks run on different durations and
+   * delays so they don't move in lockstep. Groups stack below `lg`. The edge
+   * mask feathers entry/exit like the testimonials band. Powers `HomeLogoMarquee`.
+   */
+  .home-logo-marquee {
+    --home-logo-marquee-gap: 72px;
+    --home-logo-marquee-scale: 1;
+    /* Lives at the bottom of the hero: transparent so the dotted orbit
+       ellipses show through (founder-approved), lifted above them. */
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    padding-top: var(--spacing-xxl);
+    padding-bottom: var(--spacing-xxl);
+    color: var(--text);
+  }
+
+  .home-logo-marquee__row {
+    display: flex;
+    gap: calc(3 * var(--spacing-xxl));
+    width: 100%;
+    max-width: 1600px;
+    margin-inline: auto;
+    padding-inline: var(--spacing-xxl);
+  }
+
+  .home-logo-marquee__group {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+  }
+
+  .home-logo-marquee__label {
+    margin: 0;
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: var(--font-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--subtle-text);
+  }
+
+  .home-logo-marquee__band {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 48px,
+      black calc(100% - 48px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 48px,
+      black calc(100% - 48px),
+      transparent 100%
+    );
+  }
+
+  .home-logo-marquee__track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    /* Negative delay starts the loop mid-stream, à la exa.ai. */
+    animation: home-logo-marquee-scroll 36s linear -18s infinite;
+  }
+
+  /* Second strip drifts on its own clock so the bands don't move in sync. */
+  .home-logo-marquee__track--powered {
+    animation-duration: 42s;
+    animation-delay: -29s;
+  }
+
+  /* `padding-right` (not track gap) keeps spacing uniform across the seam. */
+  .home-logo-marquee__set {
+    display: flex;
+    align-items: center;
+    gap: var(--home-logo-marquee-gap);
+    padding: 0 var(--home-logo-marquee-gap) 0 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .home-logo-marquee__item {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  /* Wordmark = monochrome asset used as an alpha mask over `currentColor`,
+     so every mark paints the same solid ink regardless of source colors. */
+  .home-logo-marquee__logo {
+    display: block;
+    background-color: currentColor;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+  }
+
+  @keyframes home-logo-marquee-scroll {
+    to {
+      transform: translate3d(-25%, 0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-logo-marquee__track {
+      animation: none;
+    }
+
+    /* Static track sits at translate 0 — keep only the trailing fade so the
+       first mark isn't ghosted behind the leading edge mask. */
+    .home-logo-marquee__band {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        black 0,
+        black calc(100% - 96px),
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to right,
+        black 0,
+        black calc(100% - 96px),
+        transparent 100%
+      );
+    }
+  }
+
+  /* Below `lg` the two groups stack — half-width marquees get too cramped. */
+  @media (max-width: 1023.98px) {
+    .home-logo-marquee__row {
+      flex-direction: column;
+      gap: calc(2 * var(--spacing-xxl));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .home-logo-marquee {
+      --home-logo-marquee-gap: 56px;
+      --home-logo-marquee-scale: 0.82;
+    }
+
+    .home-logo-marquee__band {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        black 32px,
+        black calc(100% - 32px),
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        black 32px,
+        black calc(100% - 32px),
+        transparent 100%
+      );
     }
   }
 

@@ -10,6 +10,7 @@ import {
   homeHeroOrbitSatelliteSrc,
 } from "@/components/sections/home/home-hero-orbit-satellites";
 import { HomeHeroPancakeMonster } from "@/components/sections/home/HomeHeroPancakeMonster";
+import { HomeLogoMarquee } from "@/components/sections/home/HomeLogoMarquee";
 import { H1 } from "@/components/ui/Headings";
 
 const HERO_TITLE = "The superagent that makes your company autonomous";
@@ -152,6 +153,11 @@ export function HomeHero() {
           </div>
         </div>
       </div>
+
+      {/* Customer/partner strips pinned at the bottom of the first viewport —
+          the grid above auto-centers in the remaining space (`margin-block:
+          auto`). Transparent band: the dotted orbits pass behind it. */}
+      <HomeLogoMarquee />
     </section>
   );
 }
