@@ -784,7 +784,14 @@
     display: flex;
     width: max-content;
     will-change: transform;
-    animation: home-logo-marquee-scroll 36s linear infinite;
+    /* Negative delay starts the loop mid-stream, à la exa.ai. */
+    animation: home-logo-marquee-scroll 36s linear -18s infinite;
+  }
+
+  /* Hover/focus pauses the loop — doubles as the WCAG 2.2.2 mechanism. */
+  .home-logo-marquee__band:hover .home-logo-marquee__track,
+  .home-logo-marquee__band:focus-within .home-logo-marquee__track {
+    animation-play-state: paused;
   }
 
   /* `padding-right` (not track gap) keeps spacing uniform across the seam. */
@@ -825,6 +832,23 @@
   @media (prefers-reduced-motion: reduce) {
     .home-logo-marquee__track {
       animation: none;
+    }
+
+    /* Static track sits at translate 0 — keep only the trailing fade so the
+       first mark isn't ghosted behind the leading edge mask. */
+    .home-logo-marquee__band {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        black 0,
+        black calc(100% - 96px),
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to right,
+        black 0,
+        black calc(100% - 96px),
+        transparent 100%
+      );
     }
   }
 
