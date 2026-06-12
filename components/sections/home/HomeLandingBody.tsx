@@ -10,7 +10,6 @@ import { HomeLandingSecurity } from "@/components/sections/home/HomeLandingSecur
 import { HomeLandingTestimonials } from "@/components/sections/home/HomeLandingTestimonials";
 import { HomeOrgDiagram } from "@/components/sections/home/HomeOrgDiagram";
 import { HomeOrgDiagramMobile } from "@/components/sections/home/HomeOrgDiagramMobile";
-import { HomeUseCases } from "@/components/sections/home/HomeUseCases";
 import { SlackUI } from "@/components/shared/SlackUI";
 import { H2 } from "@/components/ui/Headings";
 
@@ -46,13 +45,18 @@ function DecorPancake({ variant, className }: { variant: keyof typeof DECOR_PALE
 export function HomeLandingBody() {
   return (
     <div className="home-landing">
-      {/* Three real jobs — headerless use-case triptych, straight after the
-          demo video. The cards self-describe (kicker + headline per card). */}
-      <section className="home-landing-section home-landing-section--alt" aria-label="What Pancake does">
-        <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
-          <HomeUseCases />
-        </div>
-      </section>
+      {/*
+        "Three real jobs" use-case triptych — PARKED for now (founder call:
+        not polished enough yet). The component (`HomeUseCases`) and its CSS
+        (`.home-use-cases` block) stay in the repo; re-enable by inserting
+        this as the first section, with `--alt` background:
+
+        <section className="home-landing-section home-landing-section--alt" aria-label="What Pancake does">
+          <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
+            <HomeUseCases />
+          </div>
+        </section>
+      */}
 
       {/* Figma `428:14922` org — revamped into squads. The desktop diagram is a
           DIRECT section child (outside the page container) so its 7-card band
