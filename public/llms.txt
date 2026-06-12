@@ -51,6 +51,9 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 
 - [Team Agent Platforms Compared: Viktor, Dust, Glean, and Why Autonomous Companies Need Something Different](https://getpancake.ai/blog/team-agent-platforms-compared) — Viktor, Dust, and Glean make your existing team more productive. Pancake replaces the team layer itself with an autonomous workforce that runs without being asked. Different category, different buyer. June 12, 2026.
 
+
+- [Pancake vs Paperclips: Two Takes on the Autonomous Company](https://getpancake.ai/blog/pancake-vs-paperclips) — Paperclips is open-source developer infrastructure for orchestrating AI agents in org-chart structures (70k+ GitHub stars). Pancake is the managed platform for founders who want the company to run itself without building the runtime. June 12, 2026.
+
 ## Positioning
 
 - Category: AI superagent / autonomous company platform
