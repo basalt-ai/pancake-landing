@@ -2,7 +2,9 @@
 
 /**
  * Org diagram wires — squads revamp.
- * • Six elements: You, Pancake (hub for squads + chip for founder wire), Outreach, AI SEO, GitHub Triage, Google Ads.
+ * • Nine elements: You, Pancake (hub for squads + chip for founder wire), and all 7 squad cards
+ *   (Posthog, Meta Ads, Outreach, AI SEO, GitHub Triage, Google Ads, Reddit — outer two bleed
+ *   past the band edges as blurred teasers).
  * • Squad wires are hand-authored cubic béziers DIRECTLY in stage space (1136×706 viewBox, no group
  *   transforms) — each leaves the monster's underside and enters its squad card top-center with
  *   vertical tangents (`M hx hy C cx my, ex my, ex ey`, my ≈ midpoint). The `d` strings are plain
@@ -22,12 +24,20 @@ const SVG_NS = "http://www.w3.org/2000/svg";
 
 type OrgDeptWire = { id: string; d: string };
 
-/** Hub exits fan across the monster's underside (monster box: 608,0 → 736,128). */
+/**
+ * Hub exits fan across the monster's underside (monster box: 608,0 → 736,128).
+ * Each wire's mid-Y is an explicit "bus lane" (≥14px apart from its
+ * neighbours) so the long horizontal runs to the outer cards never merge.
+ * Outer two wires end past the stage edges — the band mask fades them out.
+ */
 const ORG_DEPT_WIRES: readonly OrgDeptWire[] = [
-  { id: "wire-outreach", d: "M644 130C583 218 136 218 136 306" },
-  { id: "wire-seo", d: "M662 132C633 233 424 233 424 334" },
-  { id: "wire-triage", d: "M682 130C686 198 712 198 712 266" },
-  { id: "wire-ads", d: "M700 127C736 210 1000 210 1000 294" },
+  { id: "wire-posthog", d: "M630 127C533 220 -176 220 -176 306" },
+  { id: "wire-meta", d: "M641 129C573 196 72 196 72 290" },
+  { id: "wire-outreach", d: "M652 131C612 234 320 234 320 326" },
+  { id: "wire-seo", d: "M664 132C652 199 568 199 568 266" },
+  { id: "wire-triage", d: "M676 131C693 212 816 212 816 294" },
+  { id: "wire-ads", d: "M688 129C733 238 1064 238 1064 330" },
+  { id: "wire-reddit", d: "M700 127C773 224 1312 224 1312 302" },
 ];
 
 type OrgWireFrame = { x: number; y: number; w: number; h: number };
@@ -69,19 +79,24 @@ function founderWireGroupTransform(): string {
  * Outer wires get one ball, the two inner ones two, founder wire one.
  */
 const REDUCED_FALLBACK_FRACTIONS: Record<string, readonly number[]> = {
-  "wire-outreach": [0.45],
-  "wire-seo": [0.3, 0.7],
+  "wire-posthog": [0.35],
+  "wire-meta": [0.3, 0.7],
+  "wire-outreach": [0.3, 0.7],
+  "wire-seo": [0.4],
   "wire-triage": [0.3, 0.7],
-  "wire-ads": [0.45],
+  "wire-ads": [0.35, 0.75],
+  "wire-reddit": [0.35],
   [FOUNDER_WIRE_ID]: [0.5],
 };
 
 const BALL_R_MIN = 3.2;
 const BALL_R_MAX = 7.8;
-/** Hub/squad legs only (Pancake ↔ four squad cards). Kept at the 3-dept density —
- *  spread over 4 wires the per-wire traffic calms slightly, which is the point. */
-const TOTAL_BALL_MIN = 6;
-const TOTAL_BALL_MAX = 9;
+/** Hub/squad legs only (Pancake ↔ seven squad cards). ~5 of 7 wires are on
+ *  screen at typical widths, so 8–11 total ≈ the shipped 4-card visible
+ *  density; balls bound for off-screen cards fading at the mask edge read as
+ *  life beyond the fold. */
+const TOTAL_BALL_MIN = 8;
+const TOTAL_BALL_MAX = 11;
 /** Departure weight for `you` (<1): only one outgoing leg (→chip), so uniform anchors over-count you→chip. */
 const DEPARTURE_WEIGHT_YOU = 0.5;
 /** When leaving Pancake, chance to pick the founder↔chip leg if squad legs also exist (balances chip↦you vs you↦chip). */
@@ -100,16 +115,19 @@ const LEG_DELAY_MAX = 0.35;
 const EASE_POOL = ["none", "power1.inOut", "power2.inOut", "sine.inOut", "power1.out", "power2.out"] as const;
 
 /** Diagram centres in stage / viewBox space (1136×706) — nearest path end picks semantic node. */
-const ANCHOR_IDS = ["you", "pancake", "outreach", "seo", "triage", "ads"] as const;
+const ANCHOR_IDS = ["you", "pancake", "posthog", "meta", "outreach", "seo", "triage", "ads", "reddit"] as const;
 type AnchorId = (typeof ANCHOR_IDS)[number];
 
 const ANCHORS: Record<AnchorId, { x: number; y: number }> = {
   you: { x: 263, y: 98 },
   pancake: { x: 672, y: 88 },
-  outreach: { x: 136, y: 460 },
-  seo: { x: 424, y: 488 },
-  triage: { x: 712, y: 420 },
-  ads: { x: 1000, y: 448 },
+  posthog: { x: -176, y: 460 },
+  meta: { x: 72, y: 444 },
+  outreach: { x: 320, y: 480 },
+  seo: { x: 568, y: 420 },
+  triage: { x: 816, y: 448 },
+  ads: { x: 1064, y: 484 },
+  reddit: { x: 1312, y: 456 },
 };
 
 type DirectedLeg = {

@@ -768,6 +768,15 @@
     gap: var(--spacing-home-landing-header-to-media);
   }
 
+  /* Org section — same full-bleed recipe as `--testimonials`: the desktop
+     squad band is a direct section child (outside the page container) so it
+     can bleed past the container edges behind its fade mask. */
+  .home-landing-section--org {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-home-landing-header-to-media);
+  }
+
   .home-landing-section__inner--closing {
     gap: var(--spacing-home-hero-after-title);
   }
@@ -855,20 +864,49 @@
    * You chip: right edge fixed at Figma (212+101)/1136; width is content-driven (max-width cap) so the box hugs copy.
    * Pancake chip: left edge at 800/1136; same — keeps the hand-drawn arrow anchors from MCP aligned to box edges.
    */
+  /**
+   * Root = full-bleed masked band. Wider than the 1136 stage so the outer
+   * squad cards (negative / >100% lefts on the stage) bleed past the edges
+   * behind the fade. `max-width: 1536px` keeps the teasers cut even on
+   * ultrawide screens (the fade reaches transparent before the clip edge, so
+   * the hard cut is never visible). `overflow-x: clip` (not hidden) avoids
+   * creating a scroll container — the mask is paint-only, masked-to-
+   * transparent cards would still produce scrollable overflow otherwise.
+   * The "Build your own" bar lives inside the band but sits centered, far
+   * from the edge fades — visually untouched.
+   */
   .home-org-diagram {
     box-sizing: border-box;
     width: 100%;
-    max-width: calc(71 * var(--spacing-xl));
+    max-width: 1536px;
     margin-inline: auto;
     min-width: 0;
-    overflow: visible;
-    /** Extra paint area when dept cards extend below the fixed-aspect stage. */
+    overflow-x: hidden;
+    overflow-x: clip;
+    /** Extra paint area when squad cards extend below the fixed-aspect stage
+        (must stay inside the mask box — mask-clip defaults to border-box). */
     padding-bottom: clamp(0.75rem, 2.5vw, 2rem);
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 72px,
+      black calc(100% - 72px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 72px,
+      black calc(100% - 72px),
+      transparent 100%
+    );
   }
 
   .home-org-diagram__stage {
     position: relative;
     width: 100%;
+    max-width: calc(71 * var(--spacing-xl));
+    margin-inline: auto;
     aspect-ratio: 1136 / 706;
     container-type: inline-size;
     container-name: org-diagram;
@@ -1063,9 +1101,10 @@
     display: flex;
     flex-direction: column;
     gap: clamp(var(--spacing-md), 2.2cqi, var(--spacing-xxl));
-    /* 4 squad columns: (1136 − 3×16px gutters) / 4 = 272, same gutter rhythm
-       the 3×368 layout had. */
-    width: calc(272 / 1136 * 100%);
+    /* 7 squad columns at pitch 248 (232 + 16px gutter), band centered on the
+       stage — outer two cards sit at negative / >100% lefts and bleed past
+       the masked band edges as blurred teasers. */
+    width: calc(232 / 1136 * 100%);
     /* No `min-height`: the box now resizes down when agents leave just like
        it resizes up when they're added. The previous 47% floor (332/706)
        kept the dept block tall after removals, leaving empty space at the
@@ -1073,7 +1112,7 @@
        symmetrically to how it grows. */
     height: auto;
     max-height: none;
-    /* Max 24px (was 32px) — at 272px wide, 32px padding starves the labels. */
+    /* Max 24px (was 32px) — at 232px wide, 32px padding starves the labels. */
     padding: clamp(var(--spacing-md), 2.8cqi, var(--spacing-xxl));
     border-radius: var(--radius-xl);
     border-width: 1px;
@@ -1082,34 +1121,65 @@
     z-index: 5;
   }
 
-  /* Staggered tops echo the old 290/320/264 rhythm; the column under the
-     Pancake hub (x≈672 → triage) sits highest, shortest wire. */
-  .home-org-diagram__dept--outreach {
-    left: 0;
+  /* L→R: posthog, meta, outreach, seo, triage, ads, reddit — staggered tops
+     keep the hand-drawn rhythm (272–336); the card under the Pancake hub
+     (seo) sits highest, shortest wire. No two adjacent cards share a palette. */
+  .home-org-diagram__dept--posthog {
+    left: calc(-292 / 1136 * 100%);
     top: calc(312 / 706 * 100%);
+    background-color: var(--alt-weak-branded-surface-03);
+    border-color: var(--branded-stroke-04);
+  }
+
+  .home-org-diagram__dept--meta {
+    left: calc(-44 / 1136 * 100%);
+    top: calc(296 / 706 * 100%);
+    background-color: var(--alt-weak-branded-surface-01);
+    border-color: var(--branded-stroke-02);
+  }
+
+  .home-org-diagram__dept--outreach {
+    left: calc(204 / 1136 * 100%);
+    top: calc(332 / 706 * 100%);
     background-color: var(--alt-weak-branded-surface-02);
     border-color: var(--branded-stroke-03);
   }
 
   .home-org-diagram__dept--seo {
-    left: calc(288 / 1136 * 100%);
-    top: calc(340 / 706 * 100%);
+    left: calc(452 / 1136 * 100%);
+    top: calc(272 / 706 * 100%);
     background-color: var(--alt-weak-branded-surface-01);
     border-color: var(--branded-stroke-02);
   }
 
   .home-org-diagram__dept--triage {
-    left: calc(576 / 1136 * 100%);
-    top: calc(272 / 706 * 100%);
+    left: calc(700 / 1136 * 100%);
+    top: calc(300 / 706 * 100%);
     background-color: var(--weak-branded-surface);
     border-color: var(--branded-stroke-01);
   }
 
   .home-org-diagram__dept--ads {
-    left: calc(864 / 1136 * 100%);
-    top: calc(300 / 706 * 100%);
+    left: calc(948 / 1136 * 100%);
+    top: calc(336 / 706 * 100%);
     background-color: var(--alt-weak-branded-surface-03);
     border-color: var(--branded-stroke-04);
+  }
+
+  .home-org-diagram__dept--reddit {
+    left: calc(1196 / 1136 * 100%);
+    top: calc(308 / 706 * 100%);
+    background-color: var(--weak-branded-surface);
+    border-color: var(--branded-stroke-01);
+  }
+
+  /* Outermost teasers — "un fondu qui floute un peu les squads qu'on ne voit
+     pas sur les côtés": the band mask supplies the fade, this supplies the
+     blur. Static filter; live rows inside animate via transform, unaffected. */
+  .home-org-diagram__dept--posthog,
+  .home-org-diagram__dept--reddit {
+    filter: blur(1.5px);
+    opacity: 0.85;
   }
 
   /**
@@ -1129,10 +1199,12 @@
   }
 
   /* "Build your own" — static dashed invitation below the stage. Deliberately
-     unwired and unanimated: it's an invitation, not a fifth squad. */
+     unwired and unanimated: it's an invitation, not an eighth squad. Fixed px
+     width (the parent band now stretches to 1536) with an inline-padding
+     guard for narrow desktop widths. */
   .home-org-diagram__build {
     box-sizing: border-box;
-    width: calc(560 / 1136 * 100%);
+    width: min(560px, calc(100% - 2 * var(--spacing-home-page-inline)));
     margin: var(--spacing-xl) auto 0;
     padding: var(--spacing-xl) var(--spacing-xxl);
     border: 1px dashed var(--stroke);
@@ -1193,7 +1265,8 @@
     gap: clamp(var(--spacing-md), 2cqi, var(--spacing-xl));
     width: 100%;
     min-width: 0;
-    padding: var(--spacing-md) clamp(var(--spacing-sm), 2.2cqi, var(--spacing-xl));
+    /* Inline padding max 12px (was 16) — buys label room on the 232px cards. */
+    padding: var(--spacing-md) clamp(var(--spacing-sm), 2.2cqi, var(--spacing-lg));
     box-sizing: border-box;
     border-radius: var(--radius-sm);
     border-width: 1px;
@@ -1205,15 +1278,18 @@
     border-color: var(--branded-stroke-03);
   }
 
-  .home-org-diagram__dept--seo .home-org-diagram__row {
+  .home-org-diagram__dept--seo .home-org-diagram__row,
+  .home-org-diagram__dept--meta .home-org-diagram__row {
     border-color: var(--branded-stroke-02);
   }
 
-  .home-org-diagram__dept--triage .home-org-diagram__row {
+  .home-org-diagram__dept--triage .home-org-diagram__row,
+  .home-org-diagram__dept--reddit .home-org-diagram__row {
     border-color: var(--branded-stroke-01);
   }
 
-  .home-org-diagram__dept--ads .home-org-diagram__row {
+  .home-org-diagram__dept--ads .home-org-diagram__row,
+  .home-org-diagram__dept--posthog .home-org-diagram__row {
     border-color: var(--branded-stroke-04);
   }
 
@@ -1241,7 +1317,11 @@
     flex: 1 1 auto;
     min-width: 0;
     font-family: var(--font-body);
-    font-size: clamp(0.75rem, 0.4rem + 2cqi, var(--font-size-body-regular));
+    /* Pure-cqi middle term (vs the old `0.4rem + 2cqi`, which always hit the
+       16px max on desktop): the label scales with the stage, so the per-row
+       character budget stays constant on the narrow 7-column cards.
+       13px at the full 1136 stage. */
+    font-size: clamp(0.6875rem, 1.15cqi, 0.8125rem);
     line-height: 1.35;
     font-weight: var(--font-normal);
     color: var(--text);
@@ -4378,6 +4458,21 @@
   }
 
   .home-org-mobile-card--ads {
+    background-color: var(--alt-weak-branded-surface-03);
+    border-color: var(--branded-stroke-04);
+  }
+
+  .home-org-mobile-card--reddit {
+    background-color: var(--weak-branded-surface);
+    border-color: var(--branded-stroke-01);
+  }
+
+  .home-org-mobile-card--meta {
+    background-color: var(--alt-weak-branded-surface-01);
+    border-color: var(--branded-stroke-02);
+  }
+
+  .home-org-mobile-card--posthog {
     background-color: var(--alt-weak-branded-surface-03);
     border-color: var(--branded-stroke-04);
   }

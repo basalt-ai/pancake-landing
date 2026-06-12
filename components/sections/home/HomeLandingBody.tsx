@@ -54,8 +54,11 @@ export function HomeLandingBody() {
         </div>
       </section>
 
-      {/* Figma `428:14922` org — revamped into squads */}
-      <section className="home-landing-section" aria-labelledby="home-landing-org-heading">
+      {/* Figma `428:14922` org — revamped into squads. The desktop diagram is a
+          DIRECT section child (outside the page container) so its 7-card band
+          can bleed past the container edges behind the fade mask — same
+          full-bleed recipe as the testimonials carousel below. */}
+      <section className="home-landing-section home-landing-section--org" aria-labelledby="home-landing-org-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             <H2 id="home-landing-org-heading" className="heading home-landing-section__title text-center">
@@ -63,16 +66,12 @@ export function HomeLandingBody() {
             </H2>
             <p className="home-landing-section__lede text-center">Even when you’re asleep</p>
           </header>
-          <div className="home-landing-section__figure home-landing-section__figure--org">
-            {/* Desktop: animated absolute diagram. Mobile: simplified
-                carousel + Tailor card per Figma `596:2940`. */}
-            <div className="home-landing-org-desktop">
-              <HomeOrgDiagram />
-            </div>
-            <div className="home-landing-org-mobile">
-              <HomeOrgDiagramMobile />
-            </div>
+          <div className="home-landing-section__figure home-landing-org-mobile">
+            <HomeOrgDiagramMobile />
           </div>
+        </div>
+        <div className="home-landing-org-desktop">
+          <HomeOrgDiagram />
         </div>
       </section>
 

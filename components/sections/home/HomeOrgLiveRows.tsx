@@ -23,13 +23,25 @@ type LiveRow = {
   baseDot?: OrgDotTone;
 };
 
-/** 4 (was 6) — squad cards are narrower (4 columns) and must stay inside the 706-tall stage at cap. */
+/** Derived from the data file so it stays the single source of truth for surfaces. */
+const SURFACES: OrgSurface[] = LIVE_INITIAL_DEPTS.map((d) => d.surface);
+
+function makeSurfaceRecord<T>(value: T): Record<OrgSurface, T> {
+  return Object.fromEntries(SURFACES.map((s) => [s, value])) as Record<OrgSurface, T>;
+}
+
+/** 4 (was 6) — squad cards are narrow columns and must stay inside the 706-tall stage at cap. */
 const ROW_CAP = 4;
 const ROW_FLOOR = 2;
-/** Per-block only — each surface draws a fresh delay in this range every cycle (no master tick).
- *  Widened from 880–1800ms when the diagram went 3 → 4 surfaces, so total section activity stays flat. */
-const BLOCK_DELAY_MIN_MS = 1200;
-const BLOCK_DELAY_MAX_MS = 2400;
+/**
+ * Per-block only — each surface draws a fresh delay in this range every cycle (no master tick).
+ * The 3-surface original ran 880–1800ms; the range scales with surface count so total section
+ * activity stays flat as squads are added — capped at 5/3 because only ~5 of the 7 cards are
+ * visible at typical widths (uncapped 7/3 made each card feel sleepy).
+ */
+const DELAY_SCALE = Math.min(SURFACES.length, 5) / 3;
+const BLOCK_DELAY_MIN_MS = Math.round(880 * DELAY_SCALE);
+const BLOCK_DELAY_MAX_MS = Math.round(1800 * DELAY_SCALE);
 const PENDING_TO_ACTIVE_S = 0.8;
 const ADD_IN_DURATION = 0.58;
 const ADD_SLIDE_MAX_PX = 168;
@@ -169,13 +181,6 @@ type HomeOrgLiveRowsProps = {
   deptRows: Record<OrgSurface, LiveRow[]>;
   setDeptRows: Dispatch<SetStateAction<Record<OrgSurface, LiveRow[]>>>;
 };
-
-/** Derived from the data file so it stays the single source of truth for surfaces. */
-const SURFACES: OrgSurface[] = LIVE_INITIAL_DEPTS.map((d) => d.surface);
-
-function makeSurfaceRecord<T>(value: T): Record<OrgSurface, T> {
-  return Object.fromEntries(SURFACES.map((s) => [s, value])) as Record<OrgSurface, T>;
-}
 
 /**
  * Live add/remove ticker shared between the desktop org diagram and the
@@ -592,6 +597,28 @@ function useOrgLiveTickerImpl({
       if (cancelled || disposedRef.current) return;
       if (liveEnabledRef.current) return;
       liveEnabledRef.current = true;
+      /**
+       * Promote rows stranded in "pending": `pauseLive()` (tab hidden) clears
+       * every promote timer, so a row recruited just before the tab went to
+       * background would otherwise stay red forever after resume. Resume-time
+       * is the natural reconciliation point — sweep any pending row whose
+       * timer no longer exists (the `has(id)` guard can't race a live timer,
+       * and a later-firing timer is a no-op thanks to its own phase guard).
+       */
+      setDeptRows((prev) => {
+        let changed = false;
+        const next = {} as typeof prev;
+        for (const s of SURFACES) {
+          next[s] = prev[s].map((r) => {
+            if (r.phase === "pending" && !pendingPromoteTimersRef.current.has(r.id)) {
+              changed = true;
+              return { ...r, phase: "active" as const };
+            }
+            return r;
+          });
+        }
+        return changed ? next : prev;
+      });
       for (const s of SURFACES) {
         armBlockRef.current(s);
       }
@@ -633,7 +660,7 @@ function useOrgLiveTickerImpl({
       clearAllPendingPromoteTimers();
       clearAllRemoveFailsafes();
     };
-  }, [reducedMotion, clearAllBlockTimers, clearAllPendingPromoteTimers, clearAllRemoveFailsafes]);
+  }, [reducedMotion, clearAllBlockTimers, clearAllPendingPromoteTimers, clearAllRemoveFailsafes, setDeptRows]);
 
   /**
    * Caller attaches each surface's article element via this callback. The

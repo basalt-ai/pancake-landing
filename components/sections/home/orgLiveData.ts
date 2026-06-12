@@ -1,13 +1,24 @@
-export type OrgSurface = "outreach" | "seo" | "triage" | "ads";
+export type OrgSurface =
+  | "outreach"
+  | "seo"
+  | "triage"
+  | "ads"
+  | "reddit"
+  | "meta"
+  | "posthog";
 
 export type OrgDotTone = "positive" | "warning" | "negative";
 
 /**
- * Seeded squad cards — the four flagship squads from Pancake's squad store
- * (Outreach, AI SEO, GitHub Triage, Google Ads), each staffed by subagents.
- * Seed 3 rows per squad (ROW_CAP is 4 — seeding at cap would force the first
- * tick to be a removal everywhere); one warning dot per card keeps the same
- * mixed-status texture as the original diagram.
+ * Seeded squad cards — all 7 squads from Pancake's squad store, each staffed
+ * by subagents. Seed 3 rows per squad (ROW_CAP is 4 — seeding at cap would
+ * force the first tick to be a removal everywhere); one warning dot per card
+ * keeps the same mixed-status texture as the original diagram.
+ *
+ * ARRAY ORDER drives the mobile carousel only (flagship squads first);
+ * desktop card positions come from the per-surface CSS modifiers in
+ * `components.css` (visual L→R: posthog, meta, outreach, seo, triage, ads,
+ * reddit — outermost two bleed past the band edges as blurred teasers).
  */
 export const LIVE_INITIAL_DEPTS: readonly {
   title: string;
@@ -50,15 +61,42 @@ export const LIVE_INITIAL_DEPTS: readonly {
       { label: "Bid Manager", dot: "warning" },
     ],
   },
+  {
+    title: "Reddit",
+    surface: "reddit",
+    rows: [
+      { label: "Subreddit Monitor", dot: "positive" },
+      { label: "Thread Scout", dot: "positive" },
+      { label: "Reply Drafter", dot: "warning" },
+    ],
+  },
+  {
+    title: "Meta Ads",
+    surface: "meta",
+    rows: [
+      { label: "Creative Tester", dot: "positive" },
+      { label: "Audience Builder", dot: "positive" },
+      { label: "Budget Pacer", dot: "warning" },
+    ],
+  },
+  {
+    title: "Posthog",
+    surface: "posthog",
+    rows: [
+      { label: "Funnel Analyst", dot: "positive" },
+      { label: "Churn Spotter", dot: "warning" },
+      { label: "Cohort Builder", dot: "positive" },
+    ],
+  },
 ] as const;
 
-/** Subagent pools per squad — labels kept ≤ 19 chars so rows stay one-line at 1024px. */
+/** Subagent pools per squad — labels kept ≤ 17 chars so rows stay one-line on the 232px cards. */
 export const ROLE_POOLS: Record<OrgSurface, readonly string[]> = {
   outreach: [
     "Lead Researcher",
     "Sequence Writer",
     "Reply Handler",
-    "LinkedIn Prospector",
+    "LinkedIn Sourcer",
     "Meeting Booker",
     "ICP Scorer",
     "Follow-up Chaser",
@@ -85,17 +123,50 @@ export const ROLE_POOLS: Record<OrgSurface, readonly string[]> = {
     "Stale Closer",
     "First Responder",
     "PR Linker",
-    "Flaky Test Spotter",
+    "Flake Spotter",
   ],
   ads: [
     "Budget Optimizer",
     "Ad Copy Tester",
     "Bid Manager",
-    "Performance Auditor",
+    "Account Auditor",
     "Keyword Pruner",
     "Spend Watchdog",
     "Audience Splitter",
-    "Quality Score Fixer",
-    "Landing Page Grader",
+    "Ad Quality Fixer",
+    "Landing Grader",
+  ],
+  reddit: [
+    "Subreddit Monitor",
+    "Thread Scout",
+    "Reply Drafter",
+    "Mention Tracker",
+    "Sentiment Reader",
+    "AMA Planner",
+    "Post Scheduler",
+    "Trend Spotter",
+    "Mod Rule Checker",
+  ],
+  meta: [
+    "Creative Tester",
+    "Audience Builder",
+    "Budget Pacer",
+    "Pixel Auditor",
+    "Hook Analyzer",
+    "Fatigue Watcher",
+    "Placement Tuner",
+    "CPM Watchdog",
+    "ROAS Reporter",
+  ],
+  posthog: [
+    "Funnel Analyst",
+    "Churn Spotter",
+    "Cohort Builder",
+    "Event Auditor",
+    "Retention Tracker",
+    "Session Reviewer",
+    "DAU Reporter",
+    "Insight Writer",
+    "Flag Cleaner",
   ],
 };
