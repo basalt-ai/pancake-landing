@@ -414,8 +414,12 @@
     flex-direction: column;
     justify-content: center;
   }
+  /* Auto margins center the hero grid in the space ABOVE the logo marquee,
+     which sits as the hero's last child at the bottom of the first viewport
+     (the marquee is a <section>, so this div selector leaves it alone). */
   .home-hero > div {
     width: 100%;
+    margin-block: auto;
   }
 
   @media (min-width: 1024px) {
@@ -753,10 +757,13 @@
   .home-logo-marquee {
     --home-logo-marquee-gap: 72px;
     --home-logo-marquee-scale: 1;
+    /* Lives at the bottom of the hero: transparent so the dotted orbit
+       ellipses show through (founder-approved), lifted above them. */
+    position: relative;
+    z-index: 5;
     width: 100%;
-    background-color: var(--surface);
-    padding-top: calc(2 * var(--spacing-xxl));
-    padding-bottom: calc(3 * var(--spacing-xxl));
+    padding-top: var(--spacing-xxl);
+    padding-bottom: var(--spacing-xxl);
     color: var(--text);
   }
 
@@ -898,8 +905,6 @@
     .home-logo-marquee {
       --home-logo-marquee-gap: 56px;
       --home-logo-marquee-scale: 0.82;
-      padding-top: var(--spacing-xxl);
-      padding-bottom: calc(2 * var(--spacing-xxl));
     }
 
     .home-logo-marquee__band {

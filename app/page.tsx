@@ -1,7 +1,6 @@
 import { HomeDemoVideo } from "@/components/sections/home/HomeDemoVideo";
 import { HomeHero } from "@/components/sections/home/HomeHero";
 import { HomeLandingBody } from "@/components/sections/home/HomeLandingBody";
-import { HomeLogoMarquee } from "@/components/sections/home/HomeLogoMarquee";
 import { HomeNav } from "@/components/sections/home/HomeNav";
 import { Footer } from "@/components/shared/Footer";
 
@@ -39,7 +38,6 @@ export default function Home() {
       <HomeNav />
       <HomeHero />
       <HomeDemoVideo />
-      <HomeLogoMarquee />
       <HomeLandingBody />
       <Footer />
     </main>
