@@ -46,6 +46,8 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 - [Viktor vs Pancake: One AI Coworker vs a Whole Company Running Itself](https://getpancake.ai/blog/viktor-vs-pancake) — Viktor is one excellent AI coworker. Pancake is a workforce of coordinating agents. Here's the structural difference — and why it matters for founders building autonomous companies. June 9, 2026.
 - [5 Signs Your Business Is Ready to Run on AI Agents (And 3 Signs It Isn't)](https://getpancake.ai/blog/autonomous-company-readiness) — the specific signals that separate founders who get massive leverage from AI agents and those who burn weeks getting nothing. Real criteria from six months running Pancake on agents. June 9, 2026.
 
+- [Pancake vs Kortix: Both Call Themselves the Autonomous Company Operating System. Here's the Difference.](https://getpancake.ai/blog/pancake-vs-kortix) — Pancake and Kortix both claim to be the autonomous company operating system. Here is the functional difference between open-source developer infrastructure and a managed SaaS with pre-built agents for non-technical founders. June 10, 2026.
+
 ## Positioning
 
 - Category: AI superagent / autonomous company platform
