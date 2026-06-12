@@ -1,7 +1,14 @@
 /**
- * Org diagram under “An entire org working for you” — Figma `428:14926` (1136×706).
- * Built from semantic tokens + MCP `get_design_context` / `get_variable_defs` (no raster for this block).
- * Dept role rows animate in `HomeOrgLiveRows`; wires/balls stay in `OrgConnections`.
+ * Org diagram under “Hire squads of agents that work autonomously” — squads
+ * revamp of the original Figma `428:14926` stage (1136×706). You + Pancake
+ * chips and the founder wire are unchanged; the stage now holds ALL 7 squad
+ * cards (Posthog, Meta Ads, Outreach, AI SEO, GitHub Triage, Google Ads,
+ * Reddit). The root `.home-org-diagram` is a full-bleed band (max 1536px,
+ * `overflow-x: clip` + horizontal fade mask) wider than the 1136 stage, so
+ * the outer two cards bleed past the edges as blurred teasers. The static
+ * dashed “Build your own” bar sits centered below — untouched by the edge
+ * fade. Squad subagent rows animate in `HomeOrgLiveRows`; wires/balls stay
+ * in `OrgConnections`.
  */
 
 "use client";
@@ -143,6 +150,12 @@ export function HomeOrgDiagram() {
         </div>
 
         <HomeOrgLiveRows scrollRootRef={diagramRootRef} deptRows={deptRows} setDeptRows={setDeptRows} />
+      </div>
+
+      {/* Static invitation — deliberately unwired and unanimated. */}
+      <div className="home-org-diagram__build">
+        <p className="home-org-diagram__build-title">+ Build your own</p>
+        <p className="home-org-diagram__build-sub">Assemble any agents into a squad of your own.</p>
       </div>
     </div>
   );

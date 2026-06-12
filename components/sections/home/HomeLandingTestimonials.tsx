@@ -1,25 +1,25 @@
 /**
  * Home — "Take it from them" section (Figma `428:15175`).
  *
- * Infinite, slow horizontal carousel of testimonial cards. The track holds
- * each testimonial twice; a manual `gsap.ticker` tick translates it left at a
- * constant px/s. When `offset` crosses one full stride (width of the
- * un-duplicated set including gaps), it wraps back by `+stride` — visually
- * seamless because the duplicated cards sit exactly where the originals were.
+ * Infinite, slow horizontal carousel of REAL X posts (June 2026 wave). Quotes
+ * are verbatim; long-form posts carry the same preview cut X itself shows
+ * (ellipsis), and every card links to the full post. Spanish posts are shown
+ * in English with a "Translated from Spanish" note. Post media is never
+ * included — text only. Avatars are local copies in `public/testimonials/`.
  *
- * The outer band breaks out of the page container (`width: 100vw`) so cards
- * exit/enter beyond the viewport edges; the soft mask gradient feathers the
- * sides.
- *
- * Card layout is a 1:1 port of Figma node `428:15180` (avatar + identity + X
- * mark, body quote, hairline divider, stats row with right-anchored "via X").
+ * The track holds each post twice; a manual `gsap.ticker` tick translates it
+ * left at a constant px/s. When `offset` crosses one full stride (width of
+ * the un-duplicated set including gaps), it wraps back by `+stride` —
+ * visually seamless because the duplicated cards sit exactly where the
+ * originals were. The outer band breaks out of the page container
+ * (`width: 100vw`); the soft mask gradient feathers the sides.
  */
 "use client";
 
 import Image from "next/image";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
-import { gsap } from "gsap";
+import { gsap } from "@/lib/gsap";
 
 const CARD_GAP_PX = 16;
 const CAROUSEL_SPEED_PX_PER_S = 36;
@@ -27,19 +27,21 @@ const CAROUSEL_SPEED_PX_PER_S = 36;
 type Testimonial = {
   id: string;
   name: string;
+  /** Handle + short date, e.g. "@nicos_ai · Jun 9". */
   handle: string;
   avatar: string;
-  quote: ReactNode;
+  /** Full permalink to the post on X. */
+  url: string;
+  quote: string;
+  /** Set when the original post is in another language and shown in English. */
+  translatedFrom?: string;
 };
 
-/**
- * Highlights `@pancake` mentions in the deep brand purple from Figma.
- * Kept as a tiny helper so testimonial text stays plain strings in source.
- */
+/** Highlights Pancake mentions in the deep brand purple from Figma. */
 function withPancakeMention(text: string): ReactNode {
-  const parts = text.split(/(@pancake)/g);
+  const parts = text.split(/(@getpancake_ai|@pancake\b)/g);
   return parts.map((part, i) =>
-    part === "@pancake" ? (
+    part === "@getpancake_ai" || part === "@pancake" ? (
       <span key={i} className="home-landing-testimonial__mention">
         {part}
       </span>
@@ -51,37 +53,78 @@ function withPancakeMention(text: string): ReactNode {
 
 const TESTIMONIALS: Testimonial[] = [
   {
-    id: "t1",
-    name: "Maya Patel",
-    handle: "@mayapatel · 1d",
-    avatar: "/testimonials/avatar-1.png",
+    id: "wesley",
+    name: "Wesley",
+    handle: "@Ambani_Wessley · Jun 9",
+    avatar: "/testimonials/ambani_wessley.jpg",
+    url: "https://x.com/Ambani_Wessley/status/2064410998925296059",
     quote:
-      "Day 14 of the pancake experiment: my engineering agent has shipped 38 PRs, my recruiter agent screened 412 candidates, and my CFO agent is actually scary good at modeling.",
+      "Just spent way too long staring at X analytics, scrolling my own profile like a detective trying to remember which tweets actually hit, comparing nothing, and posting on pure vibes again.\n\nAsked Pancake: “analyze my last 30 tweets — what landed, what flopped, the pattern”\n\nGot a…",
   },
   {
-    id: "t2",
-    name: "Hana Sato",
-    handle: "@hanasato · 1d",
-    avatar: "/testimonials/avatar-2.png",
-    quote: withPancakeMention(
-      'I asked @pancake to "run my entire content engine" and it just… did. Calendar, briefs, drafts, scheduling, analytics. I am the bottleneck now.'
-    ),
+    id: "somitra",
+    name: "SomitraSR",
+    handle: "@TheSomitraSR · Jun 9",
+    avatar: "/testimonials/thesomitrasr.jpg",
+    url: "https://x.com/TheSomitraSR/status/2064404783604343269",
+    quote:
+      "As a founder, I used to spend hours jumping between CRM, spreadsheets, email, and analytics just to figure out what needed attention.\n\nThen I’d still miss follow-ups.\n\nLast week I just asked @getpancake_ai:\n\n“Monitor new leads, prioritize the hot ones, and draft follow-ups.”…",
   },
   {
-    id: "t3",
-    name: "Leo Moretti",
-    handle: "@leomoretti · 1d",
-    avatar: "/testimonials/avatar-3.png",
+    id: "nico",
+    name: "Nico",
+    handle: "@nicos_ai · Jun 9",
+    avatar: "/testimonials/nicos_ai.jpg",
+    url: "https://x.com/nicos_ai/status/2064423456171565490",
     quote:
-      "Hired 4 pancake agents on Friday. Came back Monday to a launched landing page, 11 closed deals, and an inbox at zero. I genuinely don’t know what to do with my time.",
+      "NOW YOU CAN GO TO BED WITH A BUG AND WAKE UP WITHOUT IT\n\nBefore: you read the stack trace, reproduce it locally, find the line, write the fix, open the PR at 2AM\n\nNow: you tell Pancake “fix the checkout crash”, go to sleep, and the PR is already open by morning",
+    translatedFrom: "Spanish",
   },
   {
-    id: "t4",
-    name: "Daniel Kim",
-    handle: "@danielkim · 1d",
-    avatar: "/testimonials/avatar-4.png",
+    id: "kaitee",
+    name: "Kaitee",
+    handle: "@KaiteeShiks · Jun 9",
+    avatar: "/testimonials/kaiteeshiks.jpg",
+    url: "https://x.com/KaiteeShiks/status/2064404901762068535",
     quote:
-      "The kill switch works. I tested it. My whole org froze mid-sentence, then resumed exactly where it left off when I un-paused. This is actually production software.",
+      "One of the most annoying parts of being a creator isn't making content.\n\nIt's keeping up with sponsor emails.\n\nNormally I'd dig through my inbox, forget to reply to someone for days, hunt for old rate cards, then wonder which invoices were actually paid.\n\nWith Pancake I can just…",
+  },
+  {
+    id: "andrew",
+    name: "Andrew Carr 🤸",
+    handle: "@andrew_n_carr · Jun 9",
+    avatar: "/testimonials/andrew_n_carr.jpg",
+    url: "https://x.com/andrew_n_carr/status/2064403828791968173",
+    quote:
+      "Usually, I would have like 10 gemini or chatgpt tabs open brainstorming cold emails or hooks for some animated outreach.\n\nit's kinda sweet to just \"ask pancake\" to go off and run autonomously. The little fella is pretty darn smart.\n\nAnyway, I've had substantially better…",
+  },
+  {
+    id: "gus",
+    name: "gus",
+    handle: "@igus_ai · Jun 9",
+    avatar: "/testimonials/igus_ai.jpg",
+    url: "https://x.com/igus_ai/status/2064418742575022274",
+    quote:
+      "NOW YOU CAN RUN A 100% AUTOMATED CLIPPING BUSINESS\n\nYou hand Pancake the episode and it generates upload-ready clips, the show notes, and the chapters\n\nIt used to be 3 days of post-production per episode: reviews, timestamps, an editor, waiting\n\nTurn that into a service…",
+    translatedFrom: "Spanish",
+  },
+  {
+    id: "leonardo",
+    name: "Leonardo",
+    handle: "@MrOnsase · Jun 9",
+    avatar: "/testimonials/mronsase.jpg",
+    url: "https://x.com/MrOnsase/status/2064406486336315409",
+    quote:
+      "I wanted to turn every new feature I ship into content without spending 2 hours rewriting it.\n\nNormally I’d stare at the changelog, open a blank tweet, rewrite it 6 different ways, overthink the hook, get stuck, and end up posting nothing.\n\nSo I just asked Pancake: “turn my last…",
+  },
+  {
+    id: "jakes",
+    name: "Jakes",
+    handle: "@JakesBiko · Jun 9",
+    avatar: "/testimonials/jakesbiko.jpg",
+    url: "https://x.com/JakesBiko/status/2064406616028639431",
+    quote:
+      "I wanted to stop answering the same support question 10 times a day and actually ship features instead.\n\nNormally I’d open each ticket, search docs, dig into the codebase to double-check, write a careful reply, paste links, repeat until my whole day was gone.\n\nSo I just asked…",
   },
 ];
 
@@ -103,7 +146,13 @@ function XMark() {
 
 function Card({ t }: { t: Testimonial }) {
   return (
-    <article className="home-landing-testimonial" aria-label={`Testimonial from ${t.name}`}>
+    <a
+      className="home-landing-testimonial"
+      href={t.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`Post by ${t.name} on X`}
+    >
       <div className="home-landing-testimonial__header">
         <div className="home-landing-testimonial__avatar">
           <Image src={t.avatar} alt="" width={48} height={48} loading="lazy" />
@@ -116,21 +165,11 @@ function Card({ t }: { t: Testimonial }) {
           <XMark />
         </div>
       </div>
-      <p className="home-landing-testimonial__quote">{t.quote}</p>
-      <hr className="home-landing-testimonial__divider" />
-      <div className="home-landing-testimonial__meta">
-        <span className="home-landing-testimonial__stat">
-          <strong>321</strong> replies
-        </span>
-        <span className="home-landing-testimonial__stat">
-          <strong>821</strong> reposts
-        </span>
-        <span className="home-landing-testimonial__stat">
-          <strong>2.8k</strong> likes
-        </span>
-        <span className="home-landing-testimonial__via">via X</span>
-      </div>
-    </article>
+      <p className="home-landing-testimonial__quote">{withPancakeMention(t.quote)}</p>
+      {t.translatedFrom ? (
+        <p className="home-landing-testimonial__translated">Translated from {t.translatedFrom}</p>
+      ) : null}
+    </a>
   );
 }
 
@@ -273,7 +312,7 @@ export function HomeLandingTestimonials() {
               type="button"
               role="tab"
               aria-selected={i === activeIndex}
-              aria-label={`Story by ${t.name}`}
+              aria-label={`Post by ${t.name}`}
               className={`home-landing-testimonials__dot ${i === activeIndex ? "home-landing-testimonials__dot--active" : ""}`}
               onClick={() => scrollToTestimonial(i)}
             />

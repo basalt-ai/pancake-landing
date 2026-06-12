@@ -4,7 +4,7 @@
 
 ## What Pancake does
 
-Pancake gives you an AI co-founder that knows your company better than you and handles 50% of the job. Every agent, role, and workflow is defined in Markdown files you control. Agents pull context from your Notion, docs, and meeting notes — they know your business. Every tool call, message, and decision is written to an immutable log. You always have the last word.
+Pancake gives you an AI co-founder that knows your company better than you and handles 50% of the job. You hire squads of agents that work autonomously — Outreach, AI SEO, GitHub Triage, Google Ads, or your own — each staffed by subagents. Agents pull context from your Notion, docs, and meeting notes — they know your business. Every tool call, message, and decision is written to an immutable log. You always have the last word. Secure by design: each agent runs sandboxed in your own pod, destructive actions are approval-gated, and credentials live in an encrypted vault — never in the chat.
 
 ## Who it's for
 
@@ -69,3 +69,5 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 - Twitter/X: https://x.com/getpancake_ai
 - YouTube: https://www.youtube.com/@trypancake
 - LinkedIn: https://www.linkedin.com/company/get-pancake
+- TikTok: https://www.tiktok.com/@getpancake
+- Instagram: https://www.instagram.com/get.pancake/

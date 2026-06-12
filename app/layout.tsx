@@ -102,6 +102,8 @@ const organizationJsonLd = {
     "https://x.com/getpancake_ai",
     "https://www.youtube.com/@trypancake",
     "https://www.linkedin.com/company/get-pancake",
+    "https://www.tiktok.com/@getpancake",
+    "https://www.instagram.com/get.pancake/",
     "https://trypancake.ai",
   ],
 };
@@ -160,6 +162,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 sameAs: [
                   "https://x.com/getpancake_ai",
                   "https://www.linkedin.com/company/getpancake",
+                  "https://www.tiktok.com/@getpancake",
+                  "https://www.instagram.com/get.pancake/",
                 ],
               },
               {
