@@ -48,6 +48,9 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 
 - [Pancake vs Kortix: Both Call Themselves the Autonomous Company Operating System. Here's the Difference.](https://getpancake.ai/blog/pancake-vs-kortix) — Pancake and Kortix both claim to be the autonomous company operating system. Here is the functional difference between open-source developer infrastructure and a managed SaaS with pre-built agents for non-technical founders. June 10, 2026.
 
+
+- [Team Agent Platforms Compared: Viktor, Dust, Glean, and Why Autonomous Companies Need Something Different](https://getpancake.ai/blog/team-agent-platforms-compared) — Viktor, Dust, and Glean make your existing team more productive. Pancake replaces the team layer itself with an autonomous workforce that runs without being asked. Different category, different buyer. June 12, 2026.
+
 ## Positioning
 
 - Category: AI superagent / autonomous company platform
