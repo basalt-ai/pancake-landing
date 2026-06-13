@@ -4,9 +4,16 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
 type AnalyticsParams = Record<string, string | number | boolean | null | undefined>;
+type MetaEventName = "ViewContent" | "Lead" | "Contact" | "Schedule";
+type MetaPixelOptions = { eventID?: string };
 
 type Fbq = {
-  (command: "track" | "trackCustom", eventName: string, params?: AnalyticsParams): void;
+  (
+    command: "track" | "trackCustom",
+    eventName: string,
+    params?: AnalyticsParams,
+    options?: MetaPixelOptions,
+  ): void;
   (command: string, ...args: unknown[]): void;
 };
 
@@ -32,9 +39,65 @@ function pushDataLayer(event: string, params: AnalyticsParams = {}) {
   });
 }
 
-function trackMeta(eventName: string, params?: AnalyticsParams, custom = false) {
+function createEventId(eventName: MetaEventName) {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return `${eventName}.${crypto.randomUUID()}`;
+  }
+
+  return `${eventName}.${Date.now()}.${Math.random().toString(36).slice(2)}`;
+}
+
+function sendMetaConversion(
+  eventName: MetaEventName,
+  eventId: string,
+  customData?: AnalyticsParams,
+) {
+  const body = JSON.stringify({
+    event_name: eventName,
+    event_id: eventId,
+    event_source_url: window.location.href,
+    custom_data: customData,
+  });
+
+  if (typeof navigator.sendBeacon === "function") {
+    const sent = navigator.sendBeacon(
+      "/events/mc",
+      new Blob([body], { type: "application/json" }),
+    );
+    if (sent) return;
+  }
+
+  void fetch("/events/mc", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body,
+    keepalive: true,
+  }).catch(() => {
+    // Analytics should never affect navigation or page behavior.
+  });
+}
+
+function trackMeta(eventName: string, params?: AnalyticsParams, custom = false, eventId?: string) {
   if (typeof window.fbq !== "function") return;
-  window.fbq(custom ? "trackCustom" : "track", eventName, params);
+  window.fbq(
+    custom ? "trackCustom" : "track",
+    eventName,
+    params,
+    eventId ? { eventID: eventId } : undefined,
+  );
+}
+
+function trackMetaWithConversionsApi(
+  eventName: MetaEventName,
+  params?: AnalyticsParams,
+  customData?: AnalyticsParams,
+) {
+  const eventId = createEventId(eventName);
+  trackMeta(eventName, params, false, eventId);
+  sendMetaConversion(eventName, eventId, customData ?? params);
+  return eventId;
 }
 
 function linkText(anchor: HTMLAnchorElement) {
@@ -76,6 +139,18 @@ export function AnalyticsEvents() {
 
   useEffect(() => {
     const pagePath = currentPagePath();
+    const viewContentParams = {
+      page_path: pagePath,
+      page_location: window.location.href,
+      page_title: document.title,
+    };
+
+    trackMetaWithConversionsApi("ViewContent", viewContentParams, {
+      content_category: "landing_page",
+      content_name: document.title || pagePath,
+      page_path: pagePath,
+      page_title: document.title,
+    });
 
     if (previousPathRef.current && previousPathRef.current !== pagePath) {
       const params = {
@@ -101,9 +176,18 @@ export function AnalyticsEvents() {
         page_location: window.location.href,
         page_title: document.title,
       };
+      const eventId = trackMetaWithConversionsApi("Schedule", params, {
+        content_category: "meeting",
+        content_name: "meeting_booked",
+        conversion_name: "meeting_booked",
+        page_path: pagePath,
+        page_title: document.title,
+      });
 
-      pushDataLayer("meeting_booked", params);
-      trackMeta("Schedule", params);
+      pushDataLayer("meeting_booked", {
+        ...params,
+        event_id: eventId,
+      });
     }
   }, [pathname]);
 
@@ -128,9 +212,24 @@ export function AnalyticsEvents() {
         page_location: window.location.href,
         trigger,
       };
+      const eventId = trackMetaWithConversionsApi(
+        trackedEvent.metaEvent as MetaEventName,
+        params,
+        {
+          content_category: "landing_page",
+          content_name: trackedEvent.conversionName,
+          conversion_name: trackedEvent.conversionName,
+          destination_url: trackedEvent.destinationUrl,
+          link_text: params.link_text,
+          page_path: params.page_path,
+          trigger,
+        },
+      );
 
-      pushDataLayer(trackedEvent.dataLayerEvent, params);
-      trackMeta(trackedEvent.metaEvent, params);
+      pushDataLayer(trackedEvent.dataLayerEvent, {
+        ...params,
+        event_id: eventId,
+      });
     };
 
     const onPointerDown = (event: PointerEvent) => {
