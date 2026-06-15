@@ -53,6 +53,8 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 - [The Two Types of AI Co-Founder in 2026: Advisory vs. Operational](https://getpancake.ai/blog/ai-cofounder-advisory-vs-operational) — most AI co-founder tools are advisory: they wait for your prompt and return a recommendation. Pancake is operational: it acts, reports back, and runs your company between your focus sessions. June 14, 2026.
 - [Pancake vs Venturos: From $0 to First Revenue vs. From First Revenue to $1M](https://getpancake.ai/blog/pancake-vs-venturos) — Venturos helps you validate and launch. Pancake helps you operate and scale. Here's where each tool fits in the founder journey — and why using both in sequence makes sense. June 14, 2026.
 
+- [Pancake vs Copreneur.ai: The Difference Between Knowing What to Do and Getting It Done](https://getpancake.ai/blog/pancake-vs-copreneur-ai) — Copreneur tells you what to work on next. Pancake works on it while you sleep. Two different problems, two different tools, for the same solo founder. June 15, 2026.
+
 ## Positioning
 - [What Is OpenClaw? The AI Runtime Behind Pancake's Autonomous Company Platform](https://getpancake.ai/blog/what-is-openclaw-pancake-ai-runtime) — OpenClaw is the AI agent runtime and orchestration layer that powers Pancake. If OpenClaw is the engine, Pancake is the car. Here's what each layer does — and why it matters for founders who want a company that runs itself. June 13, 2026.
 - [Pancake vs CoFounder.im: Two Very Different Definitions of 'AI Co-Founder'](https://getpancake.ai/blog/pancake-vs-cofounder-im) — CoFounder.im validates your idea and prepares investor documents. Pancake runs your company while you sleep. Same label, completely different jobs. June 14, 2026.
