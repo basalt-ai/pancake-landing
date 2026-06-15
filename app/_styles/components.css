@@ -2675,7 +2675,7 @@
      sits at the same eye-line as the slider/heading on the right
      card, and `justify-content: space-between` pins the italic
      footnote ("More details below") to the bottom of the card so
-     it horizontally aligns with the CTA caption ("3-day free trial …")
+     it horizontally aligns with the CTA caption ("7-day free trial …")
      on the right card. */
   .pricing-base {
     position: relative;
@@ -3016,7 +3016,7 @@
   }
 
   /* CTA — pinned to the bottom of the info column via margin-top:
-     auto so its caption ("3-day free trial …") lands on the same
+     auto so its caption ("7-day free trial …") lands on the same
      baseline as "More details below" on the base card. */
   .pricing-hero__cta {
     margin-top: auto;
@@ -3031,7 +3031,7 @@
     width: 100%;
   }
 
-  /* CTA caption — "3-day free trial · $100 token cap". Matches
+  /* CTA caption — "7-day free trial · $100 token cap". Matches
      `.pricing-base__footnote` exactly (italic body-small) so the two
      small captions across the two cards read as one consistent voice. */
   .pricing-hero__cta-caption {
