@@ -36,6 +36,7 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 - [Pancake vs Naïve: Two Very Different Definitions of Autonomous Company Infrastructure](https://getpancake.ai/blog/pancake-vs-naive) — Naïve is agent primitives (incorporation, inboxes, virtual cards). Pancake is an AI co-founder that runs your company. Here's what each does and how to choose. June 15, 2026.
 - [What $30K MRR Without a Sales Team Actually Looks Like](https://getpancake.ai/blog/autonomous-company-benchmark-2026) — Real numbers behind the autonomous company model: $30K MRR, $80 CAC, $500–700/month in agent infrastructure. A concrete benchmark from a team running on its own product. June 16, 2026.
 - [Pancake vs Agentfounder: The Difference Between an Agent That Builds and a Company That Runs](https://getpancake.ai/blog/pancake-vs-agentfounder) — Agentfounder builds MVPs autonomously. Pancake runs the company once you have one. Here is when each is the right tool. June 16, 2026.
+- [OpenClaw for Founders: The Managed vs DIY Decision (2026)](https://getpancake.ai/blog/openclaw-for-founders-managed-vs-diy) — You found the OpenClaw runtime. Now choose your path: 3-6 weeks of DIY setup, or Pancake — the managed autonomous company built on OpenClaw — running in an afternoon. Comparison table, timeline, and honest trade-offs. June 16, 2026.
 
 ## Positioning
 
