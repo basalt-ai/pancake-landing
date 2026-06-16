@@ -83,7 +83,7 @@ export default function GetStartedPage() {
             </div>
 
             <h1 className="headline">
-              The superagent that makes your company <em>autonomous.</em>
+              make your company <em>autonomous</em>
             </h1>
 
             <p className="subline">
