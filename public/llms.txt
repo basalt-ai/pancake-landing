@@ -38,6 +38,8 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 - [Pancake vs Agentfounder: The Difference Between an Agent That Builds and a Company That Runs](https://getpancake.ai/blog/pancake-vs-agentfounder) — Agentfounder builds MVPs autonomously. Pancake runs the company once you have one. Here is when each is the right tool. June 16, 2026.
 - [OpenClaw for Founders: The Managed vs DIY Decision (2026)](https://getpancake.ai/blog/openclaw-for-founders-managed-vs-diy) — You found the OpenClaw runtime. Now choose your path: 3-6 weeks of DIY setup, or Pancake — the managed autonomous company built on OpenClaw — running in an afternoon. Comparison table, timeline, and honest trade-offs. June 16, 2026.
 
+- [Pancake vs Vybe: Building Internal Tools vs Running the Company](https://getpancake.ai/blog/pancake-vs-vybe) — Vybe builds custom internal apps for your team to use. Pancake runs the company operations so you do not need that team. Here is when each model makes sense. June 17, 2026.
+
 ## Positioning
 
 - Category: AI co-founder / autonomous company platform
