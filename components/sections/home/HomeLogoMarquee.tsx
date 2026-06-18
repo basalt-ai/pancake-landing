@@ -88,7 +88,7 @@ export function HomeLogoMarquee() {
   return (
     <section className="home-logo-marquee" aria-label="Customers and partners">
       <div className="home-logo-marquee__row">
-        <MarqueeGroup label="Trusted by" logos={TRUSTED_BY} />
+        <MarqueeGroup label="Trusted by 600+ companies" logos={TRUSTED_BY} />
         <MarqueeGroup
           label="Powered by"
           logos={POWERED_BY}
