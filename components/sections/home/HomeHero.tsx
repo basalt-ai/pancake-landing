@@ -32,23 +32,21 @@ export function HomeHero() {
           <H1 className="whitespace-pre-line">{HERO_TITLE}</H1>
           <p className="home-hero-body whitespace-pre-line">{HERO_SUB}</p>
           <div className="home-hero-cta-row">
-            <div className="home-hero-cta-actions">
-              <a
-                href="https://app.getpancake.ai"
-                className="button inline-flex w-fit shrink-0 items-center justify-center no-underline"
-                data-size="lg"
-              >
-                Try for free
-              </a>
-              <a
-                href="https://zcal.co/i/ZEHl48rv"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="home-hero-cta-link"
-              >
-                Book a meeting →
-              </a>
-            </div>
+            <a
+              href="https://app.getpancake.ai"
+              className="button inline-flex w-fit shrink-0 items-center justify-center no-underline"
+              data-size="lg"
+            >
+              Try for free
+            </a>
+            <a
+              href="https://zcal.co/i/ZEHl48rv"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="home-hero-cta-link"
+            >
+              Book a meeting
+            </a>
             <p className="home-hero-cta-note">No credit card required • SOC 2 compliant</p>
           </div>
         </div>

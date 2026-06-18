@@ -483,13 +483,6 @@
     color: var(--subtle-text);
   }
 
-  .home-hero-cta-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-md);
-  }
-
   .home-hero .home-hero-cta-link {
     display: inline-flex;
     align-items: center;
@@ -5026,11 +5019,6 @@
     .home-hero-cta-row .button {
       width: 100%;
       max-width: 280px;
-    }
-    /* Center the stacked button + link on mobile to match the row's centering. */
-    .home-hero-cta-actions {
-      align-items: center;
-      width: 100%;
     }
     .home-hero-pancake {
       order: 1;
