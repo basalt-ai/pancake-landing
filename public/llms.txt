@@ -65,3 +65,4 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 - Twitter/X: https://x.com/getpancake_ai
 - YouTube: https://www.youtube.com/@trypancake
 - LinkedIn: https://www.linkedin.com/company/get-pancake
+- [AI Agents for Startup Operations: Why Your First Ops Hire Should Be Software](https://getpancake.ai/blog/ai-agents-for-startup-operations) — most early-stage ops work is routine and rule-based — exactly what AI agents do well. Here is the honest breakdown of what agents handle, where humans still win, and how founders make the switch. June 18, 2026.
