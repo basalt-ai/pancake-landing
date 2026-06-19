@@ -45,6 +45,9 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 - [AI Agents for Startup Operations: Why Your First Ops Hire Should Be Software](https://getpancake.ai/blog/ai-agents-for-startup-operations) — most early-stage ops work is routine and rule-based — exactly what AI agents do well. Here is the honest breakdown of what agents handle, where humans still win, and how founders make the switch. June 18, 2026.
 - [Pancake vs AI Cofounders: Six Specialist Agents vs One Company That Runs Itself](https://getpancake.ai/blog/pancake-vs-aicofounders) — AI Cofounders gives you six specialist agents organized around startup frameworks. Pancake runs your company operations autonomously without prompting. Here is the structural difference and who each is for. June 18, 2026.
 
+- [Pancake vs CoFounderBot: One Builds Your Product, One Runs Your Company](https://getpancake.ai/blog/pancake-vs-cofounderbot) — CoFounderBot deploys seven specialized agents to build and ship software. Pancake runs company operations autonomously on a schedule. Here is the honest difference and who each is for. June 19, 2026.
+- [Pancake vs FounderTwin: AI-Assisted Workflow vs Autonomous Operations](https://getpancake.ai/blog/pancake-vs-foundertwin) — FounderTwin is a structured workflow for founders building their first MVP. Pancake runs the operations after you have built it. Two different stages, two different tools. June 19, 2026.
+
 ## Positioning
 
 - Category: AI co-founder / autonomous company platform
