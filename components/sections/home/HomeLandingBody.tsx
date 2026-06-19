@@ -149,6 +149,39 @@ export function HomeLandingBody() {
         </div>
       </section>
 
+      {/* From the blog — explicit internal links for crawler discovery of new articles */}
+      <section className="home-landing-section" aria-labelledby="home-landing-blog-heading">
+        <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
+          <header className="home-landing-section__header">
+            <H2 id="home-landing-blog-heading" className="heading home-landing-section__title text-center">
+              From the blog
+            </H2>
+          </header>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '640px', marginLeft: 'auto', marginRight: 'auto' }}>
+            <li>
+              <a href="/blog/how-to-build-autonomous-company" style={{ color: 'inherit', textDecoration: 'none' }}>
+                <strong>How to Build an Autonomous Company with an AI Team (2026 Guide)</strong>
+              </a>
+            </li>
+            <li>
+              <a href="/blog/openclaw-for-founders-managed-vs-diy" style={{ color: 'inherit', textDecoration: 'none' }}>
+                <strong>OpenClaw for Founders: The Managed vs DIY Decision (2026)</strong>
+              </a>
+            </li>
+            <li>
+              <a href="/blog/viktor-alternatives" style={{ color: 'inherit', textDecoration: 'none' }}>
+                <strong>Viktor Alternatives: Why Founders Are Choosing an AI Team Over an AI Agent</strong>
+              </a>
+            </li>
+            <li>
+              <a href="/blog" style={{ color: 'inherit' }}>
+                See all posts →
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+
       {/* Figma `428:15160` closing CTA — mobile variant `451:20112` adds three
           decorative pancakes (purple top-left, half-pink bottom-left,
           orange-pink right) that bleed past the section edges. Decor is
