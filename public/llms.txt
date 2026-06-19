@@ -47,6 +47,7 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 
 - [Pancake vs CoFounderBot: One Builds Your Product, One Runs Your Company](https://getpancake.ai/blog/pancake-vs-cofounderbot) — CoFounderBot deploys seven specialized agents to build and ship software. Pancake runs company operations autonomously on a schedule. Here is the honest difference and who each is for. June 19, 2026.
 - [Pancake vs FounderTwin: AI-Assisted Workflow vs Autonomous Operations](https://getpancake.ai/blog/pancake-vs-foundertwin) — FounderTwin is a structured workflow for founders building their first MVP. Pancake runs the operations after you have built it. Two different stages, two different tools. June 19, 2026.
+- [Pancake vs Tycoon: Same Goal, Different Machine](https://getpancake.ai/blog/pancake-vs-tycoon) — Both promise $1M ARR without a full team. Tycoon is a SaaS growth execution platform. Pancake is a general-purpose autonomous operations layer for any company. June 19, 2026.
 
 ## Positioning
 
