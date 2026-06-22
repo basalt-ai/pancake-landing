@@ -483,6 +483,23 @@
     color: var(--subtle-text);
   }
 
+  .home-hero .home-hero-cta-link {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    font-weight: var(--font-semibold);
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: opacity 0.2s ease;
+  }
+
+  .home-hero .home-hero-cta-link:hover {
+    opacity: 0.8;
+  }
+
   /**
    * Hero right column: Figma hero `428:14900` — “top” `428:16771` (236.46²) + monster `428:14920` (160²).
    */

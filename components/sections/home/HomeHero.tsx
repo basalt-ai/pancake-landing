@@ -39,6 +39,14 @@ export function HomeHero() {
             >
               Try for free
             </a>
+            <a
+              href="https://zcal.co/i/ZEHl48rv"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="home-hero-cta-link"
+            >
+              Book a meeting
+            </a>
             <p className="home-hero-cta-note">No credit card required • SOC 2 compliant</p>
           </div>
         </div>

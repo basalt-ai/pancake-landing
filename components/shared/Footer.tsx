@@ -80,7 +80,7 @@ export function Footer() {
                 </Link>
               ))}
               <a
-                href="https://zcal.co/i/4mlnC2bQ"
+                href="https://zcal.co/i/ZEHl48rv"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="basis-full whitespace-nowrap text-center text-base font-medium transition-colors hover:opacity-80"
