@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 type AnalyticsParams = Record<string, string | number | boolean | null | undefined>;
 type MetaEventName = "ViewContent" | "Lead" | "Contact" | "Schedule";
 type MetaPixelOptions = { eventID?: string };
+type RedditEventName = "PageVisit";
 
 type Fbq = {
   (
@@ -17,10 +18,15 @@ type Fbq = {
   (command: string, ...args: unknown[]): void;
 };
 
+type RedditTracker = {
+  (command: "track", eventName: RedditEventName, params?: AnalyticsParams): void;
+};
+
 declare global {
   interface Window {
     dataLayer?: Array<Record<string, unknown>>;
     fbq?: Fbq;
+    rdt?: RedditTracker;
   }
 }
 
@@ -87,6 +93,11 @@ function trackMeta(eventName: string, params?: AnalyticsParams, custom = false, 
     params,
     eventId ? { eventID: eventId } : undefined,
   );
+}
+
+function trackReddit(eventName: RedditEventName, params?: AnalyticsParams) {
+  if (typeof window.rdt !== "function") return;
+  window.rdt("track", eventName, params);
 }
 
 function trackMetaWithConversionsApi(
@@ -163,6 +174,7 @@ export function AnalyticsEvents() {
         ...params,
         source: "next_app_router",
       });
+      trackReddit("PageVisit", params);
       trackMeta("PageView");
     }
 

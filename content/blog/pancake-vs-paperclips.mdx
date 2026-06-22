@@ -1,1 +1,120 @@
----\ntitle: "Pancake vs Paperclips: Two Takes on the Autonomous Company"\ndescription: "Paperclips is the open-source org chart for AI agents — 70k stars, self-hosted, built for developers. Pancake is the managed autonomous company platform for founders who want the company to run itself. Here is the real difference."\npublishedAt: "2026-06-22"\nupdatedAt: "2026-06-22"\ncover_image: "/blog/pancake-vs-paperclips-cover.webp"\ncover_image_alt: "Visual comparing Paperclips open-source infrastructure model versus Pancake managed autonomous company model"\nauthor: "François de Fitte"\ncategory: "autonomous company"\ntags: ["Pancake vs Paperclips", "Paperclips AI alternative", "autonomous company platform 2026", "AI agent platform comparison", "open source AI agents"]\n---\n\nPaperclips is the most-starred AI agent company platform on GitHub. 70,000 stars, MIT license, TypeScript, a Discord with tens of thousands of developers. If you're an engineer who wants to build a company of AI agents from scratch, it's the reference implementation.\n\nPancake is what you use when you don't want to build the infrastructure — you want to run the company.\n\n**TL;DR:** Paperclips is open-source developer infrastructure for orchestrating AI agents in an org-chart structure. Pancake is a managed platform that deploys that autonomous company as a service, with no infrastructure to run. Different tool, different buyer, different definition of "done."\n\n---\n\n## What Paperclips actually is\n\nPaperclips (paperclipai/paperclip on GitHub) is an open-source framework for organizing AI agents in company structures. You define roles — CEO agent, VP Sales agent, SDR agent — wire them together in an org chart, and Paperclips orchestrates how they communicate, delegate tasks, and escalate decisions.\n\nIt's powerful infrastructure. 70,000 GitHub stars don't lie. The core insight behind it — that AI agents should have persistent roles, hierarchies, and reporting lines, not just be standalone bots — is exactly right. That's the same insight behind Pancake.\n\nThe difference is who builds it and who runs it.\n\nPaperclips is a framework. You write the agents. You define their tools, their memory, their decision logic. You host the runtime, manage the database, handle scaling. You maintain it as your company's needs evolve. The result is fully yours — a custom autonomous company built to your exact specification.\n\nThat's valuable. And it requires a developer on your team (or you being one) who can own it.\n\n## What Pancake actually is\n\nPancake is a managed autonomous company platform built on OpenClaw, Pancake's own agent runtime. You deploy a squad of agents into Slack — a growth agent, an ops agent, an engineering agent, a finance agent — and they run your company's recurring work 24/7 without being prompted.\n\nNo infrastructure to spin up. No database to maintain. No agent code to write. You configure the agents through conversation, connect your tools (GitHub, Linear, HubSpot, Stripe), and the squad starts running.\n\nThe underlying architecture is similar to what Paperclips enables — persistent agents with roles, a shared company brain, coordinated parallel execution. But the deployment model is entirely different: Pancake handles everything below the business logic layer so founders can focus on what the agents should do, not how they run.\n\n---\n\n## The core tradeoff\n\n| | Paperclips | Pancake |\n|---|---|---|\n| Type | Open-source framework | Managed SaaS platform |\n| Setup | Self-hosted, requires dev work | No-code, Slack-native |\n| Agent code | You write it | Pre-built squads, customizable |\n| Runtime | You run it | Pancake hosts it |\n| Maintenance | Your responsibility | Handled |\n| Company brain | You build and maintain | Shared, auto-updated |\n| Customization | Unlimited — it's your code | High within platform |\n| Cost | Free (you pay infra + dev time) | Subscription |\n| Best for | Engineering-led teams, custom builds | Founders, operators, non-technical |\n\nThe honest version: Paperclips gives you more control. Pancake gives you more speed. The right answer depends on whether you have a developer who wants to own this, or whether you need the company to start running itself next week.\n\n---\n\n## Where Paperclips wins\n\n### Full customization\nIf you have specific requirements — a custom memory architecture, proprietary integrations, unusual orchestration logic — Paperclips is the right foundation. You own the code. You can do anything.\n\n### Engineering culture fit\nIf your company is developer-first and your team builds infrastructure as a matter of course, Paperclips is a natural fit. It integrates with your existing stack in a way that a SaaS platform cannot.\n\n### Cost at scale\nFor high-volume agent usage, self-hosting Paperclips on your own infrastructure can be significantly cheaper than subscription SaaS. The economics flip at scale.\n\n### Open-source ecosystem\n70,000 stars means a large community, frequent updates, and a growing library of contributed integrations and patterns. If the community builds something you need, it's yours immediately.\n\n---\n\n## Where Pancake wins\n\n### Time to autonomous company\nDeploying Paperclips and building your first functional autonomous company workflow takes weeks of development work. Deploying Pancake takes a day. For early-stage founders who need the company to run now, not in a month, that difference is material.\n\n### Non-technical founders\nPaperclips requires a developer. Pancake does not. If you're a solo founder or a business team without engineering bandwidth, Pancake is the only path to a genuinely autonomous company without building the runtime yourself.\n\n### Coordinated squads, not just individual agents\nPancake's squads are designed to work together from the start — shared company brain, cross-agent coordination, shared memory of every decision. Paperclips gives you the tools to build this, but you have to wire it yourself. The out-of-the-box coordination is different in kind.\n\n### Maintained intelligence\nThe Pancake platform learns as your company runs. Agent behavior improves. The company brain updates automatically. With Paperclips, maintenance is on you — if an integration breaks or an agent's logic needs updating, your developer fixes it.\n\n---\n\n## The question that decides it\n\n**Do you have a developer who will own the agent infrastructure long-term?**\n\nIf yes: Paperclips is a serious option. The customization ceiling is higher and the economics at scale are better. Plan 4–6 weeks to have something functional.\n\nIf no — or if "yes, but not yet" — Pancake is the faster path. The infrastructure is handled. The squads are pre-built. The autonomous company starts running in days, not weeks.\n\nThe underlying thesis is the same: companies that run on squads of coordinating AI agents, with a shared company brain and 24/7 autonomous execution, will outcompete companies that don't. Paperclips and Pancake are two different bets on how you get there.\n\n---\n\n## FAQ\n\n**Is Paperclips free?**\nYes. Paperclips is MIT-licensed open source. You pay for hosting, compute, and any API costs (LLM calls, tool integrations). Developer time to build and maintain the system is the main cost.\n\n**Can I migrate from Paperclips to Pancake later?**\nThe conceptual model maps well — roles, hierarchies, and company structure translate directly. The agent code and configurations don't migrate automatically, but the decisions you made in Paperclips about how your company is organized inform how you configure Pancake.\n\n**Does Pancake offer a self-hosted option?**\nNot currently. Pancake runs each customer on a dedicated pod (not a shared sandbox), which provides infrastructure isolation without the overhead of self-hosting. A self-hosted option is on the roadmap.\n\n**What if I need a custom integration that Pancake doesn't support?**\nPancake agents run in your own pod with shell access, so custom integrations can be added without waiting for platform support. If Paperclips has built an integration you need, the integration itself isn't the blocker — the question is whether you want to run the whole runtime.\n\n**Is Paperclips still actively maintained?**\nAs of June 2026, yes. The GitHub repo shows recent commits and the Discord is active. For a framework this widely adopted, discontinuation risk is low.\n
+---
+title: "Pancake vs Paperclips: Two Takes on the Autonomous Company"
+description: "Paperclips is the open-source org chart for AI agents — 70k stars, self-hosted, built for developers. Pancake is the managed autonomous company platform for founders who want the company to run itself. Here is the real difference."
+publishedAt: "2026-06-22"
+updatedAt: "2026-06-22"
+cover_image: "/blog/pancake-vs-paperclips-cover.webp"
+cover_image_alt: "Visual comparing Paperclips open-source infrastructure model versus Pancake managed autonomous company model"
+author: "François de Fitte"
+category: "autonomous company"
+tags: ["Pancake vs Paperclips", "Paperclips AI alternative", "autonomous company platform 2026", "AI agent platform comparison", "open source AI agents"]
+---
+
+Paperclips is the most-starred AI agent company platform on GitHub. 70,000 stars, MIT license, TypeScript, a Discord with tens of thousands of developers. If you're an engineer who wants to build a company of AI agents from scratch, it's the reference implementation.
+
+Pancake is what you use when you don't want to build the infrastructure — you want to run the company.
+
+**TL;DR:** Paperclips is open-source developer infrastructure for orchestrating AI agents in an org-chart structure. Pancake is a managed platform that deploys that autonomous company as a service, with no infrastructure to run. Different tool, different buyer, different definition of "done."
+
+---
+
+## What Paperclips actually is
+
+Paperclips (paperclipai/paperclip on GitHub) is an open-source framework for organizing AI agents in company structures. You define roles — CEO agent, VP Sales agent, SDR agent — wire them together in an org chart, and Paperclips orchestrates how they communicate, delegate tasks, and escalate decisions.
+
+It's powerful infrastructure. 70,000 GitHub stars don't lie. The core insight behind it — that AI agents should have persistent roles, hierarchies, and reporting lines, not just be standalone bots — is exactly right. That's the same insight behind Pancake.
+
+The difference is who builds it and who runs it.
+
+Paperclips is a framework. You write the agents. You define their tools, their memory, their decision logic. You host the runtime, manage the database, handle scaling. You maintain it as your company's needs evolve. The result is fully yours — a custom autonomous company built to your exact specification.
+
+That's valuable. And it requires a developer on your team (or you being one) who can own it.
+
+## What Pancake actually is
+
+Pancake is a managed autonomous company platform built on OpenClaw, Pancake's own agent runtime. You deploy a squad of agents into Slack — a growth agent, an ops agent, an engineering agent, a finance agent — and they run your company's recurring work 24/7 without being prompted.
+
+No infrastructure to spin up. No database to maintain. No agent code to write. You configure the agents through conversation, connect your tools (GitHub, Linear, HubSpot, Stripe), and the squad starts running.
+
+The underlying architecture is similar to what Paperclips enables — persistent agents with roles, a shared company brain, coordinated parallel execution. But the deployment model is entirely different: Pancake handles everything below the business logic layer so founders can focus on what the agents should do, not how they run.
+
+---
+
+## The core tradeoff
+
+| | Paperclips | Pancake |
+|---|---|---|
+| Type | Open-source framework | Managed SaaS platform |
+| Setup | Self-hosted, requires dev work | No-code, Slack-native |
+| Agent code | You write it | Pre-built squads, customizable |
+| Runtime | You run it | Pancake hosts it |
+| Maintenance | Your responsibility | Handled |
+| Company brain | You build and maintain | Shared, auto-updated |
+| Customization | Unlimited — it's your code | High within platform |
+| Cost | Free (you pay infra + dev time) | Subscription |
+| Best for | Engineering-led teams, custom builds | Founders, operators, non-technical |
+
+The honest version: Paperclips gives you more control. Pancake gives you more speed. The right answer depends on whether you have a developer who wants to own this, or whether you need the company to start running itself next week.
+
+---
+
+## Where Paperclips wins
+
+### Full customization
+If you have specific requirements — a custom memory architecture, proprietary integrations, unusual orchestration logic — Paperclips is the right foundation. You own the code. You can do anything.
+
+### Engineering culture fit
+If your company is developer-first and your team builds infrastructure as a matter of course, Paperclips is a natural fit. It integrates with your existing stack in a way that a SaaS platform cannot.
+
+### Cost at scale
+For high-volume agent usage, self-hosting Paperclips on your own infrastructure can be significantly cheaper than subscription SaaS. The economics flip at scale.
+
+### Open-source ecosystem
+70,000 stars means a large community, frequent updates, and a growing library of contributed integrations and patterns. If the community builds something you need, it's yours immediately.
+
+---
+
+## Where Pancake wins
+
+### Time to autonomous company
+Deploying Paperclips and building your first functional autonomous company workflow takes weeks of development work. Deploying Pancake takes a day. For early-stage founders who need the company to run now, not in a month, that difference is material.
+
+### Non-technical founders
+Paperclips requires a developer. Pancake does not. If you're a solo founder or a business team without engineering bandwidth, Pancake is the only path to a genuinely autonomous company without building the runtime yourself.
+
+### Coordinated squads, not just individual agents
+Pancake's squads are designed to work together from the start — shared company brain, cross-agent coordination, shared memory of every decision. Paperclips gives you the tools to build this, but you have to wire it yourself. The out-of-the-box coordination is different in kind.
+
+### Maintained intelligence
+The Pancake platform learns as your company runs. Agent behavior improves. The company brain updates automatically. With Paperclips, maintenance is on you — if an integration breaks or an agent's logic needs updating, your developer fixes it.
+
+---
+
+## The question that decides it
+
+**Do you have a developer who will own the agent infrastructure long-term?**
+
+If yes: Paperclips is a serious option. The customization ceiling is higher and the economics at scale are better. Plan 4–6 weeks to have something functional.
+
+If no — or if "yes, but not yet" — Pancake is the faster path. The infrastructure is handled. The squads are pre-built. The autonomous company starts running in days, not weeks.
+
+The underlying thesis is the same: companies that run on squads of coordinating AI agents, with a shared company brain and 24/7 autonomous execution, will outcompete companies that don't. Paperclips and Pancake are two different bets on how you get there.
+
+---
+
+## FAQ
+
+**Is Paperclips free?**
+Yes. Paperclips is MIT-licensed open source. You pay for hosting, compute, and any API costs (LLM calls, tool integrations). Developer time to build and maintain the system is the main cost.
+
+**Can I migrate from Paperclips to Pancake later?**
+The conceptual model maps well — roles, hierarchies, and company structure translate directly. The agent code and configurations don't migrate automatically, but the decisions you made in Paperclips about how your company is organized inform how you configure Pancake.
+
+**Does Pancake offer a self-hosted option?**
+Not currently. Pancake runs each customer on a dedicated pod (not a shared sandbox), which provides infrastructure isolation without the overhead of self-hosting. A self-hosted option is on the roadmap.
+
+**What if I need a custom integration that Pancake doesn't support?**
+Pancake agents run in your own pod with shell access, so custom integrations can be added without waiting for platform support. If Paperclips has built an integration you need, the integration itself isn't the blocker — the question is whether you want to run the whole runtime.
+
+**Is Paperclips still actively maintained?**
+As of June 2026, yes. The GitHub repo shows recent commits and the Discord is active. For a framework this widely adopted, discontinuation risk is low.
