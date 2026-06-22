@@ -28,6 +28,7 @@ const CONTENT = [
   "Your own content from your own Pancake",
   "No staged, mocked, or fabricated output",
   "No pre-approval needed — post first, submit later",
+  "After payout, Pancake may sponsor or boost your post — the added reach is on us and never billed to you",
 ];
 
 export function InfluencersRules() {
