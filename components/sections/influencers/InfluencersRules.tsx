@@ -28,7 +28,7 @@ const CONTENT = [
   "Your own content from your own Pancake",
   "No staged, mocked, or fabricated output",
   "No pre-approval needed — post first, submit later",
-  "After payout, Pancake may sponsor or boost your post — the added reach is on us and never billed to you",
+  "By accepting payout, you agree Pancake may run your post as a paid ad — the added reach can't be billed back to Pancake",
 ];
 
 export function InfluencersRules() {
