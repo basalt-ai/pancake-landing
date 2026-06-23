@@ -16,7 +16,7 @@ Inventory for the Pancake landing rebuild. **Stage B** deletes or strips everyth
 | `.eslintrc.json` | Lint config. |
 | `.gitignore` | Ignore rules. |
 | `next-env.d.ts` | Next.js TypeScript ambient types. |
-| `app/layout.tsx` | Root layout, **Google Tag Manager** (`GTM-M37BB9RG`), `next/font/google`, metadata icons — **GTM `<script>` / `<noscript>` blocks must stay byte-identical** across Phase 1 Stage B. |
+| `app/layout.tsx` | Root layout, production **Google Tag Manager** (`GTM-P3Z79WKD`), direct Meta/LinkedIn/Reddit base pixels, `next/font/google`, metadata icons — **tracking `<script>` / `<noscript>` blocks must stay intentional** across Phase 1 Stage B. |
 | `app/globals.css` | File stays; Stage B strips to Tailwind plumbing only. |
 | `app/error.tsx`, `app/global-error.tsx`, `app/not-found.tsx` | App Router error boundaries / 404. |
 | `app/favicon.ico` | App Router favicon asset. |

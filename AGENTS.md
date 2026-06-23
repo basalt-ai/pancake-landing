@@ -29,7 +29,7 @@ Refinements (copy, perf, polish) come later. Don't pre-optimize.
 - **TypeScript** `^5.6.3` with `tsconfig.json` (`strict`, path alias `@/*` → repo root).
 - **Package manager:** **npm** (`package-lock.json` at repo root; no `pnpm-lock.yaml` / `yarn.lock` / `bun.lockb`).
 - **GSAP:** `gsap` + `@gsap/react` installed; import from `@/lib/gsap` only (see `lib/gsap.ts`).
-- **Analytics:** **Google Tag Manager** container `GTM-M37BB9RG` — inline bootstrap `<script>` + `<noscript>` iframe in `app/layout.tsx` (not `@next/third-parties`, not `next/script`). **Preserve as-is;** do not reinstall or “migrate” unless Tristan asks.
+- **Analytics:** production **Google Tag Manager** container `GTM-P3Z79WKD` plus direct Meta, LinkedIn, and Reddit base pixels in `app/layout.tsx` (inline bootstrap `<script>` + `<noscript>` fallbacks; not `@next/third-parties`, not `next/script`). **Preserve as-is;** do not reinstall or “migrate” unless Tristan asks.
 
 ---
 

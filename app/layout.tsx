@@ -111,6 +111,8 @@ const organizationJsonLd = {
 
 const googleTagManagerId = "GTM-P3Z79WKD";
 const metaPixelId = "1668160384441545";
+const linkedInPartnerId = "9238938";
+const redditPixelId = "a2_hvwir7k3hfy1";
 
 export default function RootLayout({
   children,
@@ -143,6 +145,42 @@ fbq('init', '${metaPixelId}');
 fbq('track', 'PageView');`,
           }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `_linkedin_partner_id = "${linkedInPartnerId}";
+window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+(function(l) {
+  if (!l) {
+    window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+    window.lintrk.q = [];
+  }
+  var s = document.getElementsByTagName("script")[0];
+  var b = document.createElement("script");
+  b.type = "text/javascript";
+  b.async = true;
+  b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+  s.parentNode.insertBefore(b, s);
+})(window.lintrk);`,
+          }}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `!function(w,d){
+  if (!w.rdt) {
+    var p = w.rdt = function(){p.sendEvent ? p.sendEvent.apply(p, arguments) : p.callQueue.push(arguments)};
+    p.callQueue = [];
+    var t = d.createElement("script");
+    t.src = "https://www.redditstatic.com/ads/pixel.js";
+    t.async = true;
+    var s = d.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(t, s);
+  }
+}(window, document);
+rdt("init", "${redditPixelId}");
+rdt("track", "PageVisit");`,
+          }}
+        />
         {/* Organization JSON-LD — present on every page */}
         <script
           type="application/ld+json"
@@ -169,6 +207,16 @@ fbq('track', 'PageView');`,
             width="1"
             style={{ display: "none" }}
             src={`https://www.facebook.com/tr?id=${metaPixelId}&ev=PageView&noscript=1`}
+            alt=""
+          />
+        </noscript>
+        <noscript>
+          {/* eslint-disable-next-line @next/next/no-img-element -- LinkedIn Insight Tag noscript fallback requires a raw tracking pixel. */}
+          <img
+            height="1"
+            width="1"
+            style={{ display: "none" }}
+            src={`https://px.ads.linkedin.com/collect/?pid=${linkedInPartnerId}&fmt=gif`}
             alt=""
           />
         </noscript>
