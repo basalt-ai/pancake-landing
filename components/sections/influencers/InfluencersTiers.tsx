@@ -67,8 +67,8 @@ const TIERS: Tier[] = [
     },
   },
   {
-    cash: "$1,500",
-    tokens: "$2,250",
+    cash: "$1,000",
+    tokens: "$1,500",
     reach: {
       linkedin: "30,000 – 99,999",
       x: "70,000 – 299,999",
@@ -78,8 +78,8 @@ const TIERS: Tier[] = [
     },
   },
   {
-    cash: "$3,000",
-    tokens: "$4,500",
+    cash: "$1,500",
+    tokens: "$2,250",
     reach: {
       linkedin: "100,000+",
       x: "300,000+",
