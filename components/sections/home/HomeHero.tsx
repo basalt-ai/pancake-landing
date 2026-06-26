@@ -18,7 +18,27 @@ const HERO_TITLE = "The superagent that makes your company autonomous";
 const HERO_SUB =
   "Pancake connects to your tools, creates agents, and starts working for you.";
 
-export function HomeHero() {
+const HERO_CTA_LABEL = "Try for free";
+const HERO_CTA_HREF = "https://app.getpancake.ai";
+const HERO_CTA_NOTE = "No credit card required • SOC 2 compliant";
+
+export type HomeHeroProps = {
+  /** H1 copy. Defaults to the home headline; pass a string to reuse the hero on other pages (e.g. comparison landing pages). */
+  title?: string;
+  /** Sub-headline below the H1. */
+  subtitle?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  ctaNote?: string;
+};
+
+export function HomeHero({
+  title = HERO_TITLE,
+  subtitle = HERO_SUB,
+  ctaLabel = HERO_CTA_LABEL,
+  ctaHref = HERO_CTA_HREF,
+  ctaNote = HERO_CTA_NOTE,
+}: HomeHeroProps = {}) {
   return (
     <section
       className="home-hero relative w-full overflow-hidden"
@@ -29,17 +49,17 @@ export function HomeHero() {
         style={{ rowGap: "var(--spacing-xl)" }}
       >
         <div className="home-hero-text-stack relative z-[1] lg:pr-[var(--spacing-md)]">
-          <H1 className="whitespace-pre-line">{HERO_TITLE}</H1>
-          <p className="home-hero-body whitespace-pre-line">{HERO_SUB}</p>
+          <H1 className="whitespace-pre-line">{title}</H1>
+          <p className="home-hero-body whitespace-pre-line">{subtitle}</p>
           <div className="home-hero-cta-row">
             <a
-              href="https://app.getpancake.ai"
+              href={ctaHref}
               className="button inline-flex w-fit shrink-0 items-center justify-center no-underline"
               data-size="lg"
             >
-              Try for free
+              {ctaLabel}
             </a>
-            <p className="home-hero-cta-note">No credit card required • SOC 2 compliant</p>
+            <p className="home-hero-cta-note">{ctaNote}</p>
           </div>
         </div>
 

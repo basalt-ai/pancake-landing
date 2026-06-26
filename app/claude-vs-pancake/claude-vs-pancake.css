@@ -1,0 +1,248 @@
+/**
+ * Comparison-page styles — scoped to the `cvp-` prefix. Two bespoke pieces the
+ * home landing doesn't ship as components: the "quick verdict" comparison block
+ * and the feature-comparison table. Everything else on the page reuses the
+ * home-landing section classes (`.home-landing-section*`), the design-system
+ * primitives (`.button`, `.badge`, `.heading`), and `<HomeHero>` itself.
+ *
+ * Unlayered (like `blog.css`) so these scoped classes win over the reset
+ * without fighting the `@layer component` styles. Values come only from the
+ * semantic design tokens — no raw palette / hex / px.
+ */
+
+/* ── Quick verdict ─────────────────────────────────────────────────────── */
+
+.cvp-verdict {
+  width: 100%;
+  max-width: calc(55 * var(--spacing-xl)); /* 880px */
+  margin: 0;
+  background: var(--surface);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  corner-shape: squircle;
+}
+
+.cvp-verdict__head,
+.cvp-verdict__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.cvp-verdict__head {
+  border-bottom: 1px solid var(--stroke);
+}
+
+.cvp-verdict__row + .cvp-verdict__row {
+  border-top: 1px solid var(--subtle-stroke);
+}
+
+.cvp-verdict__head-cell,
+.cvp-verdict__label,
+.cvp-verdict__cell {
+  padding: var(--spacing-lg) var(--spacing-xl);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-regular);
+  line-height: 1.4;
+}
+
+.cvp-verdict__head-cell {
+  font-family: var(--font-display);
+  font-weight: var(--font-heavy);
+  color: var(--text);
+}
+
+.cvp-verdict__label {
+  font-family: var(--font-display);
+  font-weight: var(--font-semibold);
+  color: var(--text);
+}
+
+.cvp-verdict__cell--claude {
+  color: var(--subtle-text);
+}
+
+.cvp-verdict__cell--pancake,
+.cvp-verdict__head-cell--pancake {
+  background: var(--alt-weak-branded-surface-01); /* purple-10 */
+  color: var(--text);
+  font-weight: var(--font-semibold);
+}
+
+/* The per-cell product label ("Claude (Tag) — " / "Pancake — "). On desktop the
+   column header conveys this visually, so the inline label is present for
+   assistive tech but visually hidden (the `aria-hidden` head is decorative).
+   On mobile, where there is no header, it becomes the visible chip prefix. */
+.cvp-verdict__src {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Mobile: drop the column header, stack each attribute as a labelled block
+   with the source spelled out (via `.cvp-verdict__src`) on each value chip. */
+@media (max-width: 767.98px) {
+  .cvp-verdict__head {
+    display: none;
+  }
+
+  .cvp-verdict__row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg) var(--spacing-xl);
+  }
+
+  .cvp-verdict__label {
+    padding: 0 0 var(--spacing-xs) 0;
+    font-size: var(--font-size-body-small);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--subtle-text);
+  }
+
+  .cvp-verdict__cell {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-sm);
+    corner-shape: squircle;
+  }
+
+  .cvp-verdict__cell--claude {
+    background: var(--alt-surface);
+  }
+
+  .cvp-verdict__src {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    font-weight: var(--font-heavy);
+    color: var(--text);
+  }
+}
+
+/* ── Feature comparison table ──────────────────────────────────────────── */
+
+.cvp-table-wrap {
+  width: 100%;
+  max-width: calc(55 * var(--spacing-xl)); /* 880px */
+  margin: 0 auto;
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  corner-shape: squircle;
+}
+
+.cvp-table {
+  width: 100%;
+  min-width: calc(21 * var(--spacing-xl)); /* 336px — keep columns legible, scroll below */
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-regular);
+}
+
+.cvp-table th,
+.cvp-table td {
+  padding: var(--spacing-lg) var(--spacing-xl);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.cvp-table thead th {
+  font-family: var(--font-display);
+  font-weight: var(--font-heavy);
+  color: var(--text);
+  border-bottom: 1px solid var(--stroke);
+}
+
+.cvp-table tbody th {
+  font-family: var(--font-display);
+  font-weight: var(--font-semibold);
+  color: var(--text);
+  text-align: left;
+}
+
+.cvp-table__feature-head {
+  text-align: left;
+}
+
+.cvp-table tbody tr + tr th,
+.cvp-table tbody tr + tr td {
+  border-top: 1px solid var(--subtle-stroke);
+}
+
+.cvp-table__pancake {
+  background: var(--alt-weak-branded-surface-01); /* purple-10 */
+}
+
+.cvp-table__icon {
+  display: inline-block;
+  width: calc(1.25 * var(--spacing-xl)); /* 20px */
+  height: calc(1.25 * var(--spacing-xl));
+}
+
+.cvp-table__icon--yes {
+  color: var(--positive-text);
+}
+
+.cvp-table__icon--no {
+  /* subtle-text (chrome-80) clears WCAG AA on the white/purple-10 cells;
+     disabled-text (chrome-60) does not. */
+  color: var(--subtle-text);
+}
+
+@media (max-width: 767.98px) {
+  .cvp-table th,
+  .cvp-table td {
+    padding: var(--spacing-md) var(--spacing-lg);
+  }
+}
+
+/* ── FAQ ───────────────────────────────────────────────────────────────── */
+/* Visible companion to the FAQPage JSON-LD — same data drives both, so the
+   structured data never claims content the visitor can't see (mirrors the
+   pricing page's FAQ invariant). Centered heading, left-aligned Q&A. */
+
+.cvp-faq {
+  width: 100%;
+  max-width: calc(45 * var(--spacing-xl)); /* 720px */
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xxl);
+  text-align: left;
+}
+
+.cvp-faq__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.cvp-faq__q {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--font-heavy);
+  font-size: var(--font-size-header-04);
+  letter-spacing: -0.452px;
+  color: var(--text);
+}
+
+.cvp-faq__a {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-regular);
+  line-height: 1.6;
+  color: var(--subtle-text);
+}
