@@ -57,11 +57,9 @@ const columns: { heading: string; links: FooterLink[] }[] = [
   {
     heading: "Compare",
     links: [
-      { href: "/claude-tag-vs-pancake", label: "vs Claude (Tag)" },
       { href: "/blog/viktor-vs-pancake", label: "vs Viktor" },
-      { href: "/blog/pancake-vs-autonoma", label: "vs Autonoma" },
-      { href: "/blog/pancake-vs-crevio", label: "vs Crevio" },
-      { href: "/blog", label: "All comparisons" },
+      { href: "/claude-tag-vs-pancake", label: "vs Claude (Tag)" },
+      { href: "/blog/openclaw-for-founders-managed-vs-diy", label: "vs OpenClaw" },
     ],
   },
   {
