@@ -37,67 +37,89 @@ const socials = [
   },
 ];
 
-const navLinks = [
-  { href: "/pricing", label: "Pricing" },
-  { href: "/blog", label: "Blog" },
-  { href: "/influencers", label: "Influencers" },
-  { href: "/open-roadmap", label: "Roadmap" },
+type FooterLink = { href: string; label: string; external?: boolean };
+
+/**
+ * Footer link columns. The "Compare" column is the home for our comparison
+ * content — the dedicated `/claude-tag-vs-pancake` landing page plus the
+ * highest-intent competitor write-ups on the blog.
+ */
+const columns: { heading: string; links: FooterLink[] }[] = [
+  {
+    heading: "Product",
+    links: [
+      { href: "/pricing", label: "Pricing" },
+      { href: "https://squads.getpancake.ai/", label: "Squads", external: true },
+      { href: "/open-roadmap", label: "Roadmap" },
+      { href: "https://app.getpancake.ai", label: "Sign in", external: true },
+    ],
+  },
+  {
+    heading: "Compare",
+    links: [
+      { href: "/claude-tag-vs-pancake", label: "vs Claude (Tag)" },
+      { href: "/blog/viktor-vs-pancake", label: "vs Viktor" },
+      { href: "/blog/pancake-vs-autonoma", label: "vs Autonoma" },
+      { href: "/blog/pancake-vs-crevio", label: "vs Crevio" },
+      { href: "/blog", label: "All comparisons" },
+    ],
+  },
+  {
+    heading: "Resources",
+    links: [
+      { href: "/blog", label: "Blog" },
+      { href: "/influencers", label: "Influencers" },
+      { href: "https://zcal.co/i/4mlnC2bQ", label: "Book a meeting", external: true },
+      { href: "https://discord.gg/brJ99Up6ym", label: "Discord", external: true },
+    ],
+  },
 ];
+
+const linkClass =
+  "text-base transition-colors hover:text-[var(--text-on-inverted-surface,#fff7ec)]";
+
+function FooterNavLink({ link }: { link: FooterLink }) {
+  if (link.external) {
+    return (
+      <a href={link.href} target="_blank" rel="noopener noreferrer" className={linkClass}>
+        {link.label}
+      </a>
+    );
+  }
+  return (
+    <Link href={link.href} prefetch={false} className={linkClass}>
+      {link.label}
+    </Link>
+  );
+}
 
 export function Footer() {
   const year = new Date().getFullYear();
 
   return (
     <footer
-      className="w-full"
+      className="relative w-full overflow-hidden"
       style={{
         backgroundColor: "var(--inverted-surface)",
         color: "var(--subtle-text-on-inverted-surface, #ddcfcd)",
       }}
     >
-      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-12 sm:px-6 lg:py-16">
-        <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
-          <Link
-            href="/"
-            aria-label="Pancake home"
-            prefetch={false}
-            className="text-[var(--text-on-inverted-surface,#fff7ec)]"
-          >
-            <PancakeLogo variant="inverted" className="h-12 sm:h-14" />
-          </Link>
-
-          <div className="flex flex-col items-center gap-5 sm:flex-row sm:gap-8">
-            <nav aria-label="Footer" className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-              {navLinks.map(({ href, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  prefetch={false}
-                  className="whitespace-nowrap text-base font-medium transition-colors hover:opacity-80"
-                  style={{ color: "var(--text-on-inverted-surface, #fff7ec)" }}
-                >
-                  {label}
-                </Link>
-              ))}
-              <a
-                href="https://zcal.co/i/4mlnC2bQ"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="basis-full whitespace-nowrap text-center text-base font-medium transition-colors hover:opacity-80"
-                style={{ color: "var(--text-on-inverted-surface, #fff7ec)" }}
-              >
-                Book a meeting
-              </a>
-            </nav>
-
-            <span
-              aria-hidden
-              className="hidden sm:inline-block"
-              style={{ color: "var(--brand-colors-ink-80, #85687c)" }}
+      <div className="mx-auto flex max-w-7xl flex-col gap-12 px-4 py-14 sm:px-6 lg:py-20">
+        {/* Top: brand block + link columns */}
+        <div className="flex flex-col gap-12 lg:flex-row lg:justify-between lg:gap-16">
+          {/* Brand */}
+          <div className="flex flex-col items-start gap-6 lg:max-w-xs">
+            <Link
+              href="/"
+              aria-label="Pancake home"
+              prefetch={false}
+              className="text-[var(--text-on-inverted-surface,#fff7ec)]"
             >
-              •
-            </span>
-
+              <PancakeLogo variant="inverted" className="h-12 sm:h-14" />
+            </Link>
+            <p className="text-sm leading-relaxed">
+              The superagent that makes your company autonomous.
+            </p>
             <div className="flex items-center gap-3">
               {socials.map(({ href, label, Icon }) => (
                 <a
@@ -114,12 +136,35 @@ export function Footer() {
               ))}
             </div>
           </div>
+
+          {/* Link columns */}
+          <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:flex-1 lg:gap-x-16">
+            {columns.map((col) => (
+              <nav key={col.heading} aria-label={col.heading} className="flex flex-col gap-4">
+                <p
+                  className="text-sm font-semibold"
+                  style={{ color: "var(--text-on-inverted-surface, #fff7ec)" }}
+                >
+                  {col.heading}
+                </p>
+                <ul className="flex flex-col gap-3">
+                  {col.links.map((link) => (
+                    <li key={link.href + link.label}>
+                      <FooterNavLink link={link} />
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
+          </div>
         </div>
 
-        <div className="flex flex-col items-center gap-3 text-[13px] sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-          <span className="whitespace-nowrap">
-            © {year} Pancake. All rights reserved.
-          </span>
+        {/* Bottom bar: copyright + address + legal */}
+        <div
+          className="flex flex-col items-center gap-3 border-t pt-8 text-[13px] sm:flex-row sm:items-start sm:justify-between sm:gap-6"
+          style={{ borderColor: "color-mix(in srgb, var(--text-on-inverted-surface, #fff7ec) 14%, transparent)" }}
+        >
+          <span className="whitespace-nowrap">© {year} Pancake. All rights reserved.</span>
 
           <div className="flex flex-col items-center gap-1 sm:items-end">
             <span className="whitespace-nowrap text-center sm:text-right">
@@ -144,6 +189,18 @@ export function Footer() {
           </div>
         </div>
       </div>
+
+      {/* Soft brand glow along the bottom edge (Pancake pink → purple), mirroring
+          the reference footer's gradient. Decorative only. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-24"
+        style={{
+          background:
+            "radial-gradient(60% 120% at 50% 100%, color-mix(in srgb, var(--strong-branded-surface) 45%, transparent), color-mix(in srgb, var(--alt-strong-branded-surface-01) 28%, transparent) 45%, transparent 75%)",
+          opacity: 0.6,
+        }}
+      />
     </footer>
   );
 }
