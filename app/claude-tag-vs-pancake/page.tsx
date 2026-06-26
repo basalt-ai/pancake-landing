@@ -1,11 +1,11 @@
 /**
- * Comparison landing page — Claude (Tag) vs Pancake (`/claude-vs-pancake`).
+ * Comparison landing page — Claude (Tag) vs Pancake (`/claude-tag-vs-pancake`).
  *
  * Built entirely from the existing landing-page system: the parameterised
  * `<HomeHero>`, the `home-landing-section*` rhythm, the design-system
  * primitives (`.button`, `.badge`, `.heading`, `Card`), and the real
  * `<HomeLandingTestimonials>` banner. The only bespoke pieces — the quick
- * verdict block and the feature table — live in `claude-vs-pancake.css` and
+ * verdict block and the feature table — live in `claude-tag-vs-pancake.css` and
  * reference only semantic tokens.
  */
 import type { Metadata } from "next";
@@ -17,9 +17,9 @@ import { HomeNav } from "@/components/sections/home/HomeNav";
 import { Footer } from "@/components/shared/Footer";
 import { H2 } from "@/components/ui/Headings";
 
-import "./claude-vs-pancake.css";
+import "./claude-tag-vs-pancake.css";
 
-const CANONICAL = "https://www.getpancake.ai/claude-vs-pancake";
+const CANONICAL = "https://www.getpancake.ai/claude-tag-vs-pancake";
 
 const HERO_TITLE = "Claude gives you one AI. Pancake gives you an entire company.";
 const HERO_SUB =
@@ -216,7 +216,7 @@ function DecorPancake({ variant, className }: { variant: keyof typeof DECOR_PALE
   );
 }
 
-export default function ClaudeVsPancakePage() {
+export default function ClaudeTagVsPancakePage() {
   return (
     <main id="main-content" className="min-h-screen">
       <script
@@ -226,7 +226,12 @@ export default function ClaudeVsPancakePage() {
 
       <HomeNav />
 
-      <HomeHero title={HERO_TITLE} subtitle={HERO_SUB} ctaHref={SIGNUP_URL} />
+      <HomeHero
+        title={HERO_TITLE}
+        subtitle={HERO_SUB}
+        ctaLabel="Get started for free"
+        ctaHref={SIGNUP_URL}
+      />
 
       <div className="home-landing">
         {/* §2 — Quick verdict */}
@@ -386,7 +391,7 @@ export default function ClaudeVsPancakePage() {
                 className="button inline-flex w-fit shrink-0 items-center justify-center no-underline"
                 data-size="lg"
               >
-                Try for free
+                Get started for free
               </a>
               <p className="home-landing-closing-cta__note">
                 No credit card required • $100 in free credits • SOC 2 compliant
