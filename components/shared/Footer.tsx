@@ -5,100 +5,100 @@ import { SiX, SiYoutube } from "react-icons/si";
 import { PancakeLogo } from "./PancakeLogo";
 
 const socials = [
+  { href: "https://x.com/getpancake_ai", label: "Pancake on X", Icon: SiX },
+  { href: "https://www.linkedin.com/company/get-pancake", label: "Pancake on LinkedIn", Icon: FaLinkedin },
+  { href: "https://www.youtube.com/@trypancake", label: "Pancake on YouTube", Icon: SiYoutube },
+  { href: "https://www.tiktok.com/@getpancake", label: "Pancake on TikTok", Icon: FaTiktok },
+  { href: "https://www.instagram.com/get.pancake/", label: "Pancake on Instagram", Icon: FaInstagram },
+  { href: "https://discord.gg/brJ99Up6ym", label: "Pancake on Discord", Icon: FaDiscord },
+];
+
+type FooterLink = { href: string; label: string };
+
+// Link columns. External hrefs (http…) render as <a target="_blank">, internal as <Link>.
+const columns: { title: string; links: FooterLink[] }[] = [
   {
-    href: "https://x.com/getpancake_ai",
-    label: "Pancake on X",
-    Icon: SiX,
+    title: "Product",
+    links: [
+      { href: "/pricing", label: "Pricing" },
+      { href: "/open-roadmap", label: "Roadmap" },
+      { href: "https://app.getpancake.ai", label: "Sign in" },
+    ],
   },
   {
-    href: "https://www.linkedin.com/company/get-pancake",
-    label: "Pancake on LinkedIn",
-    Icon: FaLinkedin,
+    title: "Compare",
+    links: [
+      { href: "/viktor-vs-pancake", label: "vs Viktor" },
+      { href: "/blog/openclaw-for-founders-managed-vs-diy", label: "vs OpenClaw" },
+    ],
   },
   {
-    href: "https://www.youtube.com/@trypancake",
-    label: "Pancake on YouTube",
-    Icon: SiYoutube,
-  },
-  {
-    href: "https://www.tiktok.com/@getpancake",
-    label: "Pancake on TikTok",
-    Icon: FaTiktok,
-  },
-  {
-    href: "https://www.instagram.com/get.pancake/",
-    label: "Pancake on Instagram",
-    Icon: FaInstagram,
-  },
-  {
-    href: "https://discord.gg/brJ99Up6ym",
-    label: "Pancake on Discord",
-    Icon: FaDiscord,
+    title: "Resources",
+    links: [
+      { href: "/blog", label: "Blog" },
+      { href: "/influencers", label: "Influencers" },
+      { href: "https://zcal.co/i/4mlnC2bQ", label: "Book a meeting" },
+      { href: "https://discord.gg/brJ99Up6ym", label: "Discord" },
+    ],
   },
 ];
 
-const navLinks = [
-  { href: "/pricing", label: "Pricing" },
-  { href: "/blog", label: "Blog" },
-  { href: "/influencers", label: "Influencers" },
-  { href: "/open-roadmap", label: "Roadmap" },
-];
+const linkClassName =
+  "text-base transition-colors hover:text-[var(--text-on-inverted-surface,#fff7ec)]";
+
+function FooterLinkItem({ href, label }: FooterLink) {
+  if (href.startsWith("http")) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={linkClassName}>
+        {label}
+      </a>
+    );
+  }
+  return (
+    <Link href={href} prefetch={false} className={linkClassName}>
+      {label}
+    </Link>
+  );
+}
 
 export function Footer() {
   const year = new Date().getFullYear();
 
   return (
     <footer
-      className="w-full"
+      className="relative w-full overflow-hidden"
       style={{
         backgroundColor: "var(--inverted-surface)",
         color: "var(--subtle-text-on-inverted-surface, #ddcfcd)",
       }}
     >
-      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-12 sm:px-6 lg:py-16">
-        <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
-          <Link
-            href="/"
-            aria-label="Pancake home"
-            prefetch={false}
-            className="text-[var(--text-on-inverted-surface,#fff7ec)]"
-          >
-            <PancakeLogo variant="inverted" className="h-12 sm:h-14" />
-          </Link>
+      {/* Purple glow rising from the bottom — on-brand depth for the dark surface. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3"
+        style={{
+          backgroundImage:
+            "radial-gradient(120% 140% at 50% 145%, var(--palette-purple-40, #8d43fd), transparent 60%)",
+          opacity: 0.45,
+        }}
+      />
 
-          <div className="flex flex-col items-center gap-5 sm:flex-row sm:gap-8">
-            <nav aria-label="Footer" className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-              {navLinks.map(({ href, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  prefetch={false}
-                  className="whitespace-nowrap text-base font-medium transition-colors hover:opacity-80"
-                  style={{ color: "var(--text-on-inverted-surface, #fff7ec)" }}
-                >
-                  {label}
-                </Link>
-              ))}
-              <a
-                href="https://zcal.co/i/4mlnC2bQ"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="basis-full whitespace-nowrap text-center text-base font-medium transition-colors hover:opacity-80"
-                style={{ color: "var(--text-on-inverted-surface, #fff7ec)" }}
-              >
-                Book a meeting
-              </a>
-            </nav>
-
-            <span
-              aria-hidden
-              className="hidden sm:inline-block"
-              style={{ color: "var(--brand-colors-ink-80, #85687c)" }}
+      <div className="relative mx-auto flex max-w-6xl flex-col gap-12 px-4 py-16 sm:px-6 lg:gap-16 lg:py-20">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-8">
+          {/* Brand */}
+          <div className="flex flex-col gap-5">
+            <Link
+              href="/"
+              aria-label="Pancake home"
+              prefetch={false}
+              className="w-fit text-[var(--text-on-inverted-surface,#fff7ec)]"
             >
-              •
-            </span>
-
-            <div className="flex items-center gap-3">
+              <PancakeLogo variant="inverted" className="h-11" />
+            </Link>
+            <p className="max-w-[260px] text-sm leading-relaxed">
+              The AI workforce that makes your company autonomous.
+            </p>
+            <div className="flex items-center gap-4">
               {socials.map(({ href, label, Icon }) => (
                 <a
                   key={href}
@@ -109,20 +109,41 @@ export function Footer() {
                   className="transition-opacity hover:opacity-80"
                   style={{ color: "var(--text-on-inverted-surface, #fff7ec)" }}
                 >
-                  <Icon size={20} />
+                  <Icon size={18} />
                 </a>
               ))}
             </div>
           </div>
+
+          {/* Link columns */}
+          {columns.map((col) => (
+            <nav key={col.title} aria-label={col.title} className="flex flex-col gap-4">
+              <span
+                className="text-sm font-semibold"
+                style={{ color: "var(--text-on-inverted-surface, #fff7ec)" }}
+              >
+                {col.title}
+              </span>
+              <ul className="flex flex-col gap-3">
+                {col.links.map((link) => (
+                  <li key={link.href}>
+                    <FooterLinkItem {...link} />
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
         </div>
 
-        <div className="flex flex-col items-center gap-3 text-[13px] sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-          <span className="whitespace-nowrap">
-            © {year} Pancake. All rights reserved.
-          </span>
+        {/* Legal bar */}
+        <div
+          className="flex flex-col gap-3 border-t pt-8 text-[13px] sm:flex-row sm:items-start sm:justify-between sm:gap-6"
+          style={{ borderColor: "color-mix(in srgb, var(--text-on-inverted-surface, #fff7ec) 16%, transparent)" }}
+        >
+          <span className="whitespace-nowrap">© {year} Pancake. All rights reserved.</span>
 
-          <div className="flex flex-col items-center gap-1 sm:items-end">
-            <span className="whitespace-nowrap text-center sm:text-right">
+          <div className="flex flex-col gap-1 sm:items-end">
+            <span className="whitespace-nowrap sm:text-right">
               535 Mission St, San Francisco, CA 94105, USA
             </span>
             <nav aria-label="Legal" className="flex items-center gap-4">

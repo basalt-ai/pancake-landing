@@ -6443,4 +6443,484 @@
       flex-direction: column;
     }
   }
+
+  /* ===================================================================
+     /viktor-vs-pancake — comparison page.
+     Reuses the home-landing-section shell, the .button CTA anchor, and the
+     .influencers-tiers__table chrome. These classes add only what the
+     landing page doesn't already provide: the verdict callout, the
+     differentiator list, the feature-table marks, and the FAQ list. All
+     values are tokens — no hardcoded hex/px/weights.
+     =================================================================== */
+
+  /* Verdict — an elegant editorial pull-quote: oversized brand quote mark, large
+     quote text, then a circular photo with name + role. No card / no box. */
+  .vvp-quote {
+    width: 100%;
+    max-width: calc(760 / 16 * 1rem);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+    text-align: left;
+  }
+
+  .vvp-quote__mark {
+    font-family: var(--font-display);
+    font-weight: var(--font-bold);
+    font-size: clamp(3rem, 6vw, 4.5rem);
+    line-height: 0.7;
+    color: var(--interactive-text);
+  }
+
+  .vvp-quote__text {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--font-semibold);
+    font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+    line-height: 1.18;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+
+  .vvp-quote__person {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+  }
+
+  .vvp-quote__photo {
+    width: calc(56 / 16 * 1rem);
+    height: calc(56 / 16 * 1rem);
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 999px;
+    background-color: var(--alt-weak-branded-surface-01);
+    color: var(--text);
+    font-family: var(--font-display);
+    font-weight: var(--font-bold);
+    font-size: var(--font-size-header-04);
+    line-height: 1;
+  }
+
+  .vvp-quote__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .vvp-quote__meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+
+  .vvp-quote__name {
+    font-family: var(--font-display);
+    font-weight: var(--font-heavy);
+    font-size: var(--font-size-header-04);
+    color: var(--text);
+  }
+
+  .vvp-quote__role {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    color: var(--subtle-text);
+  }
+
+  /* Side-by-side verdict: statement column (left) + customer quote (right). */
+  .vvp-verdict-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: calc(2 * var(--spacing-xxl));
+    align-items: center;
+  }
+
+  .vvp-verdict-aside {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+    text-align: left;
+  }
+
+  .vvp-verdict-aside__title {
+    margin: 0;
+    font-size: clamp(1.75rem, 2.6vw, 2.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    text-align: left;
+  }
+
+  .vvp-verdict-aside__lede {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    line-height: 1.55;
+    color: var(--subtle-text);
+  }
+
+  /* In the grid the quote becomes a soft, brand-tinted card (the statement on
+     the left stays plain text), so the two columns read as a clear pair. */
+  .vvp-verdict-grid .vvp-quote {
+    max-width: none;
+    margin: 0;
+    padding: calc(2 * var(--spacing-xxl));
+    background-color: var(--alt-weak-branded-surface-01);
+    border: 1px solid var(--branded-stroke-02);
+    border-radius: var(--radius-lg);
+    corner-shape: squircle;
+  }
+
+  .vvp-verdict-grid .vvp-quote__text {
+    font-size: clamp(1.5rem, 2.2vw, 2rem);
+  }
+
+  /* White avatar so it doesn't blend into the tinted card. */
+  .vvp-verdict-grid .vvp-quote__photo {
+    background-color: var(--surface);
+  }
+
+  @media (max-width: 900px) {
+    .vvp-verdict-grid {
+      grid-template-columns: 1fr;
+      gap: calc(2 * var(--spacing-xl));
+    }
+  }
+
+  /* Five differentiators — vertical list of narrative cards */
+  .vvp-diffs {
+    width: 100%;
+    max-width: calc(1040 / 16 * 1rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+  }
+
+  .vvp-diff {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-xl);
+    padding: calc(2 * var(--spacing-xl));
+    background-color: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius-lg);
+    corner-shape: squircle;
+  }
+
+  .vvp-diff__num {
+    flex-shrink: 0;
+    font-family: var(--font-display);
+    font-size: var(--font-size-header-02);
+    font-weight: var(--font-semibold);
+    line-height: 1;
+    letter-spacing: -0.905px;
+    color: var(--interactive-text);
+  }
+
+  .vvp-diff__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    min-width: 0;
+  }
+
+  .vvp-diff__title {
+    margin: 0;
+    font-size: var(--font-size-header-04);
+  }
+
+  .vvp-diff__body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  .vvp-diff__angle {
+    margin: var(--spacing-xs) 0 0 0;
+    font-family: var(--font-display);
+    font-weight: var(--font-semibold);
+    font-size: var(--font-size-body-regular);
+    color: var(--interactive-text);
+  }
+
+  @media (max-width: 640px) {
+    .vvp-diff {
+      flex-direction: column;
+      gap: var(--spacing-md);
+      padding: var(--spacing-xl);
+    }
+  }
+
+  /* Feature comparison table — chrome from .influencers-tiers__table; these
+     rules add the 3-column sizing and the check / x cell marks. */
+  .vvp-table {
+    width: 100%;
+    max-width: calc(1040 / 16 * 1rem);
+  }
+
+  .vvp-table thead th:not(:first-child),
+  .vvp-table tbody td {
+    width: 34%;
+  }
+
+  .vvp-mark {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+
+  .vvp-mark__icon {
+    flex-shrink: 0;
+    margin-top: 0.15em;
+  }
+
+  .vvp-mark__icon--yes {
+    color: var(--positive-text);
+  }
+
+  .vvp-mark__icon--no {
+    color: var(--subtle-text);
+  }
+
+  .vvp-mark__text {
+    min-width: 0;
+  }
+
+  /* FAQ */
+  .vvp-faq {
+    width: 100%;
+    max-width: var(--width-home-landing-heading);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+  }
+
+  .vvp-faq__item {
+    padding: calc(2 * var(--spacing-xl));
+    background-color: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius-lg);
+    corner-shape: squircle;
+  }
+
+  .vvp-faq__q {
+    margin: 0 0 var(--spacing-md) 0;
+    font-size: var(--font-size-header-04);
+  }
+
+  .vvp-faq__a {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  .vvp-related {
+    margin: 0;
+    max-width: var(--width-home-landing-heading);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    line-height: 1.5;
+    color: var(--subtle-text);
+    text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    .vvp-faq__item {
+      padding: var(--spacing-xl);
+    }
+  }
+
+  /* ---- Hero: standard light landing section (Design Kit) with two product
+     comparison cards below the CTA. Viktor reads as the neutral product
+     (elevated cream surface); Pancake owns the brand (weak-pink surface +
+     pink stroke + pink accent). No off-brand gradients — pure Design Kit. ---- */
+  .vvp-hero__cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+
+  .vvp-hero__cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-lg);
+  }
+
+  .vvp-hero__summary {
+    margin: var(--spacing-md) auto 0;
+    max-width: calc(560 / 16 * 1rem);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    line-height: 1.5;
+    color: var(--subtle-text);
+  }
+
+  /* Trust badges — small icon + label row under the CTAs. */
+  .vvp-hero__badges {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md) var(--spacing-xl);
+  }
+
+  .vvp-hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    color: var(--subtle-text);
+  }
+
+  .vvp-hero__badge svg {
+    width: var(--font-size-body-regular);
+    height: var(--font-size-body-regular);
+    flex: none;
+    color: var(--interactive-text);
+  }
+
+  /* Product-card icon holding a real logo image. */
+  .vvp-pcard__icon--logo {
+    overflow: hidden;
+    border: 1px solid var(--subtle-stroke);
+  }
+
+  /* Viktor: self-framed tile fills the chip edge-to-edge. */
+  .vvp-pcard--viktor .vvp-pcard__icon.vvp-pcard__icon--logo {
+    padding: 0;
+    background-color: transparent;
+  }
+
+  .vvp-pcard--viktor .vvp-pcard__icon--logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Pancake: transparent mascot centered on a light tile. */
+  .vvp-pcard--pancake .vvp-pcard__icon.vvp-pcard__icon--logo {
+    padding: var(--spacing-xs);
+    background-color: var(--surface);
+  }
+
+  .vvp-pcard--pancake .vvp-pcard__icon--logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .vvp-hero__cards {
+    width: 100%;
+    max-width: calc(1040 / 16 * 1rem);
+    margin: calc(3 * var(--spacing-xl)) auto 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-xl);
+  }
+
+  .vvp-pcard {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    padding: calc(2 * var(--spacing-xl));
+    border-radius: var(--radius-lg);
+    corner-shape: squircle;
+    text-align: left;
+  }
+
+  .vvp-pcard--viktor {
+    background-color: var(--elevated-surface);
+    border: 1px solid var(--stroke);
+  }
+
+  .vvp-pcard--pancake {
+    background-color: var(--weak-branded-surface);
+    border: 1px solid var(--branded-stroke-01);
+  }
+
+  .vvp-pcard__icon {
+    width: var(--control-size-md);
+    height: var(--control-size-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    corner-shape: squircle;
+    font-family: var(--font-display);
+    font-weight: var(--font-bold);
+    font-size: var(--font-size-header-04);
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .vvp-pcard--viktor .vvp-pcard__icon {
+    background-color: var(--surface);
+    border: 1px solid var(--stroke);
+  }
+
+  .vvp-pcard--pancake .vvp-pcard__icon {
+    background-color: var(--strong-branded-surface);
+  }
+
+  .vvp-pcard__title {
+    margin: var(--spacing-sm) 0 0 0;
+    font-size: var(--font-size-header-03);
+    color: var(--text);
+  }
+
+  .vvp-pcard__body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  .vvp-pcard__choose {
+    margin: var(--spacing-sm) 0 0 0;
+    font-family: var(--font-display);
+    font-weight: var(--font-semibold);
+    font-size: var(--font-size-body-regular);
+    line-height: 1.4;
+  }
+
+  .vvp-pcard--viktor .vvp-pcard__choose {
+    color: var(--subtle-text);
+  }
+
+  .vvp-pcard--pancake .vvp-pcard__choose {
+    color: var(--palette-pink-40);
+  }
+
+  @media (max-width: 900px) {
+    .vvp-hero__cards {
+      grid-template-columns: 1fr;
+      max-width: var(--width-home-landing-heading);
+    }
+  }
 }

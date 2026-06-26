@@ -17,6 +17,7 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 ## Key pages
 
 - [Homepage](https://getpancake.ai/) — what Pancake is and how it works
+- [Viktor vs Pancake](https://getpancake.ai/viktor-vs-pancake) — head-to-head comparison: one AI coworker you prompt vs a team of coordinating agents that run your company autonomously. June 25, 2026.
 - [Pricing](https://getpancake.ai/pricing) — plans and what's included
 - [Blog](https://getpancake.ai/blog) — founder stories and industry analysis
 - [Sign up](https://getpancake.ai/signup) — try for free, no credit card needed
