@@ -13,10 +13,10 @@ import { HomeHeroPancakeMonster } from "@/components/sections/home/HomeHeroPanca
 import { HomeLogoMarquee } from "@/components/sections/home/HomeLogoMarquee";
 import { H1 } from "@/components/ui/Headings";
 
-const HERO_TITLE = "The superagent that makes your company autonomous";
+const HERO_TITLE = "The AI coworker that does the work for you";
 
 const HERO_SUB =
-  "Pancake connects to your tools, creates agents, and starts working for you.";
+  "Pancake connects to your tools and starts doing the work for you. Autonomously.";
 
 export function HomeHero() {
   return (
@@ -37,7 +37,7 @@ export function HomeHero() {
               className="button inline-flex w-fit shrink-0 items-center justify-center no-underline"
               data-size="lg"
             >
-              Try for free
+              Get started for free
             </a>
             <p className="home-hero-cta-note">No credit card required • SOC 2 compliant</p>
           </div>

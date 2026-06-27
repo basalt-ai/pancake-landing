@@ -1,6 +1,6 @@
 /**
  * Home page sections below the hero (`/`). Most illustrations are PNGs in `public/home-landing-*.png`
- * (regenerate: `FIGMA_ACCESS_TOKEN=… npm run figma:export-landing`). Org diagram is HTML (`HomeOrgDiagram`).
+ * (regenerate: `FIGMA_ACCESS_TOKEN=… npm run figma:export-landing`).
  */
 
 import { HOME_PAGE_CONTAINER_CLASS } from "@/components/sections/home/home-layout";
@@ -8,8 +8,6 @@ import { HomeIntegrationsCloud } from "@/components/sections/home/HomeIntegratio
 import { HomeLandingControl } from "@/components/sections/home/HomeLandingControl";
 import { HomeLandingSecurity } from "@/components/sections/home/HomeLandingSecurity";
 import { HomeLandingTestimonials } from "@/components/sections/home/HomeLandingTestimonials";
-import { HomeOrgDiagram } from "@/components/sections/home/HomeOrgDiagram";
-import { HomeOrgDiagramMobile } from "@/components/sections/home/HomeOrgDiagramMobile";
 import { SlackUI } from "@/components/shared/SlackUI";
 import { H2 } from "@/components/ui/Headings";
 
@@ -58,24 +56,19 @@ export function HomeLandingBody() {
         </section>
       */}
 
-      {/* Figma `428:14922` org — revamped into squads. The desktop diagram is a
-          DIRECT section child (outside the page container) so its 7-card band
-          can bleed past the container edges behind the fade mask — same
-          full-bleed recipe as the testimonials carousel below. */}
-      <section className="home-landing-section home-landing-section--org" aria-labelledby="home-landing-org-heading">
+      {/* Figma `428:15120` slack — leads the page (replaced the former org/squads
+          section). Agents living in Slack is the headline proof point. */}
+      <section className="home-landing-section" aria-labelledby="home-landing-slack-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
-            <H2 id="home-landing-org-heading" className="heading home-landing-section__title text-center">
-              Hire squads of agents that work autonomously
+            <H2 id="home-landing-slack-heading" className="heading home-landing-section__title text-center">
+              Your agents live in Slack
             </H2>
-            <p className="home-landing-section__lede text-center">Even when you’re asleep</p>
+            <p className="home-landing-section__lede text-center">They don’t wait to be asked.</p>
           </header>
-          <div className="home-landing-section__figure home-landing-org-mobile">
-            <HomeOrgDiagramMobile />
+          <div className="home-landing-section__figure home-landing-section__figure--slack">
+            <SlackUI />
           </div>
-        </div>
-        <div className="home-landing-org-desktop">
-          <HomeOrgDiagram />
         </div>
       </section>
 
@@ -119,23 +112,8 @@ export function HomeLandingBody() {
         </div>
       </section>
 
-      {/* Figma `428:15120` slack */}
-      <section className="home-landing-section" aria-labelledby="home-landing-slack-heading">
-        <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
-          <header className="home-landing-section__header">
-            <H2 id="home-landing-slack-heading" className="heading home-landing-section__title text-center">
-              Your agents live in Slack
-            </H2>
-            <p className="home-landing-section__lede text-center">They don’t wait to be asked.</p>
-          </header>
-          <div className="home-landing-section__figure home-landing-section__figure--slack">
-            <SlackUI />
-          </div>
-        </div>
-      </section>
-
       {/* Figma `428:15125` control */}
-      <section className="home-landing-section home-landing-section--alt" aria-labelledby="home-landing-control-heading">
+      <section className="home-landing-section" aria-labelledby="home-landing-control-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             <H2 id="home-landing-control-heading" className="heading home-landing-section__title text-center">
@@ -203,7 +181,7 @@ export function HomeLandingBody() {
               className="button inline-flex w-fit shrink-0 items-center justify-center no-underline"
               data-size="lg"
             >
-              Try for free
+              Get started for free
             </a>
             <p className="home-landing-closing-cta__note">No credit card required • $100 in free credits • SOC 2 compliant</p>
           </div>
