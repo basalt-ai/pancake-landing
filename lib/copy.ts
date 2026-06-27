@@ -221,9 +221,8 @@ export const pricing = {
   ],
   defaultTierIndex: 0,
   trial: {
-    days: 7,
-    /** $100 token usage cap for the 7-day trial. Surfaced verbatim in
-     *  `trialCaption`; kept as a number for back-office math. */
+    /** $100 in free credits to start. Surfaced verbatim in `trialCaption`;
+     *  kept as a number for back-office math. */
     freeTokensDollars: 100,
   },
   currency: "USD" as const,
@@ -303,8 +302,8 @@ export const pricing = {
     ],
   } as const,
   // Trial CTA below the widget.
-  trialCta: "Start your free trial",
-  trialCaption: "7-day free trial · $100 in free credits",
+  trialCta: "Get started for free",
+  trialCaption: "$100 in free credits",
   trialHref: "https://app.getpancake.ai",
   // 3-column manifesto (shown BEFORE the buys cards — trust before value:
   // the user needs to believe the price is fair before they care what it

@@ -118,14 +118,6 @@ export function HomeNav() {
             >
               <SiDiscord size={20} aria-hidden />
             </a>
-            <a
-              href="https://squads.getpancake.ai/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={navLinkClassName}
-            >
-              Squads
-            </a>
             <Link href="/blog" className={navLinkClassName}>
               Blog
             </Link>
@@ -198,16 +190,6 @@ export function HomeNav() {
               onClick={() => setDrawerOpen(false)}
             >
               Resources
-            </a>
-            <a
-              href="https://squads.getpancake.ai/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="home-nav-mobile-drawer__link"
-              tabIndex={drawerOpen ? 0 : -1}
-              onClick={() => setDrawerOpen(false)}
-            >
-              Squads
             </a>
             <Link
               href="/blog"
