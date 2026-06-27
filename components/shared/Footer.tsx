@@ -29,7 +29,8 @@ const columns: { title: string; links: FooterLink[] }[] = [
     title: "Compare",
     links: [
       { href: "/viktor-vs-pancake", label: "vs Viktor" },
-      { href: "/blog/openclaw-for-founders-managed-vs-diy", label: "vs OpenClaw" },
+      { href: "/claude-tag-vs-pancake", label: "vs Claude Tag" },
+      { href: "/openclaw-vs-pancake", label: "vs OpenClaw" },
     ],
   },
   {

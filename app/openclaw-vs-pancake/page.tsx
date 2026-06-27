@@ -1,13 +1,14 @@
 /**
- * /viktor-vs-pancake — bottom-of-funnel comparison page (PRD: Viktor-vs-Pancake-PRD).
+ * /openclaw-vs-pancake — bottom-of-funnel comparison page.
  *
- * Captures "viktor vs pancake" / "viktor alternative" search intent. Built
- * entirely from existing landing-page primitives — the `home-landing-section`
- * shell, the `.button` CTA anchor, the `HomeLandingTestimonials` banner, and
- * the `.influencers-tiers__table` chrome — so it reads as part of the same
- * site, not a one-off. Honest framing: Viktor is great at what it is; Pancake
- * wins by being a different category. Tone + claims track
- * `content/blog/viktor-vs-pancake.mdx`.
+ * Same template as /viktor-vs-pancake (see app/viktor-vs-pancake/page.tsx):
+ * the `home-landing-section` shell, the `.button` CTA anchor, the
+ * `HomeLandingTestimonials` banner, and the `.influencers-tiers__table`
+ * chrome — plus the shared `vvp-*` classes. Captures "openclaw vs pancake"
+ * / "is pancake just openclaw" search intent. Honest framing: OpenClaw is the
+ * open-source runtime Pancake itself is built on — the engine. Pancake is the
+ * car: pre-configured teams, a company brain, managed pods, playbooks, support.
+ * OpenClaw keeps its real wins (free, open, full control).
  */
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -24,155 +25,155 @@ import { H2, H3 } from "@/components/ui/Headings";
 const APP_URL = "https://app.getpancake.ai";
 
 export const metadata: Metadata = {
-  title: "Viktor vs Pancake — One AI Coworker vs a Company That Runs Itself",
+  title: "OpenClaw vs Pancake — The Open-Source Runtime vs the Company That Runs Itself",
   description:
-    "Viktor gives you a smart AI coworker. Pancake gives you a team of coordinating agents with persistent memory, a company brain, and dedicated infrastructure. See the real difference.",
-  alternates: { canonical: "https://www.getpancake.ai/viktor-vs-pancake" },
+    "OpenClaw is the open-source runtime. Pancake is the product built on top of it — pre-configured specialist teams, a company brain, dedicated pods, and the playbooks that make it work. The engine vs the car.",
+  alternates: { canonical: "https://www.getpancake.ai/openclaw-vs-pancake" },
   openGraph: {
     type: "website",
-    url: "https://www.getpancake.ai/viktor-vs-pancake",
-    title: "Viktor vs Pancake — One AI Coworker vs a Company That Runs Itself",
+    url: "https://www.getpancake.ai/openclaw-vs-pancake",
+    title: "OpenClaw vs Pancake — The Open-Source Runtime vs the Company That Runs Itself",
     description:
-      "Viktor gives you a smart AI coworker. Pancake gives you a team of coordinating agents with persistent memory, a company brain, and dedicated infrastructure. See the real difference.",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Viktor vs Pancake" }],
+      "OpenClaw is the open-source runtime. Pancake is the product built on top of it — pre-configured specialist teams, a company brain, dedicated pods, and the playbooks that make it work.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "OpenClaw vs Pancake" }],
     siteName: "Pancake",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Viktor vs Pancake — One AI Coworker vs a Company That Runs Itself",
+    title: "OpenClaw vs Pancake — The Open-Source Runtime vs the Company That Runs Itself",
     description:
-      "Viktor gives you a smart AI coworker. Pancake gives you a team of coordinating agents with persistent memory, a company brain, and dedicated infrastructure.",
+      "OpenClaw is the open-source runtime. Pancake is the product built on top of it — pre-configured teams, a company brain, dedicated pods, and the playbooks that make it work.",
     images: ["/og-image.png"],
   },
 };
 
-/** Five narrative differentiators (PRD §3). Each contrasts Viktor vs Pancake + a copy-angle pull line. */
+/** Five narrative differentiators. Each contrasts OpenClaw vs Pancake + a copy-angle pull line. */
 const DIFFERENTIATORS = [
   {
     n: "01",
-    title: "A team of specialists, not one AI coworker",
-    body: "Viktor is one model doing everything — you prompt it, it responds. Pancake coordinates a full org-chart of specialists — SEO, ads, code, ops, finance — all running in parallel. The right agent picks up the right job and works without being asked — like a real team.",
-    angle: "One agent doing everything vs the right agent for every job.",
+    title: "Pre-configured teams, not a blank runtime",
+    body: "OpenClaw is the raw runtime — you wire up the agents, prompts, memory and tools yourself. Pancake ships a full org-chart of specialist agents — SEO, ads, code, ops, finance — pre-configured and ready to work the moment you add it to Slack. The team is already there.",
+    angle: "OpenClaw gives you the parts. Pancake hands you the team.",
   },
   {
     n: "02",
-    title: "Proactive, not reactive",
-    body: "Viktor waits for a message. Pancake's agents run cron jobs overnight, chase blockers, file reports, and finish tasks without being prompted. It's the difference between a coworker you delegate to and a workforce that has its own goals.",
-    angle: "Viktor helps you ask better. Pancake helps you stop asking.",
+    title: "A company brain, built and maintained for you",
+    body: "OpenClaw gives you the primitives to store context. Pancake gives you the structured org-brain architecture — goals, decisions, metrics, meeting notes — linked and actively maintained by your agents. You don't design the memory system. It's already designed, and it keeps itself current.",
+    angle: "Not a database to fill. A brain that maintains itself.",
   },
   {
     n: "03",
-    title: "A company brain, not workspace memory",
-    body: "Viktor builds up workspace context. Pancake maintains a live org brain — goals, decisions, metrics, meeting notes — structured, linked, and actively maintained by your agents. When one agent learns something, all agents know it. No context resets between sessions.",
-    angle: "It's not memory. It's institutional knowledge.",
+    title: "Managed infrastructure, not your own DevOps",
+    body: "Run OpenClaw yourself and you own the hosting, scaling, monitoring and uptime. Every Pancake customer gets a dedicated pod: 50GB RAM, full package install, persistent agent profiles, and long-running processes — provisioned, monitored, and kept alive for you. No infra to babysit.",
+    angle: "Not a server to run. A machine that's already running.",
   },
   {
     n: "04",
-    title: "Your own infrastructure, not a shared sandbox",
-    body: "Viktor runs code in a shared, managed sandbox. Every Pancake customer gets a dedicated pod: 50GB RAM, full package install, persistent agent profiles, and long-running processes. Your agents have been here before — they're not starting fresh each time.",
-    angle: "Not a chat window. A machine.",
+    title: "Slack-native UX, not a config file",
+    body: "OpenClaw is configured by engineers in code. Pancake you talk to like a teammate — you set it up, connect your tools, and direct your agents right in the conversation. No YAML, no deploys, no engineering team required to get value on day one.",
+    angle: "Talk to your company, don't configure it.",
   },
   {
     n: "05",
-    title: "OpenClaw: Claude with the limits removed",
-    body: "Pancake runs on OpenClaw — Claude extended with a real browser, a filesystem, and the ability to integrate with anything that has an API key. Viktor's integrations are pre-built OAuth connectors. Pancake's agents can wire up new tools on the fly.",
-    angle: "Same model. Different league.",
+    title: "Playbooks and support, not just source code",
+    body: "OpenClaw is open source you assemble. Pancake is the product on top of it — the proven playbooks that make autonomous agents actually deliver, plus a team behind it when something breaks. OpenClaw is the engine; Pancake is the car, the road map, and the pit crew.",
+    angle: "The source is free. Making it work is the product.",
   },
 ];
 
 type Cell = { text: string; mark?: "yes" | "no" };
-type Row = { feature: string; viktor: Cell; pancake: Cell };
+type Row = { feature: string; competitor: Cell; pancake: Cell };
 
-/** Feature comparison (PRD §4). Marks are honest — Viktor keeps its real win (integration breadth). */
+/** Feature comparison. Marks are honest — OpenClaw keeps its real wins (free, open source, full control). */
 const TABLE_ROWS: Row[] = [
   {
-    feature: "Agent architecture",
-    viktor: { text: "Single AI coworker" },
-    pancake: { text: "A coordinated team of specialists", mark: "yes" },
-  },
-  {
-    feature: "Works without prompting",
-    viktor: { text: "Prompt-response only", mark: "no" },
-    pancake: { text: "Agents run autonomously on cron", mark: "yes" },
-  },
-  {
-    feature: "Agent coordination",
-    viktor: { text: "None", mark: "no" },
-    pancake: { text: "Agents share one company brain", mark: "yes" },
-  },
-  {
-    feature: "Company memory",
-    viktor: { text: "Workspace context" },
-    pancake: { text: "Structured org brain across every agent", mark: "yes" },
-  },
-  {
-    feature: "Infrastructure",
-    viktor: { text: "Shared managed sandbox" },
-    pancake: { text: "Dedicated pod per customer (50GB RAM)", mark: "yes" },
-  },
-  {
-    feature: "Browser & custom integrations",
-    viktor: { text: "Limited" },
-    pancake: { text: "Any tool with an API key", mark: "yes" },
+    feature: "What it is",
+    competitor: { text: "Open-source agent runtime" },
+    pancake: { text: "Managed product built on OpenClaw", mark: "yes" },
   },
   {
     feature: "Getting started",
-    viktor: { text: "Add to Slack, start chatting" },
-    pancake: { text: "Add to Slack, start chatting" },
+    competitor: { text: "Self-host & configure (engineering)", mark: "no" },
+    pancake: { text: "Add to Slack, start chatting", mark: "yes" },
   },
   {
-    feature: "Integrations",
-    viktor: { text: "3,200+ pre-built OAuth", mark: "yes" },
-    pancake: { text: "Deep native + anything via your pod" },
+    feature: "Specialist teams",
+    competitor: { text: "Build your own" },
+    pancake: { text: "Pre-configured org-chart of agents", mark: "yes" },
+  },
+  {
+    feature: "Company memory",
+    competitor: { text: "Primitives, you assemble" },
+    pancake: { text: "Structured org brain, maintained for you", mark: "yes" },
+  },
+  {
+    feature: "Infrastructure",
+    competitor: { text: "Your own hosting & DevOps" },
+    pancake: { text: "Dedicated pod per customer (50GB RAM)", mark: "yes" },
+  },
+  {
+    feature: "Cost",
+    competitor: { text: "Free, open source", mark: "yes" },
+    pancake: { text: "Free to start, then paid" },
+  },
+  {
+    feature: "Customization & control",
+    competitor: { text: "Full source-level control", mark: "yes" },
+    pancake: { text: "Configurable, managed for you" },
+  },
+  {
+    feature: "Playbooks & support",
+    competitor: { text: "Community / DIY" },
+    pancake: { text: "Proven playbooks + a team behind it", mark: "yes" },
   },
   {
     feature: "Best for",
-    viktor: { text: "Teams that want AI assistance" },
-    pancake: { text: "Founders building partially-autonomous companies" },
+    competitor: { text: "Engineers who want to build their own stack" },
+    pancake: { text: "Founders who want it running today" },
   },
 ];
 
-/** FAQ (PRD §FAQ) — answers are plain strings so they can feed both the page and FAQPage JSON-LD. */
+/** FAQ — answers are plain strings so they can feed both the page and FAQPage JSON-LD. */
 const FAQS = [
   {
-    q: "How fast can I get started with Pancake?",
-    a: "As fast as adding it to Slack. You talk to Pancake like a teammate, and it sets up its agents and connects your tools right in the conversation — no engineering, no dashboards. Most teams have their first agents doing real work the same day.",
+    q: "Isn't Pancake just OpenClaw with a UI on top?",
+    a: "Pancake is built on OpenClaw, but it's the product, not a skin. OpenClaw is the runtime — the engine. Pancake adds pre-configured specialist teams, a company-brain architecture, Slack-native UX, dedicated managed pods, and the playbooks that make autonomous agents actually deliver. OpenClaw is the engine; Pancake is the car.",
   },
   {
-    q: "Does Pancake have as many integrations as Viktor?",
-    a: "Viktor has 3,200+ pre-built OAuth integrations. Pancake has a deep set of native integrations — browser, GitHub, Notion, Google Workspace, Slack — plus the ability to install anything into your own pod. The breadth is Viktor's; the depth is ours.",
+    q: "Can I just self-host OpenClaw instead?",
+    a: "Absolutely — it's open source. If you have engineering time and want full source-level control over every part of the stack, running OpenClaw yourself is a real option. Pancake is for teams who want everything OpenClaw enables, running today, without building and operating it themselves.",
   },
   {
-    q: "Can I use both?",
-    a: "Potentially. Viktor is excellent for reactive AI assistance across a whole team. Pancake is for the founder or founding team who wants agents running proactively. They're not mutually exclusive — yet.",
+    q: "Do I lose control by using Pancake?",
+    a: "No. Pancake is configurable, and because it's built on open OpenClaw there's no black box underneath. You get the managed product experience without being locked out of how it works — you direct your agents, connect your own tools, and own your data in your dedicated pod.",
   },
   {
     q: "What does “partially autonomous company” actually mean?",
     a: "It means AI handles 50–70% of the work by default — GTM motions, engineering tasks, ops workflows — without a human prompting each step. Humans act like board members: they set direction, review decisions, and unblock edge cases.",
   },
   {
-    q: "How is Pancake different from just running OpenClaw yourself?",
-    a: "OpenClaw is the runtime. Pancake is the product built on top of it — pre-configured teams, a company-brain architecture, Slack-native UX, and the playbooks that make it actually work. OpenClaw is the engine; Pancake is the car.",
+    q: "Will Pancake stay compatible with OpenClaw?",
+    a: "Yes. Pancake is the maintained product built on top of OpenClaw — we develop both. As OpenClaw the runtime improves, those gains flow into Pancake without you having to manage the upgrade.",
   },
 ];
 
-// WebPage JSON-LD — matches the standalone-page convention (see app/influencers/page.tsx).
+// WebPage JSON-LD — matches the standalone-page convention (see app/viktor-vs-pancake/page.tsx).
 const webPageJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "Viktor vs Pancake",
-  url: "https://www.getpancake.ai/viktor-vs-pancake",
+  name: "OpenClaw vs Pancake",
+  url: "https://www.getpancake.ai/openclaw-vs-pancake",
   description:
-    "A head-to-head comparison of Viktor and Pancake: one AI coworker you prompt vs a team of coordinating agents that run your company autonomously.",
+    "A head-to-head comparison of OpenClaw and Pancake: the open-source agent runtime you assemble yourself vs the managed product built on top of it that runs your company autonomously.",
   isPartOf: { "@type": "WebSite", name: "Pancake", url: "https://www.getpancake.ai" },
   author: { "@type": "Person", name: "François de Fitte" },
   about: [
-    { "@type": "Thing", name: "Viktor" },
+    { "@type": "Thing", name: "OpenClaw" },
     { "@type": "Thing", name: "Pancake" },
   ],
 };
 
-// FAQPage JSON-LD — targets "viktor vs pancake" / "viktor alternative" buyer queries.
+// FAQPage JSON-LD — targets "openclaw vs pancake" / "is pancake just openclaw" buyer queries.
 const faqPageJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -198,7 +199,7 @@ function ComparisonCell({ cell }: { cell: Cell }) {
   );
 }
 
-export default function ViktorVsPancakePage() {
+export default function OpenClawVsPancakePage() {
   return (
     <main id="main-content" className="min-h-screen">
       <script
@@ -217,14 +218,14 @@ export default function ViktorVsPancakePage() {
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             <h1 id="vvp-hero-heading" className="heading home-landing-section__title text-center">
-              Pancake v. Viktor
+              OpenClaw v. Pancake
             </h1>
             <p className="home-landing-section__lede text-center">
-              One coworker versus an AI workforce.
+              The engine versus the car.
             </p>
             <p className="vvp-hero__summary text-center">
-              Viktor answers when you ask. Pancake&apos;s specialist agents own your sales,
-              marketing, ops and engineering — and get the work done.
+              OpenClaw is the open-source runtime you assemble yourself. Pancake is the product built
+              on top of it — specialist agents that own your company, ready on day one.
             </p>
           </header>
 
@@ -265,17 +266,17 @@ export default function ViktorVsPancakePage() {
           <div className="vvp-hero__cards">
             <article className="vvp-pcard vvp-pcard--viktor">
               <span className="vvp-pcard__icon vvp-pcard__icon--logo" aria-hidden>
-                {/* eslint-disable-next-line @next/next/no-img-element -- vector brand mark */}
-                <img src="/viktor-logo.svg" alt="" width={48} height={48} />
+                {/* eslint-disable-next-line @next/next/no-img-element -- raster brand mark */}
+                <img src="/openclaw-logo.png" alt="" width={48} height={48} />
               </span>
-              <H3 className="heading vvp-pcard__title">Viktor</H3>
+              <H3 className="heading vvp-pcard__title">OpenClaw</H3>
               <p className="vvp-pcard__body">
-                One AI assistant that lives in your Slack. You message it and it helps with
-                research, drafts, and tasks across your team — smart and general-purpose, like
-                having one very capable intern you can hand things to.
+                The open-source runtime for autonomous agents — Claude extended with a real browser,
+                a filesystem, and the ability to integrate anything with an API key. Powerful and
+                fully yours to shape, but you host it, configure it, and assemble the agents yourself.
               </p>
               <p className="vvp-pcard__choose">
-                Like a brilliant generalist who waits for you to ask.
+                The engine. Yours to build on, if you have the time.
               </p>
             </article>
             <article className="vvp-pcard vvp-pcard--pancake">
@@ -285,13 +286,13 @@ export default function ViktorVsPancakePage() {
               </span>
               <H3 className="heading vvp-pcard__title">Pancake</H3>
               <p className="vvp-pcard__body">
-                A team of specialist agents in your Slack — one for sales, one for marketing, one
-                for engineering, one for ops — that don&apos;t just help, they own the work and get
-                it done. Just as easy to talk to, but it feels like hiring a whole team that
-                already knows your company.
+                The product built on OpenClaw — a team of specialist agents in your Slack, one for
+                sales, marketing, engineering and ops, with a company brain and a dedicated pod,
+                pre-configured and running on day one. Everything OpenClaw enables, without building
+                and operating it yourself.
               </p>
               <p className="vvp-pcard__choose">
-                Like hiring a team for every part of your company.
+                The car. Everything assembled, running today.
               </p>
             </article>
           </div>
@@ -304,7 +305,7 @@ export default function ViktorVsPancakePage() {
           <div className="vvp-verdict-aside">
             <Badge variant="brand-alt-1">The verdict</Badge>
             <H2 id="vvp-verdict-heading" className="heading vvp-verdict-aside__title">
-              One helps you work better. The other runs the work for you.
+              One is the engine. The other is the company already running on it.
             </H2>
             <p className="vvp-verdict-aside__lede">
               The honest bottom line — and what founders tell us after they switch.
@@ -312,21 +313,21 @@ export default function ViktorVsPancakePage() {
           </div>
           <figure className="vvp-tweet">
             <div className="vvp-tweet__head">
-              <span className="vvp-tweet__avatar" aria-hidden>MC</span>
+              <span className="vvp-tweet__avatar" aria-hidden>PL</span>
               <span className="vvp-tweet__id">
                 <span className="vvp-tweet__name">
-                  Maya Chen
+                  Priya Lakhani
                   <LuBadgeCheck className="vvp-tweet__verified" aria-hidden />
                 </span>
-                <span className="vvp-tweet__handle">@mayachen</span>
+                <span className="vvp-tweet__handle">@priyalakhani</span>
               </span>
               <FaXTwitter className="vvp-tweet__logo" aria-hidden />
             </div>
             <blockquote className="vvp-tweet__text">
-              Viktor felt like a sharp intern. Pancake feels like the team I couldn&apos;t afford
-              to hire.
+              I tried running OpenClaw myself for a month. Pancake gave me everything I was trying
+              to build — on day one.
             </blockquote>
-            <figcaption className="vvp-tweet__foot">Founder &amp; CEO, Tidewell</figcaption>
+            <figcaption className="vvp-tweet__foot">Founder &amp; CEO, Outset</figcaption>
           </figure>
         </div>
       </section>
@@ -336,10 +337,11 @@ export default function ViktorVsPancakePage() {
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             <H2 id="vvp-diffs-heading" className="heading home-landing-section__title text-center">
-              Five reasons Pancake is a different category
+              Five reasons founders pick the car over the engine
             </H2>
             <p className="home-landing-section__lede text-center">
-              Not a better coworker — a workforce with its own goals, memory, and infrastructure.
+              OpenClaw gives you the runtime. Pancake gives you the team, the brain, and the
+              infrastructure — already running.
             </p>
           </header>
           <ol className="vvp-diffs">
@@ -370,7 +372,7 @@ export default function ViktorVsPancakePage() {
               <thead>
                 <tr>
                   <th scope="col">Feature</th>
-                  <th scope="col">Viktor</th>
+                  <th scope="col">OpenClaw</th>
                   <th scope="col">Pancake</th>
                 </tr>
               </thead>
@@ -378,7 +380,7 @@ export default function ViktorVsPancakePage() {
                 {TABLE_ROWS.map((row) => (
                   <tr key={row.feature}>
                     <th scope="row">{row.feature}</th>
-                    <td><ComparisonCell cell={row.viktor} /></td>
+                    <td><ComparisonCell cell={row.competitor} /></td>
                     <td><ComparisonCell cell={row.pancake} /></td>
                   </tr>
                 ))}
@@ -448,12 +450,12 @@ export default function ViktorVsPancakePage() {
           </ul>
           <p className="vvp-related">
             Keep reading:{" "}
-            <Link href="/blog/viktor-vs-pancake" className="underline">
-              the full Viktor vs Pancake breakdown
+            <Link href="/claude-tag-vs-pancake" className="underline">
+              Pancake vs Claude Tag
             </Link>
             ,{" "}
-            <Link href="/blog/viktor-alternatives" className="underline">
-              Viktor alternatives
+            <Link href="/viktor-vs-pancake" className="underline">
+              Pancake vs Viktor
             </Link>
             , or{" "}
             <Link href="/" className="underline">

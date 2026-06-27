@@ -6453,17 +6453,18 @@
      values are tokens — no hardcoded hex/px/weights.
      =================================================================== */
 
-  /* Verdict — an elegant editorial pull-quote: oversized brand quote mark, large
-     quote text, then a circular photo with name + role. No card / no box. */
+  /* Verdict — a centered editorial pull-quote that sits directly under the
+     section H2 (in place of a descriptive paragraph): oversized brand quote
+     mark, quote text, then a circular photo with name + role. No card / no box. */
   .vvp-quote {
     width: 100%;
     max-width: calc(760 / 16 * 1rem);
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: var(--spacing-lg);
-    text-align: left;
+    text-align: center;
   }
 
   .vvp-quote__mark {
@@ -6478,7 +6479,7 @@
     margin: 0;
     font-family: var(--font-display);
     font-weight: var(--font-semibold);
-    font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+    font-size: clamp(1.5rem, 2.2vw, 2rem);
     line-height: 1.18;
     letter-spacing: -0.5px;
     color: var(--text);
@@ -6533,7 +6534,8 @@
     color: var(--subtle-text);
   }
 
-  /* Side-by-side verdict: statement column (left) + customer quote (right). */
+  /* Side-by-side verdict: statement column (left) + tweet-style quote card
+     (right), so the two columns read as a clear pair. */
   .vvp-verdict-grid {
     width: 100%;
     display: grid;
@@ -6566,32 +6568,112 @@
     color: var(--subtle-text);
   }
 
-  /* In the grid the quote becomes a soft, brand-tinted card (the statement on
-     the left stays plain text), so the two columns read as a clear pair. */
-  .vvp-verdict-grid .vvp-quote {
-    max-width: none;
-    margin: 0;
-    padding: calc(2 * var(--spacing-xxl));
-    background-color: var(--alt-weak-branded-surface-01);
-    border: 1px solid var(--branded-stroke-02);
-    border-radius: var(--radius-lg);
-    corner-shape: squircle;
-  }
-
-  .vvp-verdict-grid .vvp-quote__text {
-    font-size: clamp(1.5rem, 2.2vw, 2rem);
-  }
-
-  /* White avatar so it doesn't blend into the tinted card. */
-  .vvp-verdict-grid .vvp-quote__photo {
-    background-color: var(--surface);
-  }
-
   @media (max-width: 900px) {
     .vvp-verdict-grid {
       grid-template-columns: 1fr;
       gap: calc(2 * var(--spacing-xl));
     }
+  }
+
+  /* Tweet-style quote card — white surface, soft shadow, X header with avatar,
+     name + verified tick + handle, the quote as the tweet body, and the
+     person's role as the footer. All values tokenized. */
+  .vvp-tweet {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    padding: calc(2 * var(--spacing-xl));
+    background-color: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius-lg);
+    corner-shape: squircle;
+    box-shadow: var(--shadow-md, 0 calc(8 / 16 * 1rem) calc(24 / 16 * 1rem) rgb(0 0 0 / 0.06));
+    text-align: left;
+  }
+
+  .vvp-tweet__head {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .vvp-tweet__avatar {
+    width: calc(44 / 16 * 1rem);
+    height: calc(44 / 16 * 1rem);
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background-color: var(--alt-weak-branded-surface-01);
+    color: var(--text);
+    font-family: var(--font-display);
+    font-weight: var(--font-bold);
+    font-size: var(--font-size-body-small);
+    line-height: 1;
+  }
+
+  .vvp-tweet__id {
+    display: flex;
+    flex-direction: column;
+    gap: calc(2 / 16 * 1rem);
+    min-width: 0;
+  }
+
+  .vvp-tweet__name {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-family: var(--font-display);
+    font-weight: var(--font-heavy);
+    font-size: var(--font-size-body-regular);
+    color: var(--text);
+  }
+
+  .vvp-tweet__verified {
+    width: var(--font-size-body-regular);
+    height: var(--font-size-body-regular);
+    flex: none;
+    color: var(--interactive-text);
+  }
+
+  .vvp-tweet__handle {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    color: var(--subtle-text);
+  }
+
+  .vvp-tweet__logo {
+    width: calc(20 / 16 * 1rem);
+    height: calc(20 / 16 * 1rem);
+    flex: none;
+    margin-left: auto;
+    color: var(--text);
+  }
+
+  .vvp-tweet__text {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--font-semibold);
+    font-size: clamp(1.25rem, 1.8vw, 1.5rem);
+    line-height: 1.35;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+
+  .vvp-tweet__foot {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    color: var(--subtle-text);
+  }
+
+  /* Tweet card placed in the hero (in place of the summary paragraph): a
+     centered, fixed-width card so it doesn't stretch the full hero width. */
+  .vvp-hero__tweet {
+    width: 100%;
+    max-width: calc(520 / 16 * 1rem);
+    margin: calc(1.5 * var(--spacing-xl)) auto 0;
   }
 
   /* Five differentiators — vertical list of narrative cards */
@@ -6775,6 +6857,54 @@
     color: var(--subtle-text);
   }
 
+  /* Compact social-proof line in the hero — one punchy quote + inline
+     attribution, sized below the H1 and tagline so the matchup title still
+     leads. Full testimonials live in the dedicated band lower down. */
+  .vvp-hero__proof {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin: var(--spacing-xs) auto 0;
+    max-width: calc(620 / 16 * 1rem);
+  }
+
+  .vvp-hero__proof-quote {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--font-semibold);
+    font-size: clamp(1.0625rem, 1.4vw, 1.25rem);
+    line-height: 1.3;
+    letter-spacing: -0.2px;
+    color: var(--text);
+    text-align: center;
+  }
+
+  .vvp-hero__proof-by {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    color: var(--subtle-text);
+  }
+
+  .vvp-hero__proof-avatar {
+    width: calc(28 / 16 * 1rem);
+    height: calc(28 / 16 * 1rem);
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background-color: var(--alt-weak-branded-surface-01);
+    color: var(--text);
+    font-family: var(--font-display);
+    font-weight: var(--font-bold);
+    font-size: calc(11 / 16 * 1rem);
+    line-height: 1;
+  }
+
   /* Trust badges — small icon + label row under the CTAs. */
   .vvp-hero__badges {
     list-style: none;
@@ -6833,10 +6963,20 @@
     object-fit: contain;
   }
 
+  /* Comparison-page hero sits tighter than the default landing section: the
+     64px header-to-media gap reads as too much air above the CTA, and the
+     cards then stack their own top margin on top of it. Halve the inner gap
+     and trim the card margin so the hero reads as one compact block — scoped
+     by the hero's aria-labelledby so it never touches other landing sections.
+     Covers all three /…-vs-pancake heroes (they share the same id). */
+  section[aria-labelledby="vvp-hero-heading"] .home-landing-section__inner {
+    gap: calc(2 * var(--spacing-xl));
+  }
+
   .vvp-hero__cards {
     width: 100%;
     max-width: calc(1040 / 16 * 1rem);
-    margin: calc(3 * var(--spacing-xl)) auto 0;
+    margin: var(--spacing-xl) auto 0;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-xl);

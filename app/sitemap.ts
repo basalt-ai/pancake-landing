@@ -20,6 +20,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: "https://www.getpancake.ai/terms", lastModified: new Date(), priority: 0.3 },
     { url: "https://www.getpancake.ai/blog", lastModified: new Date(), priority: 0.8 },
     { url: "https://www.getpancake.ai/viktor-vs-pancake", lastModified: new Date(), priority: 0.8 },
+    { url: "https://www.getpancake.ai/claude-tag-vs-pancake", lastModified: new Date(), priority: 0.8 },
+    { url: "https://www.getpancake.ai/openclaw-vs-pancake", lastModified: new Date(), priority: 0.8 },
     ...getAllPosts().map((post) => ({
       url: `https://www.getpancake.ai/blog/${post.slug}`,
       lastModified: safeDate(post.last_updated || post.date),

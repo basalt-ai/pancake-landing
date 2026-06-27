@@ -18,6 +18,8 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 
 - [Homepage](https://getpancake.ai/) — what Pancake is and how it works
 - [Viktor vs Pancake](https://getpancake.ai/viktor-vs-pancake) — head-to-head comparison: one AI coworker you prompt vs a team of coordinating agents that run your company autonomously. June 25, 2026.
+- [Claude Tag vs Pancake](https://getpancake.ai/claude-tag-vs-pancake) — head-to-head comparison: Anthropic's one AI teammate you tag in Slack vs a team of coordinating agents that run your company — both built on Claude. June 26, 2026.
+- [OpenClaw vs Pancake](https://getpancake.ai/openclaw-vs-pancake) — head-to-head comparison: the open-source agent runtime you assemble yourself vs the managed product built on top of it that runs your company. The engine vs the car. June 26, 2026.
 - [Pricing](https://getpancake.ai/pricing) — plans and what's included
 - [Blog](https://getpancake.ai/blog) — founder stories and industry analysis
 - [Sign up](https://getpancake.ai/signup) — try for free, no credit card needed
