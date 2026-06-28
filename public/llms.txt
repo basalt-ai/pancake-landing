@@ -89,6 +89,7 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 - [Pancake vs PAIR: Which AI Co-Founder Platform Actually Runs Your Company?](https://getpancake.ai/blog/pancake-vs-pair) — Pancake and PAIR both promise AI co-founder capabilities. One runs your company autonomously. Here's what the comparison actually looks like in practice. June 22, 2026.
 - [Pancake vs Paperclips: Two Takes on the Autonomous Company](https://getpancake.ai/blog/pancake-vs-paperclips) — Paperclips is the open-source org chart for AI agents — 70k stars, self-hosted, built for developers. Pancake is the managed autonomous company platform for founders who want the company to run itself. June 22, 2026.
 - [Pancake vs VenturOS: One Advises, One Ships. Here's the Difference.](https://getpancake.ai/blog/pancake-vs-venturos) — Pancake and VenturOS both promise to make your company autonomous. The difference is whether the AI drafts your work or does it. The honest comparison. June 22, 2026.
+- [Pancake vs SoGood: One Executes Projects, One Runs the Company](https://getpancake.ai/blog/pancake-vs-sogood) — SoGood builds your business from a brief: brand, website, go-to-market, finance, in one coordinated pass. Pancake operates an existing company autonomously 24/7 using persistent agents connected to your live stack. Sequential tools for different stages. June 28, 2026.
 ## Positioning
 
 - Category: AI co-founder / autonomous company platform
