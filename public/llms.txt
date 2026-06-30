@@ -107,6 +107,8 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 - Tristan — founding GTM, San Francisco
 - Theophile - founding engineer, San Francisco
 
+- [Pancake vs Pango: One Handles Post-Purchase, One Runs Your Entire Company](https://getpancake.ai/blog/pancake-vs-pango)
+
 ## Company
 
 - Founded: 2026
