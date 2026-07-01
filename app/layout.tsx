@@ -4,6 +4,7 @@ import { Lato } from "next/font/google";
 import "./globals.css";
 import "./_styles/components.css";
 import { AnalyticsEvents } from "@/components/analytics/AnalyticsEvents";
+import { PostHogAttribution } from "@/components/analytics/PostHogAttribution";
 import { ProductHuntBadge } from "@/components/shared/ProductHuntBadge";
 
 /**
@@ -220,6 +221,7 @@ rdt("track", "PageVisit");`,
             alt=""
           />
         </noscript>
+        <PostHogAttribution />
         <a href="#main-content" className="skip-to-content">
           Skip to main content
         </a>
