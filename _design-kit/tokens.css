@@ -39,7 +39,9 @@
     --palette-red-30: #E5002E;
     --palette-red-40: #AD001A;
 
-    --palette-green-10: #68CEA7;
+    /* Pale step tuned in oklch to sit with the other 10-step pastels:
+       L matches the pink/purple/yellow-10 mean, hue matches green-20. */
+    --palette-green-10: #CFF0E1;
     --palette-green-20: #68CEA7;
     --palette-green-30: #037D48;
     --palette-green-40: #00532F;

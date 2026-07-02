@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
  *
  * Pancake shapes (sides + top) and master colours come from the Figma master
  * (file fr8NgOCTUxsEbrMEJA3YKu, node 177:11377). For 4 and 5 we add orange
- * and mint pancakes (mint pulled from --palette-green-10 so the brand
+ * and mint pancakes (mint pulled from --palette-green-20 so the brand
  * palette stays consistent), keeping the master's shape paths unchanged.
  *
  * Stacking model — BOTTOM-ANCHORED, NEW-AT-THE-BOTTOM, EXISTING-RISE-UP.
