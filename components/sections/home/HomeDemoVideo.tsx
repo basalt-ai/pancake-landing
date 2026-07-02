@@ -192,18 +192,15 @@ export function HomeDemoVideo() {
 
               {!started && (
                 <>
+                  {/* Whole-frame click target — no play chip: the ambient
+                      teaser already signals video, and the "Watch with
+                      sound" link carries the visible affordance. */}
                   <button
                     type="button"
                     className="home-film__cta"
                     onClick={startFilm}
                     aria-label="Play the Pancake film — 51 seconds, with sound"
-                  >
-                    <span className="home-film__play" aria-hidden>
-                      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <path d="M8 5.14v13.72a1 1 0 0 0 1.54.84l10.79-6.86a1 1 0 0 0 0-1.68L9.54 4.3A1 1 0 0 0 8 5.14Z" />
-                      </svg>
-                    </span>
-                  </button>
+                  />
                   <span className="home-film__duration" aria-hidden>
                     0:51
                   </span>

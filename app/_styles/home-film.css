@@ -151,13 +151,12 @@
     visibility: hidden;
   }
 
-  /* Whole-frame click target. */
+  /* Whole-frame click target — no visible play chip (the ambient teaser
+     already signals video; "Watch with sound" is the labeled affordance). */
   .home-film__cta {
     position: absolute;
     inset: 0;
     z-index: 2;
-    display: grid;
-    place-items: center;
     margin: 0;
     padding: 0;
     border: 0;
@@ -169,39 +168,6 @@
     outline: 3px solid var(--surface);
     outline-offset: -3px;
     border-radius: inherit;
-  }
-
-  /* Play chip — neutral white glass (a pink tint went muddy over the
-     film's dark frames): warm surface at 85%, ink triangle, hairline
-     stroke. Reads clean on any footage. */
-  .home-film__play {
-    display: grid;
-    place-items: center;
-    width: clamp(60px, 5.5vw, 80px);
-    aspect-ratio: 1;
-    border-radius: 9999px;
-    color: var(--text);
-    background: color-mix(in srgb, var(--surface) 85%, transparent);
-    border: 1px solid color-mix(in srgb, var(--stroke) 60%, transparent);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 16px rgba(44, 0, 42, 0.18);
-    transition:
-      transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
-      background-color 200ms ease;
-  }
-
-  .home-film__cta:hover .home-film__play,
-  .home-film__cta:focus-visible .home-film__play {
-    transform: scale(1.06);
-    background: var(--surface);
-  }
-
-  .home-film__play svg {
-    width: 38%;
-    height: 38%;
-    margin-left: 7%; /* optical centering of the triangle */
-    fill: currentColor;
   }
 
   /* Small corner duration badge (replaces the old stacked pill). */
@@ -236,7 +202,6 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .home-film__play,
     .home-film__film,
     .home-film__watch,
     .home-film__watch-arrow {
