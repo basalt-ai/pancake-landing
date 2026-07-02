@@ -1,5 +1,12 @@
 /**
- * /influencers — the Pancake Influencer Program.
+ * ARCHIVED — the Pancake Influencer Program. Not public.
+ *
+ * This lives in a Next.js private folder (`app/_influencers`), so it is
+ * excluded from routing and returns 404. Code is kept intact for future
+ * revival. To bring the program back: rename `app/_influencers` →
+ * `app/influencers`, restore the "Influencers" footer link in
+ * components/shared/Footer.tsx, and (optionally) add /influencers to
+ * app/sitemap.ts.
  *
  * Show off your Pancake, get cash or Pancake tokens (50% richer).
  * Structure intentionally diverges from comparable influencer pages: no
