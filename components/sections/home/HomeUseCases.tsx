@@ -1,8 +1,10 @@
 "use client";
 
 /**
- * Home — "three real jobs" use-case triptych, v4.1 "chat theater" redesign
- * (founder feedback on v4.0: "super flat, super not juicy, super fixed").
+ * Home — "four real jobs" use-case row (four vertical cards across on
+ * desktop), v4.1 "chat theater" redesign (founder feedback on v4.0:
+ * "super flat, super not juicy, super fixed"); finance card added on
+ * founder request.
  *
  * Composition (see the CSS block in `app/_styles/components.css`):
  *   tinted per-accent mat → floating white Slack panel → sticker kicker,
@@ -27,7 +29,7 @@ import { gsap, useGSAP, ScrollTrigger } from "@/lib/gsap";
 type UseCase = {
   id: string;
   /** Drives the card's mat/stroke/kicker tint family (see components.css). */
-  accent: "purple" | "pink" | "yellow";
+  accent: "purple" | "pink" | "yellow" | "orange";
   kicker: string;
   headline: string;
   body: string;
@@ -42,7 +44,7 @@ type UseCase = {
     text: string;
   };
   agent: { time: string; text: string };
-  artifact: { icon: "pr" | "leads" | "pdf"; title: string; meta: string };
+  artifact: { icon: "pr" | "leads" | "pdf" | "sheet"; title: string; meta: string };
 };
 
 const USE_CASES: UseCase[] = [
@@ -69,6 +71,31 @@ const USE_CASES: UseCase[] = [
       icon: "pr",
       title: "fix: guest checkout crash",
       meta: "Pull request #214 · 2 files changed",
+    },
+  },
+  {
+    id: "finance",
+    accent: "orange",
+    kicker: "Finance",
+    headline: "It never forgets.",
+    body: "Hand off the chasing you keep postponing. Reminders go out, replies get tracked, and it keeps nudging until the money lands.",
+    elapsed: "5 minutes later",
+    user: {
+      name: "Priya",
+      initial: "P",
+      accent: "#D6E9DC",
+      accentInk: "#1E5B3C",
+      time: "8:12 AM",
+      text: "@pancake chase down our overdue invoices? Some are 60+ days out and I keep forgetting.",
+    },
+    agent: {
+      time: "8:17 AM",
+      text: "14 overdue, $38,400 outstanding. Friendly reminders sent to every client, you're in CC — 3 are paying today. I'll nudge the rest every 3 days until they clear.",
+    },
+    artifact: {
+      icon: "sheet",
+      title: "overdue-invoices.xlsx",
+      meta: "Sheet · 14 invoices · live-tracked",
     },
   },
   {
@@ -162,7 +189,7 @@ export function HomeUseCases() {
           gsap.set(q(".home-use-case-card__copy > *"), { autoAlpha: 0, y: 12, filter: "blur(6px)" });
 
           const tl = gsap.timeline({
-            delay: i * 0.18, // ripple left→right when all three enter together
+            delay: i * 0.18, // ripple left→right when cards in a row enter together
             scrollTrigger: { trigger: card, start: "top 78%", once: true },
             onComplete: () => {
               // Post-play ambient life: the receipt gently floats. ±2px,
@@ -395,6 +422,16 @@ function ArtifactGlyph({ icon }: { icon: UseCase["artifact"]["icon"] }) {
           strokeWidth="2"
           strokeLinecap="round"
         />
+      </svg>
+    );
+  }
+  if (icon === "sheet") {
+    // Spreadsheet glyph — table with a header row and column split.
+    return (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
+        <rect x="2.5" y="2.5" width="13" height="13" rx="1.5" stroke="currentColor" strokeWidth="2" />
+        <path d="M2.5 7H15.5" stroke="currentColor" strokeWidth="2" />
+        <path d="M7.5 7V15.5" stroke="currentColor" strokeWidth="2" />
       </svg>
     );
   }

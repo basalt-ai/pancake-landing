@@ -4,7 +4,7 @@
  *
  * Landing v4 narrative arc (one identity throughout — ONE coworker, a whole
  * team of agents behind it):
- *   Slack (where it lives) → Use cases (three real jobs) → Org chart (the
+ *   Slack (where it lives) → Use cases (four real jobs) → Org chart (the
  *   team behind your coworker) → Integrations → UGC videos + X posts (proof)
  *   → Security → Control → Pricing teaser → FAQ → Blog → Closing CTA.
  * Background rhythm: plain/alt alternation; testimonials + pricing teaser are
@@ -80,7 +80,7 @@ export function HomeLandingBody() {
         </div>
       </section>
 
-      {/* "Three real jobs" use-case triptych — un-parked in landing v4, then
+      {/* "Four real jobs" use-case grid — un-parked in landing v4, then
           rebuilt in v4.1 as "chat theater" (founder: flat/not juicy/fixed):
           tinted mats, floating Slack panels, play-once GSAP conversation
           choreography with a receipt-stamp artifact payoff. */}

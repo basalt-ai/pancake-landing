@@ -1643,7 +1643,7 @@
     color: var(--text);
   }
 
-  /* ─── "three real jobs" use-case triptych ───
+  /* ─── "four real jobs" use-case row (four across on desktop) ───
      Headerless cards under the demo video: faux-Slack exchange on top,
      kicker + headline + body below. Chat recipe matches `.pricing-buys__chat`
      so the Slack grammar reads identically across the site. */
@@ -1664,7 +1664,9 @@
 
   @media (min-width: 1024px) {
     .home-use-cases {
-      grid-template-columns: repeat(3, 1fr);
+      /* Four vertical cards in one row (founder call) — minmax(0) so long
+         artifact titles can't blow a track open. */
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       /* `start`, not `stretch` — asymmetric heights are the composition */
       align-items: start;
       gap: var(--spacing-xxl);
@@ -1678,6 +1680,11 @@
     .home-use-case-card:nth-child(3) {
       --uc-rest-y: 14px;
       --uc-rest-r: 1deg;
+    }
+
+    .home-use-case-card:nth-child(4) {
+      --uc-rest-y: 8px;
+      --uc-rest-r: -0.75deg;
     }
   }
 
@@ -1713,6 +1720,12 @@
     --uc-mat: var(--palette-yellow-10);
     --uc-stroke: var(--palette-yellow-20);
     --uc-accent: var(--palette-yellow-40);
+  }
+
+  .home-use-case-card[data-accent="orange"] {
+    --uc-mat: var(--palette-orange-10);
+    --uc-stroke: var(--palette-orange-20);
+    --uc-accent: var(--palette-orange-40);
   }
 
   /* Pre-rendered hover shadow bloom — only its opacity transitions, so the
@@ -1934,6 +1947,12 @@
   .home-use-case-artifact__icon[data-icon="pdf"] {
     color: var(--negative-text);
     background-color: rgba(229, 0, 46, 0.1);
+  }
+
+  /* Spreadsheets read green in Slack (Excel/Sheets) — same tone as "pr". */
+  .home-use-case-artifact__icon[data-icon="sheet"] {
+    color: var(--positive-text);
+    background-color: rgba(3, 125, 72, 0.1);
   }
 
   .home-use-case-artifact__text {
