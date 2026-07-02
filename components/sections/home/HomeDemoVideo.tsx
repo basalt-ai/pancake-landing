@@ -8,9 +8,9 @@
  * LAYOUT — copy column LEFT (the claim), film RIGHT (the proof): the
  * pattern all leaders use for the first media+copy row (Linear, Stripe,
  * Attio, Clay, Loom, Figma, Notion — NN/g F-pattern: the left edge gets
- * the text). Column stack per the same research: eyebrow → benefit
- * heading one tier below H2 → one short body line → text CTA (primary
- * buttons stay reserved for hero + closing band).
+ * the text). Column stack: benefit heading one tier below H2 → one short
+ * body line → text CTA (primary buttons stay reserved for hero + closing
+ * band). No eyebrow — no other section on the page uses a kicker.
  *
  * AMBIENT: 12s silent teaser (6s–18s of the master) as the living poster —
  * IntersectionObserver lazy-load + play/pause, skipped under
@@ -144,7 +144,6 @@ export function HomeDemoVideo() {
       <div className={`home-demo-video__wrap ${HOME_PAGE_CONTAINER_CLASS}`} onPointerEnter={warmFilm}>
         <div className="home-film">
           <div className="home-film__intro">
-            <p className="home-film__eyebrow">The film</p>
             <h2 className="heading home-film__heading">Meet Pancake in 51 seconds</h2>
             <p className="home-film__body">
               One coworker in Slack. A whole team behind it. Watch the autonomy level climb to

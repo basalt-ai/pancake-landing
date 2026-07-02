@@ -42,16 +42,6 @@
   }
 
   /* ── Copy column ─────────────────────────────────────────────────────── */
-  .home-film__eyebrow {
-    margin: 0;
-    font-family: var(--font-body);
-    font-size: var(--font-size-eyebrow);
-    font-weight: var(--font-heavy);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--palette-pink-40);
-  }
-
   /* Benefit heading — one visual tier below the page's section H2s
      (split rows share horizontal space; every leader sizes down). */
   .home-film__heading {
