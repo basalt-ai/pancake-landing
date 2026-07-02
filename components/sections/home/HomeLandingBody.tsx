@@ -80,12 +80,18 @@ export function HomeLandingBody() {
         </div>
       </section>
 
-      {/* "Three real jobs" use-case triptych — un-parked in landing v4 as the
-          "what does it actually do for me" proof between Slack and the org
-          reveal. Was parked pending polish; flagged for founder review in the
-          PR — remove this section to re-park. */}
-      <section className="home-landing-section home-landing-section--alt" aria-label="What Pancake does">
+      {/* "Three real jobs" use-case triptych — un-parked in landing v4, then
+          rebuilt in v4.1 as "chat theater" (founder: flat/not juicy/fixed):
+          tinted mats, floating Slack panels, play-once GSAP conversation
+          choreography with a receipt-stamp artifact payoff. */}
+      <section className="home-landing-section home-landing-section--alt" aria-labelledby="home-landing-usecases-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
+          <header className="home-landing-section__header">
+            <H2 id="home-landing-usecases-heading" className="heading home-landing-section__title text-center">
+              Give Pancake a job
+            </H2>
+            <p className="home-landing-section__lede text-center">Ask in Slack. Come back to finished work.</p>
+          </header>
           <HomeUseCases />
         </div>
       </section>

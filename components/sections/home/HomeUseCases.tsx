@@ -1,18 +1,38 @@
+"use client";
+
 /**
- * Home — "three real jobs" use-case triptych (between the demo video and the
- * squads org chart). Headerless cards: a faux-Slack mini exchange on top,
- * kicker + headline + body below. The chat grammar (Lato, square avatars,
- * APP badge, 15px/1.46668 rhythm) mirrors pricing's `TokensBuyCards` and
- * `components/shared/SlackUI.tsx` so the visual language stays consistent —
- * copied locally rather than abstracted because the pricing variants are
- * typed against pricing copy.
+ * Home — "three real jobs" use-case triptych, v4.1 "chat theater" redesign
+ * (founder feedback on v4.0: "super flat, super not juicy, super fixed").
+ *
+ * Composition (see the CSS block in `app/_styles/components.css`):
+ *   tinted per-accent mat → floating white Slack panel → sticker kicker,
+ *   cards resting at hand-placed offsets/tilts, physical hover + spotlight.
+ *
+ * Motion: one play-once GSAP timeline per card (ScrollTrigger `once`) —
+ *   ask springs in (origin-anchored, iMessage-style) → time-jump divider
+ *   ("overnight") → typing dots → reply → the artifact chip STAMPS in like
+ *   a receipt and settles at -1deg → a 🥞 reaction pops onto the ask.
+ * Chat is temporal media: play once, never scrub. CSS defaults are the
+ * FINAL state, so no-JS and prefers-reduced-motion get the finished
+ * exchange (the typing pill only ever exists inside the timeline).
+ *
+ * The chat grammar (Lato, square avatars, APP badge, 15px/1.46668 rhythm)
+ * mirrors pricing's `TokensBuyCards` and `components/shared/SlackUI.tsx`.
  */
+
+import { useRef } from "react";
+
+import { gsap, useGSAP, ScrollTrigger } from "@/lib/gsap";
 
 type UseCase = {
   id: string;
+  /** Drives the card's mat/stroke/kicker tint family (see components.css). */
+  accent: "purple" | "pink" | "yellow";
   kicker: string;
   headline: string;
   body: string;
+  /** Time-jump divider label between the ask and the reply. */
+  elapsed: string;
   user: {
     name: string;
     initial: string;
@@ -28,9 +48,11 @@ type UseCase = {
 const USE_CASES: UseCase[] = [
   {
     id: "engineering",
+    accent: "purple",
     kicker: "Engineering",
     headline: "Ships while you sleep.",
     body: "Report the bug on your way to bed. Wake up to a tested fix and an open pull request — not a ticket.",
+    elapsed: "overnight",
     user: {
       name: "Sam",
       initial: "S",
@@ -51,9 +73,11 @@ const USE_CASES: UseCase[] = [
   },
   {
     id: "outbound",
+    accent: "pink",
     kicker: "Outbound",
     headline: "One ask, every tool.",
     body: "It works across your CRM, inbox, and analytics in a single run. You ask once; it does the legwork.",
+    elapsed: "7 minutes later",
     user: {
       name: "Mara",
       initial: "M",
@@ -74,9 +98,11 @@ const USE_CASES: UseCase[] = [
   },
   {
     id: "content",
+    accent: "yellow",
     kicker: "Support & content",
     headline: "Real work, attached.",
     body: "Answers come with the work attached — posts, PDFs, pull requests. Grounded in your docs and your codebase.",
+    elapsed: "9 minutes later",
     user: {
       name: "Leo",
       initial: "L",
@@ -98,12 +124,144 @@ const USE_CASES: UseCase[] = [
 ];
 
 export function HomeUseCases() {
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      const root = rootRef.current;
+      if (!root) return;
+
+      const mm = gsap.matchMedia();
+      // Motion only when the visitor allows it — otherwise the CSS resting
+      // state (finished conversation, reaction visible) is what renders.
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const cards = gsap.utils.toArray<HTMLElement>(root.querySelectorAll(".home-use-case-card"));
+
+        cards.forEach((card, i) => {
+          const q = gsap.utils.selector(card);
+          const typing = q('[data-uc="typing"]')[0] as HTMLElement | undefined;
+
+          // Initial states (from-values) — set imperatively so SSR/no-JS
+          // markup stays final-state.
+          gsap.set(q('[data-uc="user"]'), {
+            autoAlpha: 0,
+            y: 10,
+            scale: 0.92,
+            transformOrigin: "bottom left",
+          });
+          gsap.set(q('[data-uc="divider"]'), { autoAlpha: 0 });
+          gsap.set(q('[data-uc="agent"]'), {
+            autoAlpha: 0,
+            y: 10,
+            scale: 0.92,
+            transformOrigin: "bottom left",
+          });
+          gsap.set(q('[data-uc="reply-text"]'), { autoAlpha: 0 });
+          gsap.set(q('[data-uc="artifact"]'), { autoAlpha: 0 });
+          gsap.set(q('[data-uc="reaction"]'), { scale: 0, transformOrigin: "bottom left" });
+          gsap.set(q(".home-use-case-card__copy > *"), { autoAlpha: 0, y: 12, filter: "blur(6px)" });
+
+          const tl = gsap.timeline({
+            delay: i * 0.18, // ripple left→right when all three enter together
+            scrollTrigger: { trigger: card, start: "top 78%", once: true },
+            onComplete: () => {
+              // Post-play ambient life: the receipt gently floats. ±2px,
+              // felt-not-watched; killed with the gsap context on unmount.
+              gsap.to(q('[data-uc="artifact"]'), {
+                y: "-=2",
+                duration: 3,
+                ease: "sine.inOut",
+                yoyo: true,
+                repeat: -1,
+              });
+            },
+          });
+
+          // Copy layer — blur-up editorial voice (distinct from the chat's
+          // spring voice so the section doesn't read as a clown car).
+          tl.to(q(".home-use-case-card__copy > *"), {
+            autoAlpha: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 0.55,
+            ease: "expo.out",
+            stagger: 0.09,
+          });
+
+          // The ask — origin-anchored spring (overshoot on scale/y only).
+          tl.to(
+            q('[data-uc="user"]'),
+            { autoAlpha: 1, y: 0, scale: 1, duration: 0.42, ease: "back.out(1.7)" },
+            "<0.1",
+          );
+
+          // Time passes — the dead air IS the story.
+          tl.to(
+            q('[data-uc="divider"]'),
+            { autoAlpha: 0.75, duration: 0.4, ease: "power2.out" },
+            "+=0.35",
+          );
+
+          // Pancake starts "typing"…
+          tl.to(
+            q('[data-uc="agent"]'),
+            { autoAlpha: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(1.5)" },
+            "+=0.25",
+          );
+          if (typing) {
+            tl.set(typing, { display: "inline-flex" });
+            tl.to(q('[data-uc="typing"] i'), {
+              y: -3,
+              duration: 0.26,
+              ease: "sine.inOut",
+              stagger: 0.12,
+              yoyo: true,
+              repeat: 3,
+            });
+            tl.set(typing, { display: "none" });
+          }
+
+          // …and delivers.
+          tl.to(q('[data-uc="reply-text"]'), { autoAlpha: 1, duration: 0.3, ease: "power2.out" });
+
+          // Receipt stamp — arrives from above the plane, settles at -1deg.
+          tl.fromTo(
+            q('[data-uc="artifact"]'),
+            { autoAlpha: 0, scale: 1.3, rotate: -5, filter: "blur(2px)" },
+            {
+              autoAlpha: 1,
+              scale: 1,
+              rotate: -1,
+              filter: "blur(0px)",
+              duration: 0.32,
+              ease: "power4.out",
+            },
+            "+=0.35",
+          );
+          // Fake haptic: the card takes the hit.
+          tl.to(card, { y: "+=2", duration: 0.06, yoyo: true, repeat: 1 }, "<0.1");
+
+          // Delight payoff: the founder reacts to done work.
+          tl.to(
+            q('[data-uc="reaction"]'),
+            { scale: 1, duration: 0.35, ease: "back.out(2.5)" },
+            "+=0.5",
+          );
+        });
+
+        ScrollTrigger.refresh();
+      });
+    },
+    { scope: rootRef },
+  );
+
   return (
-    <div className="home-use-cases">
+    <div className="home-use-cases" ref={rootRef}>
       {USE_CASES.map((useCase) => (
-        <article key={useCase.id} className="home-use-case-card">
+        <article key={useCase.id} className="home-use-case-card" data-accent={useCase.accent}>
           <div className="home-use-case-card__chat">
             <UserMessage user={useCase.user} />
+            <TimeJumpDivider label={useCase.elapsed} />
             <AgentMessage agent={useCase.agent} artifact={useCase.artifact} />
           </div>
           <div className="home-use-case-card__copy">
@@ -117,9 +275,20 @@ export function HomeUseCases() {
   );
 }
 
+/** Slack date-divider grammar carrying the elapsed time between ask and reply. */
+function TimeJumpDivider({ label }: { label: string }) {
+  return (
+    <div className="home-use-case-divider" data-uc="divider">
+      <span className="home-use-case-divider__line" aria-hidden />
+      <span>{label}</span>
+      <span className="home-use-case-divider__line" aria-hidden />
+    </div>
+  );
+}
+
 function UserMessage({ user }: { user: UseCase["user"] }) {
   return (
-    <div className="flex items-start gap-3">
+    <div className="flex items-start gap-3" data-uc="user">
       <div
         className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-[6px] shadow-[inset_0_-1px_0_rgba(0,0,0,0.10),inset_0_0_0_1px_rgba(0,0,0,0.06)]"
         aria-hidden
@@ -137,6 +306,10 @@ function UserMessage({ user }: { user: UseCase["user"] }) {
         <p className="mt-1 whitespace-pre-line text-[15px] font-normal leading-[1.46668] text-[#1d1c1d]">
           {user.text}
         </p>
+        {/* Pops in after the artifact lands; static without JS/motion. */}
+        <span className="home-use-case-reaction" data-uc="reaction" aria-hidden>
+          🥞 1
+        </span>
       </div>
     </div>
   );
@@ -150,7 +323,7 @@ function AgentMessage({
   artifact: UseCase["artifact"];
 }) {
   return (
-    <div className="flex items-start gap-3">
+    <div className="flex items-start gap-3" data-uc="agent">
       <div
         className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-[6px] bg-[#FFF1DA] shadow-[inset_0_-1px_0_rgba(0,0,0,0.10),inset_0_0_0_1px_rgba(0,0,0,0.06)]"
         aria-hidden
@@ -174,7 +347,16 @@ function AgentMessage({
           </span>
           <span className="text-[12px] font-normal text-[#616061]">{agent.time}</span>
         </div>
-        <p className="mt-1 whitespace-pre-line text-[15px] font-normal leading-[1.46668] text-[#1d1c1d]">
+        {/* Typing beat — display flipped by the timeline only. */}
+        <span className="home-use-case-typing" data-uc="typing" aria-hidden>
+          <i />
+          <i />
+          <i />
+        </span>
+        <p
+          className="mt-1 whitespace-pre-line text-[15px] font-normal leading-[1.46668] text-[#1d1c1d]"
+          data-uc="reply-text"
+        >
           {agent.text}
         </p>
         <ArtifactChip artifact={artifact} />
@@ -186,7 +368,7 @@ function AgentMessage({
 /** Slack-attachment-style chip — the proof the reply shipped real work. */
 function ArtifactChip({ artifact }: { artifact: UseCase["artifact"] }) {
   return (
-    <figure className="home-use-case-artifact" aria-label={artifact.title}>
+    <figure className="home-use-case-artifact" data-uc="artifact" aria-label={artifact.title}>
       <span className="home-use-case-artifact__icon" data-icon={artifact.icon} aria-hidden>
         <ArtifactGlyph icon={artifact.icon} />
       </span>
