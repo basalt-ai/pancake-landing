@@ -37,7 +37,6 @@ const columns: { title: string; links: FooterLink[] }[] = [
     title: "Resources",
     links: [
       { href: "/blog", label: "Blog" },
-      { href: "/influencers", label: "Influencers" },
       { href: "https://zcal.co/i/4mlnC2bQ", label: "Book a meeting" },
       { href: "https://discord.gg/brJ99Up6ym", label: "Discord" },
     ],
