@@ -1,0 +1,159 @@
+/**
+ * "Living film band" chrome for `components/sections/home/HomeDemoVideo.tsx`
+ * (self-imported by the component). Structural classes (.home-demo-video,
+ * __wrap, __frame, __player) stay in components.css — this file only adds
+ * the v4.2 elements: ambient teaser layer, glass play chip + duration pill,
+ * mascot peek, and the transcript disclosure.
+ */
+@layer component {
+  .home-film__wrap {
+    position: relative;
+  }
+
+  /* Mascot peeking over the frame's top edge. Sits UNDER the frame
+     (z-index 0 vs 1), so only the peeking sliver shows; the scroll-scale
+     entrance (frame starts at scale .92) reveals a bit more of it early,
+     a free parallax wink. */
+  .home-film__mascot {
+    position: absolute;
+    top: -26px;
+    right: 9%;
+    z-index: 0;
+    width: 76px;
+    height: auto;
+    rotate: -8deg;
+    pointer-events: none;
+  }
+
+  .home-film__frame {
+    position: relative;
+    z-index: 1;
+    /* Warm ambient shadow so the card floats instead of sitting flat. */
+    box-shadow:
+      0 2px 6px rgba(44, 0, 42, 0.08),
+      0 32px 72px -28px rgba(44, 0, 42, 0.3);
+    background-color: var(--weak-branded-surface);
+  }
+
+  /* Full film sits above the teaser, revealed in place on click. */
+  .home-film__film {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 220ms ease;
+  }
+
+  .home-film__frame--playing .home-film__film {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .home-film__frame--playing .home-film__teaser {
+    visibility: hidden;
+  }
+
+  /* Whole-frame click target carrying the chrome (WCAG: one big button,
+     not a 64px island). */
+  .home-film__cta {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .home-film__cta:focus-visible {
+    outline: 3px solid var(--surface);
+    outline-offset: -3px;
+    border-radius: inherit;
+  }
+
+  /* Glass play chip — pink-tinted backdrop blur (was near-black). White
+     triangle is a graphic on pink-40 glass, not text, so the pink-surface
+     text rule doesn't apply. */
+  .home-film__play {
+    display: grid;
+    place-items: center;
+    width: clamp(64px, 6vw, 88px);
+    aspect-ratio: 1;
+    border-radius: 9999px;
+    color: #fff;
+    background: color-mix(in srgb, var(--palette-pink-40) 55%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    transition:
+      transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      background-color 200ms ease;
+  }
+
+  .home-film__cta:hover .home-film__play,
+  .home-film__cta:focus-visible .home-film__play {
+    transform: scale(1.06);
+    background: color-mix(in srgb, var(--palette-pink-40) 72%, transparent);
+  }
+
+  .home-film__play svg {
+    width: 38%;
+    height: 38%;
+    margin-left: 7%; /* optical centering of the triangle */
+    fill: currentColor;
+  }
+
+  /* Duration pill — de-risks the click (proven affordance on film bands). */
+  .home-film__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: calc(var(--spacing-sm) + 2px) var(--spacing-lg);
+    border-radius: 9999px;
+    background-color: var(--surface);
+    border: 1px solid var(--stroke);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    font-weight: var(--font-heavy);
+    box-shadow: 0 2px 8px rgba(44, 0, 42, 0.12);
+  }
+
+  /* Crawlable film-as-text (WCAG 1.2.1 media alternative + GEO). */
+  .home-film__transcript {
+    max-width: 720px;
+    margin: var(--spacing-xl) auto 0;
+    color: var(--subtle-text);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    line-height: 1.55;
+  }
+
+  .home-film__transcript summary {
+    cursor: pointer;
+    width: fit-content;
+    margin-inline: auto;
+    font-weight: var(--font-heavy);
+    color: var(--subtle-text);
+  }
+
+  .home-film__transcript summary:hover {
+    color: var(--text);
+  }
+
+  .home-film__transcript p {
+    margin: var(--spacing-lg) 0 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-film__play,
+    .home-film__film {
+      transition: none;
+    }
+  }
+}

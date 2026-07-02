@@ -29,6 +29,22 @@ const softwareApplicationJsonLd = {
   },
 };
 
+// VideoObject JSON-LD — the "Meet Pancake" film band (HomeDemoVideo). Google
+// requires name/description/thumbnailUrl/uploadDate + contentUrl; uploadDate
+// is the film's first commit date. The on-page transcript lives inside the
+// HomeDemoVideo component as a <details> block.
+const videoObjectJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  name: "Meet Pancake — the film",
+  description:
+    "A 51-second film introducing Pancake, the AI coworker that lives in your Slack, staffs squads of agents, and pushes your company's autonomy level toward 99%.",
+  thumbnailUrl: "https://getpancake.ai/demo-video-poster-live.jpg",
+  uploadDate: "2026-06-02",
+  duration: "PT51S",
+  contentUrl: "https://getpancake.ai/demo-video.mp4",
+};
+
 // FAQPage JSON-LD — generated from the visible FAQ accordion (HomeFaq) so the
 // schema and the on-page content can never drift again (Google requires FAQ
 // rich-result content to be visible to users). FAQ_ITEMS keeps the OpenClaw /
@@ -55,6 +71,11 @@ export default function Home() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageJsonLd) }}
+      />
+      {/* VideoObject JSON-LD — the "Meet Pancake" film band */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(videoObjectJsonLd) }}
       />
       <HomeNav />
       <HomeHero />
