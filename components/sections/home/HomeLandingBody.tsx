@@ -152,6 +152,16 @@ export function HomeLandingBody() {
               </a>
             </li>
             <li>
+              <a href="/blog/viktor-vs-pancake-pricing" style={{ color: 'inherit', textDecoration: 'none' }}>
+                <strong>Viktor vs Pancake Pricing: Why Founders Pay Less for an AI Team</strong>
+              </a>
+            </li>
+            <li>
+              <a href="/blog/pancake-vs-paperclips" style={{ color: 'inherit', textDecoration: 'none' }}>
+                <strong>Pancake vs Paperclips: The Managed AI Team Layer for Founders Who Need Reliability</strong>
+              </a>
+            </li>
+            <li>
               <a href="/blog" style={{ color: 'inherit' }}>
                 See all posts →
               </a>
