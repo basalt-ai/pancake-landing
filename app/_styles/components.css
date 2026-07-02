@@ -1650,7 +1650,7 @@
   /* ── Use-case "chat theater" cards ─────────────────────────────────────
      Landing v4.1 redesign (founder: "flat, not juicy, fixed"). Three layers:
      tinted per-accent mat (10-step) → floating white Slack panel (two-layer
-     warm shadow) → sticker kicker. Cards rest at hand-placed offsets/tilts
+     warm shadow) → design-kit badge kicker. Cards rest at hand-placed offsets/tilts
      (individual `translate`/`rotate` props so GSAP's transform-based nudges
      in HomeUseCases.tsx compose instead of clobbering). The conversation is
      choreographed play-once by GSAP; CSS defaults ARE the final state, so
@@ -1735,24 +1735,12 @@
     translate: none;
   }
 
-  /* Mirrored captions: stacking buries the LEFT half of the fan on its
-     right edge and the RIGHT half on its left edge, so each card's copy
-     anchors to its uncovered edge — at rest all four kickers + headlines
-     peek fully and symmetrically. The 72px inline padding reserves the
-     seam zone so body lines wrap before the overlap instead of being
-     amputated mid-word. */
+  /* Copy stays left-justified on every card (founder call). The 72px
+     right padding on the LEFT half reserves the overlap seam so body
+     lines wrap before the covering card instead of being amputated
+     mid-word — position of the text is unchanged. */
   .home-use-cases--fan .home-use-case-card:nth-child(-n + 2) .home-use-case-card__copy {
     padding-right: 72px;
-  }
-
-  .home-use-cases--fan .home-use-case-card:nth-child(n + 3) .home-use-case-card__copy {
-    align-items: flex-end;
-    padding-left: 72px;
-    text-align: right;
-  }
-
-  .home-use-cases--fan .home-use-case-card:nth-child(n + 3) .home-use-case-card__kicker {
-    rotate: 2deg; /* mirror the sticker tilt with the mirrored alignment */
   }
 
   /* Per-card accent family: mat = 10-step, stroke/kicker = 20-step. */
@@ -1808,12 +1796,6 @@
     .home-use-case-card:hover::after {
       opacity: 1;
     }
-
-    /* Spotlight: focusing one card steps its siblings back. */
-    .home-use-cases:hover .home-use-case-card:not(:hover) {
-      opacity: 0.72;
-      filter: saturate(0.9);
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1824,11 +1806,6 @@
 
     .home-use-case-card:hover {
       translate: 0 var(--uc-rest-y, 0px);
-    }
-
-    .home-use-cases:hover .home-use-case-card:not(:hover) {
-      opacity: 1;
-      filter: none;
     }
   }
 
@@ -1841,6 +1818,7 @@
      receipt. With natural heights the gap governs, so grid/mobile are
      unchanged. */
   .home-use-case-card__chat {
+    position: relative; /* anchors the "Pancake is typing" presence line */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -1864,49 +1842,32 @@
       "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   }
 
-  /* Time-jump divider — Slack's date-divider grammar carrying the "hours
-     pass" story between the ask and the reply. */
-  .home-use-case-divider {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-lg);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgba(29, 28, 29, 0.55);
-  }
-
-  .home-use-case-divider__line {
-    flex: 1;
-    height: 1px;
-    background: rgba(29, 28, 29, 0.12);
-  }
-
-  /* Typing indicator — exists only during the GSAP timeline (display is
-     flipped by the animation); no-JS and reduced-motion never see it.
-     Absolutely positioned OUT of the flow (over the invisible reply, which
-     already reserves its final space) so toggling it never changes the
-     card's height — founder: card heights are fixed from the start. */
+  /* "Pancake is typing" — Slack's presence line at the panel foot. Exists
+     only during the GSAP timeline (display is flipped by the animation);
+     no-JS and reduced-motion never see it. Absolutely positioned OUT of
+     the flow so toggling it never changes the card's height — founder:
+     card heights are fixed from the start. */
   .home-use-case-typing {
     display: none;
     position: absolute;
-    top: 22px;
-    left: 0;
+    left: var(--spacing-xl);
+    bottom: var(--spacing-xl);
     align-items: center;
-    gap: 4px;
-    width: fit-content;
-    padding: 8px 12px;
-    background: rgba(29, 28, 29, 0.06);
-    border-radius: 12px;
+    gap: 3px;
+    font-size: 13px;
+    color: #616061;
   }
 
   .home-use-case-typing i {
     display: block;
-    width: 6px;
-    height: 6px;
+    width: 4px;
+    height: 4px;
     border-radius: 50%;
     background: #616061;
+  }
+
+  .home-use-case-typing i:first-of-type {
+    margin-left: 3px;
   }
 
   /* Slack-style emoji reaction on the ask — pops in after the artifact
@@ -1950,23 +1911,24 @@
     align-items: flex-start;
   }
 
-  /* Sticker kicker — a label slapped on the mat, 20-step fill + ink offset
-     shadow; the -2deg echoes the hero's hand-placed angles. */
+  /* Kicker — the design kit's `.badge` recipe (small uppercase label),
+     tinted with the card's 20-step. Flat, straight, no offset shadow:
+     the old "sticker" treatment was off-kit. */
   .home-use-case-card__kicker {
     margin: 0;
     display: inline-flex;
-    padding: calc(var(--spacing-sm) + 1px) var(--spacing-lg);
+    align-items: center;
+    padding: var(--spacing-xs) var(--spacing-md);
     font-family: var(--font-body);
     font-size: var(--font-size-eyebrow);
-    font-weight: var(--font-heavy);
+    font-weight: var(--font-semibold);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.453px;
     color: var(--text);
     background-color: var(--uc-stroke, var(--alt-surface));
+    border: 1px solid var(--uc-stroke, var(--alt-surface));
     border-radius: var(--radius-sm);
     corner-shape: squircle;
-    rotate: -2deg;
-    box-shadow: 2px 2px 0 var(--text);
   }
 
   .home-use-case-card__headline {

@@ -7,13 +7,14 @@
  * founder request.
  *
  * Composition (see the CSS block in `app/_styles/components.css`):
- *   tinted per-accent mat → floating white Slack panel → sticker kicker,
- *   cards resting at hand-placed offsets/tilts, physical hover + spotlight.
+ *   tinted per-accent mat → floating white Slack panel → design-kit badge
+ *   kicker, cards fanned at rest with a lift-to-read hover.
  *
  * Motion: one play-once GSAP timeline per card (ScrollTrigger `once`) —
- *   ask springs in (origin-anchored, iMessage-style) → time-jump divider
- *   ("overnight") → typing dots → reply → the artifact chip STAMPS in like
- *   a receipt and settles square → a 🥞 reaction pops onto the ask.
+ *   ask springs in (origin-anchored, iMessage-style) → "Pancake is typing"
+ *   presence line at the panel foot (Slack grammar) → reply → the artifact
+ *   chip STAMPS in like a receipt and settles square → a 🥞 reaction pops
+ *   onto the ask.
  * Chat is temporal media: play once, never scrub. CSS defaults are the
  * FINAL state, so no-JS and prefers-reduced-motion get the finished
  * exchange (the typing pill only ever exists inside the timeline).
@@ -33,8 +34,6 @@ type UseCase = {
   kicker: string;
   headline: string;
   body: string;
-  /** Time-jump divider label between the ask and the reply. */
-  elapsed: string;
   user: {
     name: string;
     initial: string;
@@ -54,7 +53,6 @@ const USE_CASES: UseCase[] = [
     kicker: "Engineering",
     headline: "Ships while you sleep.",
     body: "Report the bug on your way to bed. Wake up to a tested fix and an open pull request — not a ticket.",
-    elapsed: "overnight",
     user: {
       name: "Sam",
       initial: "S",
@@ -79,7 +77,6 @@ const USE_CASES: UseCase[] = [
     kicker: "Finance",
     headline: "It never forgets.",
     body: "Hand off the chasing you keep postponing. It reminds, tracks replies, and keeps nudging until the money lands.",
-    elapsed: "5 minutes later",
     user: {
       name: "Priya",
       initial: "P",
@@ -104,7 +101,6 @@ const USE_CASES: UseCase[] = [
     kicker: "Outbound",
     headline: "One ask, every tool.",
     body: "Ask once — it works across your CRM, inbox, and analytics in a single run. It does the legwork.",
-    elapsed: "7 minutes later",
     user: {
       name: "Mara",
       initial: "M",
@@ -129,7 +125,6 @@ const USE_CASES: UseCase[] = [
     kicker: "Content",
     headline: "Real work, attached.",
     body: "Get answers with the work attached — posts, PDFs, one-pagers. Grounded in your docs and your codebase.",
-    elapsed: "9 minutes later",
     user: {
       name: "Leo",
       initial: "L",
@@ -422,7 +417,6 @@ export function HomeUseCases() {
             scale: 0.92,
             transformOrigin: "bottom left",
           });
-          gsap.set(q('[data-uc="divider"]'), { autoAlpha: 0 });
           gsap.set(q('[data-uc="agent"]'), {
             autoAlpha: 0,
             y: 10,
@@ -468,21 +462,10 @@ export function HomeUseCases() {
             "<0.1",
           );
 
-          // Time passes — the dead air IS the story.
-          tl.to(
-            q('[data-uc="divider"]'),
-            { autoAlpha: 0.75, duration: 0.4, ease: "power2.out" },
-            "+=0.35",
-          );
-
-          // Pancake starts "typing"…
-          tl.to(
-            q('[data-uc="agent"]'),
-            { autoAlpha: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(1.5)" },
-            "+=0.25",
-          );
+          // "Pancake is typing" — Slack's presence line at the panel foot
+          // carries the wait (the old time-jump divider read as noise).
           if (typing) {
-            tl.set(typing, { display: "inline-flex" });
+            tl.set(typing, { display: "inline-flex" }, "+=0.4");
             tl.to(q('[data-uc="typing"] i'), {
               y: -3,
               duration: 0.26,
@@ -495,6 +478,11 @@ export function HomeUseCases() {
           }
 
           // …and delivers.
+          tl.to(
+            q('[data-uc="agent"]'),
+            { autoAlpha: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(1.5)" },
+            "+=0.1",
+          );
           tl.to(q('[data-uc="reply-text"]'), { autoAlpha: 1, duration: 0.3, ease: "power2.out" });
 
           // Receipt stamp — arrives from above the plane, settles square
@@ -530,8 +518,14 @@ export function HomeUseCases() {
         <article key={useCase.id} className="home-use-case-card" data-accent={useCase.accent}>
           <div className="home-use-case-card__chat">
             <UserMessage user={useCase.user} />
-            <TimeJumpDivider label={useCase.elapsed} />
             <AgentMessage agent={useCase.agent} artifact={useCase.artifact} />
+            {/* Slack's presence line — exists only during the timeline. */}
+            <span className="home-use-case-typing" data-uc="typing" aria-hidden>
+              Pancake is typing
+              <i />
+              <i />
+              <i />
+            </span>
           </div>
           <div className="home-use-case-card__copy">
             <p className="home-use-case-card__kicker">{useCase.kicker}</p>
@@ -540,17 +534,6 @@ export function HomeUseCases() {
           </div>
         </article>
       ))}
-    </div>
-  );
-}
-
-/** Slack date-divider grammar carrying the elapsed time between ask and reply. */
-function TimeJumpDivider({ label }: { label: string }) {
-  return (
-    <div className="home-use-case-divider" data-uc="divider">
-      <span className="home-use-case-divider__line" aria-hidden />
-      <span>{label}</span>
-      <span className="home-use-case-divider__line" aria-hidden />
     </div>
   );
 }
@@ -615,8 +598,7 @@ function AgentMessage({
           decoding="async"
         />
       </div>
-      {/* `relative` anchors the absolutely-positioned typing pill. */}
-      <div className="relative min-w-0 flex-1">
+      <div className="min-w-0 flex-1">
         <div className="flex items-baseline gap-2">
           <span className="text-[15px] font-bold text-[#1d1c1d]">Pancake</span>
           <span className="rounded-[3px] bg-[#e8e8e8] px-1 py-px text-[10px] font-bold uppercase tracking-wide text-[#616061]">
@@ -624,12 +606,6 @@ function AgentMessage({
           </span>
           <span className="text-[12px] font-normal text-[#616061]">{agent.time}</span>
         </div>
-        {/* Typing beat — display flipped by the timeline only. */}
-        <span className="home-use-case-typing" data-uc="typing" aria-hidden>
-          <i />
-          <i />
-          <i />
-        </span>
         <p
           className="mt-1 whitespace-pre-line text-[15px] font-normal leading-[1.46668] text-[#1d1c1d]"
           data-uc="reply-text"
