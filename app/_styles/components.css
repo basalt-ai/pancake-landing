@@ -1664,8 +1664,14 @@
 
   @media (min-width: 1024px) {
     .home-use-cases {
-      /* Four vertical cards in one row (founder call) — minmax(0) so long
-         artifact titles can't blow a track open. */
+      /* Four vertical cards in one row (founder call). Full-bleed breakout —
+         the row escapes the page container into the side margins so the
+         cards keep the proportions they had at three-up; capped so ultrawide
+         screens don't stretch them. minmax(0) so long artifact titles can't
+         blow a track open. */
+      --uc-bleed: min(100vw - 2 * var(--spacing-xl), 1680px);
+      width: var(--uc-bleed);
+      margin-inline: calc((100% - var(--uc-bleed)) / 2);
       grid-template-columns: repeat(4, minmax(0, 1fr));
       /* `start`, not `stretch` — asymmetric heights are the composition */
       align-items: start;
@@ -1826,13 +1832,18 @@
   }
 
   /* Typing indicator — exists only during the GSAP timeline (display is
-     flipped by the animation); no-JS and reduced-motion never see it. */
+     flipped by the animation); no-JS and reduced-motion never see it.
+     Absolutely positioned OUT of the flow (over the invisible reply, which
+     already reserves its final space) so toggling it never changes the
+     card's height — founder: card heights are fixed from the start. */
   .home-use-case-typing {
     display: none;
+    position: absolute;
+    top: 22px;
+    left: 0;
     align-items: center;
     gap: 4px;
     width: fit-content;
-    margin-top: var(--spacing-sm);
     padding: 8px 12px;
     background: rgba(29, 28, 29, 0.06);
     border-radius: 12px;

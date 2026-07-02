@@ -78,7 +78,7 @@ const USE_CASES: UseCase[] = [
     accent: "orange",
     kicker: "Finance",
     headline: "It never forgets.",
-    body: "Hand off the chasing you keep postponing. Reminders go out, replies get tracked, and it keeps nudging until the money lands.",
+    body: "Hand off the chasing you keep postponing. It reminds, tracks replies, and keeps nudging until the money lands.",
     elapsed: "5 minutes later",
     user: {
       name: "Priya",
@@ -90,7 +90,7 @@ const USE_CASES: UseCase[] = [
     },
     agent: {
       time: "8:17 AM",
-      text: "14 overdue, $38,400 outstanding. Friendly reminders sent to every client, you're in CC — 3 are paying today. I'll nudge the rest every 3 days until they clear.",
+      text: "14 overdue, $38,400 outstanding. Reminders sent to every client — 3 are paying today. I'll nudge the rest every 3 days until they clear.",
     },
     artifact: {
       icon: "sheet",
@@ -366,7 +366,8 @@ function AgentMessage({
           decoding="async"
         />
       </div>
-      <div className="min-w-0 flex-1">
+      {/* `relative` anchors the absolutely-positioned typing pill. */}
+      <div className="relative min-w-0 flex-1">
         <div className="flex items-baseline gap-2">
           <span className="text-[15px] font-bold text-[#1d1c1d]">pancake</span>
           <span className="rounded-[3px] bg-[#e8e8e8] px-1 py-px text-[10px] font-bold uppercase tracking-wide text-[#616061]">
