@@ -2907,7 +2907,7 @@
     font-family: var(--font-body);
     font-size: 18px;
     line-height: 28px;
-    color: rgba(44, 0, 42, 0.64);
+    color: color-mix(in srgb, var(--text) 64%, transparent);
   }
 
   /* ─── Pricing hero — single card, two columns inside ─── */
@@ -3311,7 +3311,7 @@
     border-radius: 999px;
     background-color: var(--surface);
     border: 3.5px solid var(--strong-branded-surface);
-    box-shadow: 0 2px 8px rgba(44, 0, 42, 0.22);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--text) 22%, transparent);
     cursor: grab;
     transition: transform 120ms ease, box-shadow 120ms ease;
   }
@@ -3322,18 +3322,18 @@
     border-radius: 999px;
     background-color: var(--surface);
     border: 3.5px solid var(--strong-branded-surface);
-    box-shadow: 0 2px 8px rgba(44, 0, 42, 0.22);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--text) 22%, transparent);
     cursor: grab;
   }
 
   .pricing-hero__slider:hover::-webkit-slider-thumb {
     transform: scale(1.08);
-    box-shadow: 0 3px 12px rgba(44, 0, 42, 0.28);
+    box-shadow: 0 3px 12px color-mix(in srgb, var(--text) 28%, transparent);
   }
 
   .pricing-hero__slider:focus-visible::-webkit-slider-thumb {
     box-shadow: 0 0 0 4px var(--weak-branded-surface),
-      0 2px 8px rgba(44, 0, 42, 0.22);
+      0 2px 8px color-mix(in srgb, var(--text) 22%, transparent);
   }
 
   .pricing-hero__slider:active::-webkit-slider-thumb {
@@ -3682,7 +3682,7 @@
     background-color: var(--surface);
     border: 1px solid var(--subtle-stroke);
     border-radius: var(--radius-md);
-    box-shadow: 0 4px 12px rgba(44, 0, 42, 0.06);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--text) 6%, transparent);
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
@@ -4268,7 +4268,7 @@
   }
 
   .signup-card__body--lede {
-    color: rgba(44, 0, 42, 0.64);
+    color: color-mix(in srgb, var(--text) 64%, transparent);
   }
 
   .signup-card__eyebrow {
@@ -4606,7 +4606,7 @@
     border-radius: 12px;
     background-color: var(--inverted-surface, #2c002a);
     color: var(--text-on-inverted-surface, #ffffff);
-    box-shadow: 0 12px 24px rgba(44, 0, 42, 0.18);
+    box-shadow: 0 12px 24px color-mix(in srgb, var(--text) 18%, transparent);
     text-align: left;
   }
 
