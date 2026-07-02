@@ -2,21 +2,20 @@
  * "Living film band" chrome for `components/sections/home/HomeDemoVideo.tsx`
  * (self-imported by the component). Structural section classes
  * (.home-demo-video, __wrap) stay in components.css — this file owns the
- * v4.3 split layout: copy column LEFT (claim), film RIGHT (proof), the
+ * v4.4 split layout: copy column LEFT (claim), film RIGHT (proof), the
  * pattern every leader (Linear/Stripe/Attio/Clay/Loom/Figma/Notion) uses
- * for the first media+copy row. Chapters in the copy column seek the film.
+ * for the first media+copy row.
  */
 @layer component {
   /* ── Split grid ────────────────────────────────────────────────────────
-     Mobile: intro → film → chapters (grid areas). Desktop: copy column
-     (intro + chapters) left at ~42%, film right — the 58% film keeps the
-     band roughly half the scroll cost of the old full-width version. */
+     Mobile: intro → film. Desktop: copy column left at ~42%, film right —
+     the 58% film keeps the band roughly half the scroll cost of the old
+     full-width version. */
   .home-film {
     display: grid;
     grid-template-areas:
       "intro"
-      "media"
-      "extras";
+      "media";
     gap: var(--spacing-xxl);
     align-items: center;
   }
@@ -24,11 +23,8 @@
   @media (min-width: 1024px) {
     .home-film {
       grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-      grid-template-areas:
-        "intro media"
-        "extras media";
+      grid-template-areas: "intro media";
       column-gap: calc(3 * var(--spacing-xxl));
-      row-gap: var(--spacing-xxl);
       align-items: center;
     }
   }
@@ -38,15 +34,6 @@
     display: flex;
     flex-direction: column;
     gap: var(--spacing-lg);
-    align-self: end;
-  }
-
-  .home-film__extras {
-    grid-area: extras;
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-lg);
-    align-self: start;
   }
 
   .home-film__media {
@@ -85,79 +72,27 @@
     color: var(--subtle-text);
   }
 
-  /* ── Chapters — click seeks the film (and doubles as the unmute
-     trigger). Homepage chapter lists are a differentiator: leaders only
-     ship them on demo pages (Ironclad/Wistia pattern). ─────────────────── */
-  .home-film__chapters {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .home-film__chapter {
-    display: flex;
-    align-items: baseline;
-    gap: var(--spacing-lg);
-    width: 100%;
-    padding: var(--spacing-md) var(--spacing-lg);
-    margin: 0;
-    border: 0;
-    background: transparent;
-    border-radius: var(--radius-sm);
-    corner-shape: squircle;
-    cursor: pointer;
-    text-align: left;
-    font-family: var(--font-body);
-    font-size: var(--font-size-body-regular);
-    color: var(--text);
-    transition: background-color 150ms ease;
-  }
-
-  .home-film__chapter:hover {
-    background-color: var(--weak-branded-surface);
-  }
-
-  .home-film__chapter:focus-visible {
-    outline: 2px solid var(--interactive-text);
-    outline-offset: 2px;
-  }
-
-  .home-film__chapter--active {
-    background-color: var(--weak-branded-surface);
-  }
-
-  .home-film__chapter-time {
-    flex: none;
-    font-size: var(--font-size-body-small);
-    font-weight: var(--font-heavy);
-    color: var(--palette-pink-40);
-    font-variant-numeric: tabular-nums;
-  }
-
   /* Low-commitment text CTA (leaders reserve primary buttons for hero +
-     closing band). */
+     closing band). Zero padding so it left-aligns with the copy above. */
   .home-film__watch {
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-md);
     width: fit-content;
-    margin: 0;
-    padding: var(--spacing-md) var(--spacing-lg);
+    margin: var(--spacing-sm) 0 0;
+    padding: 0;
     border: 0;
     background: transparent;
-    border-radius: var(--radius-sm);
-    corner-shape: squircle;
     cursor: pointer;
     font-family: var(--font-body);
     font-size: var(--font-size-body-regular);
     font-weight: var(--font-heavy);
     color: var(--text);
+    transition: color 150ms ease;
   }
 
   .home-film__watch:hover {
-    background-color: var(--weak-branded-surface);
+    color: var(--interactive-text);
   }
 
   .home-film__watch:focus-visible {
@@ -313,7 +248,7 @@
   @media (prefers-reduced-motion: reduce) {
     .home-film__play,
     .home-film__film,
-    .home-film__chapter,
+    .home-film__watch,
     .home-film__watch-arrow {
       transition: none;
     }

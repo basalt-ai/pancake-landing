@@ -1,27 +1,24 @@
 "use client";
 
 /**
- * "Meet Pancake" film band, v4.3 split layout (founder feedback on v4.2:
- * full-width costs too much scroll; the play chip read muddy; the visible
- * transcript line was clutter).
+ * "Meet Pancake" film band, v4.4 split layout (founder feedback on v4.3:
+ * the chapter list read sloppy and low-value — chapters belong on demo
+ * pages, not on a 51-second homepage film).
  *
  * LAYOUT — copy column LEFT (the claim), film RIGHT (the proof): the
  * pattern all leaders use for the first media+copy row (Linear, Stripe,
  * Attio, Clay, Loom, Figma, Notion — NN/g F-pattern: the left edge gets
  * the text). Column stack per the same research: eyebrow → benefit
- * heading one tier below H2 → short staccato body → chapter list → text
- * CTA (primary buttons stay reserved for hero + closing band).
- *
- * CHAPTERS seek the film with sound — a homepage differentiator (leaders
- * only ship chapters on demo pages) that doubles as the unmute trigger.
+ * heading one tier below H2 → one short body line → text CTA (primary
+ * buttons stay reserved for hero + closing band).
  *
  * AMBIENT: 12s silent teaser (6s–18s of the master) as the living poster —
  * IntersectionObserver lazy-load + play/pause, skipped under
  * prefers-reduced-motion / Save-Data. Frame scale-reveals 0.94 → 1 on
  * scroll (transform-only, no pin).
  *
- * FILM: click (frame, watch link, or chapter) swaps IN PLACE to the 51s
- * master with sound; master is preload="none" until hover intent; Escape
+ * FILM: click (frame or watch link) swaps IN PLACE to the 51s master
+ * with sound; master is preload="none" until hover intent; Escape
  * or film end returns to ambient. VideoObject JSON-LD lives in
  * `app/page.tsx`; the film's typography is mirrored in a visually-hidden
  * transcript (WCAG 1.2.1 + GEO).
@@ -37,15 +34,6 @@ import "@/app/_styles/home-film.css";
 const POSTER_SRC = "/demo-video-poster-live.jpg"; // frame at 6s = teaser's first frame (seamless swap)
 const TEASER_SRC = "/demo-video-teaser.mp4"; // 12s, 720p, audio stripped, ~680 KB
 const FILM_SRC = "/demo-video.mp4"; // 51s master
-
-/** Film beats — timestamps verified against the master's frames. */
-const CHAPTERS = [
-  { t: 0, label: "Meet Pancake", time: "0:00" },
-  { t: 6, label: "It lives in your Slack", time: "0:06" },
-  { t: 19, label: "“Run GTM for me”", time: "0:19" },
-  { t: 36, label: "The work ships itself", time: "0:36" },
-  { t: 42, label: "Autonomy hits 99.86%", time: "0:42" },
-] as const;
 
 /** Faithful mirror of the film's on-screen typography + UI beats. */
 const FILM_TRANSCRIPT = [
@@ -63,7 +51,6 @@ export function HomeDemoVideo() {
   const teaserRef = useRef<HTMLVideoElement>(null);
   const filmRef = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
-  const [activeChapter, setActiveChapter] = useState<number | null>(null);
 
   // Ambient teaser: lazy-load near viewport, play/pause on visibility.
   useEffect(() => {
@@ -129,21 +116,20 @@ export function HomeDemoVideo() {
     return () => window.removeEventListener("keydown", onKey);
   });
 
-  /** Start (or seek) the film with sound — chapters land here too. */
-  const startFilm = (at = 0) => {
+  /** Start the film from the top, with sound. */
+  const startFilm = () => {
     const film = filmRef.current;
     if (!film) return;
     teaserRef.current?.pause();
     setStarted(true);
     film.muted = false;
-    film.currentTime = at;
+    film.currentTime = 0;
     void film.play();
   };
 
   const backToAmbient = () => {
     filmRef.current?.pause();
     setStarted(false);
-    setActiveChapter(null);
     void teaserRef.current?.play().catch(() => {});
   };
 
@@ -151,18 +137,6 @@ export function HomeDemoVideo() {
   const warmFilm = () => {
     const film = filmRef.current;
     if (film && film.preload === "none") film.preload = "metadata";
-  };
-
-  /** Highlight the chapter the playhead is inside. */
-  const onTimeUpdate = () => {
-    const film = filmRef.current;
-    if (!film || film.paused) return;
-    const t = film.currentTime;
-    let idx: number | null = null;
-    for (let i = 0; i < CHAPTERS.length; i++) {
-      if (t >= CHAPTERS[i].t) idx = i;
-    }
-    setActiveChapter(idx);
   };
 
   return (
@@ -173,29 +147,10 @@ export function HomeDemoVideo() {
             <p className="home-film__eyebrow">The film</p>
             <h2 className="heading home-film__heading">Meet Pancake in 51 seconds</h2>
             <p className="home-film__body">
-              One coworker in Slack. A whole team behind it. Watch the autonomy level climb.
+              One coworker in Slack. A whole team behind it. Watch the autonomy level climb to
+              99.86%.
             </p>
-          </div>
-
-          <div className="home-film__extras">
-            <ol className="home-film__chapters">
-              {CHAPTERS.map((chapter, i) => (
-                <li key={chapter.t}>
-                  <button
-                    type="button"
-                    className={`home-film__chapter${activeChapter === i ? " home-film__chapter--active" : ""}`}
-                    onClick={() => startFilm(chapter.t)}
-                    aria-label={`Play the film from ${chapter.time} — ${chapter.label}`}
-                  >
-                    <span className="home-film__chapter-time" aria-hidden>
-                      {chapter.time}
-                    </span>
-                    <span>{chapter.label}</span>
-                  </button>
-                </li>
-              ))}
-            </ol>
-            <button type="button" className="home-film__watch" onClick={() => startFilm(0)}>
+            <button type="button" className="home-film__watch" onClick={startFilm}>
               Watch with sound
               <span className="home-film__watch-arrow" aria-hidden>
                 →
@@ -232,7 +187,6 @@ export function HomeDemoVideo() {
                 poster={POSTER_SRC}
                 controls={started}
                 onEnded={backToAmbient}
-                onTimeUpdate={onTimeUpdate}
               >
                 <source src={FILM_SRC} type="video/mp4" />
               </video>
@@ -242,7 +196,7 @@ export function HomeDemoVideo() {
                   <button
                     type="button"
                     className="home-film__cta"
-                    onClick={() => startFilm(0)}
+                    onClick={startFilm}
                     aria-label="Play the Pancake film — 51 seconds, with sound"
                   >
                     <span className="home-film__play" aria-hidden>
