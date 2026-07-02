@@ -27,10 +27,10 @@ export const metadata: Metadata = {
   title: "Open roadmap — Vote on what Pancake builds next · Pancake",
   description:
     "Pancake's public roadmap. Upvote the squads, features, and integrations you want, post your own ideas, and see what's planned, in progress, and shipped.",
-  alternates: { canonical: "https://www.getpancake.ai/open-roadmap" },
+  alternates: { canonical: "https://getpancake.ai/open-roadmap" },
   openGraph: {
     type: "website",
-    url: "https://www.getpancake.ai/open-roadmap",
+    url: "https://getpancake.ai/open-roadmap",
     title: "Pancake Open Roadmap — Vote on what we build next",
     description:
       "Upvote the squads, features, and integrations you want, and post your own ideas. See what's planned, in progress, and shipped.",
@@ -55,7 +55,7 @@ export default async function OpenRoadmapPage() {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: "Pancake Open Roadmap",
-    url: "https://www.getpancake.ai/open-roadmap",
+    url: "https://getpancake.ai/open-roadmap",
     itemListOrder: "https://schema.org/ItemListOrderDescending",
     numberOfItems: ideas.length,
     itemListElement: ideas.map((idea, i) => ({

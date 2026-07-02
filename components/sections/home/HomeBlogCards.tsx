@@ -57,9 +57,16 @@ function readingMinutes(slug: string): number | null {
   return Math.max(1, Math.round(words / 220));
 }
 
-/** "2026-06-30" → "June 30, 2026" (UTC so the day never shifts with server tz). */
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-US", {
+/**
+ * "2026-06-30" → "June 30, 2026" (UTC so the day never shifts with server tz).
+ * Returns null on unparseable frontmatter dates — same failure class
+ * `app/sitemap.ts`'s safeDate() guards against; the card then omits its
+ * <time> instead of printing "Invalid Date" on the homepage.
+ */
+function formatDate(iso: string): string | null {
+  const t = new Date(iso).getTime();
+  if (!Number.isFinite(t)) return null;
+  return new Date(t).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -91,12 +98,18 @@ function FallbackBlob() {
 export function HomeBlogCards() {
   // `getAllPosts()` sorts pinned-first; re-sort strictly by recency
   // (`publishedAt` when present, else `date`) so the section always shows
-  // the three newest articles regardless of pinning.
+  // the three newest articles regardless of pinning. Bad dates sort last
+  // (NaN would poison the comparator) and future-dated posts are skipped —
+  // the GEO pipeline forward-dates some posts, and "July 2" on a July 1
+  // homepage reads as a mistake to visitors and freshness reviewers.
+  const now = Date.now();
+  const postTime = (p: BlogCardMeta) => {
+    const t = new Date(p.publishedAt ?? p.date).getTime();
+    return Number.isFinite(t) ? t : 0;
+  };
   const posts = ([...getAllPosts()] as BlogCardMeta[])
-    .sort(
-      (a, b) =>
-        new Date(b.publishedAt ?? b.date).getTime() - new Date(a.publishedAt ?? a.date).getTime(),
-    )
+    .filter((p) => postTime(p) <= now)
+    .sort((a, b) => postTime(b) - postTime(a))
     .slice(0, 3);
 
   // No posts (e.g. content dir missing in a stripped build) → skip the
@@ -145,7 +158,9 @@ export function HomeBlogCards() {
                     </div>
                     <div className="home-blog-card__body">
                       <p className="home-blog-card__meta">
-                        <time dateTime={published}>{formatDate(published)}</time>
+                        {formatDate(published) !== null && (
+                          <time dateTime={published}>{formatDate(published)}</time>
+                        )}
                         {minutes !== null && (
                           <>
                             <span aria-hidden>·</span>

@@ -290,10 +290,9 @@ export function HomeOrgDiagramMobile() {
               className={`home-org-mobile-card home-org-mobile-card--${dept.surface}`}
             >
               <h3 className="home-org-mobile-card__title">{dept.title}</h3>
-              <ul
-                className="home-org-mobile-card__rows"
-                aria-live={reducedMotion ? undefined : "polite"}
-              >
+              {/* No aria-live: the row churn is decorative texture, not
+                  information — announcing it would spam screen readers. */}
+              <ul className="home-org-mobile-card__rows">
                 {(reducedMotion
                   ? // Reduced motion: render the seeded set, no live mutations.
                     dept.rows.map((r, i) => ({

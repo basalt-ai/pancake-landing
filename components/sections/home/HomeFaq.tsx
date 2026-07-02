@@ -32,7 +32,7 @@ import { H2 } from "@/components/ui/Headings";
 export const FAQ_ITEMS: readonly { q: string; a: string }[] = [
   {
     q: "What is OpenClaw and how does Pancake use it?",
-    a: "OpenClaw is an open-source AI agent runtime that powers multi-agent workflows. Pancake is the product built on top of it: a fully managed superagent that knows your company, runs inside Slack, and handles 50% of the work by default. You get OpenClaw's agent power without setting up or maintaining the runtime yourself.",
+    a: "OpenClaw is an open-source AI agent runtime that powers multi-agent workflows. Pancake is the product built on top of it: a fully managed AI coworker that knows your company, runs inside Slack, and handles 50–70% of the work by default. You get OpenClaw's agent power without setting up or maintaining the runtime yourself.",
   },
   {
     q: "What is an autonomous company?",
@@ -40,11 +40,11 @@ export const FAQ_ITEMS: readonly { q: string; a: string }[] = [
   },
   {
     q: "How is Pancake different from Viktor?",
-    a: "Viktor is a single AI coworker you prompt — it responds, then waits. Pancake deploys a coordinating squad of agents that work proactively without being asked, each with its own memory, cron schedule, and dedicated infrastructure — so your company runs itself rather than just being assisted.",
+    a: "Viktor is a coworker you prompt — it responds, then waits, and there's nothing behind it. Pancake is also one coworker in Slack, but with a whole team of agents behind it that work proactively without being asked — each with its own memory, cron schedule, and dedicated infrastructure — so your company runs itself rather than just being assisted.",
   },
   {
     q: "What does Pancake do for early-stage founders?",
-    a: "It gives you an AI cofounder that knows your company — goals, decisions, metrics, customers — and deploys a squad of agents to handle growth, engineering, and operations tasks 24/7 inside Slack. The result: a founding team of two that operates like a team of ten, going from $1 to $1M without traditional hiring.",
+    a: "It gives you an AI coworker that knows your company — goals, decisions, metrics, customers — and staffs a team of agents to handle growth, engineering, and operations tasks 24/7 inside Slack. The result: a founding team of two that operates like a team of ten, going from $1 to $1M without traditional hiring.",
   },
   {
     q: "Does Pancake replace human employees?",

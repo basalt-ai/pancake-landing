@@ -18,6 +18,7 @@ const softwareApplicationJsonLd = {
   offers: {
     "@type": "Offer",
     url: "https://getpancake.ai/pricing",
+    price: "49",
     priceCurrency: "USD",
     availability: "https://schema.org/InStock",
   },

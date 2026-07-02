@@ -8,10 +8,10 @@ import { Footer } from "@/components/shared/Footer";
 export const metadata: Metadata = {
   title: "Blog — Pancake",
   description: "Guides, strategies, and insights on AI-native company building, automation, and the future of work.",
-  alternates: { canonical: "https://www.getpancake.ai/blog" },
+  alternates: { canonical: "https://getpancake.ai/blog" },
   openGraph: {
     type: "website",
-    url: "https://www.getpancake.ai/blog",
+    url: "https://getpancake.ai/blog",
     title: "Blog — Pancake",
     description: "Guides, strategies, and insights on AI-native company building, automation, and the future of work.",
     siteName: "Pancake",

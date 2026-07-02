@@ -157,10 +157,8 @@ function PlaceholderCard({ variant }: { variant: (typeof PLACEHOLDER_VARIANTS)[n
           <path className="home-ugc-blob__top" d={PANCAKE_TOP_PATH} />
         </svg>
       </div>
-      <PlayChip />
       <div className="home-ugc-card__caption">
-        <p className="home-ugc-card__caption-title">Your clip here</p>
-        <p className="home-ugc-card__caption-hint">drop ugc/*.mp4</p>
+        <p className="home-ugc-card__caption-title">Clip coming soon</p>
       </div>
     </li>
   );
@@ -226,6 +224,14 @@ const UGC_SCRIPT = `(function () {
 export function HomeUGCWall({ alt = false }: { alt?: boolean } = {}) {
   const clips = readClips();
   const hasClips = clips.length > 0;
+
+  // A proof section must not ship without proof: on the production build the
+  // section renders ONLY once real clips exist in public/ugc/. Dev and Vercel
+  // preview builds show the designed placeholder cards so the layout can be
+  // reviewed before the clips land (VERCEL_ENV is "preview" on PR deploys).
+  const showPlaceholders =
+    process.env.NODE_ENV === "development" || process.env.VERCEL_ENV === "preview";
+  if (!hasClips && !showPlaceholders) return null;
 
   return (
     <section

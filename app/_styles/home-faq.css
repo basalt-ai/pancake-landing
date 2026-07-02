@@ -117,11 +117,12 @@
     color: var(--subtle-text);
   }
 
-  /* Desktop (lg): bump question type to the large body size and give the
-     cards roomier inline padding. */
+  /* Desktop (lg): slightly larger question type and roomier inline padding.
+     NOT --font-size-body-large — that token resolves to scale-4 (~39px, the
+     header-01 size) and would out-shout every H2 on the page. */
   @media (min-width: 1024px) {
     .home-faq__question {
-      font-size: var(--font-size-body-large);
+      font-size: 20px;
       padding: var(--spacing-xl) var(--spacing-xxl);
     }
 

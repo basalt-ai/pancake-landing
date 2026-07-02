@@ -22,10 +22,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${post.meta.title} — Pancake Blog`,
     description: post.meta.description,
-    alternates: { canonical: `https://www.getpancake.ai/blog/${slug}` },
+    alternates: { canonical: `https://getpancake.ai/blog/${slug}` },
     openGraph: {
       type: "article",
-      url: `https://www.getpancake.ai/blog/${slug}`,
+      url: `https://getpancake.ai/blog/${slug}`,
       title: post.meta.title,
       description: post.meta.description,
       publishedTime: post.meta.date,
@@ -63,11 +63,11 @@ export default async function BlogPost({ params }: Props) {
     publisher: {
       "@type": "Organization",
       name: "Pancake",
-      url: "https://www.getpancake.ai",
+      url: "https://getpancake.ai",
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://www.getpancake.ai/blog/${slug}`,
+      "@id": `https://getpancake.ai/blog/${slug}`,
     },
   };
 

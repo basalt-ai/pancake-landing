@@ -717,7 +717,9 @@ export function HomeOrgLiveRows({ scrollRootRef, deptRows, setDeptRows }: HomeOr
           className={`home-org-diagram__dept home-org-diagram__dept--${dept.surface} home-org-diagram__abs`}
         >
           <h3 className="home-org-diagram__dept-title">{dept.title}</h3>
-          <div className="home-org-diagram__rows" aria-live="polite">
+          {/* No aria-live: the row churn is decorative texture, not information —
+              announcing every add/remove would spam screen readers forever. */}
+          <div className="home-org-diagram__rows">
             {deptRows[dept.surface].map((row) => (
               <div key={row.id} className="home-org-diagram__row" data-org-live-row={row.id}>
                 <span

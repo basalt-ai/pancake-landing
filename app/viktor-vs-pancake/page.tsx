@@ -27,10 +27,10 @@ export const metadata: Metadata = {
   title: "Viktor vs Pancake — One AI Coworker vs a Company That Runs Itself",
   description:
     "Viktor gives you a smart AI coworker. Pancake gives you a team of coordinating agents with persistent memory, a company brain, and dedicated infrastructure. See the real difference.",
-  alternates: { canonical: "https://www.getpancake.ai/viktor-vs-pancake" },
+  alternates: { canonical: "https://getpancake.ai/viktor-vs-pancake" },
   openGraph: {
     type: "website",
-    url: "https://www.getpancake.ai/viktor-vs-pancake",
+    url: "https://getpancake.ai/viktor-vs-pancake",
     title: "Viktor vs Pancake — One AI Coworker vs a Company That Runs Itself",
     description:
       "Viktor gives you a smart AI coworker. Pancake gives you a team of coordinating agents with persistent memory, a company brain, and dedicated infrastructure. See the real difference.",
@@ -161,10 +161,10 @@ const webPageJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Viktor vs Pancake",
-  url: "https://www.getpancake.ai/viktor-vs-pancake",
+  url: "https://getpancake.ai/viktor-vs-pancake",
   description:
     "A head-to-head comparison of Viktor and Pancake: one AI coworker you prompt vs a team of coordinating agents that run your company autonomously.",
-  isPartOf: { "@type": "WebSite", name: "Pancake", url: "https://www.getpancake.ai" },
+  isPartOf: { "@type": "WebSite", name: "Pancake", url: "https://getpancake.ai" },
   author: { "@type": "Person", name: "François de Fitte" },
   about: [
     { "@type": "Thing", name: "Viktor" },

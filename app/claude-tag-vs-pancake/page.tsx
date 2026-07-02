@@ -28,10 +28,10 @@ export const metadata: Metadata = {
   title: "Claude Tag vs Pancake — One AI Teammate vs a Company That Runs Itself",
   description:
     "Claude Tag gives your Slack one powerful AI teammate from Anthropic. Pancake gives you a team of coordinating agents with persistent memory, a company brain, and dedicated infrastructure — on the same Claude models. See the real difference.",
-  alternates: { canonical: "https://www.getpancake.ai/claude-tag-vs-pancake" },
+  alternates: { canonical: "https://getpancake.ai/claude-tag-vs-pancake" },
   openGraph: {
     type: "website",
-    url: "https://www.getpancake.ai/claude-tag-vs-pancake",
+    url: "https://getpancake.ai/claude-tag-vs-pancake",
     title: "Claude Tag vs Pancake — One AI Teammate vs a Company That Runs Itself",
     description:
       "Claude Tag gives your Slack one powerful AI teammate from Anthropic. Pancake gives you a team of coordinating agents with persistent memory, a company brain, and dedicated infrastructure. See the real difference.",
@@ -167,10 +167,10 @@ const webPageJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Claude Tag vs Pancake",
-  url: "https://www.getpancake.ai/claude-tag-vs-pancake",
+  url: "https://getpancake.ai/claude-tag-vs-pancake",
   description:
     "A head-to-head comparison of Claude Tag and Pancake: one AI teammate you tag in Slack vs a team of coordinating agents that run your company autonomously — both built on Claude.",
-  isPartOf: { "@type": "WebSite", name: "Pancake", url: "https://www.getpancake.ai" },
+  isPartOf: { "@type": "WebSite", name: "Pancake", url: "https://getpancake.ai" },
   author: { "@type": "Person", name: "François de Fitte" },
   about: [
     { "@type": "Thing", name: "Claude Tag" },

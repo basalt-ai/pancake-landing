@@ -13,17 +13,17 @@ function safeDate(value: string | undefined): Date {
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
-    { url: "https://www.getpancake.ai", lastModified: new Date(), priority: 1.0 },
-    { url: "https://www.getpancake.ai/pricing", lastModified: new Date(), priority: 0.8 },
-    { url: "https://www.getpancake.ai/open-roadmap", lastModified: new Date(), priority: 0.6 },
-    { url: "https://www.getpancake.ai/privacy", lastModified: new Date(), priority: 0.3 },
-    { url: "https://www.getpancake.ai/terms", lastModified: new Date(), priority: 0.3 },
-    { url: "https://www.getpancake.ai/blog", lastModified: new Date(), priority: 0.8 },
-    { url: "https://www.getpancake.ai/viktor-vs-pancake", lastModified: new Date(), priority: 0.8 },
-    { url: "https://www.getpancake.ai/claude-tag-vs-pancake", lastModified: new Date(), priority: 0.8 },
-    { url: "https://www.getpancake.ai/openclaw-vs-pancake", lastModified: new Date(), priority: 0.8 },
+    { url: "https://getpancake.ai", lastModified: new Date(), priority: 1.0 },
+    { url: "https://getpancake.ai/pricing", lastModified: new Date(), priority: 0.8 },
+    { url: "https://getpancake.ai/open-roadmap", lastModified: new Date(), priority: 0.6 },
+    { url: "https://getpancake.ai/privacy", lastModified: new Date(), priority: 0.3 },
+    { url: "https://getpancake.ai/terms", lastModified: new Date(), priority: 0.3 },
+    { url: "https://getpancake.ai/blog", lastModified: new Date(), priority: 0.8 },
+    { url: "https://getpancake.ai/viktor-vs-pancake", lastModified: new Date(), priority: 0.8 },
+    { url: "https://getpancake.ai/claude-tag-vs-pancake", lastModified: new Date(), priority: 0.8 },
+    { url: "https://getpancake.ai/openclaw-vs-pancake", lastModified: new Date(), priority: 0.8 },
     ...getAllPosts().map((post) => ({
-      url: `https://www.getpancake.ai/blog/${post.slug}`,
+      url: `https://getpancake.ai/blog/${post.slug}`,
       lastModified: safeDate(post.last_updated || post.date),
       priority: 0.7 as number,
     })),

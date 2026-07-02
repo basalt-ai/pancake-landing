@@ -28,10 +28,10 @@ export const metadata: Metadata = {
   title: "OpenClaw vs Pancake — The Open-Source Runtime vs the Company That Runs Itself",
   description:
     "OpenClaw is the open-source runtime. Pancake is the product built on top of it — pre-configured specialist teams, a company brain, dedicated pods, and the playbooks that make it work. The engine vs the car.",
-  alternates: { canonical: "https://www.getpancake.ai/openclaw-vs-pancake" },
+  alternates: { canonical: "https://getpancake.ai/openclaw-vs-pancake" },
   openGraph: {
     type: "website",
-    url: "https://www.getpancake.ai/openclaw-vs-pancake",
+    url: "https://getpancake.ai/openclaw-vs-pancake",
     title: "OpenClaw vs Pancake — The Open-Source Runtime vs the Company That Runs Itself",
     description:
       "OpenClaw is the open-source runtime. Pancake is the product built on top of it — pre-configured specialist teams, a company brain, dedicated pods, and the playbooks that make it work.",
@@ -162,10 +162,10 @@ const webPageJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "OpenClaw vs Pancake",
-  url: "https://www.getpancake.ai/openclaw-vs-pancake",
+  url: "https://getpancake.ai/openclaw-vs-pancake",
   description:
     "A head-to-head comparison of OpenClaw and Pancake: the open-source agent runtime you assemble yourself vs the managed product built on top of it that runs your company autonomously.",
-  isPartOf: { "@type": "WebSite", name: "Pancake", url: "https://www.getpancake.ai" },
+  isPartOf: { "@type": "WebSite", name: "Pancake", url: "https://getpancake.ai" },
   author: { "@type": "Person", name: "François de Fitte" },
   about: [
     { "@type": "Thing", name: "OpenClaw" },

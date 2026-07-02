@@ -193,4 +193,16 @@
       right: calc(3 * var(--spacing-xl));
     }
   }
+
+  /* The kit's outline button borders with --subtle-stroke (chrome-40), which
+     is invisible against the pink-10 band (~1.02:1). Fill the secondary CTA
+     white like the proof chips so it reads as a button on this surface. */
+  .home-pricing-teaser .button[data-variant="outline"] {
+    background-color: var(--surface);
+    border-color: var(--stroke);
+  }
+
+  .home-pricing-teaser .button[data-variant="outline"]:hover {
+    border-color: var(--strong-stroke);
+  }
 }

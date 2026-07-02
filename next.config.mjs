@@ -26,6 +26,9 @@ const nextConfig = {
     return [
       { source: "/favicon.ico", destination: "/icon.png", permanent: false },
       { source: "/creators", destination: "/influencers", permanent: true },
+      // llms.txt (and possibly LLM answers built from it) link /signup;
+      // the route never existed — send those visitors to the real signup.
+      { source: "/signup", destination: "https://app.getpancake.ai", permanent: false },
       ...dead.map((path) => ({
         source: `/${path}`,
         destination: "/",

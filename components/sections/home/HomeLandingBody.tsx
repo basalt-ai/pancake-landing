@@ -28,8 +28,13 @@ import { SlackUI } from "@/components/shared/SlackUI";
 import { H2 } from "@/components/ui/Headings";
 import { PANCAKE_TINTS } from "@/lib/pancake-palette";
 
-/** Figma `428:15162` — U+2028 line break before “company”. */
-const CLOSING_TITLE = "Make your  company autonomous";
+/**
+ * Figma `428:15162` — two-line composition. A plain "\n" because the heading
+ * renders with `whitespace-pre-line`, which honors LF but NOT the U+2028 the
+ * old constant carried (Chromium rendered it as a typo-looking double gap on
+ * a single line).
+ */
+const CLOSING_TITLE = "Make your\ncompany autonomous";
 
 /**
  * Inline pancake decoration — same two-tone silhouette used across the page
@@ -57,15 +62,17 @@ function DecorPancake({ variant, className }: { variant: keyof typeof PANCAKE_TI
 export function HomeLandingBody() {
   return (
     <div className="home-landing">
-      {/* Figma `428:15120` slack — leads the page. Agents living in Slack is
-          the headline proof point (kept from PR #151's re-order). */}
+      {/* Figma `428:15120` slack — leads the page. Pancake living in Slack is
+          the headline proof point (kept from PR #151's re-order). Singular
+          framing: the hero just introduced ONE coworker; the plural team
+          story lands two sections later in the org chart. */}
       <section className="home-landing-section" aria-labelledby="home-landing-slack-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             <H2 id="home-landing-slack-heading" className="heading home-landing-section__title text-center">
-              Your agents live in Slack
+              Pancake lives in Slack
             </H2>
-            <p className="home-landing-section__lede text-center">They don’t wait to be asked.</p>
+            <p className="home-landing-section__lede text-center">It doesn’t wait to be asked.</p>
           </header>
           <div className="home-landing-section__figure home-landing-section__figure--slack">
             <SlackUI />
@@ -96,7 +103,7 @@ export function HomeLandingBody() {
               One coworker. A whole team behind it.
             </H2>
             <p className="home-landing-section__lede text-center">
-              Pancake staffs squads of agents that keep working — even when you’re asleep.
+              Pancake staffs squads of agents that never clock out.
             </p>
           </header>
           <div className="home-landing-section__figure home-landing-org-mobile">
@@ -123,11 +130,6 @@ export function HomeLandingBody() {
         </div>
       </section>
 
-      {/* UGC video wall — real founders on camera. Reads public/ugc/*.mp4 at
-          build time; renders a designed empty state until clips are dropped
-          in (see public/ugc/README.md). */}
-      <HomeUGCWall />
-
       {/* Real X posts — full-bleed carousel band (Figma `428:15175` skeleton, real content) */}
       <section className="home-landing-section home-landing-section--testimonials" aria-labelledby="home-landing-testimonials-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner home-landing-section__inner--testimonials`}>
@@ -140,8 +142,16 @@ export function HomeLandingBody() {
         <HomeLandingTestimonials />
       </section>
 
+      {/* UGC video wall — real founders on camera, following the X posts so
+          the two proof formats read as one arc. Reads public/ugc/*.mp4 at
+          build time; production renders nothing until clips are dropped in
+          (see public/ugc/README.md); dev + Vercel previews show the designed
+          empty state. `alt` keeps the surface alternation vs the plain
+          testimonial band. */}
+      <HomeUGCWall alt />
+
       {/* Security (card skeleton from the former Figma `428:15087` features section) */}
-      <section className="home-landing-section home-landing-section--alt" aria-labelledby="home-landing-security-heading">
+      <section className="home-landing-section" aria-labelledby="home-landing-security-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             <H2 id="home-landing-security-heading" className="heading home-landing-section__title text-center">
@@ -154,7 +164,7 @@ export function HomeLandingBody() {
       </section>
 
       {/* Figma `428:15125` control */}
-      <section className="home-landing-section" aria-labelledby="home-landing-control-heading">
+      <section className="home-landing-section home-landing-section--alt" aria-labelledby="home-landing-control-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             <H2 id="home-landing-control-heading" className="heading home-landing-section__title text-center">
@@ -176,7 +186,8 @@ export function HomeLandingBody() {
       {/* FAQ — visible accordion backing the FAQPage JSON-LD in app/page.tsx
           (schema previously promoted content that never appeared on-page).
           FAQ_ITEMS in HomeFaq.tsx is the single source of truth for both.
-          `alt` keeps the surface rhythm: pink band → alt → plain → alt. */}
+          `alt` continues the rhythm after the pink band: faq(alt) →
+          blog(plain) → closing(alt). */}
       <HomeFaq alt />
 
       {/* From the blog — explicit internal links for crawler discovery of new

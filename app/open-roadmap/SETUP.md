@@ -35,7 +35,7 @@ domain (default `getpancake.ai`) get admin, which unlocks delete.
    **OAuth client ID** of type **Web application**. Under *Authorised redirect
    URIs*, add one per origin:
    - `http://localhost:3001/api/roadmap/auth/google/callback` (local dev)
-   - `https://www.getpancake.ai/api/roadmap/auth/google/callback` (production)
+   - `https://getpancake.ai/api/roadmap/auth/google/callback` (production)
 2. Copy the **Client ID** → `GOOGLE_OAUTH_CLIENT_ID` and **Client secret** →
    `GOOGLE_OAUTH_CLIENT_SECRET`.
 3. Set `ROADMAP_AUTH_SECRET` to a long random string (`openssl rand -hex 32`) —

@@ -32,14 +32,14 @@ const dmMono = DM_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Get started — The superagent that makes your company autonomous · Pancake",
+  title: "Get started — The AI coworker that does the work for you · Pancake",
   description:
     "Create your Pancake account — $100 in free credits, no card required. Stack autonomous agents across growth, engineering and ops so your company keeps running even while you sleep.",
-  alternates: { canonical: "https://www.getpancake.ai/get-started" },
+  alternates: { canonical: "https://getpancake.ai/get-started" },
   openGraph: {
     type: "website",
-    url: "https://www.getpancake.ai/get-started",
-    title: "Get started with Pancake — The superagent that makes your company autonomous",
+    url: "https://getpancake.ai/get-started",
+    title: "Get started with Pancake — the AI coworker that does the work for you",
     description:
       "Create your account — $100 in free credits, no card required. Stack autonomous agents across growth, engineering and ops.",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Get started with Pancake" }],
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Get started with Pancake — The superagent that makes your company autonomous",
+    title: "Get started with Pancake — the AI coworker that does the work for you",
     description:
       "Create your account — $100 in free credits, no card required.",
     images: ["/og-image.png"],

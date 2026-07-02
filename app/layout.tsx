@@ -59,7 +59,7 @@ const aeonikFono = localFont({
 });
 
 // Canonical host is the apex domain: https://getpancake.ai serves 200 directly,
-// and https://www.getpancake.ai 308-redirects to it (verified via curl -sI).
+// and the www host 308-redirects to it (verified via curl -sI).
 // Every absolute URL below (canonical, og:url, JSON-LD) uses the apex host.
 export const metadata: Metadata = {
   metadataBase: new URL("https://getpancake.ai"),
@@ -99,7 +99,7 @@ const organizationJsonLd = {
   name: "Pancake",
   alternateName: "Pancake AI",
   url: "https://getpancake.ai",
-  logo: "https://getpancake.ai/logo.png",
+  logo: "https://getpancake.ai/pancake-mark.png",
   description:
     "Pancake is the AI coworker that does the work for you. It connects to your tools and works autonomously — one AI coworker in Slack, a whole team of agents behind it.",
   foundingDate: "2024",

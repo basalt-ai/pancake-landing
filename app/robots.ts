@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://www.getpancake.ai/sitemap.xml",
+    sitemap: "https://getpancake.ai/sitemap.xml",
   };
 }
