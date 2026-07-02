@@ -1947,9 +1947,9 @@
   }
 
   /* Slack-attachment-style artifact chip inside the agent reply — the
-     receipt of the job. GSAP stamps it in and leaves it at rotate(-1deg);
-     these defaults are the static/no-JS resting state. Icon tones reuse the
-     site's status palette (positive/warning/negative text). */
+     receipt of the job. GSAP stamps it in and settles it square (parallel
+     to the chat panel); these defaults are the static/no-JS resting state.
+     Icon tones reuse the site's status palette. */
   .home-use-case-artifact {
     margin: var(--spacing-md) 0 0 0;
     display: flex;

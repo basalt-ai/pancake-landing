@@ -13,7 +13,7 @@
  * Motion: one play-once GSAP timeline per card (ScrollTrigger `once`) —
  *   ask springs in (origin-anchored, iMessage-style) → time-jump divider
  *   ("overnight") → typing dots → reply → the artifact chip STAMPS in like
- *   a receipt and settles at -1deg → a 🥞 reaction pops onto the ask.
+ *   a receipt and settles square → a 🥞 reaction pops onto the ask.
  * Chat is temporal media: play once, never scrub. CSS defaults are the
  * FINAL state, so no-JS and prefers-reduced-motion get the finished
  * exchange (the typing pill only ever exists inside the timeline).
@@ -61,7 +61,7 @@ const USE_CASES: UseCase[] = [
       accent: "#E8E0F2",
       accentInk: "#4A3C7B",
       time: "11:48 PM",
-      text: "@pancake checkout's crashing on prod. I'm going to bed — take it.",
+      text: "@Pancake checkout's crashing on prod. I'm going to bed — take it.",
     },
     agent: {
       time: "7:02 AM",
@@ -86,7 +86,7 @@ const USE_CASES: UseCase[] = [
       accent: "#D6E9DC",
       accentInk: "#1E5B3C",
       time: "8:12 AM",
-      text: "@pancake chase down our overdue invoices? Some are 60+ days out and I keep forgetting.",
+      text: "@Pancake chase down our overdue invoices? Some are 60+ days out and I keep forgetting.",
     },
     agent: {
       time: "8:17 AM",
@@ -111,7 +111,7 @@ const USE_CASES: UseCase[] = [
       accent: "#D5E4EB",
       accentInk: "#1F4660",
       time: "9:14 AM",
-      text: "@pancake watch new signups, flag the hot ones, draft follow-ups.",
+      text: "@Pancake watch new signups, flag the hot ones, draft follow-ups.",
     },
     agent: {
       time: "9:21 AM",
@@ -136,7 +136,7 @@ const USE_CASES: UseCase[] = [
       accent: "#EAE2D2",
       accentInk: "#6E5520",
       time: "4:32 PM",
-      text: "@pancake turn this week's changelog into a launch post.",
+      text: "@Pancake turn this week's changelog into a launch post.",
     },
     agent: {
       time: "4:41 PM",
@@ -190,11 +190,20 @@ export function HomeUseCases() {
         const getSpread = () =>
           Math.max(0, root.clientWidth / 2 - cards[0].offsetWidth / 2 - 8);
 
-        // The stage is fixed-height (cards are absolute): tallest card +
-        // outer-slot dip + hover-lift headroom.
+        // Equalize (founder: identical everything) — every white chat panel
+        // gets the height of the tallest one, then every card the height of
+        // the tallest card, then the stage wraps the result (+ dip and
+        // hover-lift headroom). Reset first so resizes re-measure natural
+        // heights instead of compounding.
+        const chats = cards.map((c) => c.querySelector<HTMLElement>(".home-use-case-card__chat"));
         const sizeStage = () => {
-          const maxH = Math.max(...cards.map((c) => c.offsetHeight));
-          root.style.height = `${maxH + 72}px`;
+          chats.forEach((chat) => chat && (chat.style.height = ""));
+          cards.forEach((card) => (card.style.height = ""));
+          const maxChat = Math.max(...chats.map((chat) => chat?.offsetHeight ?? 0));
+          chats.forEach((chat) => chat && (chat.style.height = `${maxChat}px`));
+          const maxCard = Math.max(...cards.map((c) => c.offsetHeight));
+          cards.forEach((card) => (card.style.height = `${maxCard}px`));
+          root.style.height = `${maxCard + 72}px`;
         };
         sizeStage();
         if (typeof document !== "undefined" && "fonts" in document) {
@@ -421,14 +430,15 @@ export function HomeUseCases() {
           // …and delivers.
           tl.to(q('[data-uc="reply-text"]'), { autoAlpha: 1, duration: 0.3, ease: "power2.out" });
 
-          // Receipt stamp — arrives from above the plane, settles at -1deg.
+          // Receipt stamp — arrives from above the plane, settles square
+          // (parallel to the panel that frames it; founder parallelism rule).
           tl.fromTo(
             q('[data-uc="artifact"]'),
             { autoAlpha: 0, scale: 1.3, rotate: -5, filter: "blur(2px)" },
             {
               autoAlpha: 1,
               scale: 1,
-              rotate: -1,
+              rotate: 0,
               filter: "blur(0px)",
               duration: 0.32,
               ease: "power4.out",
@@ -539,7 +549,7 @@ function AgentMessage({
       {/* `relative` anchors the absolutely-positioned typing pill. */}
       <div className="relative min-w-0 flex-1">
         <div className="flex items-baseline gap-2">
-          <span className="text-[15px] font-bold text-[#1d1c1d]">pancake</span>
+          <span className="text-[15px] font-bold text-[#1d1c1d]">Pancake</span>
           <span className="rounded-[3px] bg-[#e8e8e8] px-1 py-px text-[10px] font-bold uppercase tracking-wide text-[#616061]">
             APP
           </span>

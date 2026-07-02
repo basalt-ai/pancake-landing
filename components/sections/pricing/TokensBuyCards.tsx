@@ -99,7 +99,7 @@ function AgentMessage({ agent }: { agent: Card["agent"] }) {
       <PancakeAgentAvatar />
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline gap-2">
-          <span className="text-[15px] font-bold text-[#1d1c1d]">pancake</span>
+          <span className="text-[15px] font-bold text-[#1d1c1d]">Pancake</span>
           <span className="rounded-[3px] bg-[#e8e8e8] px-1 py-px text-[10px] font-bold uppercase tracking-wide text-[#616061]">
             APP
           </span>
