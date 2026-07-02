@@ -150,8 +150,178 @@ const USE_CASES: UseCase[] = [
   },
 ];
 
+/** Fan slot geometry — d ∈ [-1, 1] from center; outer cards rotate, dip,
+ *  and shrink the most (quadratic falloff, 21st.dev card-fan pattern). */
+function fanSlot(slot: number, count: number, spread: number) {
+  const half = (count - 1) / 2;
+  const d = half > 0 ? (slot - half) / half : 0;
+  return {
+    x: d * spread,
+    y: Math.abs(d) ** 2 * 40,
+    rot: d * 7,
+    scale: 1 - 0.08 * Math.abs(d) ** 2,
+    z: count - Math.ceil(Math.abs(slot - half)),
+  };
+}
+
 export function HomeUseCases() {
   const rootRef = useRef<HTMLDivElement>(null);
+
+  // Fan mode (desktop + motion allowed): the row becomes a stage, the four
+  // cards an overlapping hand. Hover lifts a card to the front (rotation
+  // zeroed for reading) and elastically pushes the others aside — founder-
+  // picked 21st.dev card-fan pattern, card innards unchanged. The CSS grid
+  // remains the no-JS / reduced-motion / mobile layout.
+  useGSAP(
+    () => {
+      const root = rootRef.current;
+      if (!root) return;
+
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
+        const cards = gsap.utils.toArray<HTMLElement>(root.querySelectorAll(".home-use-case-card"));
+        if (cards.length < 2) return;
+        root.classList.add("home-use-cases--fan");
+
+        const count = cards.length;
+        const half = (count - 1) / 2;
+
+        // Outer card centers sit near the row edges; overlap is the point.
+        const getSpread = () =>
+          Math.max(0, root.clientWidth / 2 - cards[0].offsetWidth / 2 - 8);
+
+        // The stage is fixed-height (cards are absolute): tallest card +
+        // outer-slot dip + hover-lift headroom.
+        const sizeStage = () => {
+          const maxH = Math.max(...cards.map((c) => c.offsetHeight));
+          root.style.height = `${maxH + 72}px`;
+        };
+        sizeStage();
+        if (typeof document !== "undefined" && "fonts" in document) {
+          document.fonts.ready.then(sizeStage).catch(() => {});
+        }
+
+        let entering = true;
+        let hovered: number | null = null;
+        let leaveTimer: ReturnType<typeof setTimeout> | null = null;
+
+        const layout = (hoveredSlot: number | null, duration = 0.55) => {
+          const spread = getSpread();
+          cards.forEach((card, slot) => {
+            const base = fanSlot(slot, count, spread);
+            let { x, y, rot, scale } = base;
+            let delay = 0;
+            if (hoveredSlot !== null) {
+              const dist = Math.abs(slot - hoveredSlot);
+              delay = dist * 0.02;
+              if (slot === hoveredSlot) {
+                // Lift, straighten, come to front — the card becomes readable.
+                y -= 28;
+                rot = 0;
+                scale = Math.min(1, scale * 1.06);
+              } else {
+                const push = 110 / dist;
+                x += slot < hoveredSlot ? -push : push;
+                rot += (slot < hoveredSlot ? -3 : 3) / dist;
+              }
+            } else {
+              delay = Math.abs(slot - half) * 0.02;
+            }
+            gsap.to(card, {
+              x,
+              y,
+              rotation: rot,
+              scale,
+              duration,
+              delay,
+              ease: "elastic.out(1, 0.75)",
+              overwrite: "auto",
+            });
+            gsap.set(card, { zIndex: slot === hoveredSlot ? count + 6 : base.z });
+          });
+        };
+
+        // Elastic entry from below, staggered left→right, plays once.
+        const spread = getSpread();
+        cards.forEach((card, slot) => {
+          const t = fanSlot(slot, count, spread);
+          gsap.set(card, {
+            x: t.x * 0.4,
+            y: t.y + 140,
+            rotation: 0,
+            scale: 0.6,
+            autoAlpha: 0,
+            zIndex: t.z,
+          });
+        });
+        ScrollTrigger.create({
+          trigger: root,
+          start: "top 80%",
+          once: true,
+          onEnter: () => {
+            cards.forEach((card, slot) => {
+              const t = fanSlot(slot, count, spread);
+              gsap.to(card, {
+                x: t.x,
+                y: t.y,
+                rotation: t.rot,
+                scale: t.scale,
+                autoAlpha: 1,
+                duration: 1.1,
+                ease: "elastic.out(1.05, 0.78)",
+                delay: slot * 0.08,
+                onComplete: slot === count - 1 ? () => { entering = false; } : undefined,
+              });
+            });
+          },
+        });
+
+        const enterHandlers = cards.map((card, slot) => {
+          const onEnter = () => {
+            if (entering) return;
+            if (leaveTimer) {
+              clearTimeout(leaveTimer);
+              leaveTimer = null;
+            }
+            if (hovered !== slot) {
+              hovered = slot;
+              layout(slot);
+            }
+          };
+          card.addEventListener("mouseenter", onEnter);
+          return onEnter;
+        });
+
+        const onLeave = () => {
+          if (entering) return;
+          if (leaveTimer) clearTimeout(leaveTimer);
+          leaveTimer = setTimeout(() => {
+            hovered = null;
+            layout(null);
+          }, 60);
+        };
+        root.addEventListener("mouseleave", onLeave);
+
+        const onResize = () => {
+          if (entering) return;
+          sizeStage();
+          layout(hovered, 0.3);
+        };
+        window.addEventListener("resize", onResize);
+
+        return () => {
+          cards.forEach((card, slot) => card.removeEventListener("mouseenter", enterHandlers[slot]));
+          root.removeEventListener("mouseleave", onLeave);
+          window.removeEventListener("resize", onResize);
+          if (leaveTimer) clearTimeout(leaveTimer);
+          root.classList.remove("home-use-cases--fan");
+          root.style.height = "";
+          gsap.set(cards, { clearProps: "transform,opacity,visibility,zIndex" });
+        };
+      });
+    },
+    { scope: rootRef },
+  );
 
   useGSAP(
     () => {

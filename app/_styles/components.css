@@ -1708,6 +1708,33 @@
     rotate: var(--uc-rest-r, 0deg);
   }
 
+  /* ── Fan mode — class applied by HomeUseCases.tsx at ≥1024px when motion
+     is allowed. The row becomes a fixed-height stage (JS sets it from the
+     tallest card) and the cards an overlapping hand; GSAP owns x/rotation/
+     scale/z from a centered anchor. The rest-offset translate/rotate are
+     neutralized so they don't double-apply on top of GSAP's transform.
+     The grid above stays the no-JS / reduced-motion fallback. */
+  .home-use-cases--fan {
+    display: block;
+    position: relative;
+  }
+
+  .home-use-cases--fan .home-use-case-card {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: clamp(360px, 30vw, 420px);
+    margin-left: calc(clamp(360px, 30vw, 420px) / -2);
+    translate: none;
+    rotate: none;
+  }
+
+  .home-use-cases--fan .home-use-case-card:hover {
+    /* GSAP does the lift in fan mode; the grid's -6px hover nudge would
+       fight it. The ::after shadow bloom + sibling dim still apply. */
+    translate: none;
+  }
+
   /* Per-card accent family: mat = 10-step, stroke/kicker = 20-step,
      accent ink = 40-step (contrast-legal on the 10-step mat). */
   .home-use-case-card[data-accent="purple"] {
