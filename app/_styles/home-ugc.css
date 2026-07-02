@@ -164,10 +164,11 @@
     pointer-events: none;
   }
 
+  /* No `display` on the generic svg rule — its 0-1-1 specificity would
+     out-rank the 0-1-0 glyph-swap rules below and show BOTH icons. */
   .home-ugc-card__sound svg {
     width: 16px;
     height: 16px;
-    display: block;
   }
 
   .home-ugc-card__sound-on {
