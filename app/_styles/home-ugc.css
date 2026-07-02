@@ -1,0 +1,297 @@
+/**
+ * "Founders on camera" UGC wall (`components/sections/home/HomeUGCWall.tsx`).
+ * Import from `app/layout.tsx` AFTER `components.css` — same `@layer
+ * component` slot, so source order settles equal-specificity ties.
+ */
+@layer component {
+  /* ── Track ─────────────────────────────────────────────────────────────
+     Horizontal scroll-snap row. It bleeds by exactly the page gutter
+     (negative inline margins + matching padding), so cards slide under the
+     page edges mid-scroll while resting positions still align to the grid.
+     The first/last auto-margin pair centers the row when it does NOT
+     overflow (desktop with few clips) without the clipped-start bug that
+     `justify-content: center` causes on overflowing flex scrollers. */
+  .home-ugc-track {
+    display: flex;
+    gap: var(--spacing-xl);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    width: calc(100% + 2 * var(--spacing-home-page-inline));
+    margin-inline: calc(-1 * var(--spacing-home-page-inline));
+    padding-inline: var(--spacing-home-page-inline);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--spacing-home-page-inline);
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .home-ugc-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .home-ugc-card:first-child {
+    margin-inline-start: auto;
+  }
+
+  .home-ugc-card:last-child {
+    margin-inline-end: auto;
+  }
+
+  /* ── Card ──────────────────────────────────────────────────────────────
+     Vertical 9:16 clip, ~240px on mobile / ~280px on desktop. Squircle
+     corner declared alongside the radius token per the components.css
+     pattern (tokens.css swaps radii for browsers without corner-shape). */
+  .home-ugc-card {
+    position: relative;
+    flex: 0 0 240px;
+    aspect-ratio: 9 / 16;
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius-xl);
+    corner-shape: squircle;
+    background-color: var(--alt-surface);
+    overflow: hidden;
+    scroll-snap-align: center;
+  }
+
+  @media (min-width: 1024px) {
+    .home-ugc-card {
+      flex-basis: 280px;
+    }
+
+    /* Desktop: cards are all (or mostly) visible — proximity keeps trackpad
+       scrolling free instead of yanking to snap points. */
+    .home-ugc-track {
+      scroll-snap-type: x proximity;
+    }
+  }
+
+  /* ── Video layer ─────────────────────────────────────────────────────── */
+  .home-ugc-card__media {
+    position: absolute;
+    inset: 0;
+  }
+
+  .home-ugc-card__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Full-card toggle (unmute/mute). Transparent button above every layer so
+     one tap anywhere works; the sound chip stays visible through it. */
+  .home-ugc-card__toggle {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    border-radius: inherit;
+  }
+
+  .home-ugc-card__toggle:focus-visible {
+    outline: 2px solid var(--interactive-text);
+    outline-offset: -2px;
+  }
+
+  /* ── Caption overlay ───────────────────────────────────────────────────
+     Scrim sits over arbitrary footage (not a branded surface), so it uses
+     the neutral inverted-surface ramp + on-inverted text. */
+  .home-ugc-card__meta {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xl);
+    padding-top: calc(3 * var(--spacing-xl));
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      color-mix(in srgb, var(--inverted-surface) 78%, transparent) 100%
+    );
+    color: var(--text-on-inverted-surface);
+    pointer-events: none;
+  }
+
+  .home-ugc-card__quote {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+
+  .home-ugc-card__byline {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    font-weight: var(--font-heavy);
+  }
+
+  .home-ugc-card__handle {
+    font-weight: var(--font-normal);
+    opacity: 0.8;
+  }
+
+  /* ── Sound indicator ───────────────────────────────────────────────────
+     Small chip, top-right. The inline script flips `data-ugc-sound` on the
+     card; these attribute selectors swap the glyph. */
+  .home-ugc-card__sound {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    z-index: 4;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: color-mix(in srgb, var(--inverted-surface) 55%, transparent);
+    color: var(--text-on-inverted-surface);
+    pointer-events: none;
+  }
+
+  .home-ugc-card__sound svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+  }
+
+  .home-ugc-card__sound-on {
+    display: none;
+  }
+
+  [data-ugc-sound="on"] .home-ugc-card__sound-on {
+    display: block;
+  }
+
+  [data-ugc-sound="on"] .home-ugc-card__sound-off {
+    display: none;
+  }
+
+  /* ── Play affordance ───────────────────────────────────────────────────
+     Hidden by default (previews autoplay). Always on for placeholders;
+     for video cards it appears only under reduced motion (below). */
+  .home-ugc-card__play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    z-index: 3;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: none;
+    place-items: center;
+    background: var(--surface);
+    border: 1px solid var(--stroke);
+    color: var(--text);
+    pointer-events: none;
+  }
+
+  .home-ugc-card__play svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+    margin-left: 2px; /* optical centering of the triangle */
+  }
+
+  .home-ugc-card--placeholder .home-ugc-card__play {
+    display: grid;
+  }
+
+  /* Reduced motion: the inline script pauses autoplaying previews (CSS
+     can't), and this surfaces the play affordance until the visitor
+     explicitly starts a clip (`data-ugc-consent` set on tap). */
+  @media (prefers-reduced-motion: reduce) {
+    .home-ugc-card--video:not([data-ugc-consent="true"]) .home-ugc-card__play {
+      display: grid;
+    }
+  }
+
+  /* ── Placeholder cards (designed empty state) ──────────────────────────
+     Soft brand-gradient poster per variant via two custom props; the blob
+     reuses the angled-1 pancake silhouette, side path tinted by opacity so
+     both tones derive from the same semantic token (no raw hex). Caption
+     text is chrome-100 (`--text`) — valid fg on pink/purple/yellow weak
+     surfaces per the contrast rules. */
+  .home-ugc-card--pink {
+    --ugc-weak: var(--weak-branded-surface);
+    --ugc-strong: var(--strong-branded-surface);
+  }
+
+  .home-ugc-card--purple {
+    --ugc-weak: var(--alt-weak-branded-surface-01);
+    --ugc-strong: var(--alt-strong-branded-surface-01);
+  }
+
+  .home-ugc-card--yellow {
+    --ugc-weak: var(--alt-weak-branded-surface-02);
+    --ugc-strong: var(--alt-strong-branded-surface-02);
+  }
+
+  .home-ugc-card__poster {
+    position: absolute;
+    inset: 0;
+    /* Gradient overshoots 100% so the strong tone only tints the bottom —
+       keeps the poster "soft" while the rotation stays legible. */
+    background: linear-gradient(170deg, var(--ugc-weak) 0%, var(--ugc-strong) 145%);
+  }
+
+  .home-ugc-blob {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    translate: -50%;
+    width: 46%;
+    aspect-ratio: 49 / 48;
+    height: auto;
+  }
+
+  .home-ugc-blob__side {
+    fill: var(--ugc-strong);
+    opacity: 0.45;
+  }
+
+  .home-ugc-blob__top {
+    fill: var(--ugc-strong);
+  }
+
+  .home-ugc-card__caption {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xl);
+    text-align: center;
+    color: var(--text);
+  }
+
+  .home-ugc-card__caption-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--font-size-body-regular);
+    font-weight: var(--font-heavy);
+  }
+
+  .home-ugc-card__caption-hint {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+  }
+}

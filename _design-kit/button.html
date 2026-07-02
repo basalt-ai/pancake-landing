@@ -26,9 +26,17 @@
         font-weight: var(--font-heavy);
         cursor: pointer;
         corner-shape: squircle;
+        /* Hover feedback fades rather than snaps (color-only — no motion). */
+        transition: background-color 150ms ease, border-color 150ms ease;
 
+        /* Hover — darken the fill by mixing a touch of --text into it.
+           (Replaces an invalid `background-opacity: 0.8` that browsers
+           silently dropped, leaving buttons with zero hover feedback.)
+           Variant rules below re-declare the custom properties at higher
+           specificity, so each variant's own :hover wins where defined. */
         &:hover {
-          background-opacity: 0.8;
+          --button-background-color: color-mix(in srgb, var(--strong-branded-surface) 88%, var(--text));
+          --button-border-color: color-mix(in srgb, var(--strong-branded-surface) 88%, var(--text));
         }
       }
 
@@ -45,25 +53,45 @@
         --button-height: var(--control-size-lg);
       }
 
-      /* Variants */
+      /* Variants — filled variants darken on hover with the same color-mix
+         recipe as the brand default; transparent variants (outline, ghost)
+         gain a faint fill instead. */
       .button[data-variant="subtle"] {
         --button-background-color: var(--elevated-surface);
         --button-border-color: var(--stroke);
+
+        &:hover {
+          --button-background-color: color-mix(in srgb, var(--elevated-surface) 92%, var(--text));
+        }
       }
 
       .button[data-variant="alternative"] {
         --button-background-color: var(--alt-strong-branded-surface-01);
         --button-border-color: var(--alt-strong-branded-surface-01);
+
+        &:hover {
+          --button-background-color: color-mix(in srgb, var(--alt-strong-branded-surface-01) 88%, var(--text));
+          --button-border-color: color-mix(in srgb, var(--alt-strong-branded-surface-01) 88%, var(--text));
+        }
       }
 
       .button[data-variant="outline"] {
         --button-background-color: transparent;
         --button-border-color: var(--subtle-stroke);
+
+        &:hover {
+          --button-background-color: var(--alt-surface);
+        }
       }
 
       .button[data-variant="negative"] {
         --button-background-color: var(--negative-surface);
         --button-border-color: var(--negative-surface);
+
+        &:hover {
+          --button-background-color: color-mix(in srgb, var(--negative-surface) 88%, var(--text));
+          --button-border-color: color-mix(in srgb, var(--negative-surface) 88%, var(--text));
+        }
       }
 
       .button[data-variant="ghost"] {

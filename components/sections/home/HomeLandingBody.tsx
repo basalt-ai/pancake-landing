@@ -1,31 +1,45 @@
 /**
  * Home page sections below the hero (`/`). Most illustrations are PNGs in `public/home-landing-*.png`
  * (regenerate: `FIGMA_ACCESS_TOKEN=… npm run figma:export-landing`).
+ *
+ * Landing v4 narrative arc (one identity throughout — ONE coworker, a whole
+ * team of agents behind it):
+ *   Slack (where it lives) → Use cases (three real jobs) → Org chart (the
+ *   team behind your coworker) → Integrations → UGC videos + X posts (proof)
+ *   → Security → Control → Pricing teaser → FAQ → Blog → Closing CTA.
+ * Background rhythm: plain/alt alternation; testimonials + pricing teaser are
+ * full-bleed bands with their own treatment; the org band keeps the plain
+ * surface (its edge-fade mask blends into `--surface`).
  */
 
 import { HOME_PAGE_CONTAINER_CLASS } from "@/components/sections/home/home-layout";
+import { HomeBlogCards } from "@/components/sections/home/HomeBlogCards";
+import { HomeFaq } from "@/components/sections/home/HomeFaq";
 import { HomeIntegrationsCloud } from "@/components/sections/home/HomeIntegrationsCloud";
 import { HomeLandingControl } from "@/components/sections/home/HomeLandingControl";
 import { HomeLandingSecurity } from "@/components/sections/home/HomeLandingSecurity";
 import { HomeLandingTestimonials } from "@/components/sections/home/HomeLandingTestimonials";
+import { HomeOrgDiagram } from "@/components/sections/home/HomeOrgDiagram";
+import { HomeOrgDiagramMobile } from "@/components/sections/home/HomeOrgDiagramMobile";
+import { HomePricingTeaser } from "@/components/sections/home/HomePricingTeaser";
+import { HomeUGCWall } from "@/components/sections/home/HomeUGCWall";
+import { HomeUseCases } from "@/components/sections/home/HomeUseCases";
 import { SlackUI } from "@/components/shared/SlackUI";
 import { H2 } from "@/components/ui/Headings";
+import { PANCAKE_TINTS } from "@/lib/pancake-palette";
 
 /** Figma `428:15162` — U+2028 line break before “company”. */
-const CLOSING_TITLE = "Make your \u2028company autonomous";
+const CLOSING_TITLE = "Make your  company autonomous";
 
 /**
- * Inline pancake decoration \u2014 same two-tone silhouette used across the page
- * (side + top paths from `pancake-svgs/angled-1.svg`), tinted by variant.
- * Powers the bleed pancakes around the closing CTA on mobile (Figma `451:20112`).
+ * Inline pancake decoration — same two-tone silhouette used across the page
+ * (side + top paths from `pancake-svgs/angled-1.svg`), tinted by variant via
+ * the shared on-palette tints in `lib/pancake-palette` (previously off-palette
+ * hardcoded hexes — unified in landing v4).
+ * Powers the bleed pancakes around the closing CTA (Figma `451:20112`).
  */
-const DECOR_PALETTE = {
-  purple: { side: "#D7C4ED", top: "#B89BE0" },
-  pink:   { side: "#F4B0BF", top: "#F1809E" },
-  orange: { side: "#FFB48A", top: "#FF7F47" },
-} as const;
-function DecorPancake({ variant, className }: { variant: keyof typeof DECOR_PALETTE; className: string }) {
-  const p = DECOR_PALETTE[variant];
+function DecorPancake({ variant, className }: { variant: keyof typeof PANCAKE_TINTS; className: string }) {
+  const p = PANCAKE_TINTS[variant];
   return (
     <svg className={className} viewBox="0 0 49 48" aria-hidden focusable="false">
       <path
@@ -43,21 +57,8 @@ function DecorPancake({ variant, className }: { variant: keyof typeof DECOR_PALE
 export function HomeLandingBody() {
   return (
     <div className="home-landing">
-      {/*
-        "Three real jobs" use-case triptych — PARKED for now (founder call:
-        not polished enough yet). The component (`HomeUseCases`) and its CSS
-        (`.home-use-cases` block) stay in the repo; re-enable by inserting
-        this as the first section, with `--alt` background:
-
-        <section className="home-landing-section home-landing-section--alt" aria-label="What Pancake does">
-          <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
-            <HomeUseCases />
-          </div>
-        </section>
-      */}
-
-      {/* Figma `428:15120` slack — leads the page (replaced the former org/squads
-          section). Agents living in Slack is the headline proof point. */}
+      {/* Figma `428:15120` slack — leads the page. Agents living in Slack is
+          the headline proof point (kept from PR #151's re-order). */}
       <section className="home-landing-section" aria-labelledby="home-landing-slack-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
@@ -69,6 +70,41 @@ export function HomeLandingBody() {
           <div className="home-landing-section__figure home-landing-section__figure--slack">
             <SlackUI />
           </div>
+        </div>
+      </section>
+
+      {/* "Three real jobs" use-case triptych — un-parked in landing v4 as the
+          "what does it actually do for me" proof between Slack and the org
+          reveal. Was parked pending polish; flagged for founder review in the
+          PR — remove this section to re-park. */}
+      <section className="home-landing-section home-landing-section--alt" aria-label="What Pancake does">
+        <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
+          <HomeUseCases />
+        </div>
+      </section>
+
+      {/* Squads org chart — revived from _archive (removed in PR #151 because
+          "hire squads of agents" clashed with the singular-coworker hero).
+          v4 reframes it as the team BEHIND your one coworker, and the live
+          rows now show task-shaped work instead of job titles, so the section
+          demonstrates "does the work for you" rather than an org shuffling
+          headcount. Band keeps the plain surface for its edge-fade mask. */}
+      <section className="home-landing-section home-landing-section--org" aria-labelledby="home-landing-org-heading">
+        <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
+          <header className="home-landing-section__header">
+            <H2 id="home-landing-org-heading" className="heading home-landing-section__title text-center">
+              One coworker. A whole team behind it.
+            </H2>
+            <p className="home-landing-section__lede text-center">
+              Pancake staffs squads of agents that keep working — even when you’re asleep.
+            </p>
+          </header>
+          <div className="home-landing-section__figure home-landing-org-mobile">
+            <HomeOrgDiagramMobile />
+          </div>
+        </div>
+        <div className="home-landing-org-desktop">
+          <HomeOrgDiagram />
         </div>
       </section>
 
@@ -86,6 +122,11 @@ export function HomeLandingBody() {
           </div>
         </div>
       </section>
+
+      {/* UGC video wall — real founders on camera. Reads public/ugc/*.mp4 at
+          build time; renders a designed empty state until clips are dropped
+          in (see public/ugc/README.md). */}
+      <HomeUGCWall />
 
       {/* Real X posts — full-bleed carousel band (Figma `428:15175` skeleton, real content) */}
       <section className="home-landing-section home-landing-section--testimonials" aria-labelledby="home-landing-testimonials-heading">
@@ -127,43 +168,24 @@ export function HomeLandingBody() {
         </div>
       </section>
 
-      {/* From the blog — explicit internal links for crawler discovery of new articles */}
-      <section className="home-landing-section" aria-labelledby="home-landing-blog-heading">
-        <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
-          <header className="home-landing-section__header">
-            <H2 id="home-landing-blog-heading" className="heading home-landing-section__title text-center">
-              From the blog
-            </H2>
-          </header>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '640px', marginLeft: 'auto', marginRight: 'auto' }}>
-            <li>
-              <a href="/blog/how-to-build-autonomous-company" style={{ color: 'inherit', textDecoration: 'none' }}>
-                <strong>How to Build an Autonomous Company with an AI Team (2026 Guide)</strong>
-              </a>
-            </li>
-            <li>
-              <a href="/blog/openclaw-for-founders-managed-vs-diy" style={{ color: 'inherit', textDecoration: 'none' }}>
-                <strong>OpenClaw for Founders: The Managed vs DIY Decision (2026)</strong>
-              </a>
-            </li>
-            <li>
-              <a href="/blog/viktor-alternatives" style={{ color: 'inherit', textDecoration: 'none' }}>
-                <strong>Viktor Alternatives: Why Founders Are Choosing an AI Team Over an AI Agent</strong>
-              </a>
-            </li>
-            <li>
-              <a href="/blog" style={{ color: 'inherit' }}>
-                See all posts →
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      {/* Pricing teaser — the homepage previously never mentioned price;
+          the honest $49-flat + tokens-at-cost story is the sharpest
+          differentiator. Full band with its own pink treatment. */}
+      <HomePricingTeaser />
 
-      {/* Figma `428:15160` closing CTA — mobile variant `451:20112` adds three
-          decorative pancakes (purple top-left, half-pink bottom-left,
-          orange-pink right) that bleed past the section edges. Decor is
-          mobile-only via CSS (default `display: none`, opt-in below `lg`). */}
+      {/* FAQ — visible accordion backing the FAQPage JSON-LD in app/page.tsx
+          (schema previously promoted content that never appeared on-page).
+          FAQ_ITEMS in HomeFaq.tsx is the single source of truth for both.
+          `alt` keeps the surface rhythm: pink band → alt → plain → alt. */}
+      <HomeFaq alt />
+
+      {/* From the blog — explicit internal links for crawler discovery of new
+          articles (kept as real <a href> anchors), now styled as cards. */}
+      <HomeBlogCards />
+
+      {/* Figma `428:15160` closing CTA — decorative pancakes (purple top-left,
+          half-pink bottom-left, orange-pink right) bleed past the section
+          edges; desktop positions added in landing v4 (were mobile-only). */}
       <section className="home-landing-section home-landing-section--alt home-landing-section--closing" aria-labelledby="home-landing-closing-heading">
         <DecorPancake variant="purple" className="home-landing-closing-decor home-landing-closing-decor--purple" />
         <DecorPancake variant="pink" className="home-landing-closing-decor home-landing-closing-decor--pink" />

@@ -124,6 +124,16 @@ export function HomeNav() {
             <Link href={sideLinkHref} className={navLinkClassName}>
               {sideLinkLabel}
             </Link>
+            {/* Persistent conversion path — the page previously had zero CTAs
+                between hero and closing. Real <a> to app.getpancake.ai so the
+                hostname-based Lead tracking in AnalyticsEvents fires. */}
+            <a
+              href="https://app.getpancake.ai"
+              className="button inline-flex w-fit shrink-0 items-center justify-center no-underline"
+              data-size="sm"
+            >
+              Get started
+            </a>
           </nav>
         </div>
       </div>
@@ -189,7 +199,7 @@ export function HomeNav() {
               tabIndex={drawerOpen ? 0 : -1}
               onClick={() => setDrawerOpen(false)}
             >
-              Resources
+              Discord
             </a>
             <Link
               href="/blog"
@@ -207,6 +217,16 @@ export function HomeNav() {
             >
               {sideLinkLabel}
             </Link>
+            {/* Drawer CTA — same analytics contract as the desktop nav CTA. */}
+            <a
+              href="https://app.getpancake.ai"
+              className="button mt-[var(--spacing-xl)] inline-flex w-fit shrink-0 items-center justify-center no-underline"
+              data-size="lg"
+              tabIndex={drawerOpen ? 0 : -1}
+              onClick={() => setDrawerOpen(false)}
+            >
+              Get started for free
+            </a>
           </nav>
         </div>
       </div>

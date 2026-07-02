@@ -1,0 +1,237 @@
+/**
+ * "From the blog" home section (`components/sections/home/HomeBlogCards.tsx`).
+ * Replaces the raw inline-styled link list with kit-language cards:
+ * cover (or branded-blob fallback) / date + read time / title / excerpt.
+ *
+ * Rules live in `component` so they slot into the same cascade layer as the
+ * rest of the landing (`app/globals.css` declares the layer order:
+ * reference, semantic, reset, tw-base, component, tw-utilities).
+ */
+@layer component {
+  /* Grid + "See all posts" footer link, stacked inside the section inner column. */
+  .home-blog {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xxl);
+  }
+
+  /* Mobile-first: stacked cards; 3-up from lg — same breakpoint and gap
+     rhythm as `.home-use-cases` so card sections feel like one family. */
+  .home-blog__grid {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+  }
+
+  @media (min-width: 1024px) {
+    .home-blog__grid {
+      grid-template-columns: repeat(3, 1fr);
+      align-items: stretch;
+    }
+  }
+
+  /* Flex cell so the anchor card stretches to the row height — keeps the
+     three cards equal-height even when titles wrap differently. */
+  .home-blog__cell {
+    display: flex;
+  }
+
+  /**
+   * The card IS the anchor (GEO: crawlers must find a real `<a href>` to the
+   * article from the home page). Kit card recipe: `--surface` bg, `--stroke`
+   * border, `--radius-lg` + squircle. `overflow: hidden` clips the cover /
+   * fallback tint to the rounded corners.
+   */
+  .home-blog-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow: hidden;
+    background-color: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius-lg);
+    corner-shape: squircle;
+    color: var(--text);
+    text-decoration: none;
+    transition:
+      border-color 160ms ease,
+      transform 160ms ease;
+  }
+
+  /* Hover/focus: stronger border + slight lift. `:focus-visible` keeps the
+     default outline on top of the border change for keyboard users. */
+  .home-blog-card:hover,
+  .home-blog-card:focus-visible {
+    border-color: var(--strong-stroke);
+    transform: translateY(-4px);
+  }
+
+  /* Cover strip — 16:9 keeps the row aligned regardless of source image
+     dimensions; `--alt-surface` shows while the image decodes. The hairline
+     separates media from copy without reading as a second card. */
+  .home-blog-card__media {
+    position: relative; /* anchors next/image `fill` */
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background-color: var(--alt-surface);
+    border-bottom: 1px solid var(--subtle-stroke);
+  }
+
+  .home-blog-card__img {
+    object-fit: cover;
+  }
+
+  /**
+   * No-cover fallback: weak-branded tint + small two-tone pancake blob
+   * (same silhouette as the closing-CTA decor). Tints rotate pink → purple →
+   * yellow per card so a cover-less row still has variety. Decorative only —
+   * the container is aria-hidden in JSX.
+   */
+  .home-blog-card__fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .home-blog-card__fallback--pink {
+    background-color: var(--weak-branded-surface); /* pink-10 */
+  }
+
+  .home-blog-card__fallback--purple {
+    background-color: var(--alt-weak-branded-surface-01); /* purple-10 */
+  }
+
+  .home-blog-card__fallback--yellow {
+    background-color: var(--alt-weak-branded-surface-02); /* yellow-10 */
+  }
+
+  .home-blog-card__blob {
+    width: 72px;
+    height: 72px;
+  }
+
+  /* Blob tones stay in-family with each tint: side = *-20, top = *-30 —
+     all via semantic aliases (no raw palette values). */
+  .home-blog-card__fallback--pink .home-blog-card__blob-side {
+    fill: var(--branded-stroke-01); /* pink-20 */
+  }
+  .home-blog-card__fallback--pink .home-blog-card__blob-top {
+    fill: var(--strong-branded-surface); /* pink-30 */
+  }
+
+  .home-blog-card__fallback--purple .home-blog-card__blob-side {
+    fill: var(--branded-stroke-02); /* purple-20 */
+  }
+  .home-blog-card__fallback--purple .home-blog-card__blob-top {
+    fill: var(--alt-strong-branded-surface-01); /* purple-30 */
+  }
+
+  .home-blog-card__fallback--yellow .home-blog-card__blob-side {
+    fill: var(--branded-stroke-03); /* yellow-20 */
+  }
+  .home-blog-card__fallback--yellow .home-blog-card__blob-top {
+    fill: var(--alt-strong-branded-surface-02); /* yellow-30 */
+  }
+
+  /* Copy block — `flex: 1` absorbs height differences so borders align. */
+  .home-blog-card__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: var(--spacing-xxl);
+  }
+
+  /* Date · read time — quiet meta row above the title. */
+  .home-blog-card__meta {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    color: var(--subtle-text);
+  }
+
+  /* Same display treatment as `.home-use-case-card__headline`. GEO titles run
+     long, so clamp to 3 lines — the full title lives on the article page. */
+  .home-blog-card__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--font-size-header-04);
+    line-height: 1.15;
+    letter-spacing: -0.3px;
+    color: var(--text);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+
+  .home-blog-card__excerpt {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.45;
+    font-weight: var(--font-normal);
+    color: var(--subtle-text);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+
+  /* "See all posts →" — quiet text link under the grid; arrow nudges right
+     on hover as the only flourish. */
+  .home-blog__all {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-regular);
+    font-weight: var(--font-heavy);
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .home-blog__all:hover,
+  .home-blog__all:focus-visible {
+    text-decoration: underline;
+  }
+
+  .home-blog__all-arrow {
+    transition: transform 160ms ease;
+  }
+
+  .home-blog__all:hover .home-blog__all-arrow,
+  .home-blog__all:focus-visible .home-blog__all-arrow {
+    transform: translateX(4px);
+  }
+
+  /* Motion is decorative here — kill the lift and arrow nudge entirely. */
+  @media (prefers-reduced-motion: reduce) {
+    .home-blog-card,
+    .home-blog__all-arrow {
+      transition: none;
+    }
+
+    .home-blog-card:hover,
+    .home-blog-card:focus-visible {
+      transform: none;
+    }
+
+    .home-blog__all:hover .home-blog__all-arrow,
+    .home-blog__all:focus-visible .home-blog__all-arrow {
+      transform: none;
+    }
+  }
+}

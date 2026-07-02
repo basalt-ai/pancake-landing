@@ -25,6 +25,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 
 import { PancakeMonster } from "@/components/mascot/pancake-monster/PancakeMonster";
 import { gsap } from "@/lib/gsap";
+import { PANCAKE_TINTS } from "@/lib/pancake-palette";
 
 const VB_W = 1786;
 const VB_H = 900;
@@ -65,14 +66,20 @@ const PANCAKE_TOP_D =
  * `top` = darker visible upper surface; `side` = lighter underbelly peeking
  * at the lower edge — matches `pancake-svgs/angled-1.svg`.
  *
+ * Brand hues come from the shared `PANCAKE_TINTS` (lib/pancake-palette.ts —
+ * on-palette values from tokens.css) so the cloud pancakes match the hero and
+ * closing-CTA decor exactly; previously this held local off-palette, muted
+ * approximations. `cream` is a cloud-only accent with no tokens.css
+ * counterpart, so it stays local.
+ *
  * The chip backgrounds use external Figma ellipse SVGs (see `LOGOS[].chipSrc`),
  * NOT this layered pancake — chips are simple cream ellipses, not pancakes.
  */
 const PANCAKE_PALETTE = {
-  pink:   { top: "#F1809E", side: "#F4B0BF" },
-  purple: { top: "#B89BE0", side: "#D7C4ED" },
-  orange: { top: "#FF7F47", side: "#FFB48A" },
-  yellow: { top: "#F2C94C", side: "#F7DE9C" },
+  pink:   PANCAKE_TINTS.pink,
+  purple: PANCAKE_TINTS.purple,
+  orange: PANCAKE_TINTS.orange,
+  yellow: PANCAKE_TINTS.yellow,
   cream:  { top: "#FFD7A8", side: "#FFE9C8" },
 } as const;
 type PancakePaletteName = keyof typeof PANCAKE_PALETTE;
