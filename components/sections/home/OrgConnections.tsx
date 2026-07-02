@@ -26,18 +26,22 @@ type OrgDeptWire = { id: string; d: string };
 
 /**
  * Hub exits fan across the monster's underside (monster box: 608,0 → 736,128).
- * Each wire's mid-Y is an explicit "bus lane" (≥14px apart from its
- * neighbours) so the long horizontal runs to the outer cards never merge.
- * Outer two wires end past the stage edges — the band mask fades them out.
+ * Each wire = hub departure → horizontal "bus lane" → vertical drop onto its
+ * card. Bus lanes are NESTED per side — the farther the target, the HIGHER
+ * its lane (188 / 210 / 232, ≥22px apart) — so a nearer wire's vertical drop
+ * can never slice through a farther wire's lane (founder: dirty crossings on
+ * both flanks). Departure order matches target order, so the descents from
+ * the hub don't cross either. Outer two wires end past the stage edges — the
+ * band mask fades them out.
  */
 const ORG_DEPT_WIRES: readonly OrgDeptWire[] = [
-  { id: "wire-posthog", d: "M630 127C533 220 -176 220 -176 306" },
-  { id: "wire-meta", d: "M641 129C573 196 72 196 72 290" },
-  { id: "wire-outreach", d: "M652 131C612 234 320 234 320 326" },
+  { id: "wire-posthog", d: "M630 127C533 188 -176 188 -176 306" },
+  { id: "wire-meta", d: "M641 129C573 210 72 210 72 290" },
+  { id: "wire-outreach", d: "M652 131C612 232 320 232 320 326" },
   { id: "wire-seo", d: "M664 132C652 199 568 199 568 266" },
-  { id: "wire-triage", d: "M676 131C693 212 816 212 816 294" },
-  { id: "wire-ads", d: "M688 129C733 238 1064 238 1064 330" },
-  { id: "wire-reddit", d: "M700 127C773 224 1312 224 1312 302" },
+  { id: "wire-triage", d: "M676 131C693 232 816 232 816 294" },
+  { id: "wire-ads", d: "M688 129C733 210 1064 210 1064 330" },
+  { id: "wire-reddit", d: "M700 127C773 188 1312 188 1312 302" },
 ];
 
 type OrgWireFrame = { x: number; y: number; w: number; h: number };
