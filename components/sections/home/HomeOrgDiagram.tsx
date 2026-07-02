@@ -81,10 +81,13 @@ export function HomeOrgDiagram() {
           </div>
         </div>
 
+        {/* Stage box is 1136/648 (dead bottom air trimmed) but the Figma
+            geometry stays in 706-unit space — `slice` keeps the width-based
+            1:1 mapping and top alignment; the cropped 106 units are empty. */}
         <svg
           className="home-org-diagram__svg home-org-diagram__svg--chip-arrows"
           viewBox="0 0 1136 706"
-          preserveAspectRatio="xMidYMid meet"
+          preserveAspectRatio="xMidYMin slice"
           aria-hidden
           focusable="false"
         >
