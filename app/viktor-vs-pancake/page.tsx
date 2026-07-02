@@ -156,7 +156,7 @@ const FAQS = [
   },
 ];
 
-// WebPage JSON-LD — matches the standalone-page convention (see app/influencers/page.tsx).
+// WebPage JSON-LD — matches the standalone-page convention (see app/_influencers/page.tsx).
 const webPageJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
