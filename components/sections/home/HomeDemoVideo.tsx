@@ -1,30 +1,35 @@
 "use client";
 
 /**
- * "Meet Pancake" film band, v4.2 "living film" treatment (validated by the
- * founder; pattern = Screen Studio's dual-video + Monaco's affordance
- * anatomy + Clay's scroll reveal):
+ * "Meet Pancake" film band, v4.3 split layout (founder feedback on v4.2:
+ * full-width costs too much scroll; the play chip read muddy; the visible
+ * transcript line was clutter).
  *
- *   AMBIENT: a 12s silent teaser cut of the film (6s–18s of the master)
- *   autoplays muted/loop inline as the living poster. It lazy-loads via
- *   IntersectionObserver (zero teaser bytes until the band approaches),
- *   pauses off-screen, and is skipped entirely under prefers-reduced-motion
- *   or Save-Data (static poster remains). The frame scale-reveals 0.92 → 1
- *   on scroll (transform-only, no pin — CLS-exempt).
+ * LAYOUT — copy column LEFT (the claim), film RIGHT (the proof): the
+ * pattern all leaders use for the first media+copy row (Linear, Stripe,
+ * Attio, Clay, Loom, Figma, Notion — NN/g F-pattern: the left edge gets
+ * the text). Column stack per the same research: eyebrow → benefit
+ * heading one tier below H2 → short staccato body → chapter list → text
+ * CTA (primary buttons stay reserved for hero + closing band).
  *
- *   FILM: click anywhere swaps IN PLACE (no lightbox) to the full 51s
- *   master with sound + native controls from 0:00. The master is
- *   preload="none" — zero bytes until intent; hovering the band upgrades it
- *   to preload="metadata" so playback starts instantly. Escape (or the film
- *   ending) returns to the ambient state.
+ * CHAPTERS seek the film with sound — a homepage differentiator (leaders
+ * only ship chapters on demo pages) that doubles as the unmute trigger.
  *
- * The VideoObject JSON-LD for this film lives in `app/page.tsx`; the
- * on-screen typography is mirrored below as a crawlable transcript
- * (WCAG 1.2.1 media alternative + GEO).
+ * AMBIENT: 12s silent teaser (6s–18s of the master) as the living poster —
+ * IntersectionObserver lazy-load + play/pause, skipped under
+ * prefers-reduced-motion / Save-Data. Frame scale-reveals 0.94 → 1 on
+ * scroll (transform-only, no pin).
+ *
+ * FILM: click (frame, watch link, or chapter) swaps IN PLACE to the 51s
+ * master with sound; master is preload="none" until hover intent; Escape
+ * or film end returns to ambient. VideoObject JSON-LD lives in
+ * `app/page.tsx`; the film's typography is mirrored in a visually-hidden
+ * transcript (WCAG 1.2.1 + GEO).
  */
 
 import { useEffect, useRef, useState } from "react";
 
+import { HOME_PAGE_CONTAINER_CLASS } from "@/components/sections/home/home-layout";
 import { gsap, useGSAP } from "@/lib/gsap";
 
 import "@/app/_styles/home-film.css";
@@ -33,10 +38,19 @@ const POSTER_SRC = "/demo-video-poster-live.jpg"; // frame at 6s = teaser's firs
 const TEASER_SRC = "/demo-video-teaser.mp4"; // 12s, 720p, audio stripped, ~680 KB
 const FILM_SRC = "/demo-video.mp4"; // 51s master
 
+/** Film beats — timestamps verified against the master's frames. */
+const CHAPTERS = [
+  { t: 0, label: "Meet Pancake", time: "0:00" },
+  { t: 6, label: "It lives in your Slack", time: "0:06" },
+  { t: 19, label: "“Run GTM for me”", time: "0:19" },
+  { t: 36, label: "The work ships itself", time: "0:36" },
+  { t: 42, label: "Autonomy hits 99.86%", time: "0:42" },
+] as const;
+
 /** Faithful mirror of the film's on-screen typography + UI beats. */
 const FILM_TRANSCRIPT = [
   "Meet Pancake. The OpenClaw cofounder that makes your company autonomous. Lives with you in Slack, Messages, Mail.",
-  "Pancake: “Hey hey! 👋 I'm Pancake, I'm here to make your company more autonomous. I already went through all the material you provided about your company. Adding to company brain.”",
+  "Pancake: “Hey hey! 👋 I'm Pancake, I'm here to help make your company more autonomous. I already went through all the material you provided about your company. Adding to company brain.”",
   "Mike: “I suck at GTM, can you run it for me?” — Pancake spins up a LinkedIn outreach agent, a content skill, a lead magnet agent, and hires a Reddit squad. Autonomy level: 24.28%.",
   "Mike: “What would I do without you.” Pancake: “Probably miss your 2pm.” — “What squads do you think I should hire next?” The squad store: AI SEO squad, Outreach squad, Reddit squad.",
   "Daily digest delivered, blog post live, weekly citation audit complete, PR merged. Autonomy level: 79.00%… 99.86%.",
@@ -49,10 +63,9 @@ export function HomeDemoVideo() {
   const teaserRef = useRef<HTMLVideoElement>(null);
   const filmRef = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
+  const [activeChapter, setActiveChapter] = useState<number | null>(null);
 
   // Ambient teaser: lazy-load near viewport, play/pause on visibility.
-  // Skipped under reduced-motion / Save-Data — the static poster remains
-  // and the play chrome is the only affordance (as before v4.2).
   useEffect(() => {
     const teaser = teaserRef.current;
     if (!teaser) return;
@@ -83,9 +96,7 @@ export function HomeDemoVideo() {
     return () => io.disconnect();
   }, []);
 
-  // Scroll-scale entrance: frame grows 0.92 → 1 while its radius relaxes.
-  // Transform-only (CLS-exempt), scrub with catch-up smoothing, NO pin —
-  // the Slack simulation below must stay freely reachable.
+  // Scroll-scale entrance: transform-only, no pin, reduced-motion guarded.
   useGSAP(
     () => {
       const frame = frameRef.current;
@@ -95,12 +106,12 @@ export function HomeDemoVideo() {
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         gsap.fromTo(
           frame,
-          { scale: 0.92, borderRadius: 32 },
+          { scale: 0.94, borderRadius: 32 },
           {
             scale: 1,
             borderRadius: 16,
             ease: "none",
-            scrollTrigger: { trigger: section, start: "top 85%", end: "top 30%", scrub: 0.8 },
+            scrollTrigger: { trigger: section, start: "top 85%", end: "top 35%", scrub: 0.8 },
           },
         );
       });
@@ -108,8 +119,7 @@ export function HomeDemoVideo() {
     { scope: sectionRef },
   );
 
-  // Escape returns to the ambient state (fullscreen Esc exits fullscreen
-  // first — the second press lands here).
+  // Escape returns to the ambient state.
   useEffect(() => {
     if (!started) return;
     const onKey = (e: KeyboardEvent) => {
@@ -119,22 +129,21 @@ export function HomeDemoVideo() {
     return () => window.removeEventListener("keydown", onKey);
   });
 
-  const startFilm = () => {
+  /** Start (or seek) the film with sound — chapters land here too. */
+  const startFilm = (at = 0) => {
     const film = filmRef.current;
     if (!film) return;
     teaserRef.current?.pause();
     setStarted(true);
-    // Always from the head, with sound — the teaser is a re-cut, not the
-    // film's opening, so resuming from its loop position would be nonsense.
     film.muted = false;
-    film.currentTime = 0;
+    film.currentTime = at;
     void film.play();
   };
 
   const backToAmbient = () => {
-    const film = filmRef.current;
-    film?.pause();
+    filmRef.current?.pause();
     setStarted(false);
+    setActiveChapter(null);
     void teaserRef.current?.play().catch(() => {});
   };
 
@@ -144,65 +153,116 @@ export function HomeDemoVideo() {
     if (film && film.preload === "none") film.preload = "metadata";
   };
 
+  /** Highlight the chapter the playhead is inside. */
+  const onTimeUpdate = () => {
+    const film = filmRef.current;
+    if (!film || film.paused) return;
+    const t = film.currentTime;
+    let idx: number | null = null;
+    for (let i = 0; i < CHAPTERS.length; i++) {
+      if (t >= CHAPTERS[i].t) idx = i;
+    }
+    setActiveChapter(idx);
+  };
+
   return (
     <section ref={sectionRef} className="home-demo-video" aria-label="Meet Pancake — the film">
-      <div className="home-demo-video__wrap home-film__wrap" onPointerEnter={warmFilm}>
-        {/* eslint-disable-next-line @next/next/no-img-element -- decorative mascot peek */}
-        <img className="home-film__mascot" src="/pancake-monster.png" alt="" width={76} height={76} loading="lazy" decoding="async" />
+      <div className={`home-demo-video__wrap ${HOME_PAGE_CONTAINER_CLASS}`} onPointerEnter={warmFilm}>
+        <div className="home-film">
+          <div className="home-film__intro">
+            <p className="home-film__eyebrow">The film</p>
+            <h2 className="heading home-film__heading">Meet Pancake in 51 seconds</h2>
+            <p className="home-film__body">
+              One coworker in Slack. A whole team behind it. Watch the autonomy level climb.
+            </p>
+          </div>
 
-        <div ref={frameRef} className={`home-demo-video__frame home-film__frame${started ? " home-film__frame--playing" : ""}`}>
-          {/* Ambient teaser — silent 12s loop, src promoted by the observer. */}
-          <video
-            ref={teaserRef}
-            className="home-demo-video__player home-film__teaser"
-            muted
-            loop
-            playsInline
-            preload="none"
-            poster={POSTER_SRC}
-            width={1280}
-            height={720}
-            aria-hidden
-            tabIndex={-1}
-          />
-
-          {/* The full film — zero bytes until intent. */}
-          <video
-            ref={filmRef}
-            className="home-demo-video__player home-film__film"
-            playsInline
-            preload="none"
-            poster={POSTER_SRC}
-            controls={started}
-            onEnded={backToAmbient}
-          >
-            <source src={FILM_SRC} type="video/mp4" />
-          </video>
-
-          {!started && (
-            <button
-              type="button"
-              className="home-film__cta"
-              onClick={startFilm}
-              aria-label="Play the Pancake film — 51 seconds, with sound"
-            >
-              <span className="home-film__play" aria-hidden>
-                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                  <path d="M8 5.14v13.72a1 1 0 0 0 1.54.84l10.79-6.86a1 1 0 0 0 0-1.68L9.54 4.3A1 1 0 0 0 8 5.14Z" />
-                </svg>
-              </span>
-              <span className="home-film__chip" aria-hidden>
-                Watch with sound · 0:51
+          <div className="home-film__extras">
+            <ol className="home-film__chapters">
+              {CHAPTERS.map((chapter, i) => (
+                <li key={chapter.t}>
+                  <button
+                    type="button"
+                    className={`home-film__chapter${activeChapter === i ? " home-film__chapter--active" : ""}`}
+                    onClick={() => startFilm(chapter.t)}
+                    aria-label={`Play the film from ${chapter.time} — ${chapter.label}`}
+                  >
+                    <span className="home-film__chapter-time" aria-hidden>
+                      {chapter.time}
+                    </span>
+                    <span>{chapter.label}</span>
+                  </button>
+                </li>
+              ))}
+            </ol>
+            <button type="button" className="home-film__watch" onClick={() => startFilm(0)}>
+              Watch with sound
+              <span className="home-film__watch-arrow" aria-hidden>
+                →
               </span>
             </button>
-          )}
+          </div>
+
+          <div className="home-film__media">
+            {/* eslint-disable-next-line @next/next/no-img-element -- decorative mascot peek */}
+            <img className="home-film__mascot" src="/pancake-monster.png" alt="" width={68} height={68} loading="lazy" decoding="async" />
+
+            <div ref={frameRef} className={`home-film__frame${started ? " home-film__frame--playing" : ""}`}>
+              {/* Ambient teaser — silent 12s loop, src promoted by the observer. */}
+              <video
+                ref={teaserRef}
+                className="home-film__player home-film__teaser"
+                muted
+                loop
+                playsInline
+                preload="none"
+                poster={POSTER_SRC}
+                width={1280}
+                height={720}
+                aria-hidden
+                tabIndex={-1}
+              />
+
+              {/* The full film — zero bytes until intent. */}
+              <video
+                ref={filmRef}
+                className="home-film__player home-film__film"
+                playsInline
+                preload="none"
+                poster={POSTER_SRC}
+                controls={started}
+                onEnded={backToAmbient}
+                onTimeUpdate={onTimeUpdate}
+              >
+                <source src={FILM_SRC} type="video/mp4" />
+              </video>
+
+              {!started && (
+                <>
+                  <button
+                    type="button"
+                    className="home-film__cta"
+                    onClick={() => startFilm(0)}
+                    aria-label="Play the Pancake film — 51 seconds, with sound"
+                  >
+                    <span className="home-film__play" aria-hidden>
+                      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M8 5.14v13.72a1 1 0 0 0 1.54.84l10.79-6.86a1 1 0 0 0 0-1.68L9.54 4.3A1 1 0 0 0 8 5.14Z" />
+                      </svg>
+                    </span>
+                  </button>
+                  <span className="home-film__duration" aria-hidden>
+                    0:51
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Film-as-text: WCAG 1.2.1 media alternative + crawlable GEO copy. */}
-        <details className="home-film__transcript">
-          <summary>Read the film as text</summary>
-          <p>{FILM_TRANSCRIPT}</p>
-        </details>
+        {/* Film-as-text: kept in the DOM for WCAG 1.2.1 + GEO crawlers,
+            visually hidden (the visible disclosure read as clutter). */}
+        <p className="home-film__transcript">{FILM_TRANSCRIPT}</p>
       </div>
     </section>
   );
