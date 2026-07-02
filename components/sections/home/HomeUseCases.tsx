@@ -86,16 +86,16 @@ const USE_CASES: UseCase[] = [
       accent: "#D6E9DC",
       accentInk: "#1E5B3C",
       time: "8:12 AM",
-      text: "@Pancake chase down our overdue invoices? Some are 60+ days out and I keep forgetting.",
+      text: "@Pancake chase down our overdue invoices? Some are 60+ days past due and I keep forgetting.",
     },
     agent: {
       time: "8:17 AM",
-      text: "14 overdue, $38,400 outstanding. Reminders sent to every client — 3 are paying today. I'll nudge the rest every 3 days until they clear.",
+      text: "14 overdue, $38,400 outstanding. Reminders sent to every client — 3 have already opened theirs. I'll nudge the rest every 3 days until they clear.",
     },
     artifact: {
       icon: "sheet",
       title: "overdue-invoices.xlsx",
-      meta: "Sheet · 14 invoices · live-tracked",
+      meta: "Excel · 14 invoices · updated daily",
     },
   },
   {
@@ -103,7 +103,7 @@ const USE_CASES: UseCase[] = [
     accent: "pink",
     kicker: "Outbound",
     headline: "One ask, every tool.",
-    body: "It works across your CRM, inbox, and analytics in a single run. You ask once; it does the legwork.",
+    body: "Ask once — it works across your CRM, inbox, and analytics in a single run. It does the legwork.",
     elapsed: "7 minutes later",
     user: {
       name: "Mara",
@@ -115,20 +115,20 @@ const USE_CASES: UseCase[] = [
     },
     agent: {
       time: "9:21 AM",
-      text: "12 new leads since yesterday — cross-checked CRM, inbox, and analytics. 3 are hot. Drafts ready for your send.",
+      text: "12 new leads since yesterday — cross-checked CRM, inbox, and analytics. 3 are hot, drafts ready to send. I'll flag new ones as they land.",
     },
     artifact: {
       icon: "leads",
-      title: "Hot leads — follow-ups",
-      meta: "3 drafts · CRM + email + analytics",
+      title: "Follow-up drafts",
+      meta: "3 drafts · CRM + inbox + analytics",
     },
   },
   {
     id: "content",
     accent: "yellow",
-    kicker: "Support & content",
+    kicker: "Content",
     headline: "Real work, attached.",
-    body: "Answers come with the work attached — posts, PDFs, pull requests. Grounded in your docs and your codebase.",
+    body: "Get answers with the work attached — posts, PDFs, one-pagers. Grounded in your docs and your codebase.",
     elapsed: "9 minutes later",
     user: {
       name: "Leo",
@@ -140,7 +140,7 @@ const USE_CASES: UseCase[] = [
     },
     agent: {
       time: "4:41 PM",
-      text: "Drafted from the changelog and the docs — blog post, X thread, and a one-pager attached.",
+      text: "Drafted from the changelog and the docs — blog post and X thread are in your drafts, one-pager attached.",
     },
     artifact: {
       icon: "pdf",
@@ -167,17 +167,25 @@ function fanSlot(slot: number, count: number, spread: number) {
 export function HomeUseCases() {
   const rootRef = useRef<HTMLDivElement>(null);
 
-  // Fan mode (desktop + motion allowed): the row becomes a stage, the four
-  // cards an overlapping hand. Hover lifts a card to the front (rotation
-  // zeroed for reading) and elastically pushes the others aside — founder-
-  // picked 21st.dev card-fan pattern, card innards unchanged. The CSS grid
-  // remains the no-JS / reduced-motion / mobile layout.
+  // One breakpoint-aware GSAP context for the whole section.
+  //
+  // ≥1024px + motion allowed — FAN MODE: the row becomes a stage, the four
+  // cards an overlapping hand (founder-picked 21st.dev card-fan pattern,
+  // card innards unchanged). Hover lifts a card to the front and elastically
+  // pushes the others aside. The chat timelines trigger off the ROOT here:
+  // the fan displaces the cards ~260px into their hidden entry pose before
+  // ScrollTrigger measures, so per-card triggers would fire a full scroll
+  // beat late and the fan would arrive blank (audit blocker).
+  //
+  // <1024px + motion allowed — the CSS grid stays; chat timelines trigger
+  // per card as before. Reduced-motion / no-JS get the finished exchange.
   useGSAP(
     () => {
       const root = rootRef.current;
       if (!root) return;
 
       const mm = gsap.matchMedia();
+
       mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
         const cards = gsap.utils.toArray<HTMLElement>(root.querySelectorAll(".home-use-case-card"));
         if (cards.length < 2) return;
@@ -185,20 +193,32 @@ export function HomeUseCases() {
 
         const count = cards.length;
         const half = (count - 1) / 2;
+        let active = true;
+        let entering = true;
+        let entryFired = false;
+        let hovered: number | null = null;
+        let leaveTimer: ReturnType<typeof setTimeout> | null = null;
+        let resizeTimer: ReturnType<typeof setTimeout> | null = null;
 
-        // Outer card centers sit near the row edges; overlap is the point.
+        // Outer card centers sit near the row edges; the 40px margin covers
+        // the rotated silhouette's bounding overshoot so nothing pokes past
+        // the viewport (horizontal-overflow audit finding).
         const getSpread = () =>
-          Math.max(0, root.clientWidth / 2 - cards[0].offsetWidth / 2 - 8);
+          Math.max(0, root.clientWidth / 2 - cards[0].offsetWidth / 2 - 40);
 
         // Equalize (founder: identical everything) — every white chat panel
         // gets the height of the tallest one, then every card the height of
         // the tallest card, then the stage wraps the result (+ dip and
-        // hover-lift headroom). Reset first so resizes re-measure natural
+        // hover-lift headroom). Reset first so re-runs re-measure natural
         // heights instead of compounding.
         const chats = cards.map((c) => c.querySelector<HTMLElement>(".home-use-case-card__chat"));
-        const sizeStage = () => {
+        const resetHeights = () => {
           chats.forEach((chat) => chat && (chat.style.height = ""));
           cards.forEach((card) => (card.style.height = ""));
+        };
+        const sizeStage = () => {
+          if (!active) return; // fonts.ready can outlive this context
+          resetHeights();
           const maxChat = Math.max(...chats.map((chat) => chat?.offsetHeight ?? 0));
           chats.forEach((chat) => chat && (chat.style.height = `${maxChat}px`));
           const maxCard = Math.max(...cards.map((c) => c.offsetHeight));
@@ -206,13 +226,6 @@ export function HomeUseCases() {
           root.style.height = `${maxCard + 72}px`;
         };
         sizeStage();
-        if (typeof document !== "undefined" && "fonts" in document) {
-          document.fonts.ready.then(sizeStage).catch(() => {});
-        }
-
-        let entering = true;
-        let hovered: number | null = null;
-        let leaveTimer: ReturnType<typeof setTimeout> | null = null;
 
         const layout = (hoveredSlot: number | null, duration = 0.55) => {
           const spread = getSpread();
@@ -224,14 +237,20 @@ export function HomeUseCases() {
               const dist = Math.abs(slot - hoveredSlot);
               delay = dist * 0.02;
               if (slot === hoveredSlot) {
-                // Lift, straighten, come to front — the card becomes readable.
-                y -= 28;
+                // The reading state — identical for every slot (audit:
+                // absolute target, not a relative bump, so outer cards
+                // straighten to the same size and elevation as inner ones).
+                x = base.x;
+                y = -24;
                 rot = 0;
-                scale = Math.min(1, scale * 1.06);
+                scale = 1;
               } else {
                 const push = 110 / dist;
                 x += slot < hoveredSlot ? -push : push;
                 rot += (slot < hoveredSlot ? -3 : 3) / dist;
+                // Never push a card past its rest extremes — the stage is
+                // already flush with the viewport.
+                x = Math.max(-spread, Math.min(spread, x));
               }
             } else {
               delay = Math.abs(slot - half) * 0.02;
@@ -250,24 +269,43 @@ export function HomeUseCases() {
           });
         };
 
-        // Elastic entry from below, staggered left→right, plays once.
-        const spread = getSpread();
-        cards.forEach((card, slot) => {
-          const t = fanSlot(slot, count, spread);
-          gsap.set(card, {
-            x: t.x * 0.4,
-            y: t.y + 140,
-            rotation: 0,
-            scale: 0.6,
-            autoAlpha: 0,
-            zIndex: t.z,
+        // Hidden entry pose (re-applied on pre-entry resizes with fresh
+        // geometry so the entry never fans out to a stale spread).
+        const applyHiddenPose = () => {
+          const spread = getSpread();
+          cards.forEach((card, slot) => {
+            const t = fanSlot(slot, count, spread);
+            gsap.set(card, {
+              x: t.x * 0.4,
+              y: t.y + 140,
+              rotation: 0,
+              scale: 0.6,
+              autoAlpha: 0,
+              zIndex: t.z,
+            });
           });
-        });
+        };
+        applyHiddenPose();
+
+        if (typeof document !== "undefined" && "fonts" in document) {
+          document.fonts.ready
+            .then(() => {
+              if (!active) return;
+              sizeStage();
+              ScrollTrigger.refresh();
+              if (hovered !== null) layout(hovered, 0.2);
+            })
+            .catch(() => {});
+        }
+
+        // Elastic entry from below, staggered left→right, plays once.
         ScrollTrigger.create({
           trigger: root,
           start: "top 80%",
           once: true,
           onEnter: () => {
+            entryFired = true;
+            const spread = getSpread();
             cards.forEach((card, slot) => {
               const t = fanSlot(slot, count, spread);
               gsap.to(card, {
@@ -279,7 +317,13 @@ export function HomeUseCases() {
                 duration: 1.1,
                 ease: "elastic.out(1.05, 0.78)",
                 delay: slot * 0.08,
-                onComplete: slot === count - 1 ? () => { entering = false; } : undefined,
+                onComplete: () => {
+                  // Hand opacity/visibility back to the stylesheet so the
+                  // CSS sibling-dim spotlight works again (inline opacity:1
+                  // from the tween would out-rank it forever).
+                  gsap.set(card, { clearProps: "opacity,visibility" });
+                  if (slot === count - 1) entering = false;
+                },
               });
             });
           },
@@ -310,40 +354,63 @@ export function HomeUseCases() {
           }, 60);
         };
         root.addEventListener("mouseleave", onLeave);
+        // Parking the cursor on bare stage (corners, the band below the
+        // cards) also resets — not just leaving the whole root.
+        const leaveHandlers = cards.map((card) => {
+          card.addEventListener("mouseleave", onLeave);
+          return onLeave;
+        });
 
+        // Debounced: raw resize would force reflows + spawn tweens per event.
         const onResize = () => {
-          if (entering) return;
-          sizeStage();
-          layout(hovered, 0.3);
+          if (resizeTimer) clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(() => {
+            sizeStage();
+            if (!entryFired) applyHiddenPose();
+            else layout(hovered, 0.3);
+          }, 150);
         };
         window.addEventListener("resize", onResize);
 
+        createChatTimelines(cards, () => root);
+        ScrollTrigger.refresh();
+
         return () => {
-          cards.forEach((card, slot) => card.removeEventListener("mouseenter", enterHandlers[slot]));
+          active = false;
+          cards.forEach((card, slot) => {
+            card.removeEventListener("mouseenter", enterHandlers[slot]);
+            card.removeEventListener("mouseleave", leaveHandlers[slot]);
+          });
           root.removeEventListener("mouseleave", onLeave);
           window.removeEventListener("resize", onResize);
           if (leaveTimer) clearTimeout(leaveTimer);
+          if (resizeTimer) clearTimeout(resizeTimer);
           root.classList.remove("home-use-cases--fan");
           root.style.height = "";
+          resetHeights(); // inline equalized heights would corrupt the grid
           gsap.set(cards, { clearProps: "transform,opacity,visibility,zIndex" });
         };
+      });
+
+      mm.add("(max-width: 1023.98px) and (prefers-reduced-motion: no-preference)", () => {
+        const cards = gsap.utils.toArray<HTMLElement>(root.querySelectorAll(".home-use-case-card"));
+        createChatTimelines(cards, (card) => card);
+        ScrollTrigger.refresh();
       });
     },
     { scope: rootRef },
   );
 
-  useGSAP(
-    () => {
-      const root = rootRef.current;
-      if (!root) return;
-
-      const mm = gsap.matchMedia();
-      // Motion only when the visitor allows it — otherwise the CSS resting
-      // state (finished conversation, reaction visible) is what renders.
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const cards = gsap.utils.toArray<HTMLElement>(root.querySelectorAll(".home-use-case-card"));
-
-        cards.forEach((card, i) => {
+  /** Play-once chat timelines — motion grammar unchanged. `getTrigger`
+   *  decides what each card's ScrollTrigger measures: the card itself in
+   *  grid mode, the untransformed ROOT in fan mode (cards sit displaced in
+   *  their hidden entry pose when trigger positions are computed). Hoisted
+   *  function declaration — called from the useGSAP above. */
+  function createChatTimelines(
+    cards: HTMLElement[],
+    getTrigger: (card: HTMLElement) => HTMLElement,
+  ) {
+    cards.forEach((card, i) => {
           const q = gsap.utils.selector(card);
           const typing = q('[data-uc="typing"]')[0] as HTMLElement | undefined;
 
@@ -369,7 +436,7 @@ export function HomeUseCases() {
 
           const tl = gsap.timeline({
             delay: i * 0.18, // ripple left→right when cards in a row enter together
-            scrollTrigger: { trigger: card, start: "top 78%", once: true },
+            scrollTrigger: { trigger: getTrigger(card), start: "top 78%", once: true },
             onComplete: () => {
               // Post-play ambient life: the receipt gently floats. ±2px,
               // felt-not-watched; killed with the gsap context on unmount.
@@ -454,13 +521,8 @@ export function HomeUseCases() {
             { scale: 1, duration: 0.35, ease: "back.out(2.5)" },
             "+=0.5",
           );
-        });
-
-        ScrollTrigger.refresh();
-      });
-    },
-    { scope: rootRef },
-  );
+    });
+  }
 
   return (
     <div className="home-use-cases" ref={rootRef}>
@@ -494,6 +556,11 @@ function TimeJumpDivider({ label }: { label: string }) {
 }
 
 function UserMessage({ user }: { user: UseCase["user"] }) {
+  // Slack renders app mentions as blue tokens — every ask leads with
+  // "@Pancake", so split it out (audit: the section's most recognizable
+  // Slack element was missing).
+  const mention = user.text.startsWith("@Pancake") ? "@Pancake" : null;
+  const rest = mention ? user.text.slice(mention.length) : user.text;
   return (
     <div className="flex items-start gap-3" data-uc="user">
       <div
@@ -511,11 +578,13 @@ function UserMessage({ user }: { user: UseCase["user"] }) {
           <span className="text-[12px] font-normal text-[#616061]">{user.time}</span>
         </div>
         <p className="mt-1 whitespace-pre-line text-[15px] font-normal leading-[1.46668] text-[#1d1c1d]">
-          {user.text}
+          {mention && <span className="home-use-case-mention">{mention}</span>}
+          {rest}
         </p>
         {/* Pops in after the artifact lands; static without JS/motion. */}
         <span className="home-use-case-reaction" data-uc="reaction" aria-hidden>
-          🥞 1
+          <span className="home-use-case-reaction__emoji">🥞</span>
+          <span className="home-use-case-reaction__count">1</span>
         </span>
       </div>
     </div>

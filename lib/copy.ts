@@ -348,7 +348,7 @@ export const pricing = {
           accent: "#E8E0F2",
           accentInk: "#4A3C7B",
           time: "8:14am",
-          text: "@pancake — write me an X thread about why we pivoted last month. Use the framing from my last 3 threads. Schedule it for 2pm today.",
+          text: "@Pancake — write me an X thread about why we pivoted last month. Use the framing from my last 3 threads. Schedule it for 2pm today.",
         },
         agent: {
           time: "8:19am",
@@ -366,7 +366,7 @@ export const pricing = {
           accent: "#D5E4EB",
           accentInk: "#1F4660",
           time: "10:04am",
-          text: "@pancake — 27 demo requests came in over the weekend. Qualify each against our ICP (B2B SaaS, 20+ employees, US/EU). Reject the bottom half politely, book the top half on my Cal.com with a 1-pager prep doc for each.",
+          text: "@Pancake — 27 demo requests came in over the weekend. Qualify each against our ICP (B2B SaaS, 20+ employees, US/EU). Reject the bottom half politely, book the top half on my Cal.com with a 1-pager prep doc for each.",
         },
         agent: {
           time: "1:47pm",
@@ -384,7 +384,7 @@ export const pricing = {
           accent: "#EAE2D2",
           accentInk: "#6E5520",
           time: "Monday 9:02am",
-          text: "@pancake — I want 30 sales calls booked by Friday. ICP is mid-market e-commerce, 50-500 employees, hiring growth or marketing roles. Find them, write personalized outbound, send from my Apollo, book demos on my Cal.com when they reply. Check in with me Wednesday.",
+          text: "@Pancake — I want 30 sales calls booked by Friday. ICP is mid-market e-commerce, 50-500 employees, hiring growth or marketing roles. Find them, write personalized outbound, send from my Apollo, book demos on my Cal.com when they reply. Check in with me Wednesday.",
         },
         agent: {
           time: "Wednesday 4:18pm",

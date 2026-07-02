@@ -1735,30 +1735,48 @@
     translate: none;
   }
 
-  /* Per-card accent family: mat = 10-step, stroke/kicker = 20-step,
-     accent ink = 40-step (contrast-legal on the 10-step mat). */
+  /* Mirrored captions: stacking buries the LEFT half of the fan on its
+     right edge and the RIGHT half on its left edge, so each card's copy
+     anchors to its uncovered edge — at rest all four kickers + headlines
+     peek fully and symmetrically. The 72px inline padding reserves the
+     seam zone so body lines wrap before the overlap instead of being
+     amputated mid-word. */
+  .home-use-cases--fan .home-use-case-card:nth-child(-n + 2) .home-use-case-card__copy {
+    padding-right: 72px;
+  }
+
+  .home-use-cases--fan .home-use-case-card:nth-child(n + 3) .home-use-case-card__copy {
+    align-items: flex-end;
+    padding-left: 72px;
+    text-align: right;
+  }
+
+  .home-use-cases--fan .home-use-case-card:nth-child(n + 3) .home-use-case-card__kicker {
+    rotate: 2deg; /* mirror the sticker tilt with the mirrored alignment */
+  }
+
+  /* Per-card accent family: mat = 10-step, stroke/kicker = 20-step. */
   .home-use-case-card[data-accent="purple"] {
     --uc-mat: var(--palette-purple-10);
     --uc-stroke: var(--palette-purple-20);
-    --uc-accent: var(--palette-purple-40);
   }
 
   .home-use-case-card[data-accent="pink"] {
     --uc-mat: var(--palette-pink-10);
     --uc-stroke: var(--palette-pink-20);
-    --uc-accent: var(--palette-pink-40);
   }
 
   .home-use-case-card[data-accent="yellow"] {
     --uc-mat: var(--palette-yellow-10);
     --uc-stroke: var(--palette-yellow-20);
-    --uc-accent: var(--palette-yellow-40);
   }
 
   .home-use-case-card[data-accent="orange"] {
     --uc-mat: var(--palette-orange-10);
-    --uc-stroke: var(--palette-orange-20);
-    --uc-accent: var(--palette-orange-40);
+    /* Raw orange-20 (#FFA45F) is a saturated warning tone, not a pastel
+       like the other families' 20-steps — mix it toward the mat so the
+       FINANCE sticker sits at the same pastel rank as its siblings. */
+    --uc-stroke: color-mix(in srgb, var(--palette-orange-10) 55%, var(--palette-orange-20));
   }
 
   /* Pre-rendered hover shadow bloom — only its opacity transitions, so the
@@ -1769,7 +1787,7 @@
     inset: 0;
     border-radius: inherit;
     corner-shape: squircle;
-    box-shadow: 0 24px 48px -16px rgba(44, 0, 42, 0.24);
+    box-shadow: 0 24px 48px -16px color-mix(in srgb, var(--text) 24%, transparent);
     opacity: 0;
     pointer-events: none;
     transition: opacity 300ms ease;
@@ -1815,19 +1833,26 @@
   }
 
   /* Floating white Slack panel — two-layer warm shadow (tight + ambient,
-     toned from the brand ink, never pure black). */
+     toned from the brand ink via color-mix, never pure black).
+     space-between: when fan mode fixes every panel to the tallest one's
+     height, the slack distributes around the time-jump divider (ask pinned
+     top, reply + receipt pinned bottom — Slack-accurate, and the stretch
+     reads as time passing) instead of pooling as dead white under the
+     receipt. With natural heights the gap governs, so grid/mobile are
+     unchanged. */
   .home-use-case-card__chat {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     gap: var(--spacing-xl);
     padding: var(--spacing-xl);
     background-color: var(--surface);
-    border: 1px solid rgba(44, 0, 42, 0.06);
+    border: 1px solid color-mix(in srgb, var(--text) 6%, transparent);
     border-radius: var(--radius-md);
     corner-shape: squircle;
     box-shadow:
-      0 1px 2px rgba(44, 0, 42, 0.06),
-      0 12px 32px -12px rgba(44, 0, 42, 0.18);
+      0 1px 2px color-mix(in srgb, var(--text) 6%, transparent),
+      0 12px 32px -12px color-mix(in srgb, var(--text) 18%, transparent);
   }
 
   /* Same workaround as `.pricing-buys__chat`: `app/_styles/style.css` slams
@@ -1885,19 +1910,37 @@
   }
 
   /* Slack-style emoji reaction on the ask — pops in after the artifact
-     lands (visible statically without JS). */
+     lands (visible statically without JS). Recipe matches the canonical
+     StaticReactions in SlackUI.tsx: 15px emoji, 12px/400 count, #f0f0f0
+     pill — the two Slack surfaces must agree. */
   .home-use-case-reaction {
     display: inline-flex;
     align-items: center;
     gap: 4px;
     margin-top: var(--spacing-md);
     padding: 2px 10px;
-    font-size: 12px;
-    font-weight: 700;
-    color: #1d1c1d;
-    background: rgba(29, 28, 29, 0.05);
-    border: 1px solid rgba(29, 28, 29, 0.13);
+    background: #f0f0f0;
     border-radius: 999px;
+  }
+
+  .home-use-case-reaction__emoji {
+    font-size: 15px;
+    line-height: 1;
+  }
+
+  .home-use-case-reaction__count {
+    font-size: 12px;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+    color: #1d1c1d;
+  }
+
+  /* Slack's app-mention token — the "@Pancake" that opens every ask. */
+  .home-use-case-mention {
+    padding: 0 2px;
+    color: #1264a3;
+    background-color: rgba(29, 155, 209, 0.1);
+    border-radius: 3px;
   }
 
   .home-use-case-card__copy {
@@ -1929,7 +1972,7 @@
   .home-use-case-card__headline {
     margin: 0;
     font-family: var(--font-display);
-    font-weight: 500;
+    font-weight: var(--font-semibold);
     font-size: var(--font-size-header-04);
     line-height: 1.15;
     letter-spacing: -0.3px;
@@ -1944,6 +1987,13 @@
     font-weight: var(--font-normal);
     color: var(--text);
     opacity: 0.78;
+  }
+
+  /* Kills one-word widows in the hovered (reading) state — progressive
+     enhancement, no-op where unsupported. */
+  .home-use-case-card__chat p,
+  .home-use-case-card__body {
+    text-wrap: pretty;
   }
 
   /* Slack-attachment-style artifact chip inside the agent reply — the
@@ -1974,23 +2024,23 @@
 
   .home-use-case-artifact__icon[data-icon="pr"] {
     color: var(--positive-text);
-    background-color: rgba(3, 125, 72, 0.1);
+    background-color: color-mix(in srgb, var(--positive-text) 10%, transparent);
   }
 
   .home-use-case-artifact__icon[data-icon="leads"] {
     color: var(--warning-text);
-    background-color: rgba(212, 57, 0, 0.1);
+    background-color: color-mix(in srgb, var(--warning-text) 10%, transparent);
   }
 
   .home-use-case-artifact__icon[data-icon="pdf"] {
     color: var(--negative-text);
-    background-color: rgba(229, 0, 46, 0.1);
+    background-color: color-mix(in srgb, var(--negative-text) 10%, transparent);
   }
 
   /* Spreadsheets read green in Slack (Excel/Sheets) — same tone as "pr". */
   .home-use-case-artifact__icon[data-icon="sheet"] {
     color: var(--positive-text);
-    background-color: rgba(3, 125, 72, 0.1);
+    background-color: color-mix(in srgb, var(--positive-text) 10%, transparent);
   }
 
   .home-use-case-artifact__text {
