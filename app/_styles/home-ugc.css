@@ -4,26 +4,36 @@
  * component` slot, so source order settles equal-specificity ties.
  */
 @layer component {
+  /* Section root — full-bleed band recipe (same as `--org`/`--testimonials`):
+     the header stays in the page container, the track escapes it, and the
+     section itself provides the standard header→media gap. */
+  .home-landing-section.home-ugc {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-home-landing-header-to-media);
+  }
+
   /* ── Track ─────────────────────────────────────────────────────────────
-     Horizontal scroll-snap row. It bleeds by exactly the page gutter
-     (negative inline margins + matching padding), so cards slide under the
-     page edges mid-scroll while resting positions still align to the grid.
-     The first/last auto-margin pair centers the row when it does NOT
-     overflow (desktop with few clips) without the clipped-start bug that
-     `justify-content: center` causes on overflowing flex scrollers. */
+     TRUE full-bleed horizontal scroll-snap band (founder call: no side
+     margins — the boxed row read as a static grid). When the strip
+     overflows, the init script centers it on the page axis so cards crop
+     symmetrically at BOTH edges; center snap alignment keeps every resting
+     position symmetric. The first/last auto-margin pair centers the row
+     when it does NOT overflow (ultra-wide) without the clipped-start bug
+     that `justify-content: center` causes on overflowing flex scrollers. */
   .home-ugc-track {
     display: flex;
     gap: var(--spacing-xl);
     list-style: none;
     margin: 0;
-    padding: 0;
     box-sizing: border-box;
-    width: calc(100% + 2 * var(--spacing-home-page-inline));
-    margin-inline: calc(-1 * var(--spacing-home-page-inline));
-    padding-inline: var(--spacing-home-page-inline);
+    width: 100%;
+    /* Small end-stops so first/last cards never kiss the viewport edge. */
+    padding-block: 0;
+    padding-inline: var(--spacing-xl);
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    scroll-padding-inline: var(--spacing-home-page-inline);
+    scroll-padding-inline: var(--spacing-xl);
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
   }
@@ -57,12 +67,15 @@
   }
 
   @media (min-width: 1024px) {
+    /* Bigger cards on desktop: at 1440px, five 320px cards (+ gaps) overflow
+       by ~250px, so the centered strip shows deliberate symmetric crops at
+       both edges — the scroll affordance IS the composition. */
     .home-ugc-card {
-      flex-basis: 280px;
+      flex-basis: 320px;
     }
 
-    /* Desktop: cards are all (or mostly) visible — proximity keeps trackpad
-       scrolling free instead of yanking to snap points. */
+    /* Desktop: proximity keeps trackpad scrolling free instead of yanking
+       to snap points. */
     .home-ugc-track {
       scroll-snap-type: x proximity;
     }

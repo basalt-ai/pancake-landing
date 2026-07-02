@@ -179,6 +179,14 @@ function PlaceholderCard({ variant }: { variant: (typeof PLACEHOLDER_VARIANTS)[n
 const UGC_SCRIPT = `(function () {
   if (window.__pancakeUgcWall) return; window.__pancakeUgcWall = true;
   var prm = window.matchMedia("(prefers-reduced-motion: reduce)");
+  // Center the overflowing full-bleed strip on the page axis so cards crop
+  // symmetrically at both edges (the resting composition; snap alignment
+  // keeps scrolled positions symmetric too). Card layout is CSS-fixed
+  // (aspect-ratio), so one pass at parse time is layout-stable.
+  document.querySelectorAll("[data-ugc-wall] .home-ugc-track").forEach(function (track) {
+    var overflow = track.scrollWidth - track.clientWidth;
+    if (overflow > 0) track.scrollLeft = overflow / 2;
+  });
   function sweep() {
     if (!prm.matches) return;
     document.querySelectorAll("[data-ugc-card] video").forEach(function (v) {
@@ -246,15 +254,18 @@ export function HomeUGCWall({ alt = false }: { alt?: boolean } = {}) {
           </H2>
           <p className="home-landing-section__lede text-center">Real people. Real workloads handed off.</p>
         </header>
-
-        {/* `role="list"` restated because `list-style: none` strips list
-            semantics in Safari/VoiceOver. */}
-        <ul className="home-ugc-track" role="list">
-          {hasClips
-            ? clips.map((clip) => <VideoCard key={clip.src} clip={clip} />)
-            : PLACEHOLDER_VARIANTS.map((variant, i) => <PlaceholderCard key={`${variant}-${i}`} variant={variant} />)}
-        </ul>
       </div>
+
+      {/* Full-bleed band OUTSIDE the page container — same recipe as the
+          X-posts and org bands. The strip is centered on the page axis by
+          the init script when it overflows (symmetric crops both edges);
+          `role="list"` restated because `list-style: none` strips list
+          semantics in Safari/VoiceOver. */}
+      <ul className="home-ugc-track" role="list">
+        {hasClips
+          ? clips.map((clip) => <VideoCard key={clip.src} clip={clip} />)
+          : PLACEHOLDER_VARIANTS.map((variant, i) => <PlaceholderCard key={`${variant}-${i}`} variant={variant} />)}
+      </ul>
 
       {/* Interactivity only matters once real clips exist. */}
       {hasClips && <script dangerouslySetInnerHTML={{ __html: UGC_SCRIPT }} />}
