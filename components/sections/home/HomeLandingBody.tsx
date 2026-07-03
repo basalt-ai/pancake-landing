@@ -20,6 +20,7 @@
 
 import { HOME_PAGE_CONTAINER_CLASS } from "@/components/sections/home/home-layout";
 import { HomeBlogCards } from "@/components/sections/home/HomeBlogCards";
+import { HomeClosingCta } from "@/components/sections/home/HomeClosingCta";
 import { HomeIntegrationsCloud } from "@/components/sections/home/HomeIntegrationsCloud";
 import { HomeLandingTestimonials } from "@/components/sections/home/HomeLandingTestimonials";
 import { HomeTrustCarousel } from "@/components/sections/home/HomeTrustCarousel";
@@ -30,38 +31,6 @@ import { HomeUGCWall } from "@/components/sections/home/HomeUGCWall";
 import { HomeUseCases } from "@/components/sections/home/HomeUseCases";
 import { SlackUI } from "@/components/shared/SlackUI";
 import { H2 } from "@/components/ui/Headings";
-import { PANCAKE_TINTS } from "@/lib/pancake-palette";
-
-/**
- * Figma `428:15162` — two-line composition. A plain "\n" because the heading
- * renders with `whitespace-pre-line`, which honors LF but NOT the U+2028 the
- * old constant carried (Chromium rendered it as a typo-looking double gap on
- * a single line).
- */
-const CLOSING_TITLE = "Make your\ncompany autonomous";
-
-/**
- * Inline pancake decoration — same two-tone silhouette used across the page
- * (side + top paths from `pancake-svgs/angled-1.svg`), tinted by variant via
- * the shared on-palette tints in `lib/pancake-palette` (previously off-palette
- * hardcoded hexes — unified in landing v4).
- * Powers the bleed pancakes around the closing CTA (Figma `451:20112`).
- */
-function DecorPancake({ variant, className }: { variant: keyof typeof PANCAKE_TINTS; className: string }) {
-  const p = PANCAKE_TINTS[variant];
-  return (
-    <svg className={className} viewBox="0 0 49 48" aria-hidden focusable="false">
-      <path
-        d="M25.9537 42C33.3632 42 39.2879 37.7456 43.3461 33.4449C46.1317 30.4929 47.7828 26.7658 47.8255 22.5904C47.9308 12.2895 37.5877 4 24.9673 4C12.347 4 1.61512 11.2979 0.299682 22.5904C-0.498594 29.4427 3.49706 33.162 8.00699 36.2143C12.4861 39.2458 19.7274 42 25.9537 42Z"
-        fill={p.side}
-      />
-      <path
-        d="M25.8326 36C32.779 36 38.3334 32.4173 42.138 28.7957C44.7495 26.3098 46.2973 23.1712 46.3374 19.6551C46.4361 10.9807 36.7394 4 24.9078 4C13.0762 4 3.01515 10.1456 1.78193 19.6551C1.03355 25.4254 4.77947 28.5575 9.00753 31.1278C13.2067 33.6806 19.9955 36 25.8326 36Z"
-        fill={p.top}
-      />
-    </svg>
-  );
-}
 
 export function HomeLandingBody() {
   return (
@@ -190,33 +159,18 @@ export function HomeLandingBody() {
           differentiator. Full band with its own pink treatment. */}
       <HomePricingTeaser />
 
-      {/* Figma `428:15160` closing CTA — directly after pricing since the
-          2026-07-02 narrative reorder: nothing sits between the price and
-          the ask (the blog cards that used to live here were an exit ramp
-          at the exact moment of decision). Decorative pancakes (purple
-          top-left, half-pink bottom-left, orange-pink right) bleed past the
-          section edges; desktop positions added in landing v4. */}
+      {/* Closing CTA finale — directly after pricing since the 2026-07-02
+          narrative reorder: nothing sits between the price and the ask.
+          Rebuilt 2026-07-03 (founder: generic band, headline too far from
+          the value prop): HomeClosingCta cashes the hero claim ("Give
+          Pancake its first job") and restages the hero's mascot-among-
+          orbits scene around the button — the old edge-bleed decor
+          pancakes are gone, absorbed into the orbit satellites. (SOC 2
+          left the note deliberately: the trust carousel owns compliance
+          two sections up.) */}
       <section className="home-landing-section home-landing-section--alt home-landing-section--closing" aria-labelledby="home-landing-closing-heading">
-        <DecorPancake variant="purple" className="home-landing-closing-decor home-landing-closing-decor--purple" />
-        <DecorPancake variant="pink" className="home-landing-closing-decor home-landing-closing-decor--pink" />
-        <DecorPancake variant="orange" className="home-landing-closing-decor home-landing-closing-decor--orange" />
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner home-landing-section__inner--closing`}>
-          <h2 id="home-landing-closing-heading" className="heading home-landing-section__closing-title whitespace-pre-line text-center">
-            {CLOSING_TITLE}
-          </h2>
-          <p className="home-landing-section__lede home-landing-section__lede--closing text-center">
-            Sign up and onboard Pancake now
-          </p>
-          <div className="home-landing-closing-cta">
-            <a
-              href="https://app.getpancake.ai"
-              className="button inline-flex w-fit shrink-0 items-center justify-center no-underline"
-              data-size="lg"
-            >
-              Get started for free
-            </a>
-            <p className="home-landing-closing-cta__note">No credit card required • $100 in free credits • SOC 2 compliant</p>
-          </div>
+          <HomeClosingCta />
         </div>
       </section>
 

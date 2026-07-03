@@ -2186,7 +2186,11 @@
     color: var(--subtle-text);
   }
 
-  .home-landing-section__closing-title {
+  /* `h2` prefix is load-bearing: the kit's `h2.heading` (0,1,1) otherwise
+     out-cascades this class (0,1,0) per-property and pins font-size at
+     header-02 (31.25px) under the 64px line-height — the airy, undersized
+     title the founder flagged. Same specificity + later source = we win. */
+  h2.home-landing-section__closing-title {
     margin: 0;
     max-width: var(--width-home-landing-heading);
     font-family: var(--font-display);
@@ -2229,67 +2233,121 @@
     color: var(--subtle-text);
   }
 
-  /* Decorative pancakes around the closing CTA. Mobile coordinates come from
-     Figma `451:20112` (see the `@media (max-width: 1023.98px)` block near the
-     end of this file); the desktop block below adapts the same three pancakes
-     to large screens. Default is hidden so nothing flashes at widths a media
-     block doesn't cover. */
-  .home-landing-closing-decor {
-    display: none;
+  /* ─────────────── Closing CTA finale (HomeClosingCta.tsx) ───────────────
+     The hero's constellation restaged around the ask: eye-tracking mascot
+     centered between two dotted orbits (hero stroke recipe), four two-tone
+     satellite pancakes ON the rings. Geometry is percentage-based against
+     the 640×200 design box, so the composition holds at any width. The old
+     edge-bleed `.home-landing-closing-decor` pancakes are gone — absorbed
+     into these satellites. */
+
+  .home-closing {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xl);
+    width: 100%;
   }
 
-  /**
-   * Desktop (≥ lg) closing-CTA decor — larger satellites bleeding past the
-   * section edges, mirroring the mobile composition (purple top-left, pink
-   * bottom-left half-visible, orange right). Positions hug the viewport
-   * edges: the centered content column is `--width-home-landing-heading`
-   * (752px) wide, leaving ≥136px gutters at the 1024px breakpoint, and every
-   * pancake's visible portion stays inside its gutter — no overlap with the
-   * CTA text column. The section clips the bleed (`overflow: hidden`).
-   */
-  @media (min-width: 1024px) {
-    .home-landing-section--closing {
-      position: relative;
-      overflow: hidden;
+  .home-closing__stage {
+    position: relative;
+    width: min(640px, 100%);
+    aspect-ratio: 640 / 200;
+    /* Stage → title reads a step wider than the text stack's rhythm. */
+    margin-bottom: var(--spacing-md);
+  }
+
+  /* The outer ellipse deliberately bottoms 20px past the design box (the
+     hero's orbits bleed the same way) — keep every overflow visible so the
+     dotted arc fades naturally instead of clipping mid-dot. */
+  .home-closing__orbits {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .home-closing__orbit {
+    fill: none;
+    stroke: var(--text);
+    stroke-width: 1;
+    stroke-dasharray: 0.578125 6.9375;
+    stroke-linecap: round;
+  }
+
+  .home-closing-sat {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .home-closing-sat[data-layer="behind"] {
+    z-index: 2;
+  }
+
+  .home-closing-sat[data-layer="front"] {
+    z-index: 4;
+  }
+
+  .home-closing-sat__fly,
+  .home-closing-sat__float {
+    display: block;
+  }
+
+  /* Slow ambient drift once the entrance settles — desynced via per-sat
+     delays so the constellation breathes instead of bouncing in unison. */
+  .home-closing-sat__float {
+    animation: home-closing-float 7s ease-in-out infinite alternate;
+    animation-delay: var(--sat-float-delay, 0s);
+  }
+
+  @keyframes home-closing-float {
+    from {
+      transform: translateY(-6px);
     }
 
-    .home-landing-closing-decor {
-      display: block;
-      position: absolute;
-      pointer-events: none;
-      z-index: 0;
+    to {
+      transform: translateY(6px);
     }
+  }
 
-    /* Purple — top-left, bleeding past the left edge (~40% clipped). */
-    .home-landing-closing-decor--purple {
-      top: calc(2 * var(--spacing-xxl));
-      left: -64px; /* ~2/5 of its 160px width hidden off-canvas */
-      width: 160px;
-      height: 160px;
+  @media (prefers-reduced-motion: reduce) {
+    .home-closing-sat__float {
+      animation: none;
     }
+  }
 
-    /* Pink — bottom-left, half-visible (clipped by the left edge). */
-    .home-landing-closing-decor--pink {
-      bottom: calc(1.5 * var(--spacing-xxl));
-      left: -70px; /* exactly half of its 140px width hidden */
-      width: 140px;
-      height: 140px;
-    }
+  .home-closing-sat__pancake {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
 
-    /* Orange — right edge, mid-height, peeking in. */
-    .home-landing-closing-decor--orange {
-      top: 50%;
-      right: -40px; /* ~1/3 of its 124px width hidden */
-      width: 124px;
-      height: 124px;
-      transform: translateY(-50%);
-    }
+  /* Mascot slot — anchored on the orbit center (134/200 of the stage).
+     The monster drawing carries generous internal padding (the hero's
+     interactive variant runs a 275px canvas for a ~160px body), so the
+     slot runs bigger than the satellites suggest: 176px canvas ≈ 95px
+     visible pancake. Width clamps to the mobile floor; the component
+     measures this box and renders the SVG sharp at that size. */
+  .home-closing__monster {
+    position: absolute;
+    left: 50%;
+    top: 67%;
+    transform: translate(-50%, -50%);
+    width: clamp(112px, 27.5%, 176px);
+    aspect-ratio: 1 / 1;
+    z-index: 3;
+  }
 
-    /* Keep the CTA copy above the decor layer. */
-    .home-landing-section--closing .home-landing-section__inner {
-      position: relative;
-      z-index: 1;
-    }
+  .home-landing-section--closing {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .home-landing-section--closing .home-landing-section__inner {
+    position: relative;
+    z-index: 1;
   }
 
   /**
@@ -6016,38 +6074,11 @@
       gap: var(--spacing-xxl);
     }
 
-    /* === Closing CTA — decorative pancake satellites (Figma 451:20112). === */
-    .home-landing-section--closing {
-      position: relative;
-      overflow: hidden;
-    }
-    .home-landing-closing-decor {
-      display: block;
-      position: absolute;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .home-landing-closing-decor--purple {
-      top: var(--spacing-md);
-      left: calc(-1 * var(--spacing-md));
-      width: 76px;
-      height: 76px;
-    }
-    .home-landing-closing-decor--pink {
-      bottom: var(--spacing-xxl);
-      left: calc(-1 * var(--spacing-xl));
-      width: 96px;
-      height: 96px;
-    }
-    .home-landing-closing-decor--orange {
-      top: 18%;
-      right: calc(-2 * var(--spacing-xl));
-      width: 76px;
-      height: 76px;
-    }
+    /* === Closing CTA — the orbit finale keeps its own geometry (percent-
+       based stage in HomeClosingCta); mobile only centers the text stack.
+       The old mobile edge-decor pancakes (Figma 451:20112) are gone with
+       their desktop siblings. === */
     .home-landing-section--closing .home-landing-section__inner {
-      position: relative;
-      z-index: 1;
       align-items: center;
       text-align: center;
     }

@@ -224,6 +224,10 @@ export const pricing = {
     /** $100 in free credits to start. Surfaced verbatim in `trialCaption`;
      *  kept as a number for back-office math. */
     freeTokensDollars: 100,
+    /** Trial length in days — source of truth since f6da811 (3 → 7); the
+     *  field was dropped in the v4 copy restructure and is restored for the
+     *  closing-CTA note, which derives from it instead of hardcoding. */
+    days: 7,
   },
   currency: "USD" as const,
   currencySymbol: "$",
