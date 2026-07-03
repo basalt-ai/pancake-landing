@@ -31,8 +31,9 @@ import { PancakeMonster } from "@/components/mascot/pancake-monster/PancakeMonst
 import { pricing } from "@/lib/copy";
 import { PANCAKE_TINTS } from "@/lib/pancake-palette";
 
-/** Hard break: control the 64px wrap (heading renders whitespace-pre-line). */
-const CLOSING_TITLE = "Give Pancake\nits first job";
+/** One line at 64px — measures 683px against the 752px heading column
+ *  (founder call); small screens wrap naturally on the max-width. */
+const CLOSING_TITLE = "Give Pancake its first job";
 
 /** Stage design space — all positions below are % of this box. */
 const STAGE_W = 640;
