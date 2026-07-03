@@ -238,6 +238,17 @@ const TENTACLES: TentacleDef[] = [
     tail: { x: 1310, y: 138, size: 14, palette: "pink" },
   },
   {
+    // Ops — fills the empty top-right box (founder note): staggered radii
+    // with hero Jira mid-chain, exits through the corner.
+    id: "ops",
+    nodes: [
+      { slug: "zendesk", alt: "Zendesk", cx: 1385, cy: 225, chip: 52 },
+      { slug: "jira", alt: "Jira", cx: 1560, cy: 120, chip: 96 },
+      { slug: "telegram", alt: "Telegram", cx: 1735, cy: 58, chip: 58 },
+    ],
+    exit: { x: 1872, y: 8 },
+  },
+  {
     // Automation — a short chain that just ends on n8n, filling the bare
     // stretch between the monster and the X/Gmail chains (founder note).
     id: "automation",
@@ -247,9 +258,11 @@ const TENTACLES: TentacleDef[] = [
     ],
   },
   {
-    // Analytics — fills the right-mid gap and GROWS outward.
+    // Analytics — starts right by the monster and GROWS outward (founder:
+    // no bare anchor runs with the logos bunched at the tip).
     id: "analytics",
     nodes: [
+      { slug: "mixpanel", alt: "Mixpanel", cx: 1245, cy: 575, chip: 50 },
       { slug: "googlesheets", alt: "Google Sheets", cx: 1445, cy: 660, chip: 56 },
       { slug: "posthog", alt: "PostHog", cx: 1610, cy: 695, chip: 74 },
     ],
@@ -265,8 +278,11 @@ const TENTACLES: TentacleDef[] = [
     ],
   },
   {
+    // Workspace — ClickUp anchors the chain near the monster so the long
+    // climb to Miro/Dropbox isn't a bare wire with a tip cluster.
     id: "workspace",
     nodes: [
+      { slug: "clickup", alt: "ClickUp", cx: 968, cy: 240, chip: 48 },
       { slug: "miro", alt: "Miro", cx: 990, cy: 85, chip: 58 },
       { slug: "dropbox", alt: "Dropbox", cx: 1040, cy: 12, chip: 50 },
     ],
