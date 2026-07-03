@@ -96,15 +96,46 @@ function FallbackBlob() {
 }
 
 // Founder-curated shelf (2026-07-02): newest-3 surfaced whichever GEO
-// comparison post shipped last — thin reads for a homepage visitor. These
-// three are the highest-value pieces, one per genre: the vision manifesto,
-// the real-numbers proof, and the practical how-we-run-it. Order = display
-// order. If a slug is renamed, the newest remaining posts pad the shelf.
+// comparison post shipped last — thin reads for a homepage visitor. Two
+// internal picks (the vision manifesto + the real-numbers proof) and one
+// external partner post (below). Order = display order. If a slug is
+// renamed, the newest remaining posts pad the internal slots.
 const FEATURED_SLUGS = [
   "the-next-unicorns-will-have-five-employees",
   "autonomous-company-benchmark-2026",
-  "autonomous-company-stack",
 ];
+
+/**
+ * Third card — external partner post about Pancake's agent inbox (founder
+ * call 2026-07-02: replaced the stack post, judged the weakest of the
+ * three). Same card anatomy, but the anchor leaves the site: title and
+ * excerpt are the AgentMail article's own text, read time from its ~1,100
+ * words at the same 220 wpm formula as internal posts.
+ */
+const AGENTMAIL_CARD = {
+  key: "agentmail-superagent-inbox",
+  href: "https://www.agentmail.to/blog/how-pancake-gives-its-superagent-a-real-inbox-with-agentmail",
+  title: "How Pancake Gives Its Superagent a Real Inbox with AgentMail",
+  excerpt:
+    "An inbox the agent fully owns, not a founder's personal address. Shipped in a day, zero-touch threads, response times from hours to minutes.",
+  dateISO: "2026-06-16",
+  minutes: 5 as number | null,
+  source: "AgentMail",
+};
+
+/** Unified card view-model — internal posts and the external partner post
+ *  render through the same markup. */
+type ShelfCard = {
+  key: string;
+  href: string;
+  external: boolean;
+  title: string;
+  excerpt?: string;
+  dateISO: string;
+  minutes: number | null;
+  cover: { src: string; alt: string } | null;
+  source?: string;
+};
 
 export function HomeBlogCards() {
   const now = Date.now();
@@ -124,11 +155,23 @@ export function HomeBlogCards() {
   const pad = all
     .filter((p) => !FEATURED_SLUGS.includes(p.slug) && postTime(p) <= now)
     .sort((a, b) => postTime(b) - postTime(a));
-  const posts = [...featured, ...pad].slice(0, 3);
+  const internal = [...featured, ...pad].slice(0, 2);
 
-  // No posts (e.g. content dir missing in a stripped build) → skip the
-  // section entirely rather than render an empty grid.
-  if (posts.length === 0) return null;
+  const cards: ShelfCard[] = internal.map((p) => ({
+    key: p.slug,
+    href: `/blog/${p.slug}`,
+    external: false,
+    title: p.title,
+    excerpt: p.description ?? p.summary,
+    dateISO: p.publishedAt ?? p.date,
+    minutes: readingMinutes(p.slug),
+    cover: resolveCover(p),
+  }));
+  cards.push({ ...AGENTMAIL_CARD, external: true, cover: null });
+
+  // Even with a stripped content dir the external card keeps the shelf alive;
+  // the guard only fires if that ever changes.
+  if (cards.length === 0) return null;
 
   return (
     <section className="home-landing-section" aria-labelledby="home-landing-blog-heading">
@@ -142,21 +185,22 @@ export function HomeBlogCards() {
 
         <div className="home-blog">
           <ul className="home-blog__grid">
-            {posts.map((post, index) => {
-              const cover = resolveCover(post);
+            {cards.map((card, index) => {
               const tone = FALLBACK_TONES[index % FALLBACK_TONES.length];
-              const minutes = readingMinutes(post.slug);
-              const published = post.publishedAt ?? post.date;
-              const excerpt = post.description ?? post.summary;
               return (
-                <li key={post.slug} className="home-blog__cell">
-                  {/* Plain anchor on purpose — see GEO note in the file header. */}
-                  <a href={`/blog/${post.slug}`} className="home-blog-card">
+                <li key={card.key} className="home-blog__cell">
+                  {/* Plain anchor on purpose — see GEO note in the file header.
+                      External cards open in a new tab so the homepage stays. */}
+                  <a
+                    href={card.href}
+                    className="home-blog-card"
+                    {...(card.external ? { target: "_blank", rel: "noopener" } : {})}
+                  >
                     <div className="home-blog-card__media">
-                      {cover ? (
+                      {card.cover ? (
                         <Image
-                          src={cover.src}
-                          alt={cover.alt}
+                          src={card.cover.src}
+                          alt={card.cover.alt}
                           fill
                           sizes="(min-width: 1024px) 33vw, 100vw"
                           className="home-blog-card__img"
@@ -172,18 +216,24 @@ export function HomeBlogCards() {
                     </div>
                     <div className="home-blog-card__body">
                       <p className="home-blog-card__meta">
-                        {formatDate(published) !== null && (
-                          <time dateTime={published}>{formatDate(published)}</time>
+                        {formatDate(card.dateISO) !== null && (
+                          <time dateTime={card.dateISO}>{formatDate(card.dateISO)}</time>
                         )}
-                        {minutes !== null && (
+                        {card.minutes !== null && (
                           <>
                             <span aria-hidden>·</span>
-                            <span>{minutes} min read</span>
+                            <span>{card.minutes} min read</span>
+                          </>
+                        )}
+                        {card.source && (
+                          <>
+                            <span aria-hidden>·</span>
+                            <span>{card.source}</span>
                           </>
                         )}
                       </p>
-                      <h3 className="home-blog-card__title">{post.title}</h3>
-                      {excerpt && <p className="home-blog-card__excerpt">{excerpt}</p>}
+                      <h3 className="home-blog-card__title">{card.title}</h3>
+                      {card.excerpt && <p className="home-blog-card__excerpt">{card.excerpt}</p>}
                     </div>
                   </a>
                 </li>
