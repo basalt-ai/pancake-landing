@@ -12,6 +12,29 @@ import {
 import { HomeHeroPancakeMonster } from "@/components/sections/home/HomeHeroPancakeMonster";
 import { HomeLogoMarquee } from "@/components/sections/home/HomeLogoMarquee";
 import { H1 } from "@/components/ui/Headings";
+import { PANCAKE_TINTS } from "@/lib/pancake-palette";
+
+/**
+ * Full two-tone pancake (side + top paths from `pancake-svgs/angled-1.svg`,
+ * same silhouette as the closing-CTA decor) — used for satellites whose Figma
+ * raster export is clipped by its own bounding box (see `inlinePancake` in
+ * home-hero-orbit-satellites.ts).
+ */
+function OrbitSatellitePancake({ palette }: { palette: keyof typeof PANCAKE_TINTS }) {
+  const p = PANCAKE_TINTS[palette];
+  return (
+    <svg className="home-hero-orbit-satellite-img" viewBox="0 0 49 48" aria-hidden focusable="false">
+      <path
+        d="M25.9537 42C33.3632 42 39.2879 37.7456 43.3461 33.4449C46.1317 30.4929 47.7828 26.7658 47.8255 22.5904C47.9308 12.2895 37.5877 4 24.9673 4C12.347 4 1.61512 11.2979 0.299682 22.5904C-0.498594 29.4427 3.49706 33.162 8.00699 36.2143C12.4861 39.2458 19.7274 42 25.9537 42Z"
+        fill={p.side}
+      />
+      <path
+        d="M25.8326 36C32.779 36 38.3334 32.4173 42.138 28.7957C44.7495 26.3098 46.2973 23.1712 46.3374 19.6551C46.4361 10.9807 36.7394 4 24.9078 4C13.0762 4 3.01515 10.1456 1.78193 19.6551C1.03355 25.4254 4.77947 28.5575 9.00753 31.1278C13.2067 33.6806 19.9955 36 25.8326 36Z"
+        fill={p.top}
+      />
+    </svg>
+  );
+}
 
 const HERO_TITLE = "The AI coworker that does the work for you";
 
@@ -105,13 +128,17 @@ export function HomeHero() {
                       } as CSSProperties
                     }
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element -- Figma PNG @2x (skew-accurate vs SVG export) */}
-                    <img
-                      className="home-hero-orbit-satellite-img"
-                      src={homeHeroOrbitSatelliteSrc(s.figmaNode)}
-                      alt=""
-                      decoding="async"
-                    />
+                    {s.inlinePancake ? (
+                      <OrbitSatellitePancake palette={s.inlinePancake} />
+                    ) : (
+                      // eslint-disable-next-line @next/next/no-img-element -- Figma PNG @2x (skew-accurate vs SVG export)
+                      <img
+                        className="home-hero-orbit-satellite-img"
+                        src={homeHeroOrbitSatelliteSrc(s.figmaNode)}
+                        alt=""
+                        decoding="async"
+                      />
+                    )}
                   </div>
                 </div>
               ))}
@@ -139,13 +166,17 @@ export function HomeHero() {
                       } as CSSProperties
                     }
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element -- Figma PNG @2x (skew-accurate vs SVG export) */}
-                    <img
-                      className="home-hero-orbit-satellite-img"
-                      src={homeHeroOrbitSatelliteSrc(s.figmaNode)}
-                      alt=""
-                      decoding="async"
-                    />
+                    {s.inlinePancake ? (
+                      <OrbitSatellitePancake palette={s.inlinePancake} />
+                    ) : (
+                      // eslint-disable-next-line @next/next/no-img-element -- Figma PNG @2x (skew-accurate vs SVG export)
+                      <img
+                        className="home-hero-orbit-satellite-img"
+                        src={homeHeroOrbitSatelliteSrc(s.figmaNode)}
+                        alt=""
+                        decoding="async"
+                      />
+                    )}
                   </div>
                 </div>
               ))}

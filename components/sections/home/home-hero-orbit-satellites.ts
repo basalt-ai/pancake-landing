@@ -28,6 +28,10 @@ export type HomeHeroOrbitSatellite = {
   readonly widthFigma: number;
   readonly heightFigma: number;
   readonly layer: HomeHeroOrbitSatelliteLayer;
+  /** Render as the shared two-tone pancake SVG instead of the Figma raster —
+   *  used when the Figma export itself is clipped (the instance sat on the
+   *  frame edge in the comp, so the PNG bounding box slices the pancake). */
+  readonly inlinePancake?: "pink" | "purple" | "yellow" | "orange";
 };
 
 /** Figma `428:14920` monster frame = 160px — same basis as `--size-home-hero-monster-max-width`. */
@@ -58,14 +62,19 @@ export const HOME_HERO_ORBIT_SATELLITES: readonly HomeHeroOrbitSatellite[] = [
     layer: "behindMascot",
   },
   {
+    // Figma exported this instance clipped (67×41 bbox — it overlapped the
+    // hero frame edge in the comp, so the PNG slices the pancake's top-left).
+    // In the coded hero it floats mid-air, so it renders as the full two-tone
+    // pancake SVG instead; box restored to the silhouette's 49:48 aspect.
     figmaNode: "428:14911",
     orbit: 6,
     dxFigma: -615.5639871583408,
     dyFigma: 358.4359562268801,
     rotationFigmaPluginDeg: -32.467800351709045,
     widthFigma: 67,
-    heightFigma: 41,
+    heightFigma: 66,
     layer: "behindMascot",
+    inlinePancake: "purple",
   },
   {
     figmaNode: "428:14921",
