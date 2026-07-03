@@ -15,9 +15,8 @@
 import { HOME_PAGE_CONTAINER_CLASS } from "@/components/sections/home/home-layout";
 import { HomeBlogCards } from "@/components/sections/home/HomeBlogCards";
 import { HomeIntegrationsCloud } from "@/components/sections/home/HomeIntegrationsCloud";
-import { HomeLandingControl } from "@/components/sections/home/HomeLandingControl";
-import { HomeLandingSecurity } from "@/components/sections/home/HomeLandingSecurity";
 import { HomeLandingTestimonials } from "@/components/sections/home/HomeLandingTestimonials";
+import { HomeLandingTrust } from "@/components/sections/home/HomeLandingTrust";
 import { HomeOrgDiagram } from "@/components/sections/home/HomeOrgDiagram";
 import { HomeOrgDiagramMobile } from "@/components/sections/home/HomeOrgDiagramMobile";
 import { HomePricingTeaser } from "@/components/sections/home/HomePricingTeaser";
@@ -155,31 +154,20 @@ export function HomeLandingBody() {
           testimonial band. */}
       <HomeUGCWall alt />
 
-      {/* Security (card skeleton from the former Figma `428:15087` features section) */}
-      <section className="home-landing-section" aria-labelledby="home-landing-security-heading">
+      {/* Trust — merged security + control (founder call 2026-07-03: one
+          block, three pillars). SOC 2 checklist, per-person account access
+          with the approval last-word, and the private pod. Replaces the
+          former "Secure by design" and "You're always in control" sections;
+          HomeLandingSecurity.tsx / HomeLandingControl.tsx stay on disk
+          unreferenced. Single-line header per the one-screen budget. */}
+      <section className="home-landing-section" aria-labelledby="home-landing-trust-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
-            <H2 id="home-landing-security-heading" className="heading home-landing-section__title text-center">
-              Secure by design
+            <H2 id="home-landing-trust-heading" className="heading home-landing-section__title text-center">
+              Secure enough to hand it your real accounts
             </H2>
-            <p className="home-landing-section__lede text-center">Sandboxed, approval-gated, vault-first.</p>
           </header>
-          <HomeLandingSecurity />
-        </div>
-      </section>
-
-      {/* Figma `428:15125` control */}
-      <section className="home-landing-section home-landing-section--alt" aria-labelledby="home-landing-control-heading">
-        <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
-          <header className="home-landing-section__header">
-            <H2 id="home-landing-control-heading" className="heading home-landing-section__title text-center">
-              You’re always in control
-            </H2>
-            <p className="home-landing-section__lede text-center">Jump in at any time, you always have the last word.</p>
-          </header>
-          <div className="home-landing-section__figure">
-            <HomeLandingControl />
-          </div>
+          <HomeLandingTrust />
         </div>
       </section>
 
