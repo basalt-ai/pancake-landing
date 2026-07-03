@@ -124,12 +124,11 @@ export function HomeLandingBody() {
       <section className="home-landing-section home-landing-section--alt" aria-labelledby="home-landing-integrations-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
+            {/* Single-line header (founder: one efficient sentence — the freed
+                line keeps the full artwork visible without cropping logos). */}
             <H2 id="home-landing-integrations-heading" className="heading home-landing-section__title text-center">
-              Plugged into everything
+              Pancake plugs into the tools you already use
             </H2>
-            <p className="home-landing-section__lede text-center">
-              Pancake works inside the tools you already use.
-            </p>
           </header>
           <div className="home-landing-section__figure">
             <HomeIntegrationsCloud />

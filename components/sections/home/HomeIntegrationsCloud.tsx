@@ -37,10 +37,10 @@ import { gsap } from "@/lib/gsap";
 import { PANCAKE_TINTS } from "@/lib/pancake-palette";
 
 const VB_W = 1920;
-const VB_H = 900;
+const VB_H = 720;
 /** Tentacle anchor — pancake-monster centre in Figma container coords. */
 const ANCHOR_X = 960;
-const ANCHOR_Y = 435;
+const ANCHOR_Y = 360;
 
 /* ----------------------------------------------------------------------- */
 /* Pancake — inline SVG, parameterised colours, used for tails + decoration */
@@ -109,8 +109,13 @@ type TentacleDef = {
 };
 
 /**
- * Hand-authored chains — full 1920×900 stage, monster dead-center at
- * (960, 435). Sizes are deliberately non-monotone along a chain.
+ * Hand-authored chains — full 1920×720 stage, monster dead-center at
+ * (960, 360). Sizes are deliberately non-monotone along a chain.
+ * The 720 height replaced 900 (founder: the section must fit one screen and
+ * logos must never get cropped) — x positions and chip sizes are untouched,
+ * only vertical spacing compressed (y' ≈ 360 + (y − 435) × 0.7 plus manual
+ * de-collision nudges); every chip clears the top/bottom edges even at full
+ * wobble amplitude, so no dynamic viewport cropping is needed.
  */
 const TENTACLES: TentacleDef[] = [
   {
@@ -118,143 +123,143 @@ const TENTACLES: TentacleDef[] = [
     // ring around Pancake was empty), hero Gmail is the SECOND link.
     id: "gmail",
     nodes: [
-      { slug: "googlecalendar", alt: "Google Calendar", cx: 790, cy: 330, chip: 64 },
-      { slug: "gmail", alt: "Gmail", cx: 560, cy: 200, chip: 130, mobile: true },
-      { slug: "googledrive", alt: "Google Drive", cx: 400, cy: 118, chip: 68 },
-      { slug: "producthunt", alt: "Product Hunt", cx: 268, cy: 62, chip: 52 },
-      { slug: "loom", alt: "Loom", cx: 150, cy: 16, chip: 46 },
+      { slug: "googlecalendar", alt: "Google Calendar", cx: 790, cy: 286, chip: 64 },
+      { slug: "gmail", alt: "Gmail", cx: 560, cy: 196, chip: 130, mobile: true },
+      { slug: "googledrive", alt: "Google Drive", cx: 400, cy: 138, chip: 68 },
+      { slug: "producthunt", alt: "Product Hunt", cx: 268, cy: 99, chip: 52 },
+      { slug: "loom", alt: "Loom", cx: 150, cy: 67, chip: 46 },
     ],
-    exit: { x: 30, y: -28 },
+    exit: { x: 30, y: -40 },
   },
   {
     id: "github",
     nodes: [
-      { slug: "linear", alt: "Linear", cx: 1060, cy: 295, chip: 54 },
-      { slug: "github", alt: "GitHub", src: "/integrations/github-fill.svg", cx: 1085, cy: 172, chip: 120, logoRotateDeg: 6.63, mobile: true },
-      { slug: "youtube", alt: "YouTube", cx: 1215, cy: 92, chip: 78, mobile: true },
+      { slug: "linear", alt: "Linear", cx: 1060, cy: 250, chip: 54 },
+      { slug: "github", alt: "GitHub", src: "/integrations/github-fill.svg", cx: 1085, cy: 150, chip: 120, logoRotateDeg: 6.63, mobile: true },
+      { slug: "youtube", alt: "YouTube", cx: 1215, cy: 100, chip: 78, mobile: true },
     ],
-    tail: { x: 1325, y: -32, size: 16, palette: "yellow" },
+    tail: { x: 1320, y: 26, size: 16, palette: "yellow" },
   },
   {
     id: "ai",
     nodes: [
-      { slug: "openai", alt: "OpenAI", cx: 1265, cy: 380, chip: 70, mobile: true },
-      { slug: "claude", alt: "Claude", cx: 1505, cy: 330, chip: 92 },
-      { slug: "perplexity", alt: "Perplexity", cx: 1680, cy: 268, chip: 54 },
+      { slug: "openai", alt: "OpenAI", cx: 1265, cy: 322, chip: 70, mobile: true },
+      { slug: "claude", alt: "Claude", cx: 1505, cy: 286, chip: 92 },
+      { slug: "perplexity", alt: "Perplexity", cx: 1680, cy: 243, chip: 54 },
     ],
-    exit: { x: 1830, y: 215 },
+    exit: { x: 1830, y: 206 },
   },
   {
     id: "x",
     nodes: [
-      { slug: "x", alt: "X", cx: 380, cy: 470, chip: 100, mobile: true },
-      { slug: "reddit", alt: "Reddit", cx: 240, cy: 506, chip: 84, mobile: true },
-      { slug: "tiktok", alt: "TikTok", cx: 132, cy: 556, chip: 56 },
+      { slug: "x", alt: "X", cx: 380, cy: 384, chip: 100, mobile: true },
+      { slug: "reddit", alt: "Reddit", cx: 240, cy: 410, chip: 84, mobile: true },
+      { slug: "tiktok", alt: "TikTok", cx: 132, cy: 445, chip: 56 },
     ],
-    tail: { x: 28, y: 598, size: 18, palette: "pink" },
+    tail: { x: 28, y: 474, size: 18, palette: "pink" },
   },
   {
     id: "linkedin",
     nodes: [
-      { slug: "hubspot", alt: "HubSpot", cx: 1150, cy: 520, chip: 60 },
-      { slug: "linkedin", alt: "LinkedIn", inline: "linkedin", cx: 1352, cy: 482, chip: 140, logoScale: 0.63, mobile: true },
-      { slug: "salesforce", alt: "Salesforce", cx: 1565, cy: 555, chip: 78 },
-      { slug: "apollo", alt: "Apollo", cx: 1715, cy: 612, chip: 52 },
+      { slug: "hubspot", alt: "HubSpot", cx: 1150, cy: 420, chip: 60 },
+      { slug: "linkedin", alt: "LinkedIn", inline: "linkedin", cx: 1362, cy: 400, chip: 140, logoScale: 0.63, mobile: true },
+      { slug: "salesforce", alt: "Salesforce", cx: 1565, cy: 444, chip: 78 },
+      { slug: "apollo", alt: "Apollo", cx: 1715, cy: 484, chip: 52 },
     ],
-    exit: { x: 1890, y: 665 },
+    exit: { x: 1890, y: 521 },
   },
   {
     id: "vercel",
     nodes: [
-      { slug: "supabase", alt: "Supabase", cx: 770, cy: 565, chip: 58 },
-      { slug: "vercel", alt: "Vercel", cx: 480, cy: 642, chip: 120, logoScale: 0.4, mobile: true },
-      { slug: "sentry", alt: "Sentry", cx: 330, cy: 724, chip: 74 },
-      { slug: "cloudflare", alt: "Cloudflare", cx: 208, cy: 792, chip: 56 },
-      { slug: "aws", alt: "AWS", cx: 108, cy: 850, chip: 48 },
+      { slug: "supabase", alt: "Supabase", cx: 770, cy: 451, chip: 58 },
+      { slug: "vercel", alt: "Vercel", cx: 480, cy: 505, chip: 120, logoScale: 0.4, mobile: true },
+      { slug: "sentry", alt: "Sentry", cx: 330, cy: 562, chip: 74 },
+      { slug: "cloudflare", alt: "Cloudflare", cx: 208, cy: 610, chip: 56 },
+      { slug: "aws", alt: "AWS", cx: 108, cy: 650, chip: 48 },
     ],
-    exit: { x: 10, y: 900 },
+    exit: { x: 0, y: 735 },
   },
   {
     id: "slack",
     nodes: [
-      { slug: "slack", alt: "Slack", cx: 870, cy: 695, chip: 130, logoRotateDeg: -9.15, mobile: true },
-      { slug: "discord", alt: "Discord", cx: 798, cy: 806, chip: 80, mobile: true },
-      { slug: "zapier", alt: "Zapier", cx: 748, cy: 882, chip: 56 },
+      { slug: "slack", alt: "Slack", cx: 870, cy: 542, chip: 130, logoRotateDeg: -9.15, mobile: true },
+      { slug: "discord", alt: "Discord", cx: 770, cy: 634, chip: 80, mobile: true },
+      { slug: "zapier", alt: "Zapier", cx: 700, cy: 680, chip: 56 },
     ],
-    exit: { x: 705, y: 945 },
+    exit: { x: 660, y: 760 },
   },
   {
     id: "notion",
     nodes: [
-      { slug: "notion", alt: "Notion", cx: 1242, cy: 720, chip: 140, logoRotateDeg: 6.49, mobile: true },
-      { slug: "airtable", alt: "Airtable", cx: 1425, cy: 790, chip: 76, mobile: true },
-      { slug: "asana", alt: "Asana", cx: 1555, cy: 840, chip: 60 },
-      { slug: "trello", alt: "Trello", cx: 1695, cy: 880, chip: 50 },
+      { slug: "notion", alt: "Notion", cx: 1242, cy: 560, chip: 140, logoRotateDeg: 6.49, mobile: true },
+      { slug: "airtable", alt: "Airtable", cx: 1425, cy: 608, chip: 76, mobile: true },
+      { slug: "asana", alt: "Asana", cx: 1555, cy: 644, chip: 60 },
+      { slug: "trello", alt: "Trello", cx: 1695, cy: 672, chip: 50 },
     ],
-    tail: { x: 1790, y: 908, size: 16, palette: "orange" },
+    tail: { x: 1790, y: 691, size: 16, palette: "orange" },
   },
   {
     id: "stripe",
     nodes: [
-      { slug: "stripe", alt: "Stripe", cx: 855, cy: 135, chip: 100, mobile: true },
-      { slug: "paypal", alt: "PayPal", cx: 795, cy: 55, chip: 64 },
-      { slug: "quickbooks", alt: "QuickBooks", cx: 740, cy: -5, chip: 54 },
+      { slug: "stripe", alt: "Stripe", cx: 855, cy: 150, chip: 100, mobile: true },
+      { slug: "paypal", alt: "PayPal", cx: 770, cy: 84, chip: 64 },
+      { slug: "quickbooks", alt: "QuickBooks", cx: 690, cy: 44, chip: 54 },
     ],
-    exit: { x: 695, y: -55 },
+    exit: { x: 655, y: -40 },
   },
   {
     id: "figma",
     nodes: [
-      { slug: "figma", alt: "Figma", cx: 300, cy: 300, chip: 90, mobile: true },
-      { slug: "canva", alt: "Canva", cx: 185, cy: 252, chip: 64 },
-      { slug: "webflow", alt: "Webflow", cx: 92, cy: 210, chip: 54 },
+      { slug: "figma", alt: "Figma", cx: 300, cy: 266, chip: 90, mobile: true },
+      { slug: "canva", alt: "Canva", cx: 185, cy: 232, chip: 64 },
+      { slug: "webflow", alt: "Webflow", cx: 92, cy: 202, chip: 54 },
     ],
-    tail: { x: 15, y: 178, size: 14, palette: "purple" },
+    tail: { x: 15, y: 180, size: 14, palette: "purple" },
   },
   {
     id: "shopify",
     nodes: [
-      { slug: "shopify", alt: "Shopify", cx: 1062, cy: 790, chip: 92, mobile: true },
-      { slug: "mailchimp", alt: "Mailchimp", cx: 1128, cy: 862, chip: 60 },
-      { slug: "intercom", alt: "Intercom", cx: 1178, cy: 910, chip: 52 },
+      { slug: "shopify", alt: "Shopify", cx: 1062, cy: 608, chip: 92, mobile: true },
+      { slug: "mailchimp", alt: "Mailchimp", cx: 1150, cy: 668, chip: 60 },
+      { slug: "intercom", alt: "Intercom", cx: 1235, cy: 682, chip: 52 },
     ],
-    exit: { x: 1215, y: 955 },
+    exit: { x: 1310, y: 745 },
   },
   {
     id: "meta",
     nodes: [
-      { slug: "meta", alt: "Meta Ads", cx: 215, cy: 395, chip: 80, mobile: true },
-      { slug: "googleads", alt: "Google Ads", cx: 112, cy: 428, chip: 58 },
-      { slug: "googleanalytics", alt: "Google Analytics", cx: 28, cy: 455, chip: 50 },
+      { slug: "meta", alt: "Meta Ads", cx: 200, cy: 315, chip: 80, mobile: true },
+      { slug: "googleads", alt: "Google Ads", cx: 112, cy: 355, chip: 58 },
+      { slug: "googleanalytics", alt: "Google Analytics", cx: 40, cy: 374, chip: 50 },
     ],
-    exit: { x: -60, y: 480 },
+    exit: { x: -60, y: 392 },
   },
   {
     id: "instagram",
     nodes: [
-      { slug: "instagram", alt: "Instagram", cx: 1148, cy: 275, chip: 78, mobile: true },
-      { slug: "calendly", alt: "Calendly", cx: 1258, cy: 196, chip: 50 },
+      { slug: "instagram", alt: "Instagram", cx: 1148, cy: 248, chip: 78, mobile: true },
+      { slug: "calendly", alt: "Calendly", cx: 1258, cy: 193, chip: 50 },
     ],
-    tail: { x: 1310, y: 138, size: 14, palette: "pink" },
+    tail: { x: 1310, y: 152, size: 14, palette: "pink" },
   },
   {
     // Ops — fills the empty top-right box (founder note): staggered radii
     // with hero Jira mid-chain, exits through the corner.
     id: "ops",
     nodes: [
-      { slug: "zendesk", alt: "Zendesk", cx: 1385, cy: 225, chip: 52 },
-      { slug: "jira", alt: "Jira", cx: 1560, cy: 120, chip: 96 },
-      { slug: "telegram", alt: "Telegram", cx: 1735, cy: 58, chip: 58 },
+      { slug: "zendesk", alt: "Zendesk", cx: 1385, cy: 213, chip: 52 },
+      { slug: "jira", alt: "Jira", cx: 1560, cy: 140, chip: 96 },
+      { slug: "telegram", alt: "Telegram", cx: 1735, cy: 96, chip: 58 },
     ],
-    exit: { x: 1872, y: 8 },
+    exit: { x: 1885, y: -30 },
   },
   {
     // Automation — a short chain that just ends on n8n, filling the bare
     // stretch between the monster and the X/Gmail chains (founder note).
     id: "automation",
     nodes: [
-      { slug: "docker", alt: "Docker", cx: 660, cy: 385, chip: 54 },
-      { slug: "n8n", alt: "n8n", cx: 520, cy: 428, chip: 48 },
+      { slug: "docker", alt: "Docker", cx: 660, cy: 325, chip: 54 },
+      { slug: "n8n", alt: "n8n", cx: 520, cy: 355, chip: 48 },
     ],
   },
   {
@@ -262,19 +267,19 @@ const TENTACLES: TentacleDef[] = [
     // no bare anchor runs with the logos bunched at the tip).
     id: "analytics",
     nodes: [
-      { slug: "mixpanel", alt: "Mixpanel", cx: 1245, cy: 575, chip: 50 },
-      { slug: "googlesheets", alt: "Google Sheets", cx: 1445, cy: 660, chip: 56 },
-      { slug: "posthog", alt: "PostHog", cx: 1610, cy: 695, chip: 74 },
+      { slug: "mixpanel", alt: "Mixpanel", cx: 1225, cy: 448, chip: 50 },
+      { slug: "googlesheets", alt: "Google Sheets", cx: 1445, cy: 518, chip: 56 },
+      { slug: "posthog", alt: "PostHog", cx: 1610, cy: 542, chip: 74 },
     ],
-    exit: { x: 1790, y: 735 },
+    exit: { x: 1790, y: 570 },
   },
   {
     // Comms — starts right next to the monster and just ENDS on WhatsApp
     // (founder: not every chain terminates with a pancake or an exit).
     id: "comms",
     nodes: [
-      { slug: "zoom", alt: "Zoom", cx: 1030, cy: 600, chip: 58 },
-      { slug: "whatsapp", alt: "WhatsApp", cx: 1115, cy: 700, chip: 52 },
+      { slug: "zoom", alt: "Zoom", cx: 1038, cy: 482, chip: 58 },
+      { slug: "whatsapp", alt: "WhatsApp", cx: 1130, cy: 532, chip: 52 },
     ],
   },
   {
@@ -282,11 +287,11 @@ const TENTACLES: TentacleDef[] = [
     // climb to Miro/Dropbox isn't a bare wire with a tip cluster.
     id: "workspace",
     nodes: [
-      { slug: "clickup", alt: "ClickUp", cx: 968, cy: 240, chip: 48 },
-      { slug: "miro", alt: "Miro", cx: 990, cy: 85, chip: 58 },
-      { slug: "dropbox", alt: "Dropbox", cx: 1040, cy: 12, chip: 50 },
+      { slug: "clickup", alt: "ClickUp", cx: 968, cy: 224, chip: 48 },
+      { slug: "miro", alt: "Miro", cx: 990, cy: 115, chip: 58 },
+      { slug: "dropbox", alt: "Dropbox", cx: 1040, cy: 64, chip: 50 },
     ],
-    exit: { x: 1075, y: -50 },
+    exit: { x: 1075, y: -40 },
   },
 ];
 

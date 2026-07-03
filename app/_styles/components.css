@@ -2283,14 +2283,19 @@
     position: relative;
     box-sizing: border-box;
     /* Full-bleed breakout (founder: the side margins were dead space) —
-       the 1920-unit stage spans the viewport, monster dead-center. */
+       the 1920-unit stage spans the viewport, monster dead-center. The 720
+       height is baked into the ARTWORK (was 900): the founder killed the
+       svh-driven slice crop because it sliced logos at arbitrary heights,
+       so the stage itself got recomposed shorter — no dynamic cropping,
+       every chip fully inside. overflow-hidden only trims the exiting
+       wires at the image edge (that's their design). */
     --cloud-bleed: min(100vw, 1920px);
     width: var(--cloud-bleed);
     margin-inline: calc((100% - var(--cloud-bleed)) / 2);
-    aspect-ratio: 1920 / 900;
+    aspect-ratio: 1920 / 720;
     container-type: inline-size;
     container-name: integrations-cloud;
-    overflow: visible;
+    overflow: hidden;
   }
 
   @media (min-width: 1024px) {
@@ -2307,32 +2312,12 @@
       gap: calc(2 * var(--spacing-xl));
     }
 
-    /* One-screen cap (founder: one full screen is more than enough for this
-       section). Two levers: (1) the full-bleed cloud IS the band, so the
-       default 96px band paddings are dead space — trim them; (2) cap the
-       cloud's height — the svg's `xMidYMid slice` then crops the stage
-       top/bottom symmetrically, and overflow-hidden keeps the cropped outer
-       chips from painting over the header or the next section. The 250px
-       allowance = trimmed paddings (80) + header (~132) + gap (32) + buffer,
-       so header + cloud together always fit one viewport. */
+    /* One-screen trim: the full-bleed cloud IS the band, so the default
+       96px band paddings are mostly dead space. The height itself comes
+       from the shortened 1920×720 artwork + the single-line header — no
+       dynamic cropping (founder: logos must never get cut). */
     section[aria-labelledby="home-landing-integrations-heading"] {
-      padding-block: calc(3 * var(--spacing-xl)) calc(2 * var(--spacing-xl));
-    }
-
-    .home-integrations-cloud {
-      max-height: calc(100svh - 250px);
-      min-height: 440px;
-      overflow: hidden;
-    }
-
-    /* Anchor (960, 435) under a symmetric vertical crop: x stays at 50%
-       (no horizontal crop — the box only ever gets shorter), y sits 15
-       viewBox units above the stage centre = 15/1920 of the width. The
-       formula also holds when the cap doesn't bite. Overrides the inline
-       48.33% (only exact for the uncropped box). */
-    .home-integrations-cloud__monster {
-      left: 50% !important;
-      top: calc(50% - 0.78125cqi) !important;
+      padding-block: calc(2.5 * var(--spacing-xl)) calc(1.5 * var(--spacing-xl));
     }
   }
 
@@ -5379,10 +5364,11 @@
       width: 100vw;
       max-width: 100vw;
       margin-inline: calc(50% - 50vw);
-      /* 9/7 box + the svg's `slice` = a ~1150-unit side-cropped window on
-         the 1920 stage — X and LinkedIn half-cut at the edges, monster
-         centered, no transform hacks. */
-      aspect-ratio: 9 / 7;
+      /* 8/5 box + the svg's `slice` = a ~1150-unit side-cropped window on
+         the 1920×720 stage (same window and chip px sizes as the old 9/7
+         box had on the 900-tall stage) — X and LinkedIn half-cut at the
+         edges, monster centered, no transform hacks. */
+      aspect-ratio: 8 / 5;
       overflow: hidden;
     }
     .home-integrations-cloud__svg {
@@ -5391,12 +5377,12 @@
       width: 100%;
       height: 100%;
     }
-    /* `slice` fills the 9/7 box by height: anchor (960, 435) lands at
-         exactly 50% / 48.33% of the element — no scale compensation. */
+    /* `slice` fills the 8/5 box by height: anchor (960, 360) is the exact
+         stage centre, so it lands at 50% / 50% — no scale compensation. */
     .home-integrations-cloud__monster {
       width: 17cqi; /* ≈ the 160-unit monster at the slice scale */
       left: 50% !important;
-      top: 48.33% !important;
+      top: 50% !important;
       transform: translate(-50%, -50%);
     }
         /* === Testimonials — mobile snap carousel replaces desktop ticker === */
