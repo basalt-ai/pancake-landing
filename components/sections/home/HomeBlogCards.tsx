@@ -95,22 +95,36 @@ function FallbackBlob() {
   );
 }
 
+// Founder-curated shelf (2026-07-02): newest-3 surfaced whichever GEO
+// comparison post shipped last — thin reads for a homepage visitor. These
+// three are the highest-value pieces, one per genre: the vision manifesto,
+// the real-numbers proof, and the practical how-we-run-it. Order = display
+// order. If a slug is renamed, the newest remaining posts pad the shelf.
+const FEATURED_SLUGS = [
+  "the-next-unicorns-will-have-five-employees",
+  "autonomous-company-benchmark-2026",
+  "autonomous-company-stack",
+];
+
 export function HomeBlogCards() {
-  // `getAllPosts()` sorts pinned-first; re-sort strictly by recency
-  // (`publishedAt` when present, else `date`) so the section always shows
-  // the three newest articles regardless of pinning. Bad dates sort last
-  // (NaN would poison the comparator) and future-dated posts are skipped —
-  // the GEO pipeline forward-dates some posts, and "July 2" on a July 1
-  // homepage reads as a mistake to visitors and freshness reviewers.
   const now = Date.now();
   const postTime = (p: BlogCardMeta) => {
     const t = new Date(p.publishedAt ?? p.date).getTime();
     return Number.isFinite(t) ? t : 0;
   };
-  const posts = ([...getAllPosts()] as BlogCardMeta[])
-    .filter((p) => postTime(p) <= now)
-    .sort((a, b) => postTime(b) - postTime(a))
-    .slice(0, 3);
+  const all = [...getAllPosts()] as BlogCardMeta[];
+  const bySlug = new Map(all.map((p) => [p.slug, p]));
+  const featured = FEATURED_SLUGS.flatMap((slug) => {
+    const p = bySlug.get(slug);
+    return p ? [p] : [];
+  });
+  // Pad with the newest non-featured, non-future posts if curation ever
+  // goes stale (renamed slug) — same guards as the old recency logic
+  // (future-dated GEO posts skipped, bad dates sort last).
+  const pad = all
+    .filter((p) => !FEATURED_SLUGS.includes(p.slug) && postTime(p) <= now)
+    .sort((a, b) => postTime(b) - postTime(a));
+  const posts = [...featured, ...pad].slice(0, 3);
 
   // No posts (e.g. content dir missing in a stripped build) → skip the
   // section entirely rather than render an empty grid.
