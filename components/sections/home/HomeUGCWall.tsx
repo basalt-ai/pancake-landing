@@ -202,6 +202,24 @@ const UGC_SCRIPT = `(function () {
     var card = t.closest("[data-ugc-card]");
     if (card && prm.matches && card.getAttribute("data-ugc-consent") !== "true") t.pause();
   }, true);
+  // Founder rule: sound never keeps playing off-screen. When a sound-on
+  // card leaves the viewport (page scroll OR the strip's own horizontal
+  // scroll), mute it back — the muted loop keeps running, only audio stops.
+  if ("IntersectionObserver" in window) {
+    var muteOffscreen = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) return;
+        var v = entry.target.querySelector("video");
+        if (v && !v.muted) {
+          v.muted = true;
+          entry.target.setAttribute("data-ugc-sound", "off");
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll("[data-ugc-card]").forEach(function (card) {
+      muteOffscreen.observe(card);
+    });
+  }
   document.addEventListener("click", function (e) {
     var card = e.target && e.target.closest ? e.target.closest("[data-ugc-card]") : null;
     if (!card) return;

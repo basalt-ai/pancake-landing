@@ -116,6 +116,25 @@ export function HomeDemoVideo() {
     return () => window.removeEventListener("keydown", onKey);
   });
 
+  // Scrolling away ends the screening (founder: sound must never keep
+  // playing from off-screen) — same exit path as Escape, so the muted
+  // ambient teaser takes back over.
+  useEffect(() => {
+    if (!started) return;
+    const section = sectionRef.current;
+    if (!section) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) backToAmbient();
+        }
+      },
+      { threshold: 0.25 },
+    );
+    io.observe(section);
+    return () => io.disconnect();
+  });
+
   /** Start the film from the top, with sound. */
   const startFilm = () => {
     const film = filmRef.current;
