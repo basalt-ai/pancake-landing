@@ -2273,8 +2273,8 @@
   }
 
   @media (min-width: 1024px) {
-    /* Tighten the gap between the "Endless integrations / Plug in your
-       stack..." header and the cloud below — the default
+    /* Tighten the gap between the "Plugged into everything" header and the
+       cloud below — the default
        `--spacing-home-landing-header-to-media` is 4 × xl (64 px), which
        reads as too much whitespace because the cloud has built-in top
        padding (the topmost chip — GitHub — sits ~104 viewBox units down
@@ -2284,6 +2284,34 @@
     section[aria-labelledby="home-landing-integrations-heading"]
       .home-landing-section__inner {
       gap: calc(2 * var(--spacing-xl));
+    }
+
+    /* One-screen cap (founder: one full screen is more than enough for this
+       section). Two levers: (1) the full-bleed cloud IS the band, so the
+       default 96px band paddings are dead space — trim them; (2) cap the
+       cloud's height — the svg's `xMidYMid slice` then crops the stage
+       top/bottom symmetrically, and overflow-hidden keeps the cropped outer
+       chips from painting over the header or the next section. The 250px
+       allowance = trimmed paddings (80) + header (~132) + gap (32) + buffer,
+       so header + cloud together always fit one viewport. */
+    section[aria-labelledby="home-landing-integrations-heading"] {
+      padding-block: calc(3 * var(--spacing-xl)) calc(2 * var(--spacing-xl));
+    }
+
+    .home-integrations-cloud {
+      max-height: calc(100svh - 250px);
+      min-height: 440px;
+      overflow: hidden;
+    }
+
+    /* Anchor (960, 435) under a symmetric vertical crop: x stays at 50%
+       (no horizontal crop — the box only ever gets shorter), y sits 15
+       viewBox units above the stage centre = 15/1920 of the width. The
+       formula also holds when the cap doesn't bite. Overrides the inline
+       48.33% (only exact for the uncropped box). */
+    .home-integrations-cloud__monster {
+      left: 50% !important;
+      top: calc(50% - 0.78125cqi) !important;
     }
   }
 

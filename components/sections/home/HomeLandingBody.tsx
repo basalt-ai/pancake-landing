@@ -126,11 +126,10 @@ export function HomeLandingBody() {
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             <H2 id="home-landing-integrations-heading" className="heading home-landing-section__title text-center">
-              Endless integrations
+              Plugged into everything
             </H2>
             <p className="home-landing-section__lede text-center">
-              Plug in your stack. Your agents read, write, ship, and sell through it — like an
-              employee would.
+              Pancake works inside the tools you already use.
             </p>
           </header>
           <div className="home-landing-section__figure">
