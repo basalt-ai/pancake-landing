@@ -106,10 +106,10 @@ export function HomeLandingBody() {
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             <H2 id="home-landing-org-heading" className="heading home-landing-section__title text-center">
-              One coworker. A whole team behind it.
+              One coworker, a whole team behind it
             </H2>
             <p className="home-landing-section__lede text-center">
-              Pancake staffs squads of agents that never clock out.
+              Pancake puts a squad of agents on every job you give it.
             </p>
           </header>
           <div className="home-landing-section__figure home-landing-org-mobile">

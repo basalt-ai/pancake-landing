@@ -992,6 +992,22 @@
     gap: var(--spacing-home-landing-header-to-media);
   }
 
+  @media (min-width: 1024px) {
+    /* One-screen cap (same founder rule as the integrations cloud). The org
+       chart is structured content — squad cards with live task rows — so
+       instead of cropping it scales DOWN: a height-driven width cap on the
+       stage, whose children are all container-relative. Band paddings and
+       the header gap get the same trim as the integrations section. The
+       260px allowance = paddings (80) + header (~132) + gap (32) + the
+       stage's 12px paint fudge; tall viewports never hit the cap (the
+       1136px design width wins), tiny ones floor at 780px so the cards
+       stay readable. */
+    .home-landing-section--org {
+      padding-block: calc(3 * var(--spacing-xl)) calc(2 * var(--spacing-xl));
+      gap: calc(2 * var(--spacing-xl));
+    }
+  }
+
   .home-landing-section__inner--closing {
     gap: var(--spacing-home-hero-after-title);
   }
@@ -1120,7 +1136,15 @@
   .home-org-diagram__stage {
     position: relative;
     width: 100%;
-    max-width: calc(71 * var(--spacing-xl));
+    /* Height-driven one-screen cap (founder rule, same as the integrations
+       cloud): on short viewports the stage scales down so header + diagram
+       fit 100svh — children are container-relative so everything tracks.
+       Tall viewports never hit the svh term (the 1136px design width wins);
+       tiny ones floor at 780px so the squad cards stay readable. */
+    max-width: min(
+      calc(71 * var(--spacing-xl)),
+      max(calc((100svh - 260px) * 1136 / 632), 780px)
+    );
     margin-inline: auto;
     aspect-ratio: 1136 / 632; /* live-row churn peaks ~618 in stage units — the Figma frame (706) kept 90-130px of dead air (founder: way too much white space) */
     container-type: inline-size;
