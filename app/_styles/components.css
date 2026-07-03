@@ -701,8 +701,14 @@
   .home-demo-video {
     width: 100%;
     background-color: var(--surface);
-    padding-top: var(--spacing-xxl);
-    padding-bottom: var(--spacing-xxl);
+    /* Founder call 2026-07-03: the hero → film seam was brutal — the dark
+       frame started 35px under the marquee's last logo while the hero
+       carries ~300px of internal air. A wide pause before the claim
+       (top) and a smaller one after (bottom) so the band breathes without
+       drifting from the use-case section below. Mobile keeps its tighter
+       override. */
+    padding-top: calc(4 * var(--spacing-xxl));
+    padding-bottom: calc(2.5 * var(--spacing-xxl));
   }
 
   .home-demo-video__wrap {
