@@ -14,8 +14,8 @@
  * Copy decisions from the competitor research (Viktor first):
  *  - concrete irreversibles over abstractions ("money moves, code pushes"),
  *  - mechanisms over adjectives ("agents use them without ever seeing them"),
- *  - SOC 2 stated sober, once, in the footnote — the SF norm, not a
- *    theatrical card (founder: "il faut juste dire SOC 2"),
+ *  - SOC 2 stated sober, on its own seal card — the SF norm
+ *    (founder: "il faut juste dire SOC 2"),
  *  - no unexplained jargon: "pod"/"sandbox" → "sealed workspace".
  *
  * Carousel mechanics: framer-motion motionValue drives the cylinder's
@@ -544,7 +544,6 @@ export function HomeTrustCarousel() {
   );
   const [frontIndex, setFrontIndex] = useState(0);
   const [dragging, setDragging] = useState(false);
-  const [hinted, setHinted] = useState(false);
   const [mobileIndex, setMobileIndex] = useState(0);
 
   const reducedMotion = useRef(false);
@@ -587,7 +586,6 @@ export function HomeTrustCarousel() {
         vel: 0,
       };
       setDragging(true);
-      setHinted(true);
       e.currentTarget.setPointerCapture(e.pointerId);
     },
     [rotation]
@@ -626,7 +624,6 @@ export function HomeTrustCarousel() {
 
   const stepBy = useCallback(
     (dir: 1 | -1) => {
-      setHinted(true);
       const snapped = Math.round(rotation.get() / STEP) * STEP;
       settleTo(snapped - dir * STEP);
     },
@@ -635,7 +632,6 @@ export function HomeTrustCarousel() {
 
   const goToIndex = useCallback(
     (i: number) => {
-      setHinted(true);
       /* Shortest path on the ring to the target face. */
       const n = -rotation.get() / STEP;
       const k = Math.round(n);
@@ -698,7 +694,6 @@ export function HomeTrustCarousel() {
             <CarouselFace key={card.id} index={i} rotation={rotation} front={i === frontIndex} card={card} />
           ))}
         </motion.div>
-        {!hinted ? <span className="home-trust-carousel__hint" aria-hidden>‹ drag ›</span> : null}
       </div>
 
       {/* Desktop nav — arrows + dots. */}
@@ -763,12 +758,6 @@ export function HomeTrustCarousel() {
 
       <p aria-live="polite" style={VISUALLY_HIDDEN}>
         {TRUST_CARDS[frontIndex].title}
-      </p>
-
-      {/* SOC 2 moved into its own seal card — the footnote keeps only what
-          the deck doesn't already claim. */}
-      <p className="home-landing-trust__note">
-        Subprocessor list available on request.
       </p>
     </div>
   );

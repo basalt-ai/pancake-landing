@@ -3072,23 +3072,6 @@
     height: 100%;
   }
 
-  /* Drag affordance — mono chip under the front card, gone after first touch. */
-  .home-trust-carousel__hint {
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-50%);
-    padding: 4px 10px;
-    background-color: var(--elevated-surface);
-    border: 0.844px solid var(--stroke);
-    border-radius: 10px;
-    font-family: var(--font-mono, ui-monospace, monospace);
-    font-size: 11px;
-    line-height: 16px;
-    color: var(--subtle-text);
-    pointer-events: none;
-  }
-
   .home-trust-carousel__arrow {
     display: inline-flex;
     align-items: center;
