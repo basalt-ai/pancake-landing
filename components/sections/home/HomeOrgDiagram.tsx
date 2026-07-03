@@ -5,10 +5,9 @@
  * cards (Posthog, Meta Ads, Outreach, AI SEO, GitHub Triage, Google Ads,
  * Reddit). The root `.home-org-diagram` is a full-bleed band (max 1536px,
  * `overflow-x: clip` + horizontal fade mask) wider than the 1136 stage, so
- * the outer two cards bleed past the edges as blurred teasers. The static
- * dashed “Build your own” bar sits centered below — untouched by the edge
- * fade. Squad subagent rows animate in `HomeOrgLiveRows`; wires/balls stay
- * in `OrgConnections`.
+ * the outer two cards bleed past the edges as blurred teasers. Squad
+ * subagent rows animate in `HomeOrgLiveRows`; wires/balls stay in
+ * `OrgConnections`. (The "Build your own" bar was cut — founder call.)
  */
 
 "use client";
@@ -81,7 +80,7 @@ export function HomeOrgDiagram() {
           </div>
         </div>
 
-        {/* Stage box is 1136/648 (dead bottom air trimmed) but the Figma
+        {/* Stage box is 1136/632 (dead bottom air trimmed) but the Figma
             geometry stays in 706-unit space — `slice` keeps the width-based
             1:1 mapping and top alignment; the cropped 106 units are empty. */}
         <svg
@@ -153,12 +152,6 @@ export function HomeOrgDiagram() {
         </div>
 
         <HomeOrgLiveRows scrollRootRef={diagramRootRef} deptRows={deptRows} setDeptRows={setDeptRows} />
-      </div>
-
-      {/* Static invitation — deliberately unwired and unanimated. */}
-      <div className="home-org-diagram__build">
-        <p className="home-org-diagram__build-title">+ Build your own</p>
-        <p className="home-org-diagram__build-sub">Assemble any agents into a squad of your own.</p>
       </div>
     </div>
   );

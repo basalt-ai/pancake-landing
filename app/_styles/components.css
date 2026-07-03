@@ -1100,7 +1100,7 @@
     overflow-x: clip;
     /** Extra paint area when squad cards extend below the fixed-aspect stage
         (must stay inside the mask box — mask-clip defaults to border-box). */
-    padding-bottom: clamp(0.75rem, 2.5vw, 2rem);
+    padding-bottom: 0.75rem;
     -webkit-mask-image: linear-gradient(
       to right,
       transparent 0,
@@ -1122,7 +1122,7 @@
     width: 100%;
     max-width: calc(71 * var(--spacing-xl));
     margin-inline: auto;
-    aspect-ratio: 1136 / 648; /* live-row churn peaks ~618 in stage units — the Figma frame (706) kept 90-130px of dead air (founder: way too much white space) */
+    aspect-ratio: 1136 / 632; /* live-row churn peaks ~618 in stage units — the Figma frame (706) kept 90-130px of dead air (founder: way too much white space) */
     container-type: inline-size;
     container-name: org-diagram;
   }
@@ -1195,7 +1195,7 @@
     /** Right edge at Figma (212+101)/1136; shrink-wrap width so empty rail next to copy is gone. */
     right: calc((1136 - 212 - 101) / 1136 * 100%);
     left: auto;
-    top: calc(70 / 648 * 100%);
+    top: calc(70 / 632 * 100%);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -1210,7 +1210,7 @@
     /** Left edge at Figma 800/1136; shrink-wrap so the label sits tight to the icon-side arrow. */
     left: calc(800 / 1136 * 100%);
     right: auto;
-    top: calc(8 / 648 * 100%);
+    top: calc(8 / 632 * 100%);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -1280,9 +1280,9 @@
 
   .home-org-diagram__you-avatar {
     left: calc(380 / 1136 * 100%);
-    top: calc(10 / 648 * 100%);
+    top: calc(10 / 632 * 100%);
     width: calc(108 / 1136 * 100%);
-    height: calc(108 / 648 * 100%);
+    height: calc(108 / 632 * 100%);
     border-radius: 50%;
     overflow: hidden;
     z-index: 4;
@@ -1298,7 +1298,7 @@
     left: calc(608 / 1136 * 100%);
     top: 0;
     width: calc(128 / 1136 * 100%);
-    height: calc(128 / 648 * 100%);
+    height: calc(128 / 632 * 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1341,49 +1341,49 @@
      (seo) sits highest, shortest wire. No two adjacent cards share a palette. */
   .home-org-diagram__dept--posthog {
     left: calc(-292 / 1136 * 100%);
-    top: calc(312 / 648 * 100%);
+    top: calc(312 / 632 * 100%);
     background-color: var(--alt-weak-branded-surface-03);
     border-color: var(--branded-stroke-04);
   }
 
   .home-org-diagram__dept--meta {
     left: calc(-44 / 1136 * 100%);
-    top: calc(296 / 648 * 100%);
+    top: calc(296 / 632 * 100%);
     background-color: var(--alt-weak-branded-surface-01);
     border-color: var(--branded-stroke-02);
   }
 
   .home-org-diagram__dept--outreach {
     left: calc(204 / 1136 * 100%);
-    top: calc(332 / 648 * 100%);
+    top: calc(332 / 632 * 100%);
     background-color: var(--alt-weak-branded-surface-02);
     border-color: var(--branded-stroke-03);
   }
 
   .home-org-diagram__dept--seo {
     left: calc(452 / 1136 * 100%);
-    top: calc(272 / 648 * 100%);
+    top: calc(272 / 632 * 100%);
     background-color: var(--alt-weak-branded-surface-01);
     border-color: var(--branded-stroke-02);
   }
 
   .home-org-diagram__dept--triage {
     left: calc(700 / 1136 * 100%);
-    top: calc(300 / 648 * 100%);
+    top: calc(300 / 632 * 100%);
     background-color: var(--weak-branded-surface);
     border-color: var(--branded-stroke-01);
   }
 
   .home-org-diagram__dept--ads {
     left: calc(948 / 1136 * 100%);
-    top: calc(336 / 648 * 100%);
+    top: calc(336 / 632 * 100%);
     background-color: var(--alt-weak-branded-surface-03);
     border-color: var(--branded-stroke-04);
   }
 
   .home-org-diagram__dept--reddit {
     left: calc(1196 / 1136 * 100%);
-    top: calc(308 / 648 * 100%);
+    top: calc(308 / 632 * 100%);
     background-color: var(--weak-branded-surface);
     border-color: var(--branded-stroke-01);
   }
@@ -1407,46 +1407,6 @@
       corner-shape: squircle;
       border-radius: 88px;
     }
-    .home-org-diagram__build {
-      corner-shape: squircle;
-      border-radius: 88px;
-    }
-  }
-
-  /* "Build your own" — static dashed invitation below the stage. Deliberately
-     unwired and unanimated: it's an invitation, not an eighth squad. Fixed px
-     width (the parent band now stretches to 1536) with an inline-padding
-     guard for narrow desktop widths. */
-  .home-org-diagram__build {
-    box-sizing: border-box;
-    width: min(560px, calc(100% - 2 * var(--spacing-home-page-inline)));
-    margin: var(--spacing-xl) auto 0;
-    padding: var(--spacing-xl) var(--spacing-xxl);
-    border: 1px dashed var(--stroke);
-    border-radius: var(--radius-xl);
-    background-color: transparent;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--spacing-sm);
-    text-align: center;
-  }
-
-  .home-org-diagram__build-title {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: var(--font-size-header-04);
-    line-height: 1.2;
-    font-weight: var(--font-semibold);
-    color: var(--text);
-  }
-
-  .home-org-diagram__build-sub {
-    margin: 0;
-    font-family: var(--font-body);
-    font-size: var(--font-size-body-regular, 16px);
-    line-height: 1.4;
-    color: var(--subtle-text);
   }
 
   .home-org-diagram__dept-title {
@@ -4985,28 +4945,6 @@
   .home-org-mobile-card--posthog {
     background-color: var(--alt-weak-branded-surface-03);
     border-color: var(--branded-stroke-04);
-  }
-
-  /* Static "Build your own" finale slide — dashed invitation, no live rows. */
-  .home-org-mobile-card--build {
-    background-color: var(--surface);
-    border: 1px dashed var(--stroke);
-    justify-content: center;
-    align-items: center;
-    gap: var(--spacing-sm);
-    text-align: center;
-  }
-
-  .home-org-mobile-card--build .home-org-mobile-card__title {
-    font-size: 20px;
-  }
-
-  .home-org-mobile-card__sub {
-    margin: 0;
-    font-family: var(--font-body);
-    font-size: 14px;
-    line-height: 1.4;
-    color: var(--subtle-text);
   }
 
   .home-org-mobile-card__title {

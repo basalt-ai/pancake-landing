@@ -178,11 +178,11 @@ function PairConnector() {
   );
 }
 
-/** Carousel slides: the four live squads + the static "Build your own" finale. */
-const SLIDES: readonly { key: string; label: string }[] = [
-  ...LIVE_INITIAL_DEPTS.map((d) => ({ key: d.surface, label: d.title })),
-  { key: "build", label: "Build your own" },
-];
+/** Carousel slides: the live squads ("Build your own" finale cut — founder call). */
+const SLIDES: readonly { key: string; label: string }[] = LIVE_INITIAL_DEPTS.map((d) => ({
+  key: d.surface,
+  label: d.title,
+}));
 
 export function HomeOrgDiagramMobile() {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -315,12 +315,6 @@ export function HomeOrgDiagramMobile() {
               </ul>
             </article>
           ))}
-
-          {/* Static "Build your own" finale — no live rows, no registerArticle. */}
-          <article className="home-org-mobile-card home-org-mobile-card--build">
-            <h3 className="home-org-mobile-card__title">+ Build your own</h3>
-            <p className="home-org-mobile-card__sub">Assemble any agents into a squad of your own.</p>
-          </article>
         </div>
 
         {/* Dots indicator. */}
