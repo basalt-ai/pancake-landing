@@ -14,7 +14,6 @@
 
 import { HOME_PAGE_CONTAINER_CLASS } from "@/components/sections/home/home-layout";
 import { HomeBlogCards } from "@/components/sections/home/HomeBlogCards";
-import { HomeFaq } from "@/components/sections/home/HomeFaq";
 import { HomeIntegrationsCloud } from "@/components/sections/home/HomeIntegrationsCloud";
 import { HomeLandingControl } from "@/components/sections/home/HomeLandingControl";
 import { HomeLandingSecurity } from "@/components/sections/home/HomeLandingSecurity";
@@ -189,15 +188,13 @@ export function HomeLandingBody() {
           differentiator. Full band with its own pink treatment. */}
       <HomePricingTeaser />
 
-      {/* FAQ — visible accordion backing the FAQPage JSON-LD in app/page.tsx
-          (schema previously promoted content that never appeared on-page).
-          FAQ_ITEMS in HomeFaq.tsx is the single source of truth for both.
-          `alt` continues the rhythm after the pink band: faq(alt) →
-          blog(plain) → closing(alt). */}
-      <HomeFaq alt />
-
       {/* From the blog — explicit internal links for crawler discovery of new
-          articles (kept as real <a href> anchors), now styled as cards. */}
+          articles (kept as real <a href> anchors), now styled as cards.
+          (The FAQ accordion that sat between pricing and blog was removed on
+          founder call 2026-07-02 — its FAQPage JSON-LD went with it, since
+          Google requires schema content to be visible on-page. HomeFaq.tsx
+          and home-faq.css stay on disk, unreferenced, if it ever returns.)
+          Rhythm: pricing(pink band) → blog(plain) → closing(alt). */}
       <HomeBlogCards />
 
       {/* Figma `428:15160` closing CTA — decorative pancakes (purple top-left,

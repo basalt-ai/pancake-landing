@@ -1,6 +1,5 @@
 import { HomeDemoVideo } from "@/components/sections/home/HomeDemoVideo";
 import { HomeHero } from "@/components/sections/home/HomeHero";
-import { FAQ_ITEMS } from "@/components/sections/home/HomeFaq";
 import { HomeLandingBody } from "@/components/sections/home/HomeLandingBody";
 import { HomeNav } from "@/components/sections/home/HomeNav";
 import { Footer } from "@/components/shared/Footer";
@@ -45,20 +44,6 @@ const videoObjectJsonLd = {
   contentUrl: "https://getpancake.ai/demo-video.mp4",
 };
 
-// FAQPage JSON-LD — generated from the visible FAQ accordion (HomeFaq) so the
-// schema and the on-page content can never drift again (Google requires FAQ
-// rich-result content to be visible to users). FAQ_ITEMS keeps the OpenClaw /
-// autonomous-company / Viktor-comparison questions the GEO strategy targets.
-const faqPageJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: FAQ_ITEMS.map(({ q, a }) => ({
-    "@type": "Question",
-    name: q,
-    acceptedAnswer: { "@type": "Answer", text: a },
-  })),
-};
-
 export default function Home() {
   return (
     <main id="main-content" className="min-h-screen">
@@ -66,11 +51,6 @@ export default function Home() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationJsonLd) }}
-      />
-      {/* FAQPage JSON-LD — OpenClaw, autonomous company, and Viktor comparison queries */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageJsonLd) }}
       />
       {/* VideoObject JSON-LD — the "Meet Pancake" film band */}
       <script
