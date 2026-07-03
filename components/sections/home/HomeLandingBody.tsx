@@ -105,12 +105,11 @@ export function HomeLandingBody() {
       <section className="home-landing-section home-landing-section--org" aria-labelledby="home-landing-org-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
+            {/* Single-line header (founder: one efficient sentence frees the
+                vertical room that keeps the squad boxes at full size). */}
             <H2 id="home-landing-org-heading" className="heading home-landing-section__title text-center">
-              One coworker, a whole team behind it
+              One coworker, a whole team of agents behind it
             </H2>
-            <p className="home-landing-section__lede text-center">
-              Pancake puts a squad of agents on every job you give it.
-            </p>
           </header>
           <div className="home-landing-section__figure home-landing-org-mobile">
             <HomeOrgDiagramMobile />

@@ -1003,7 +1003,7 @@
        1136px design width wins), tiny ones floor at 780px so the cards
        stay readable. */
     .home-landing-section--org {
-      padding-block: calc(3 * var(--spacing-xl)) calc(2 * var(--spacing-xl));
+      padding-block: calc(2.5 * var(--spacing-xl)) calc(1.5 * var(--spacing-xl));
       gap: calc(2 * var(--spacing-xl));
     }
   }
@@ -1136,15 +1136,12 @@
   .home-org-diagram__stage {
     position: relative;
     width: 100%;
-    /* Height-driven one-screen cap (founder rule, same as the integrations
-       cloud): on short viewports the stage scales down so header + diagram
-       fit 100svh — children are container-relative so everything tracks.
-       Tall viewports never hit the svh term (the 1136px design width wins);
-       tiny ones floor at 780px so the squad cards stay readable. */
-    max-width: min(
-      calc(71 * var(--spacing-xl)),
-      max(calc((100svh - 260px) * 1136 / 632), 780px)
-    );
+    /* Fixed design width — founder: the squad boxes' size and proportions
+       are untouchable (an svh-driven shrink got reverted; it cropped card
+       rows and pulled the edge cards inside the viewport). The one-screen
+       fit comes from the single-line section heading + trimmed paddings
+       instead. */
+    max-width: calc(71 * var(--spacing-xl));
     margin-inline: auto;
     aspect-ratio: 1136 / 632; /* live-row churn peaks ~618 in stage units — the Figma frame (706) kept 90-130px of dead air (founder: way too much white space) */
     container-type: inline-size;
