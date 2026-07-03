@@ -113,7 +113,8 @@ type TentacleDef = {
   /** Chain ending A: a pancake berry (kept for a handful of chains). */
   tail?: { x: number; y: number; size: number; palette: PancakePaletteName };
   /** Chain ending B: a bare exit point, usually OFF-canvas — the last faded
-   *  segment runs out of the image so the cloud reads as endless. */
+   *  segment runs out of the image so the cloud reads as endless.
+   *  Neither set → the chain simply ends on its last logo. */
   exit?: { x: number; y: number };
 };
 
@@ -124,73 +125,71 @@ type TentacleDef = {
  */
 const TENTACLES: TentacleDef[] = [
   {
-    // Google-suite chain — the SECOND link is the hero (founder: the first
-    // logo must not always be the biggest), and the chain exits top-left.
+    // Google-suite — small Calendar sits close to the monster (founder: the
+    // ring around Pancake was empty), hero Gmail is the SECOND link.
     id: "gmail",
     nodes: [
-      { slug: "googlecalendar", alt: "Google Calendar", cx: 742, cy: 302, chip: 72 },
-      { slug: "gmail", alt: "Gmail", cx: 560, cy: 200, chip: 160, logoRotateDeg: -8.59, mobile: true },
-      { slug: "googledrive", alt: "Google Drive", cx: 400, cy: 118, chip: 70 },
-      { slug: "typeform", alt: "Typeform", cx: 268, cy: 60, chip: 52 },
-      { slug: "loom", alt: "Loom", cx: 148, cy: 14, chip: 46 },
+      { slug: "googlecalendar", alt: "Google Calendar", cx: 790, cy: 330, chip: 64 },
+      { slug: "gmail", alt: "Gmail", cx: 560, cy: 200, chip: 130, mobile: true },
+      { slug: "googledrive", alt: "Google Drive", cx: 400, cy: 118, chip: 68 },
+      { slug: "producthunt", alt: "Product Hunt", cx: 268, cy: 62, chip: 52 },
+      { slug: "loom", alt: "Loom", cx: 150, cy: 16, chip: 46 },
     ],
-    exit: { x: 30, y: -30 },
+    exit: { x: 30, y: -28 },
   },
   {
     id: "github",
     nodes: [
-      { slug: "github", alt: "GitHub", src: "/integrations/github-fill.svg", cx: 1085, cy: 172, chip: 137, logoRotateDeg: 6.63, mobile: true },
-      { slug: "youtube", alt: "YouTube", cx: 1196, cy: 96, chip: 82, mobile: true },
-      { slug: "linear", alt: "Linear", cx: 1262, cy: 24, chip: 56 },
+      { slug: "linear", alt: "Linear", cx: 1060, cy: 295, chip: 54 },
+      { slug: "github", alt: "GitHub", src: "/integrations/github-fill.svg", cx: 1085, cy: 172, chip: 120, logoRotateDeg: 6.63, mobile: true },
+      { slug: "youtube", alt: "YouTube", cx: 1198, cy: 94, chip: 78, mobile: true },
     ],
-    tail: { x: 1315, y: -35, size: 16, palette: "yellow" },
+    tail: { x: 1300, y: -30, size: 16, palette: "yellow" },
   },
   {
     id: "ai",
     nodes: [
-      { slug: "openai", alt: "OpenAI", cx: 1435, cy: 325, chip: 90, mobile: true },
-      { slug: "claude", alt: "Claude", cx: 1580, cy: 300, chip: 60 },
-      { slug: "perplexity", alt: "Perplexity", cx: 1700, cy: 248, chip: 52 },
+      { slug: "openai", alt: "OpenAI", cx: 1265, cy: 380, chip: 70, mobile: true },
+      { slug: "claude", alt: "Claude", cx: 1462, cy: 338, chip: 92 },
+      { slug: "perplexity", alt: "Perplexity", cx: 1625, cy: 282, chip: 54 },
     ],
-    exit: { x: 1810, y: 200 },
+    exit: { x: 1760, y: 232 },
   },
   {
     id: "x",
     nodes: [
-      { slug: "x", alt: "X", cx: 380, cy: 470, chip: 113, mobile: true },
-      { slug: "reddit", alt: "Reddit", cx: 240, cy: 506, chip: 96, mobile: true },
+      { slug: "x", alt: "X", cx: 380, cy: 470, chip: 100, mobile: true },
+      { slug: "reddit", alt: "Reddit", cx: 240, cy: 506, chip: 84, mobile: true },
       { slug: "tiktok", alt: "TikTok", cx: 132, cy: 556, chip: 56 },
     ],
     tail: { x: 28, y: 598, size: 18, palette: "pink" },
   },
   {
-    // CRM chain — small HubSpot first, the LinkedIn hero mid-chain.
     id: "linkedin",
     nodes: [
-      { slug: "hubspot", alt: "HubSpot", cx: 1178, cy: 542, chip: 64 },
-      { slug: "linkedin", alt: "LinkedIn", inline: "linkedin", cx: 1352, cy: 482, chip: 190, logoScale: 0.63, mobile: true },
-      { slug: "salesforce", alt: "Salesforce", cx: 1532, cy: 548, chip: 80 },
-      { slug: "apollo", alt: "Apollo", cx: 1662, cy: 602, chip: 52 },
+      { slug: "hubspot", alt: "HubSpot", cx: 1150, cy: 520, chip: 60 },
+      { slug: "linkedin", alt: "LinkedIn", inline: "linkedin", cx: 1352, cy: 482, chip: 140, logoScale: 0.63, mobile: true },
+      { slug: "salesforce", alt: "Salesforce", cx: 1530, cy: 548, chip: 78 },
+      { slug: "apollo", alt: "Apollo", cx: 1660, cy: 602, chip: 52 },
     ],
-    exit: { x: 1800, y: 652 },
+    exit: { x: 1795, y: 650 },
   },
   {
-    // Dev chain — Supabase first (small), Vercel hero second, exits the corner.
     id: "vercel",
     nodes: [
-      { slug: "supabase", alt: "Supabase", cx: 642, cy: 562, chip: 60 },
-      { slug: "vercel", alt: "Vercel", cx: 480, cy: 642, chip: 150, logoScale: 0.4, mobile: true },
-      { slug: "sentry", alt: "Sentry", cx: 328, cy: 722, chip: 76 },
+      { slug: "supabase", alt: "Supabase", cx: 770, cy: 565, chip: 58 },
+      { slug: "vercel", alt: "Vercel", cx: 480, cy: 642, chip: 120, logoScale: 0.4, mobile: true },
+      { slug: "sentry", alt: "Sentry", cx: 330, cy: 724, chip: 74 },
       { slug: "cloudflare", alt: "Cloudflare", cx: 208, cy: 792, chip: 56 },
       { slug: "aws", alt: "AWS", cx: 108, cy: 850, chip: 48 },
     ],
-    exit: { x: 8, y: 902 },
+    exit: { x: 10, y: 900 },
   },
   {
     id: "slack",
     nodes: [
-      { slug: "slack", alt: "Slack", cx: 870, cy: 695, chip: 172, logoRotateDeg: -9.15, mobile: true },
-      { slug: "discord", alt: "Discord", cx: 798, cy: 806, chip: 92, mobile: true },
+      { slug: "slack", alt: "Slack", cx: 870, cy: 695, chip: 130, logoRotateDeg: -9.15, mobile: true },
+      { slug: "discord", alt: "Discord", cx: 798, cy: 806, chip: 80, mobile: true },
       { slug: "zapier", alt: "Zapier", cx: 748, cy: 882, chip: 56 },
     ],
     exit: { x: 705, y: 945 },
@@ -198,19 +197,18 @@ const TENTACLES: TentacleDef[] = [
   {
     id: "notion",
     nodes: [
-      { slug: "notion", alt: "Notion", cx: 1242, cy: 720, chip: 200, logoRotateDeg: 6.49, mobile: true },
-      { slug: "airtable", alt: "Airtable", cx: 1425, cy: 790, chip: 80, mobile: true },
-      { slug: "asana", alt: "Asana", cx: 1555, cy: 840, chip: 62 },
+      { slug: "notion", alt: "Notion", cx: 1242, cy: 720, chip: 140, logoRotateDeg: 6.49, mobile: true },
+      { slug: "airtable", alt: "Airtable", cx: 1425, cy: 790, chip: 76, mobile: true },
+      { slug: "asana", alt: "Asana", cx: 1555, cy: 840, chip: 60 },
       { slug: "trello", alt: "Trello", cx: 1660, cy: 878, chip: 50 },
     ],
     tail: { x: 1745, y: 905, size: 16, palette: "orange" },
   },
   {
-    // Money chain — QuickBooks half-cut by the top edge (the cloud leaks out).
     id: "stripe",
     nodes: [
-      { slug: "stripe", alt: "Stripe", cx: 855, cy: 135, chip: 110, mobile: true },
-      { slug: "paypal", alt: "PayPal", cx: 795, cy: 55, chip: 66 },
+      { slug: "stripe", alt: "Stripe", cx: 855, cy: 135, chip: 100, mobile: true },
+      { slug: "paypal", alt: "PayPal", cx: 795, cy: 55, chip: 64 },
       { slug: "quickbooks", alt: "QuickBooks", cx: 740, cy: -5, chip: 54 },
     ],
     exit: { x: 695, y: -55 },
@@ -218,8 +216,8 @@ const TENTACLES: TentacleDef[] = [
   {
     id: "figma",
     nodes: [
-      { slug: "figma", alt: "Figma", cx: 300, cy: 300, chip: 100, mobile: true },
-      { slug: "canva", alt: "Canva", cx: 185, cy: 252, chip: 66 },
+      { slug: "figma", alt: "Figma", cx: 300, cy: 300, chip: 90, mobile: true },
+      { slug: "canva", alt: "Canva", cx: 185, cy: 252, chip: 64 },
       { slug: "webflow", alt: "Webflow", cx: 92, cy: 210, chip: 54 },
     ],
     tail: { x: 15, y: 178, size: 14, palette: "purple" },
@@ -227,17 +225,16 @@ const TENTACLES: TentacleDef[] = [
   {
     id: "shopify",
     nodes: [
-      { slug: "shopify", alt: "Shopify", cx: 1062, cy: 790, chip: 104, mobile: true },
-      { slug: "mailchimp", alt: "Mailchimp", cx: 1128, cy: 862, chip: 62 },
+      { slug: "shopify", alt: "Shopify", cx: 1062, cy: 790, chip: 92, mobile: true },
+      { slug: "mailchimp", alt: "Mailchimp", cx: 1128, cy: 862, chip: 60 },
       { slug: "intercom", alt: "Intercom", cx: 1178, cy: 910, chip: 52 },
     ],
     exit: { x: 1215, y: 955 },
   },
   {
-    // Ads chain — Google Analytics half-cut by the left edge.
     id: "meta",
     nodes: [
-      { slug: "meta", alt: "Meta Ads", cx: 215, cy: 395, chip: 88, mobile: true },
+      { slug: "meta", alt: "Meta Ads", cx: 215, cy: 395, chip: 80, mobile: true },
       { slug: "googleads", alt: "Google Ads", cx: 112, cy: 428, chip: 58 },
       { slug: "googleanalytics", alt: "Google Analytics", cx: 28, cy: 455, chip: 50 },
     ],
@@ -246,31 +243,30 @@ const TENTACLES: TentacleDef[] = [
   {
     id: "instagram",
     nodes: [
-      { slug: "instagram", alt: "Instagram", cx: 1148, cy: 275, chip: 80, mobile: true },
+      { slug: "instagram", alt: "Instagram", cx: 1148, cy: 275, chip: 78, mobile: true },
       { slug: "calendly", alt: "Calendly", cx: 1232, cy: 206, chip: 50 },
     ],
     tail: { x: 1262, y: 148, size: 14, palette: "pink" },
   },
   {
-    // Analytics chain — grows bigger outward, exits mid-right.
+    // Analytics — fills the right-mid gap and GROWS outward.
     id: "analytics",
     nodes: [
-      { slug: "googlesheets", alt: "Google Sheets", cx: 1500, cy: 418, chip: 56 },
-      { slug: "posthog", alt: "PostHog", cx: 1652, cy: 430, chip: 72 },
+      { slug: "googlesheets", alt: "Google Sheets", cx: 1420, cy: 655, chip: 56 },
+      { slug: "posthog", alt: "PostHog", cx: 1560, cy: 685, chip: 74 },
     ],
-    exit: { x: 1800, y: 438 },
+    exit: { x: 1700, y: 718 },
   },
   {
-    // Comms chain — exits bottom between Slack and Vercel chains.
+    // Comms — starts right next to the monster and just ENDS on WhatsApp
+    // (founder: not every chain terminates with a pancake or an exit).
     id: "comms",
     nodes: [
-      { slug: "zoom", alt: "Zoom", cx: 695, cy: 785, chip: 60 },
-      { slug: "whatsapp", alt: "WhatsApp", cx: 640, cy: 866, chip: 54 },
+      { slug: "zoom", alt: "Zoom", cx: 1030, cy: 600, chip: 58 },
+      { slug: "whatsapp", alt: "WhatsApp", cx: 1115, cy: 700, chip: 52 },
     ],
-    exit: { x: 600, y: 935 },
   },
   {
-    // Workspace chain — Dropbox half-cut by the top edge.
     id: "workspace",
     nodes: [
       { slug: "miro", alt: "Miro", cx: 990, cy: 85, chip: 58 },
@@ -308,14 +304,16 @@ function wobbleFor(id: string): Wobble {
     return ((h >>> 0) / 0x1_0000_0000) * mul;
   };
   return {
-    freqX: 0.26 + r(0.32),
-    freqY: 0.24 + r(0.32),
-    ampX:  22 + r(20),
-    ampY:  20 + r(20),
+    // Frequencies ~2× the original — the founder read the slow drift as
+    // "lancinant, mou"; amplitudes trimmed so the faster motion stays cute.
+    freqX: 0.52 + r(0.42),
+    freqY: 0.5 + r(0.4),
+    ampX:  14 + r(12),
+    ampY:  13 + r(11),
     phaseX: r(Math.PI * 2),
     phaseY: r(Math.PI * 2),
-    ctrlFreqA: 0.32 + r(0.36),
-    ctrlAmpA:  110 + r(110),
+    ctrlFreqA: 0.55 + r(0.45),
+    ctrlAmpA:  80 + r(70),
     ctrlPhaseA: r(Math.PI * 2),
     restCurl: r(160) - 80,
     tiltDeg: r(120) - 60,
@@ -471,15 +469,17 @@ export function HomeIntegrationsCloud() {
             mWire.setAttribute("d", segD(ANCHOR_X, ANCHOR_Y, x, y, curl));
           }
         }
-        const end = tent.tail ?? tent.exit!;
-        const tw = wobbles.get(`${tent.id}-tail`)!;
-        const tailPt = {
-          x: end.x + Math.sin(t * tw.freqX * Math.PI + tw.phaseX) * tw.ampX * 1.3,
-          y: end.y + Math.sin(t * tw.freqY * Math.PI + tw.phaseY) * tw.ampY * 1.3,
-        };
-        pts.push(tailPt);
-        const tailEl = tailRefs.current.get(tent.id);
-        if (tailEl) tailEl.setAttribute("transform", `translate(${tailPt.x.toFixed(2)} ${tailPt.y.toFixed(2)})`);
+        const end = tent.tail ?? tent.exit;
+        if (end) {
+          const tw = wobbles.get(`${tent.id}-tail`)!;
+          const tailPt = {
+            x: end.x + Math.sin(t * tw.freqX * Math.PI + tw.phaseX) * tw.ampX * 1.3,
+            y: end.y + Math.sin(t * tw.freqY * Math.PI + tw.phaseY) * tw.ampY * 1.3,
+          };
+          pts.push(tailPt);
+          const tailEl = tailRefs.current.get(tent.id);
+          if (tailEl) tailEl.setAttribute("transform", `translate(${tailPt.x.toFixed(2)} ${tailPt.y.toFixed(2)})`);
+        }
 
         // 2. Chain segments — curl = per-arrival resting curl + live wobble.
         for (let i = 0; i < pts.length - 1; i++) {
@@ -520,7 +520,7 @@ export function HomeIntegrationsCloud() {
           const pts = [
             { x: ANCHOR_X, y: ANCHOR_Y },
             ...tent.nodes.map((n) => ({ x: n.cx, y: n.cy })),
-            { x: (tent.tail ?? tent.exit!).x, y: (tent.tail ?? tent.exit!).y },
+            ...(tent.tail ?? tent.exit ? [{ x: (tent.tail ?? tent.exit)!.x, y: (tent.tail ?? tent.exit)!.y }] : []),
           ];
           return pts.slice(0, -1).map((p, i) => {
             const q = pts[i + 1];
