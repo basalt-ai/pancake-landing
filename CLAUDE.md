@@ -6,26 +6,13 @@ and when to reach for it. The Pancake design kit (`app/_styles/`, `_design-kit/`
 design system, and `AGENTS.md` always win over any tool's suggestions — these tools advise,
 they don't decide.
 
-## MCP servers (`.mcp.json`, project scope)
-
-### refero — real-product design references
-HTTP MCP at `https://api.refero.design/mcp`. Library of 135k+ real product screens, 2,000+
-curated style systems, and 6,000+ user flows (Stripe, Linear, Notion tier).
-
-- **When**: FIRST step of any section design/redesign (hero, pricing, FAQ, testimonials,
-  comparison pages) or funnel work — search real references and lock a direction *before*
-  writing JSX/CSS.
-- **How**: `refero_search_styles` / `refero_get_style` for visual systems;
-  `refero_search_screens` + `refero_get_screen_image` for concrete screens;
-  `refero_get_similar_screens` to widen a moodboard; `refero_search_flows` for
-  signup/onboarding journeys.
-- **Setup**: needs a Refero Pro account — authorize once via `/mcp` in an interactive
-  session (OAuth). Reference material is copyrighted product UI: inspiration only, never
-  copy assets.
+## MCP servers
 
 ### magic — 21st.dev component generator
 Stdio MCP (`npx @21st-dev/magic`). Generates/refines single React+Tailwind components from
-the 21st.dev community library; also `logo_search` for brand logos as SVG/TSX.
+the 21st.dev community library; also `logo_search` for brand logos as SVG/TSX. Tools:
+`21st_magic_component_builder`, `21st_magic_component_inspiration`,
+`21st_magic_component_refiner`, `logo_search`.
 
 - **When**: scaffolding one new component or section variant (pricing cards, marquee, FAQ
   accordion) to cherry-pick structure from, or grabbing a brand logo SVG. Component-scale
@@ -33,9 +20,8 @@ the 21st.dev community library; also `logo_search` for brand logos as SVG/TSX.
 - **Caveat**: output is shadcn/framer-motion-flavored. Always re-skin to the Pancake kit
   (tokens, `.badge`, equal card heights, no hover dim) — never drop in as-is or add its
   dependencies.
-- **Setup**: export `TWENTYFIRST_API_KEY` in your shell (key from https://21st.dev/magic/console);
-  `.mcp.json` expands it at launch. Without it, the magic server just fails to connect —
-  everything else keeps working.
+- **Setup**: already configured at user scope (`~/.claude.json`) with Tristan's API key —
+  nothing to do. The key is private config; never move it into a committed file.
 
 ## Skills (installed in `~/.claude/skills/`)
 
@@ -92,3 +78,7 @@ The taste-skill repo has 10 more skills (minimalist/brutalist/soft styles, image
 reference boards, image-to-code); ui-ux-pro-max ships 6 more (banner-design, brand, slides,
 design-system, ui-styling, design). Flagships only were installed to keep session context
 lean — copy others from the repos into `~/.claude/skills/` if a task calls for one.
+
+The refero.design MCP (real-product screen/style reference library) was evaluated and
+skipped: it requires a paid Refero Pro subscription and Tristan declined. Don't re-suggest
+it unless that changes.
