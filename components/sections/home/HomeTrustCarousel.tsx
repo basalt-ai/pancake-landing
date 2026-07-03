@@ -542,10 +542,6 @@ export function HomeTrustCarousel() {
     rotation,
     (r) => `translateZ(${-RADIUS}px) rotateY(${r}deg)`
   );
-  /* Backdrop orbit spins at 0.15× the drag rate — ties the carousel to the
-     hero's orbit language. */
-  const orbitRotate = useTransform(rotation, (r) => r * 0.15);
-
   const [frontIndex, setFrontIndex] = useState(0);
   const [dragging, setDragging] = useState(false);
   const [hinted, setHinted] = useState(false);
@@ -697,10 +693,6 @@ export function HomeTrustCarousel() {
         onPointerCancel={onPointerUp}
         onKeyDown={onKeyDown}
       >
-        {/* Dotted orbit peeking from behind the front card. */}
-        <motion.span className="home-trust-carousel__orbit" style={{ rotate: orbitRotate }} aria-hidden>
-          <Image src="/control/sandbox-e1.svg" alt="" fill unoptimized />
-        </motion.span>
         <motion.div className="home-trust-carousel__ring" style={{ transform: ringTransform }}>
           {TRUST_CARDS.map((card, i) => (
             <CarouselFace key={card.id} index={i} rotation={rotation} front={i === frontIndex} card={card} />

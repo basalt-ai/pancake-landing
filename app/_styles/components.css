@@ -3022,6 +3022,10 @@
       perspective-origin: 50% 45%;
       cursor: grab;
       touch-action: pan-y;
+      /* The drag gesture must never start a text selection — a mouse drag
+         across the 3D faces paints giant skewed highlight quads. */
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     .home-trust-carousel__stage[data-dragging] {
@@ -3039,20 +3043,6 @@
       align-items: center;
       gap: 16px;
     }
-  }
-
-  /* Dotted orbit peeking from behind the front card — hero orbit language.
-     Sized to poke ~75px past each side of the 368px front card while
-     staying inside the 500px stage, clear of the H2 and the nav dots. */
-  .home-trust-carousel__orbit {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 520px;
-    height: 507px;
-    margin: -253px 0 0 -260px;
-    z-index: 0;
-    pointer-events: none;
   }
 
   .home-trust-carousel__ring {
