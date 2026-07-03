@@ -38,6 +38,9 @@ import { PANCAKE_TINTS } from "@/lib/pancake-palette";
 
 const VB_W = 1920;
 const VB_H = 720;
+/** Ceiling for the dynamic vertical spread (founder: the logos should use
+ *  the air the one-screen band has to give — but never get sparse). */
+const VB_MAX_H = 880;
 /** Tentacle anchor — pancake-monster centre in Figma container coords. */
 const ANCHOR_X = 960;
 const ANCHOR_Y = 360;
@@ -377,6 +380,41 @@ export function HomeIntegrationsCloud() {
   const monsterSlotRef = useRef<HTMLDivElement | null>(null);
   const [monsterSizePx, setMonsterSizePx] = useState(160);
 
+  /**
+   * Dynamic vertical spread (desktop only) — the stage's viewBox height
+   * grows to match the air the one-screen band gives the figure, clamped
+   * to [VB_H, VB_MAX_H]. Every y coordinate scales by `vbH / VB_H`, so the
+   * composition literally expands to fill the box: chip sizes are
+   * untouched, vertical gaps and edge margins only ever GROW (no new
+   * collisions, no crops), and the anchor stays at exactly half the stage
+   * so the 50%-based monster overlays hold at any spread.
+   */
+  const vizRef = useRef<HTMLDivElement | null>(null);
+  const [vbH, setVbH] = useState(VB_H);
+  const spreadRef = useRef(1);
+
+  useLayoutEffect(() => {
+    const viz = vizRef.current;
+    if (!viz || typeof ResizeObserver === "undefined") return;
+    const apply = () => {
+      const r = viz.getBoundingClientRect();
+      if (r.width < 1 || r.height < 1) return;
+      const desktop = window.matchMedia("(min-width: 1024px)").matches;
+      const h = desktop
+        ? Math.round(Math.min(VB_MAX_H, Math.max(VB_H, (r.height / r.width) * VB_W)))
+        : VB_H;
+      spreadRef.current = h / VB_H;
+      setVbH(h);
+    };
+    const ro = new ResizeObserver(apply);
+    ro.observe(viz);
+    apply();
+    return () => ro.disconnect();
+  }, []);
+
+  /** Spread-scaled y — for the static (SSR / reduced-motion) render. */
+  const sy = (y: number) => (y * vbH) / VB_H;
+
   const wobbles = useMemo(() => {
     const m = new Map<string, Wobble>();
     for (const n of ALL_NODES) m.set(n.slug, wobbleFor(n.slug));
@@ -470,22 +508,24 @@ export function HomeIntegrationsCloud() {
     const tick = () => {
       if (disposed) return;
       const t = performance.now() / 1000 - start;
+      // Vertical spread — every base y scales; wobble amplitudes don't.
+      const sp = spreadRef.current;
 
       for (const tent of TENTACLES) {
         // 1. Wobbled positions for every node + the tail.
-        const pts: { x: number; y: number }[] = [{ x: ANCHOR_X, y: ANCHOR_Y }];
+        const pts: { x: number; y: number }[] = [{ x: ANCHOR_X, y: ANCHOR_Y * sp }];
         for (const node of tent.nodes) {
           const w = wobbles.get(node.slug)!;
           const s = ampScaleFor(node.chip);
           const x = node.cx + Math.sin(t * w.freqX * Math.PI + w.phaseX) * w.ampX * s;
-          const y = node.cy + Math.sin(t * w.freqY * Math.PI + w.phaseY) * w.ampY * s;
+          const y = node.cy * sp + Math.sin(t * w.freqY * Math.PI + w.phaseY) * w.ampY * s;
           pts.push({ x, y });
           const chipEl = chipRefs.current.get(node.slug);
           if (chipEl) chipEl.setAttribute("transform", `translate(${x.toFixed(2)} ${y.toFixed(2)})`);
           const mWire = mobileWireRefs.current.get(node.slug);
           if (mWire) {
             const curl = w.restCurl + Math.sin(t * w.ctrlFreqA * Math.PI + w.ctrlPhaseA) * w.ctrlAmpA * 0.5;
-            mWire.setAttribute("d", segD(ANCHOR_X, ANCHOR_Y, x, y, curl));
+            mWire.setAttribute("d", segD(ANCHOR_X, ANCHOR_Y * sp, x, y, curl));
           }
         }
         const end = tent.tail ?? tent.exit;
@@ -493,7 +533,7 @@ export function HomeIntegrationsCloud() {
           const tw = wobbles.get(`${tent.id}-tail`)!;
           const tailPt = {
             x: end.x + Math.sin(t * tw.freqX * Math.PI + tw.phaseX) * tw.ampX * 1.3,
-            y: end.y + Math.sin(t * tw.freqY * Math.PI + tw.phaseY) * tw.ampY * 1.3,
+            y: end.y * sp + Math.sin(t * tw.freqY * Math.PI + tw.phaseY) * tw.ampY * 1.3,
           };
           pts.push(tailPt);
           const tailEl = tailRefs.current.get(tent.id);
@@ -526,13 +566,14 @@ export function HomeIntegrationsCloud() {
 
   return (
     <div className="home-integrations-cloud" data-node-id="428:15019">
-      <div className="home-integrations-cloud__viz">
-      {/* `slice`: on desktop the container ratio matches the viewBox so this
-          equals `meet`; on mobile the shorter 9/7 box crops the SIDES to a
-          ~1150-unit window — a natural zoom with no transform hacks. */}
+      <div ref={vizRef} className="home-integrations-cloud__viz">
+      {/* `slice`: on desktop the viewBox height is DERIVED from the measured
+          box ratio (dynamic spread), so this equals `meet`; on mobile the
+          shorter 8/5 box crops the SIDES to a ~1150-unit window — a natural
+          zoom with no transform hacks. */}
       <svg
         className="home-integrations-cloud__svg"
-        viewBox={`0 0 ${VB_W} ${VB_H}`}
+        viewBox={`0 0 ${VB_W} ${vbH}`}
         preserveAspectRatio="xMidYMid slice"
         aria-hidden
         focusable="false"
@@ -540,9 +581,9 @@ export function HomeIntegrationsCloud() {
         {/* Chain segments — depth-faded (inner .7 → mid .5 → tail .32). */}
         {TENTACLES.map((tent) => {
           const pts = [
-            { x: ANCHOR_X, y: ANCHOR_Y },
-            ...tent.nodes.map((n) => ({ x: n.cx, y: n.cy })),
-            ...(tent.tail ?? tent.exit ? [{ x: (tent.tail ?? tent.exit)!.x, y: (tent.tail ?? tent.exit)!.y }] : []),
+            { x: ANCHOR_X, y: sy(ANCHOR_Y) },
+            ...tent.nodes.map((n) => ({ x: n.cx, y: sy(n.cy) })),
+            ...(tent.tail ?? tent.exit ? [{ x: (tent.tail ?? tent.exit)!.x, y: sy((tent.tail ?? tent.exit)!.y) }] : []),
           ];
           return pts.slice(0, -1).map((p, i) => {
             const q = pts[i + 1];
@@ -577,7 +618,7 @@ export function HomeIntegrationsCloud() {
               else mobileWireRefs.current.delete(node.slug);
             }}
             className="home-integrations-cloud__tentacle home-integrations-cloud__tentacle--inner home-integrations-cloud__tentacle--mobile"
-            d={staticSegD(ANCHOR_X, ANCHOR_Y, node.cx, node.cy)}
+            d={staticSegD(ANCHOR_X, sy(ANCHOR_Y), node.cx, sy(node.cy))}
           />
         ))}
 
@@ -590,7 +631,7 @@ export function HomeIntegrationsCloud() {
               if (el) tailRefs.current.set(tent.id, el);
               else tailRefs.current.delete(tent.id);
             }}
-            transform={`translate(${tent.tail!.x} ${tent.tail!.y})`}
+            transform={`translate(${tent.tail!.x} ${sy(tent.tail!.y)})`}
             data-tail
           >
             <g transform={`scale(${tent.tail!.size / 49}) translate(${-49 / 2} ${-48 / 2})`}>
@@ -615,7 +656,7 @@ export function HomeIntegrationsCloud() {
                   if (el) chipRefs.current.set(node.slug, el);
                   else chipRefs.current.delete(node.slug);
                 }}
-                transform={`translate(${node.cx} ${node.cy})`}
+                transform={`translate(${node.cx} ${sy(node.cy)})`}
                 data-logo={node.slug}
                 data-depth={depth}
                 data-mobile={node.mobile ? "1" : "0"}

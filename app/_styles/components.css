@@ -2359,6 +2359,29 @@
       flex-direction: column;
       justify-content: center;
     }
+
+    /* The stage grows into the band's leftover height (founder: expand the
+       logo floating zone above and below the artwork). The component reads
+       the box ratio and spreads the composition vertically to match — the
+       floor is the natural 720 artwork (so `slice` never crops), the cap is
+       the 880-unit spread (justify-center absorbs anything past it). */
+    .home-integrations-cloud {
+      flex: 1 1 auto;
+      aspect-ratio: auto;
+      min-height: calc(var(--cloud-bleed) * 720 / 1920);
+      max-height: calc(var(--cloud-bleed) * 880 / 1920);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* The viz can't use `height: 100%` here — the flex-grown parent has no
+       definite height for percentages (circular), which resolved to 0 and
+       froze the spread at 720. Flex sizing instead. */
+    .home-integrations-cloud__viz {
+      height: auto;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
   }
 
   /**
