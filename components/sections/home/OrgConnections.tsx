@@ -498,7 +498,7 @@ export function OrgConnections() {
       ref={rootRef}
       className="home-org-diagram__svg home-org-diagram__svg--org-connections"
       viewBox="0 0 1136 706"
-      // Stage box is 1136/648 (dead bottom air trimmed); `slice` keeps the
+      // Stage box is 1136/632 (dead bottom air trimmed); `slice` keeps the
       // width-based 1:1 mapping + top alignment — cropped units are empty.
       preserveAspectRatio="xMidYMin slice"
       aria-hidden
