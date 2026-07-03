@@ -1,19 +1,28 @@
 /**
  * Home — “Endless integrations” floating cloud (Figma `428:15019`) + callout copy (`428:15015`).
  *
- * Reproduces the static Figma artwork as a live, organic animation:
- *  - Each logo sits on a tilted **pancake** chip (ellipse + 3D-side, layered
- *    via two stacked SVG paths). No more perfect circles — chips track the
- *    pancake design system used elsewhere on the page.
- *  - Each chip is anchored to the central pancake monster by a dotted Bezier
- *    "tentacle". The tentacle is split into two segments: an *inner* run
- *    from monster→chip (full opacity) and an *outer* run from chip→tail
- *    (faded), so the tendril clearly continues past the logo.
- *  - A small pancake sits at every outer-tail tip, plus a handful of
- *    decorative pancake "berries" scattered through negative space — same
- *    set used in the Figma decoration layer, just tinted from the palette.
- *  - All wobble math runs on the GSAP shared ticker (one rAF loop), with
- *    deterministic per-element seeds so SSR/CSR agree.
+ * v4.5 "deep cloud" (founder ask: show ~10× the integrations while staying
+ * cute and juicy). The original 8 single-chip tentacles became 16 CHAINS of
+ * 2-5 chips — 50 logos, grouped by theme (dev flows out of GitHub/Vercel,
+ * growth out of X/LinkedIn, money out of Stripe…). Founder rules: sizes are
+ * DELIBERATELY non-monotone along a chain (the hero logo is often the
+ * second link, not the first); only a handful of chains end on a pancake
+ * berry — most run OFF-canvas through half-cut chips so the cloud reads as
+ * continuing past the frame.
+ *
+ *  - Each logo sits on a tilted cream **blob chip** — ONE shared organic
+ *    path (lifted from the original Figma ellipse export), scaled per node,
+ *    so the "orbit" always fits its logo exactly at any size.
+ *  - Chain segments are dotted Beziers recomputed every frame; opacity
+ *    fades with depth (inner .7 → mid .5 → tail .32) so tendrils visibly
+ *    dissolve past the last logo — the cloud reads as continuing forever.
+ *  - A small pancake sits at every tail tip.
+ *  - All wobble math runs on the GSAP shared ticker (one rAF loop) with
+ *    deterministic per-element seeds so SSR/CSR agree. Wobble amplitude
+ *    scales with chip size — satellites float gently, heroes drift wide.
+ *  - Mobile (<1024px) hides depth ≥ 1 chips + chain segments and shows a
+ *    direct head→tail "bridge" instead — same density as the original
+ *    8-chip cloud in the zoomed 5/6 crop.
  *
  * Coordinates are the Figma inner-container space (1786 × 900); the SVG
  * `viewBox` does the responsive scaling.
@@ -35,46 +44,23 @@ const ANCHOR_Y = 435;
 
 /**
  * Figma `428:15015` — callout in inner-container coords (1786×900).
- * `white-space: pre` + explicit `\n` = exactly 3 lines. Each time we narrow `w`,
- * add the same delta to `x` so the block slides right (right edge ~1758) and
- * the inner peach rail shrinks vs the longest line + padding.
+ * `white-space: pre` + explicit `\n` = exactly 3 lines. Chains keep clear of
+ * this box (x ∈ [1278, 1758], y ∈ [48, ~230]).
  */
 const INTEGRATIONS_CALLOUT_VB = { x: 1278, y: 48, w: 480 };
-/** Figma `428:15015` — three-line stack (explicit breaks match comp). */
 const INTEGRATIONS_CALLOUT_COPY = `Connect your tools. Your agents
 read, write, ship, and sell through
-them \u2014 like an employee would.`;
+them — like an employee would.`;
 
 /* ----------------------------------------------------------------------- */
-/* Pancake — inline SVG, parameterised colours, used for chips + decoration */
+/* Pancake — inline SVG, parameterised colours, used for tails + decoration */
 /* ----------------------------------------------------------------------- */
 
-/**
- * Path data lifted directly from `public/pancake-svgs/angled-1.svg` (project
- * design system). Side path is the lighter "edge" of the 3D pancake, top
- * path is the darker upper surface — together they form the layered look.
- */
-const PANCAKE_VIEWBOX = "0 0 49 48";
 const PANCAKE_SIDE_D =
   "M25.9537 42C33.3632 42 39.2879 37.7456 43.3461 33.4449C46.1317 30.4929 47.7828 26.7658 47.8255 22.5904C47.9308 12.2895 37.5877 4 24.9673 4C12.347 4 1.61512 11.2979 0.299682 22.5904C-0.498594 29.4427 3.49706 33.162 8.00699 36.2143C12.4861 39.2458 19.7274 42 25.9537 42Z";
 const PANCAKE_TOP_D =
   "M25.8326 36C32.779 36 38.3334 32.4173 42.138 28.7957C44.7495 26.3098 46.2973 23.1712 46.3374 19.6551C46.4361 10.9807 36.7394 4 24.9078 4C13.0762 4 3.01515 10.1456 1.78193 19.6551C1.03355 25.4254 4.77947 28.5575 9.00753 31.1278C13.2067 33.6806 19.9955 36 25.8326 36Z";
 
-/**
- * Decorative pancake palettes. Used for the small "berries" scattered through
- * negative space and the tail tips at the end of each tentacle. Convention:
- * `top` = darker visible upper surface; `side` = lighter underbelly peeking
- * at the lower edge — matches `pancake-svgs/angled-1.svg`.
- *
- * Brand hues come from the shared `PANCAKE_TINTS` (lib/pancake-palette.ts —
- * on-palette values from tokens.css) so the cloud pancakes match the hero and
- * closing-CTA decor exactly; previously this held local off-palette, muted
- * approximations. `cream` is a cloud-only accent with no tokens.css
- * counterpart, so it stays local.
- *
- * The chip backgrounds use external Figma ellipse SVGs (see `LOGOS[].chipSrc`),
- * NOT this layered pancake — chips are simple cream ellipses, not pancakes.
- */
 const PANCAKE_PALETTE = {
   pink:   PANCAKE_TINTS.pink,
   purple: PANCAKE_TINTS.purple,
@@ -84,110 +70,218 @@ const PANCAKE_PALETTE = {
 } as const;
 type PancakePaletteName = keyof typeof PANCAKE_PALETTE;
 
+/**
+ * Shared chip blob — the organic cream ellipse from the original Figma
+ * export (`ellipse-gmail.svg`, 172.13 × 169.339). Inlined once and scaled
+ * per chip so every logo's "orbit" is proportional to the logo itself.
+ */
+const BLOB_W = 172.13;
+const BLOB_H = 169.339;
+const BLOB_D =
+  "M172.13 77.2048C172.13 125.026 134.869 169.339 87.3369 169.339C63.9016 169.339 38.4144 165.431 22.8941 150.144C6.93551 134.426 0 105.714 0 81.4702C0 54.3473 14.515 36.3508 33.9172 20.4742C48.7239 8.35805 66.7634 0 87.3369 0C134.869 0 172.13 29.3831 172.13 77.2048Z";
+const BLOB_FILL = "#FFF7EC";
+
 /* ----------------------------------------------------------------------- */
-/* Logo definitions                                                         */
+/* Tentacle definitions                                                     */
 /* ----------------------------------------------------------------------- */
 
-type LogoDef = {
-  id: string;
-  src: string;
+type NodeDef = {
+  /** Doubles as the wobble seed and (unless `src` overrides) the icon file name. */
+  slug: string;
   alt: string;
   /** Chip centre in Figma coords. */
   cx: number;
   cy: number;
-  /**
-   * Chip ellipse asset (a Figma export — simple cream ellipse path with
-   * `fill="var(--fill-0, #FFF7EC)"`). Sized to its native viewBox below.
-   */
-  chipSrc: string;
-  /** Chip ellipse intrinsic dimensions (match the asset's viewBox). */
-  chipW: number;
-  chipH: number;
-  /** Tilt (deg) applied around the chip centre — matches Figma per-chip rotations. */
-  chipRotateDeg: number;
-  /** Logo dimensions and any in-chip rotation. */
-  logoW: number;
-  logoH: number;
+  /** Chip blob width in viewBox units (height follows the blob's own ratio). */
+  chip: number;
+  /** Optional explicit icon path (defaults to `/integrations/<slug>.svg`). */
+  src?: string;
+  /** Logo width = chip × logoScale (default 0.56 — matches the original chips). */
+  logoScale?: number;
   logoRotateDeg?: number;
-  /** Outer tail point in Figma coords — the tentacle continues from chip→tail past the logo. */
-  tailX: number;
-  tailY: number;
-  /** Pancake at the tail tip — size + colour. */
-  tailSize: number;
-  tailPalette: PancakePaletteName;
-  /** Outer-segment perpendicular curl (px) — sets which side the outer Bezier sweeps. */
-  outerCurl: number;
+  /** Inline-rendered logo (LinkedIn kept from the original implementation). */
+  inline?: "linkedin";
+  /** Kept in the mobile crop (big recognizable chips only, wired straight
+   *  to the monster — chains don't survive the 1.4× zoomed crop). */
+  mobile?: boolean;
 };
 
-const LOGOS: LogoDef[] = [
-  // Gmail (Figma Ellipse 4 — un-rotated 172×169 cream ellipse).
-  // Tail extended outward into the top-left corner; deeper outer curl so the
-  // wire arcs more dramatically away from the monster.
+type TentacleDef = {
+  id: string;
+  /** Ordered from the monster outward — index 0 is the "head" (kept on mobile). */
+  nodes: NodeDef[];
+  /** Chain ending A: a pancake berry (kept for a handful of chains). */
+  tail?: { x: number; y: number; size: number; palette: PancakePaletteName };
+  /** Chain ending B: a bare exit point, usually OFF-canvas — the last faded
+   *  segment runs out of the image so the cloud reads as endless. */
+  exit?: { x: number; y: number };
+};
+
+/**
+ * Hand-authored chains. Sizes taper outward; heads keep (roughly) the
+ * positions of the original 8-logo composition. The top-right zone stays
+ * clear of chips ≥ the callout box.
+ */
+const TENTACLES: TentacleDef[] = [
   {
-    id: "gmail", src: "/integrations/gmail.svg", alt: "Gmail",
-    cx: 658, cy: 254,
-    chipSrc: "/integrations/ellipse-gmail.svg", chipW: 172, chipH: 169, chipRotateDeg: 0,
-    logoW: 96, logoH: 72, logoRotateDeg: -8.59,
-    tailX: 140, tailY: 30, tailSize: 22, tailPalette: "orange", outerCurl: -130,
+    // Google-suite chain — the SECOND link is the hero (founder: the first
+    // logo must not always be the biggest), and the chain exits top-left.
+    id: "gmail",
+    nodes: [
+      { slug: "googlecalendar", alt: "Google Calendar", cx: 742, cy: 302, chip: 72 },
+      { slug: "gmail", alt: "Gmail", cx: 560, cy: 200, chip: 160, logoRotateDeg: -8.59, mobile: true },
+      { slug: "googledrive", alt: "Google Drive", cx: 400, cy: 118, chip: 70 },
+      { slug: "typeform", alt: "Typeform", cx: 268, cy: 60, chip: 52 },
+      { slug: "loom", alt: "Loom", cx: 148, cy: 14, chip: 46 },
+    ],
+    exit: { x: 30, y: -30 },
   },
-  // GitHub (Ellipse 9 — 137×135, tilted 58.71° in Figma).
   {
-    id: "github", src: "/integrations/github-fill.svg", alt: "GitHub",
-    cx: 1085, cy: 172,
-    chipSrc: "/integrations/ellipse-github.svg", chipW: 137.52, chipH: 135.29, chipRotateDeg: 58.71,
-    logoW: 76, logoH: 75, logoRotateDeg: 6.63,
-    tailX: 1430, tailY: -10, tailSize: 24, tailPalette: "yellow", outerCurl: 120,
+    id: "github",
+    nodes: [
+      { slug: "github", alt: "GitHub", src: "/integrations/github-fill.svg", cx: 1085, cy: 172, chip: 137, logoRotateDeg: 6.63, mobile: true },
+      { slug: "youtube", alt: "YouTube", cx: 1196, cy: 96, chip: 82, mobile: true },
+      { slug: "linear", alt: "Linear", cx: 1262, cy: 24, chip: 56 },
+    ],
+    tail: { x: 1315, y: -35, size: 16, palette: "yellow" },
   },
-  // Claude (Ellipse 13 — 63×55, tilt -149.23°).
   {
-    id: "claude", src: "/integrations/claude.svg", alt: "Claude",
-    cx: 1576, cy: 303,
-    chipSrc: "/integrations/ellipse-claude.svg", chipW: 63.27, chipH: 54.9, chipRotateDeg: -149.23,
-    logoW: 36, logoH: 36,
-    tailX: 1880, tailY: 200, tailSize: 16, tailPalette: "orange", outerCurl: -75,
+    id: "ai",
+    nodes: [
+      { slug: "openai", alt: "OpenAI", cx: 1435, cy: 325, chip: 90, mobile: true },
+      { slug: "claude", alt: "Claude", cx: 1580, cy: 300, chip: 60 },
+      { slug: "perplexity", alt: "Perplexity", cx: 1700, cy: 248, chip: 52 },
+    ],
+    exit: { x: 1810, y: 200 },
   },
-  // X (Ellipse 12 — 113×98, tilt -109.95°).
   {
-    id: "x", src: "/integrations/x.svg", alt: "X",
-    cx: 380, cy: 470,
-    chipSrc: "/integrations/ellipse-x.svg", chipW: 113.65, chipH: 98.61, chipRotateDeg: -109.95,
-    logoW: 60, logoH: 55,
-    tailX: -10, tailY: 600, tailSize: 18, tailPalette: "pink", outerCurl: -110,
+    id: "x",
+    nodes: [
+      { slug: "x", alt: "X", cx: 380, cy: 470, chip: 113, mobile: true },
+      { slug: "reddit", alt: "Reddit", cx: 240, cy: 506, chip: 96, mobile: true },
+      { slug: "tiktok", alt: "TikTok", cx: 132, cy: 556, chip: 56 },
+    ],
+    tail: { x: 28, y: 598, size: 18, palette: "pink" },
   },
-  // LinkedIn (Ellipse 8 — 206×203, tilt 58.71°). Pushed further right so it
-  // doesn't crowd the central pancake monster.
   {
-    id: "linkedin", src: "", alt: "LinkedIn",
-    cx: 1310, cy: 470,
-    chipSrc: "/integrations/ellipse-linkedin.svg", chipW: 206.38, chipH: 203.03, chipRotateDeg: 58.71,
-    logoW: 130, logoH: 130,
-    tailX: 1820, tailY: 600, tailSize: 24, tailPalette: "orange", outerCurl: 110,
+    // CRM chain — small HubSpot first, the LinkedIn hero mid-chain.
+    id: "linkedin",
+    nodes: [
+      { slug: "hubspot", alt: "HubSpot", cx: 1178, cy: 542, chip: 64 },
+      { slug: "linkedin", alt: "LinkedIn", inline: "linkedin", cx: 1352, cy: 482, chip: 190, logoScale: 0.63, mobile: true },
+      { slug: "salesforce", alt: "Salesforce", cx: 1532, cy: 548, chip: 80 },
+      { slug: "apollo", alt: "Apollo", cx: 1662, cy: 602, chip: 52 },
+    ],
+    exit: { x: 1800, y: 652 },
   },
-  // Vercel (Ellipse 5 — same cream ellipse asset as Gmail; un-rotated 172×169).
   {
-    id: "vercel", src: "/integrations/vercel.svg", alt: "Vercel",
-    cx: 556, cy: 596,
-    chipSrc: "/integrations/ellipse-gmail.svg", chipW: 172, chipH: 169, chipRotateDeg: 0,
-    logoW: 64, logoH: 56,
-    tailX: 160, tailY: 830, tailSize: 24, tailPalette: "yellow", outerCurl: -125,
+    // Dev chain — Supabase first (small), Vercel hero second, exits the corner.
+    id: "vercel",
+    nodes: [
+      { slug: "supabase", alt: "Supabase", cx: 642, cy: 562, chip: 60 },
+      { slug: "vercel", alt: "Vercel", cx: 480, cy: 642, chip: 150, logoScale: 0.4, mobile: true },
+      { slug: "sentry", alt: "Sentry", cx: 328, cy: 722, chip: 76 },
+      { slug: "cloudflare", alt: "Cloudflare", cx: 208, cy: 792, chip: 56 },
+      { slug: "aws", alt: "AWS", cx: 108, cy: 850, chip: 48 },
+    ],
+    exit: { x: 8, y: 902 },
   },
-  // Slack (Ellipse 6 — 172×169, tilt 58.71°).
   {
-    id: "slack", src: "/integrations/slack.svg", alt: "Slack",
-    cx: 870, cy: 695,
-    chipSrc: "/integrations/ellipse-slack.svg", chipW: 172.13, chipH: 169.34, chipRotateDeg: 58.71,
-    logoW: 96, logoH: 96, logoRotateDeg: -9.15,
-    tailX: 720, tailY: 940, tailSize: 28, tailPalette: "purple", outerCurl: 95,
+    id: "slack",
+    nodes: [
+      { slug: "slack", alt: "Slack", cx: 870, cy: 695, chip: 172, logoRotateDeg: -9.15, mobile: true },
+      { slug: "discord", alt: "Discord", cx: 798, cy: 806, chip: 92, mobile: true },
+      { slug: "zapier", alt: "Zapier", cx: 748, cy: 882, chip: 56 },
+    ],
+    exit: { x: 705, y: 945 },
   },
-  // Notion (Ellipse 7 — 215×212, tilt 58.71°).
   {
-    id: "notion", src: "/integrations/notion.svg", alt: "Notion",
-    cx: 1242, cy: 720,
-    chipSrc: "/integrations/ellipse-notion.svg", chipW: 215.57, chipH: 212.07, chipRotateDeg: 58.71,
-    logoW: 132, logoH: 132, logoRotateDeg: 6.49,
-    tailX: 1740, tailY: 880, tailSize: 20, tailPalette: "orange", outerCurl: 130,
+    id: "notion",
+    nodes: [
+      { slug: "notion", alt: "Notion", cx: 1242, cy: 720, chip: 200, logoRotateDeg: 6.49, mobile: true },
+      { slug: "airtable", alt: "Airtable", cx: 1425, cy: 790, chip: 80, mobile: true },
+      { slug: "asana", alt: "Asana", cx: 1555, cy: 840, chip: 62 },
+      { slug: "trello", alt: "Trello", cx: 1660, cy: 878, chip: 50 },
+    ],
+    tail: { x: 1745, y: 905, size: 16, palette: "orange" },
+  },
+  {
+    // Money chain — QuickBooks half-cut by the top edge (the cloud leaks out).
+    id: "stripe",
+    nodes: [
+      { slug: "stripe", alt: "Stripe", cx: 855, cy: 135, chip: 110, mobile: true },
+      { slug: "paypal", alt: "PayPal", cx: 795, cy: 55, chip: 66 },
+      { slug: "quickbooks", alt: "QuickBooks", cx: 740, cy: -5, chip: 54 },
+    ],
+    exit: { x: 695, y: -55 },
+  },
+  {
+    id: "figma",
+    nodes: [
+      { slug: "figma", alt: "Figma", cx: 300, cy: 300, chip: 100, mobile: true },
+      { slug: "canva", alt: "Canva", cx: 185, cy: 252, chip: 66 },
+      { slug: "webflow", alt: "Webflow", cx: 92, cy: 210, chip: 54 },
+    ],
+    tail: { x: 15, y: 178, size: 14, palette: "purple" },
+  },
+  {
+    id: "shopify",
+    nodes: [
+      { slug: "shopify", alt: "Shopify", cx: 1062, cy: 790, chip: 104, mobile: true },
+      { slug: "mailchimp", alt: "Mailchimp", cx: 1128, cy: 862, chip: 62 },
+      { slug: "intercom", alt: "Intercom", cx: 1178, cy: 910, chip: 52 },
+    ],
+    exit: { x: 1215, y: 955 },
+  },
+  {
+    // Ads chain — Google Analytics half-cut by the left edge.
+    id: "meta",
+    nodes: [
+      { slug: "meta", alt: "Meta Ads", cx: 215, cy: 395, chip: 88, mobile: true },
+      { slug: "googleads", alt: "Google Ads", cx: 112, cy: 428, chip: 58 },
+      { slug: "googleanalytics", alt: "Google Analytics", cx: 28, cy: 455, chip: 50 },
+    ],
+    exit: { x: -60, y: 480 },
+  },
+  {
+    id: "instagram",
+    nodes: [
+      { slug: "instagram", alt: "Instagram", cx: 1148, cy: 275, chip: 80, mobile: true },
+      { slug: "calendly", alt: "Calendly", cx: 1232, cy: 206, chip: 50 },
+    ],
+    tail: { x: 1262, y: 148, size: 14, palette: "pink" },
+  },
+  {
+    // Analytics chain — grows bigger outward, exits mid-right.
+    id: "analytics",
+    nodes: [
+      { slug: "googlesheets", alt: "Google Sheets", cx: 1500, cy: 418, chip: 56 },
+      { slug: "posthog", alt: "PostHog", cx: 1652, cy: 430, chip: 72 },
+    ],
+    exit: { x: 1800, y: 438 },
+  },
+  {
+    // Comms chain — exits bottom between Slack and Vercel chains.
+    id: "comms",
+    nodes: [
+      { slug: "zoom", alt: "Zoom", cx: 695, cy: 785, chip: 60 },
+      { slug: "whatsapp", alt: "WhatsApp", cx: 640, cy: 866, chip: 54 },
+    ],
+    exit: { x: 600, y: 935 },
+  },
+  {
+    // Workspace chain — Dropbox half-cut by the top edge.
+    id: "workspace",
+    nodes: [
+      { slug: "miro", alt: "Miro", cx: 990, cy: 85, chip: 58 },
+      { slug: "dropbox", alt: "Dropbox", cx: 1040, cy: 12, chip: 50 },
+    ],
+    exit: { x: 1075, y: -50 },
   },
 ];
+
+/** Flat list — handy for building refs/wobbles once. */
+const ALL_NODES: NodeDef[] = TENTACLES.flatMap((t) => t.nodes);
 
 /* ----------------------------------------------------------------------- */
 /* Per-element wobble seed                                                  */
@@ -197,30 +291,15 @@ type Wobble = {
   freqX: number; freqY: number;
   ampX: number;  ampY: number;
   phaseX: number; phaseY: number;
-  /** Bezier control point wobble — independent of chip wobble so the rope undulates. */
+  /** Segment control-point wobble — independent of chip wobble so ropes undulate. */
   ctrlFreqA: number; ctrlAmpA: number; ctrlPhaseA: number;
-  ctrlFreqP: number; ctrlAmpP: number; ctrlPhaseP: number;
-  /** Outer-tail wobble (a bit larger than chip drift — tail tips drift further). */
-  tailFreqX: number; tailFreqY: number;
-  tailAmpX: number;  tailAmpY: number;
-  tailPhaseX: number; tailPhaseY: number;
-  /** Outer-segment Bezier control wobble. */
-  outerCtrlFreq: number; outerCtrlAmp: number; outerCtrlPhase: number;
+  /** Resting perpendicular curl for the segment ARRIVING at this element. */
+  restCurl: number;
+  /** Chip tilt — deterministic, replaces the per-chip Figma rotations. */
+  tiltDeg: number;
 };
 
-/**
- * Deterministic per-id wobble (stable string hash).
- *
- * Tuned for a livelier cloud:
- *  - Chip drift frequencies bumped ~30% so chips visibly move (not just sit).
- *  - Chip drift amplitudes nearly doubled — chips trace bigger orbits.
- *  - Inner-Bezier ctrlAmpA range widened so the wires snake more dramatically
- *    perpendicular to the anchor→chip line.
- *  - Outer-Bezier amplitude/freq bumped so the tail end of each tendril
- *    flicks visibly instead of holding a near-static curve.
- *  - Tail point amplitudes bumped so the small pancake at the tail tip
- *    drifts noticeably across its arc.
- */
+/** Deterministic per-id wobble (stable string hash) — SSR/CSR agree. */
 function wobbleFor(id: string): Wobble {
   let h = 0;
   for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
@@ -238,19 +317,14 @@ function wobbleFor(id: string): Wobble {
     ctrlFreqA: 0.32 + r(0.36),
     ctrlAmpA:  110 + r(110),
     ctrlPhaseA: r(Math.PI * 2),
-    ctrlFreqP: 0.22 + r(0.28),
-    ctrlAmpP:  32 + r(42),
-    ctrlPhaseP: r(Math.PI * 2),
-    tailFreqX: 0.30 + r(0.32),
-    tailFreqY: 0.28 + r(0.30),
-    tailAmpX:  32 + r(26),
-    tailAmpY:  28 + r(26),
-    tailPhaseX: r(Math.PI * 2),
-    tailPhaseY: r(Math.PI * 2),
-    outerCtrlFreq: 0.28 + r(0.30),
-    outerCtrlAmp:  90 + r(100),
-    outerCtrlPhase: r(Math.PI * 2),
+    restCurl: r(160) - 80,
+    tiltDeg: r(120) - 60,
   };
+}
+
+/** Chip-size wobble damping — satellites float gently, heroes drift wide. */
+function ampScaleFor(chip: number): number {
+  return Math.max(0.4, Math.min(1, chip / 172));
 }
 
 /* ----------------------------------------------------------------------- */
@@ -278,30 +352,26 @@ export function HomeIntegrationsCloud() {
   );
 
   const chipRefs = useRef<Map<string, SVGGElement>>(new Map());
-  const innerPathRefs = useRef<Map<string, SVGPathElement>>(new Map());
-  const outerPathRefs = useRef<Map<string, SVGPathElement>>(new Map());
+  /** Chain segments keyed `${tentacleId}:${segmentIndex}` (0 = anchor→head). */
+  const segRefs = useRef<Map<string, SVGPathElement>>(new Map());
+  /** Mobile-only direct anchor→chip wires, keyed by node slug. */
+  const mobileWireRefs = useRef<Map<string, SVGPathElement>>(new Map());
   const tailRefs = useRef<Map<string, SVGGElement>>(new Map());
-  /** Slot the monster sits in — its CSS sets responsive size; we read that into px. */
   const monsterSlotRef = useRef<HTMLDivElement | null>(null);
   const [monsterSizePx, setMonsterSizePx] = useState(160);
 
   const wobbles = useMemo(() => {
     const m = new Map<string, Wobble>();
-    for (const l of LOGOS) m.set(l.id, wobbleFor(l.id));
+    for (const n of ALL_NODES) m.set(n.slug, wobbleFor(n.slug));
+    for (const t of TENTACLES) m.set(`${t.id}-tail`, wobbleFor(`${t.id}-tail`));
     return m;
   }, []);
 
   /**
-   * Monster target — a smoothly eased random walk around the monster centre
-   * instead of a hard chip-to-chip jump. Each "leg" picks a new random
-   * offset and `getMonsterTarget` returns the eased lerp between current and
-   * next every frame; the PancakeMonster morpher then interpolates its
-   * orientation against that continuously-moving point. The leg picker also
-   * sometimes returns the offset to (0, 0) — straight ahead — so the
-   * monster pauses at neutral instead of always pulling toward an edge.
+   * Monster target — a smoothly eased random walk around the monster centre.
+   * (Unchanged from the 8-logo version.)
    */
   const targetMotionRef = useRef({
-    /** Offset from monster centre, window-space px. */
     current: { x: 0, y: 0 },
     next: { x: 0, y: 0 },
     startedAt: 0,
@@ -313,15 +383,12 @@ export function HomeIntegrationsCloud() {
     const pickNewLeg = () => {
       const m = targetMotionRef.current;
       const now = performance.now();
-      // Snapshot where we *are* right now so the next leg starts from the live point.
       const tNow = m.duration > 0 ? Math.min(1, (now - m.startedAt) / m.duration) : 1;
       const easedNow = tNow * tNow * (3 - 2 * tNow);
       m.current = {
         x: m.current.x + (m.next.x - m.current.x) * easedNow,
         y: m.current.y + (m.next.y - m.current.y) * easedNow,
       };
-      // 30 % chance: return to centre (neutral). Otherwise pick a random
-      // direction across the full 360° spectrum at a varying radius.
       if (Math.random() < 0.3) {
         m.next = { x: 0, y: 0 };
       } else {
@@ -337,7 +404,6 @@ export function HomeIntegrationsCloud() {
     return () => clearInterval(id);
   }, [reducedMotion]);
 
-  /** Live eased target point in window coords. Called every frame — stays cheap. */
   const getMonsterTarget = useCallback(() => {
     const slot = monsterSlotRef.current;
     if (!slot) return null;
@@ -353,7 +419,6 @@ export function HomeIntegrationsCloud() {
     };
   }, []);
 
-  /** Track the monster slot's responsive size so the SVG renders sharp at any breakpoint. */
   useLayoutEffect(() => {
     const el = monsterSlotRef.current;
     if (!el || typeof ResizeObserver === "undefined") return;
@@ -373,74 +438,60 @@ export function HomeIntegrationsCloud() {
     const start = performance.now() / 1000;
     let disposed = false;
 
+    /** Quadratic segment `d` between two live points with a perpendicular curl. */
+    const segD = (x1: number, y1: number, x2: number, y2: number, curl: number) => {
+      const vx = x2 - x1;
+      const vy = y2 - y1;
+      const len = Math.hypot(vx, vy) || 1;
+      // Curl is capped by segment length so short satellite links stay tidy.
+      const c = Math.max(-len * 0.42, Math.min(len * 0.42, curl));
+      const cx = (x1 + x2) / 2 + (-vy / len) * c;
+      const cy = (y1 + y2) / 2 + (vx / len) * c;
+      return `M ${x1.toFixed(1)} ${y1.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`;
+    };
+
     const tick = () => {
       if (disposed) return;
       const t = performance.now() / 1000 - start;
 
-      for (const logo of LOGOS) {
-        const w = wobbles.get(logo.id)!;
+      for (const tent of TENTACLES) {
+        // 1. Wobbled positions for every node + the tail.
+        const pts: { x: number; y: number }[] = [{ x: ANCHOR_X, y: ANCHOR_Y }];
+        for (const node of tent.nodes) {
+          const w = wobbles.get(node.slug)!;
+          const s = ampScaleFor(node.chip);
+          const x = node.cx + Math.sin(t * w.freqX * Math.PI + w.phaseX) * w.ampX * s;
+          const y = node.cy + Math.sin(t * w.freqY * Math.PI + w.phaseY) * w.ampY * s;
+          pts.push({ x, y });
+          const chipEl = chipRefs.current.get(node.slug);
+          if (chipEl) chipEl.setAttribute("transform", `translate(${x.toFixed(2)} ${y.toFixed(2)})`);
+          const mWire = mobileWireRefs.current.get(node.slug);
+          if (mWire) {
+            const curl = w.restCurl + Math.sin(t * w.ctrlFreqA * Math.PI + w.ctrlPhaseA) * w.ctrlAmpA * 0.5;
+            mWire.setAttribute("d", segD(ANCHOR_X, ANCHOR_Y, x, y, curl));
+          }
+        }
+        const end = tent.tail ?? tent.exit!;
+        const tw = wobbles.get(`${tent.id}-tail`)!;
+        const tailPt = {
+          x: end.x + Math.sin(t * tw.freqX * Math.PI + tw.phaseX) * tw.ampX * 1.3,
+          y: end.y + Math.sin(t * tw.freqY * Math.PI + tw.phaseY) * tw.ampY * 1.3,
+        };
+        pts.push(tailPt);
+        const tailEl = tailRefs.current.get(tent.id);
+        if (tailEl) tailEl.setAttribute("transform", `translate(${tailPt.x.toFixed(2)} ${tailPt.y.toFixed(2)})`);
 
-        // Chip drift (its own tilt is baked into the SVG transform; we just translate)
-        const dx = Math.sin(t * w.freqX * Math.PI + w.phaseX) * w.ampX;
-        const dy = Math.sin(t * w.freqY * Math.PI + w.phaseY) * w.ampY;
-        const tipX = logo.cx + dx;
-        const tipY = logo.cy + dy;
-
-        const chipEl = chipRefs.current.get(logo.id);
-        if (chipEl) {
-          // Outer `<g>` only translates — chip and logo rotations live on inner `<g>`s.
-          chipEl.setAttribute(
-            "transform",
-            `translate(${tipX.toFixed(2)} ${tipY.toFixed(2)})`,
-          );
+        // 2. Chain segments — curl = per-arrival resting curl + live wobble.
+        for (let i = 0; i < pts.length - 1; i++) {
+          const seg = segRefs.current.get(`${tent.id}:${i}`);
+          if (!seg) continue;
+          const arriveId = i < tent.nodes.length ? tent.nodes[i].slug : `${tent.id}-tail`;
+          const w = wobbles.get(arriveId)!;
+          const curl = w.restCurl + Math.sin(t * w.ctrlFreqA * Math.PI + w.ctrlPhaseA) * w.ctrlAmpA * 0.5;
+          seg.setAttribute("d", segD(pts[i].x, pts[i].y, pts[i + 1].x, pts[i + 1].y, curl));
         }
 
-        // Inner tentacle — anchor → chip
-        const inner = innerPathRefs.current.get(logo.id);
-        if (inner) {
-          const vx = tipX - ANCHOR_X;
-          const vy = tipY - ANCHOR_Y;
-          const len = Math.hypot(vx, vy) || 1;
-          const nx = -vy / len;
-          const ny = vx / len;
-          const mx = (ANCHOR_X + tipX) / 2;
-          const my = (ANCHOR_Y + tipY) / 2;
-          const perp = Math.sin(t * w.ctrlFreqA * Math.PI + w.ctrlPhaseA) * w.ctrlAmpA;
-          const along = Math.sin(t * w.ctrlFreqP * Math.PI + w.ctrlPhaseP) * w.ctrlAmpP;
-          const cx = mx + nx * perp + (vx / len) * along;
-          const cy = my + ny * perp + (vy / len) * along;
-          inner.setAttribute("d", `M ${ANCHOR_X.toFixed(1)} ${ANCHOR_Y.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${tipX.toFixed(1)} ${tipY.toFixed(1)}`);
-        }
-
-        // Tail wobble + outer tentacle (chip → tail)
-        const tdx = Math.sin(t * w.tailFreqX * Math.PI + w.tailPhaseX) * w.tailAmpX;
-        const tdy = Math.sin(t * w.tailFreqY * Math.PI + w.tailPhaseY) * w.tailAmpY;
-        const tlX = logo.tailX + tdx;
-        const tlY = logo.tailY + tdy;
-
-        const tailEl = tailRefs.current.get(logo.id);
-        if (tailEl) {
-          tailEl.setAttribute("transform", `translate(${tlX.toFixed(2)} ${tlY.toFixed(2)})`);
-        }
-
-        const outer = outerPathRefs.current.get(logo.id);
-        if (outer) {
-          // Mid-point between chip and tail with curl perpendicular to direction
-          const vx2 = tlX - tipX;
-          const vy2 = tlY - tipY;
-          const len2 = Math.hypot(vx2, vy2) || 1;
-          const nx2 = -vy2 / len2;
-          const ny2 = vx2 / len2;
-          const mx2 = (tipX + tlX) / 2;
-          const my2 = (tipY + tlY) / 2;
-          const curl = logo.outerCurl + Math.sin(t * w.outerCtrlFreq * Math.PI + w.outerCtrlPhase) * w.outerCtrlAmp;
-          const cx2 = mx2 + nx2 * curl;
-          const cy2 = my2 + ny2 * curl;
-          outer.setAttribute("d", `M ${tipX.toFixed(1)} ${tipY.toFixed(1)} Q ${cx2.toFixed(1)} ${cy2.toFixed(1)} ${tlX.toFixed(1)} ${tlY.toFixed(1)}`);
-        }
       }
-
-      // Monster handles its own animation (PancakeMonster + useCursorTracking with custom target).
     };
 
     gsap.ticker.add(tick);
@@ -450,12 +501,12 @@ export function HomeIntegrationsCloud() {
     };
   }, [reducedMotion, wobbles]);
 
+  /** Static segment d for SSR/no-JS/reduced-motion (straight midpoint quadratic). */
+  const staticSegD = (x1: number, y1: number, x2: number, y2: number) =>
+    `M ${x1} ${y1} Q ${(x1 + x2) / 2} ${(y1 + y2) / 2} ${x2} ${y2}`;
+
   return (
     <div className="home-integrations-cloud" data-node-id="428:15019">
-      {/* Viz wrapper — keeps the cloud SVG + interactive monster in their own
-          aspect-ratio'd box. On desktop the wrapper fills the parent (parent
-          enforces aspect); on mobile the parent is auto-height (flex column)
-          and this wrapper enforces the 1786/900 cloud ratio. */}
       <div className="home-integrations-cloud__viz">
       <svg
         className="home-integrations-cloud__svg"
@@ -464,116 +515,130 @@ export function HomeIntegrationsCloud() {
         aria-hidden
         focusable="false"
       >
-        {/* Outer tentacle segments (chip → tail) — drawn first / under chips, faded */}
-        {LOGOS.map((logo) => (
+        {/* Chain segments — depth-faded (inner .7 → mid .5 → tail .32). */}
+        {TENTACLES.map((tent) => {
+          const pts = [
+            { x: ANCHOR_X, y: ANCHOR_Y },
+            ...tent.nodes.map((n) => ({ x: n.cx, y: n.cy })),
+            { x: (tent.tail ?? tent.exit!).x, y: (tent.tail ?? tent.exit!).y },
+          ];
+          return pts.slice(0, -1).map((p, i) => {
+            const q = pts[i + 1];
+            const depthClass =
+              i === 0
+                ? "home-integrations-cloud__tentacle--inner"
+                : i === pts.length - 2
+                  ? "home-integrations-cloud__tentacle--outer"
+                  : "home-integrations-cloud__tentacle--mid";
+            return (
+              <path
+                key={`${tent.id}-seg-${i}`}
+                ref={(el) => {
+                  if (el) segRefs.current.set(`${tent.id}:${i}`, el);
+                  else segRefs.current.delete(`${tent.id}:${i}`);
+                }}
+                className={`home-integrations-cloud__tentacle ${depthClass}`}
+                data-seg-depth={i}
+                d={staticSegD(p.x, p.y, q.x, q.y)}
+              />
+            );
+          });
+        })}
+
+        {/* Mobile-only wires: each kept chip connects straight to the monster
+            (chains don't survive the zoomed mobile crop). */}
+        {ALL_NODES.filter((n) => n.mobile).map((node) => (
           <path
-            key={`${logo.id}-outer`}
+            key={`${node.slug}-mwire`}
             ref={(el) => {
-              if (el) outerPathRefs.current.set(logo.id, el);
-              else outerPathRefs.current.delete(logo.id);
+              if (el) mobileWireRefs.current.set(node.slug, el);
+              else mobileWireRefs.current.delete(node.slug);
             }}
-            className="home-integrations-cloud__tentacle home-integrations-cloud__tentacle--outer"
-            d={`M ${logo.cx} ${logo.cy} Q ${(logo.cx + logo.tailX) / 2} ${(logo.cy + logo.tailY) / 2} ${logo.tailX} ${logo.tailY}`}
+            className="home-integrations-cloud__tentacle home-integrations-cloud__tentacle--inner home-integrations-cloud__tentacle--mobile"
+            d={staticSegD(ANCHOR_X, ANCHOR_Y, node.cx, node.cy)}
           />
         ))}
 
-        {/* Inner tentacle segments (anchor → chip) — full opacity */}
-        {LOGOS.map((logo) => (
-          <path
-            key={`${logo.id}-inner`}
-            ref={(el) => {
-              if (el) innerPathRefs.current.set(logo.id, el);
-              else innerPathRefs.current.delete(logo.id);
-            }}
-            className="home-integrations-cloud__tentacle home-integrations-cloud__tentacle--inner"
-            d={`M ${ANCHOR_X} ${ANCHOR_Y} Q ${(ANCHOR_X + logo.cx) / 2} ${(ANCHOR_Y + logo.cy) / 2} ${logo.cx} ${logo.cy}`}
-          />
-        ))}
-
-        {/* Tail pancakes (small, decorative, sit at outer tentacle tips) */}
-        {LOGOS.map((logo) => (
+        {/* Tail pancakes — only chains that end INSIDE the frame get a berry;
+            the rest just run off-canvas (founder: not everything terminates). */}
+        {TENTACLES.filter((tent) => tent.tail).map((tent) => (
           <g
-            key={`${logo.id}-tail`}
+            key={`${tent.id}-tail`}
             ref={(el) => {
-              if (el) tailRefs.current.set(logo.id, el);
-              else tailRefs.current.delete(logo.id);
+              if (el) tailRefs.current.set(tent.id, el);
+              else tailRefs.current.delete(tent.id);
             }}
-            transform={`translate(${logo.tailX} ${logo.tailY})`}
+            transform={`translate(${tent.tail!.x} ${tent.tail!.y})`}
+            data-tail
           >
-            <g transform={`scale(${logo.tailSize / 49}) translate(${-49 / 2} ${-48 / 2})`}>
-              <PancakePaths palette={logo.tailPalette} />
+            <g transform={`scale(${tent.tail!.size / 49}) translate(${-49 / 2} ${-48 / 2})`}>
+              <PancakePaths palette={tent.tail!.palette} />
             </g>
           </g>
         ))}
 
         {/*
-         * Logo chips. Each chip is composed of two stacked images at the same
-         * `(cx, cy)` centre:
-         *  1. The **chip ellipse SVG** (Figma export, cream `#FFF7EC`) rotated
-         *     by `chipRotateDeg` — this gives the tilted-oval pancake silhouette.
-         *  2. The **brand logo SVG** rotated by its own `logoRotateDeg` — drift
-         *     wobble is applied to the outer `<g>` so chip + logo move together.
+         * Logo chips — shared blob path scaled per node (the orbit always
+         * fits its logo), deterministic tilt, logo on top. Painted after
+         * all segments so ropes pass underneath.
          */}
-        {LOGOS.map((logo) => (
-          <g
-            key={logo.id}
-            ref={(el) => {
-              if (el) chipRefs.current.set(logo.id, el);
-              else chipRefs.current.delete(logo.id);
-            }}
-            transform={`translate(${logo.cx} ${logo.cy})`}
-            data-logo={logo.id}
-          >
-            {/* Chip ellipse — tilted */}
-            <g transform={`rotate(${logo.chipRotateDeg})`}>
-              <image
-                href={logo.chipSrc}
-                width={logo.chipW}
-                height={logo.chipH}
-                x={-logo.chipW / 2}
-                y={-logo.chipH / 2}
-                preserveAspectRatio="none"
-              />
-            </g>
-            {/* Logo — independent rotation, sits on top */}
-            <g transform={`rotate(${logo.logoRotateDeg ?? 0})`}>
-              {logo.id === "linkedin" ? (
-                <svg
-                  viewBox="0 0 24 24"
-                  width={logo.logoW}
-                  height={logo.logoH}
-                  x={-logo.logoW / 2}
-                  y={-logo.logoH / 2}
-                  overflow="visible"
-                >
-                  <rect width="24" height="24" rx="3" fill="#0A66C2" />
-                  <path
-                    fill="#FFFFFF"
-                    d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43A2.06 2.06 0 1 1 5.34 3.3a2.06 2.06 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45z"
-                  />
-                </svg>
-              ) : (
-                <image
-                  href={logo.src}
-                  width={logo.logoW}
-                  height={logo.logoH}
-                  x={-logo.logoW / 2}
-                  y={-logo.logoH / 2}
-                  preserveAspectRatio="xMidYMid meet"
-                />
-              )}
-            </g>
-          </g>
-        ))}
+        {TENTACLES.map((tent) =>
+          tent.nodes.map((node, depth) => {
+            const w = wobbles.get(node.slug)!;
+            const logoW = node.chip * (node.logoScale ?? (node.chip < 70 ? 0.62 : 0.56));
+            return (
+              <g
+                key={node.slug}
+                ref={(el) => {
+                  if (el) chipRefs.current.set(node.slug, el);
+                  else chipRefs.current.delete(node.slug);
+                }}
+                transform={`translate(${node.cx} ${node.cy})`}
+                data-logo={node.slug}
+                data-depth={depth}
+                data-mobile={node.mobile ? "1" : "0"}
+              >
+                <g transform={`rotate(${w.tiltDeg})`}>
+                  <g
+                    transform={`scale(${node.chip / BLOB_W}) translate(${-BLOB_W / 2} ${-BLOB_H / 2})`}
+                  >
+                    <path d={BLOB_D} fill={BLOB_FILL} />
+                  </g>
+                </g>
+                <g transform={`rotate(${node.logoRotateDeg ?? 0})`}>
+                  {node.inline === "linkedin" ? (
+                    <svg
+                      viewBox="0 0 24 24"
+                      width={logoW}
+                      height={logoW}
+                      x={-logoW / 2}
+                      y={-logoW / 2}
+                      overflow="visible"
+                    >
+                      <rect width="24" height="24" rx="3" fill="#0A66C2" />
+                      <path
+                        fill="#FFFFFF"
+                        d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43A2.06 2.06 0 1 1 5.34 3.3a2.06 2.06 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45z"
+                      />
+                    </svg>
+                  ) : (
+                    <image
+                      href={node.src ?? `/integrations/${node.slug}.svg`}
+                      width={logoW}
+                      height={logoW}
+                      x={-logoW / 2}
+                      y={-logoW / 2}
+                      preserveAspectRatio="xMidYMid meet"
+                    />
+                  )}
+                </g>
+              </g>
+            );
+          }),
+        )}
       </svg>
 
-      {/*
-       * Interactive pancake monster. Same component as the hero, but instead of
-       * tracking the real cursor it tracks the centre of whichever chip is the
-       * current "target" — cycling through every ~2.5 s so the monster appears
-       * to look around at the logos and try to eat them. Fork cursor is
-       * disabled — this monster is ambient, the page cursor stays normal.
-       */}
+      {/* Interactive pancake monster — unchanged from the 8-logo version. */}
       <div
         ref={monsterSlotRef}
         className="home-integrations-cloud__monster"

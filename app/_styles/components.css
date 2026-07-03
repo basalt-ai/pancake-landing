@@ -2338,6 +2338,11 @@
     opacity: 0.7;
   }
 
+  /* Chain middle segments (deep-cloud) — between inner and tail fade. */
+  .home-integrations-cloud__tentacle--mid {
+    opacity: 0.5;
+  }
+
   .home-integrations-cloud__tentacle--outer {
     opacity: 0.32;
   }
@@ -2387,6 +2392,25 @@
      centre it across the cloud, and let the text wrap naturally. The
      positional `left/top/width` set inline by the component are overridden
      here so the responsive rule wins. */
+  /* Deep-cloud responsive gating: chains don't survive mobile's 1.4× zoomed
+     crop, so mobile keeps only the big recognizable chips (data-mobile) and
+     wires each straight to the monster; chain segments, satellite chips, and
+     tail berries hide. Desktop shows the full chains and hides the mobile
+     wires. */
+  @media (min-width: 1024px) {
+    .home-integrations-cloud__tentacle--mobile {
+      display: none;
+    }
+  }
+
+  @media (max-width: 1023.98px) {
+    .home-integrations-cloud__svg [data-mobile="0"],
+    .home-integrations-cloud__svg [data-seg-depth],
+    .home-integrations-cloud__svg [data-tail] {
+      display: none;
+    }
+  }
+
   @container integrations-cloud (max-width: 840px) {
     .home-integrations-cloud__callout {
       left: 50% !important;
