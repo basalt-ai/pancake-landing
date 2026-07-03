@@ -90,4 +90,5 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 
 ---
 
-Last updated: July 2, 2026
+Last updated: July 3, 2026
+- [What Is Organizational Memory AI? The Infrastructure Layer for Autonomous Companies](https://getpancake.ai/blog/what-is-organizational-memory-ai) — Organizational memory AI captures institutional knowledge and makes it queryable by AI agents so they can make decisions with full company context. Here's why it's essential infrastructure for companies running on AI. July 3, 2026.
