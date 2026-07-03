@@ -90,5 +90,8 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 
 ---
 
+- [Pancake vs OneManCompany: One Runs Your Company, One Builds a Pixel-Art Office Simulation](https://getpancake.ai/blog/pancake-vs-onemancompany) — OneManCompany is an open-source academic prototype that models Fortune 500 org charts in a pixel-art interface. Pancake is production infrastructure that runs real companies autonomously. Both serve one-person companies — completely different execution layers. July 3, 2026.
+
+---
+
 Last updated: July 3, 2026
-- [What Is Organizational Memory AI? The Infrastructure Layer for Autonomous Companies](https://getpancake.ai/blog/what-is-organizational-memory-ai) — Organizational memory AI captures institutional knowledge and makes it queryable by AI agents so they can make decisions with full company context. Here's why it's essential infrastructure for companies running on AI. July 3, 2026.
