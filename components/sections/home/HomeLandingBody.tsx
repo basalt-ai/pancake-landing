@@ -3,10 +3,16 @@
  * (regenerate: `FIGMA_ACCESS_TOKEN=… npm run figma:export-landing`).
  *
  * Landing v4 narrative arc (one identity throughout — ONE coworker, a whole
- * team of agents behind it):
- *   Slack (where it lives) → Use cases (four real jobs) → Org chart (the
- *   team behind your coworker) → Integrations → UGC videos + X posts (proof)
- *   → Security → Control → Pricing teaser → FAQ → Blog → Closing CTA.
+ * team of agents behind it), reordered 2026-07-02 to the classic question
+ * chain (Julian Shapiro / StoryBrand / CXL consensus + viktor/lindy/linear
+ * live orders): benefits before mechanism, trust where doubt peaks (right
+ * before money), nothing between price and the ask:
+ *   Use cases ("what would it do for me") → Slack ("what's it like
+ *   day-to-day, and it doesn't wait to be asked") → Org chart ("how can ONE
+ *   coworker do all that") → Integrations ("does it fit my stack") →
+ *   X posts + UGC videos ("who else uses it") → Trust ("can I trust it with
+ *   my accounts") → Pricing teaser → Closing CTA → Blog (post-CTA — editorial
+ *   never sits inside the conversion path).
  * Background rhythm: plain/alt alternation; testimonials + pricing teaser are
  * full-bleed bands with their own treatment; the org band keeps the plain
  * surface (its edge-fade mask blends into `--surface`).
@@ -60,11 +66,33 @@ function DecorPancake({ variant, className }: { variant: keyof typeof PANCAKE_TI
 export function HomeLandingBody() {
   return (
     <div className="home-landing">
-      {/* Figma `428:15120` slack — leads the page. Pancake living in Slack is
-          the headline proof point (kept from PR #151's re-order). Singular
-          framing: the hero just introduced ONE coworker; the plural team
-          story lands two sections later in the org chart. */}
-      <section className="home-landing-section" aria-labelledby="home-landing-slack-heading">
+      {/* "Four real jobs" use-case grid — leads the body since the 2026-07-02
+          narrative reorder (benefits before mechanism: right after the video
+          receipt, the visitor asks "what would it do for MY startup").
+          Rebuilt in v4.1 as "chat theater" (founder: flat/not juicy/fixed):
+          tinted mats, floating Slack panels, play-once GSAP conversation
+          choreography with a receipt-stamp artifact payoff. Mats carry their
+          own tints, so the band takes the plain surface. */}
+      <section className="home-landing-section" aria-labelledby="home-landing-usecases-heading">
+        <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
+          <header className="home-landing-section__header">
+            {/* Single-line header — one-screen budget (founder rule). */}
+            <H2 id="home-landing-usecases-heading" className="heading home-landing-section__title text-center">
+              Give Pancake a job, come back to finished work
+            </H2>
+          </header>
+          <HomeUseCases />
+        </div>
+      </section>
+
+      {/* Figma `428:15120` slack — the interaction model, second since the
+          reorder: once the use cases build desire for the outcomes, this
+          answers "what's it like to work with day-to-day" — and the
+          proactivity line lands harder. Singular framing: the hero
+          introduced ONE coworker; the plural team story lands next in the
+          org chart. `--alt` keeps the plain/alt rhythm after the plain
+          use-case band. */}
+      <section className="home-landing-section home-landing-section--alt" aria-labelledby="home-landing-slack-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             {/* Single-line header — one-screen budget (founder rule). */}
@@ -75,22 +103,6 @@ export function HomeLandingBody() {
           <div className="home-landing-section__figure home-landing-section__figure--slack">
             <SlackUI />
           </div>
-        </div>
-      </section>
-
-      {/* "Four real jobs" use-case grid — un-parked in landing v4, then
-          rebuilt in v4.1 as "chat theater" (founder: flat/not juicy/fixed):
-          tinted mats, floating Slack panels, play-once GSAP conversation
-          choreography with a receipt-stamp artifact payoff. */}
-      <section className="home-landing-section home-landing-section--alt" aria-labelledby="home-landing-usecases-heading">
-        <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
-          <header className="home-landing-section__header">
-            {/* Single-line header — one-screen budget (founder rule). */}
-            <H2 id="home-landing-usecases-heading" className="heading home-landing-section__title text-center">
-              Give Pancake a job, come back to finished work
-            </H2>
-          </header>
-          <HomeUseCases />
         </div>
       </section>
 
@@ -178,18 +190,12 @@ export function HomeLandingBody() {
           differentiator. Full band with its own pink treatment. */}
       <HomePricingTeaser />
 
-      {/* From the blog — explicit internal links for crawler discovery of new
-          articles (kept as real <a href> anchors), now styled as cards.
-          (The FAQ accordion that sat between pricing and blog was removed on
-          founder call 2026-07-02 — its FAQPage JSON-LD went with it, since
-          Google requires schema content to be visible on-page. HomeFaq.tsx
-          and home-faq.css stay on disk, unreferenced, if it ever returns.)
-          Rhythm: pricing(pink band) → blog(plain) → closing(alt). */}
-      <HomeBlogCards />
-
-      {/* Figma `428:15160` closing CTA — decorative pancakes (purple top-left,
-          half-pink bottom-left, orange-pink right) bleed past the section
-          edges; desktop positions added in landing v4 (were mobile-only). */}
+      {/* Figma `428:15160` closing CTA — directly after pricing since the
+          2026-07-02 narrative reorder: nothing sits between the price and
+          the ask (the blog cards that used to live here were an exit ramp
+          at the exact moment of decision). Decorative pancakes (purple
+          top-left, half-pink bottom-left, orange-pink right) bleed past the
+          section edges; desktop positions added in landing v4. */}
       <section className="home-landing-section home-landing-section--alt home-landing-section--closing" aria-labelledby="home-landing-closing-heading">
         <DecorPancake variant="purple" className="home-landing-closing-decor home-landing-closing-decor--purple" />
         <DecorPancake variant="pink" className="home-landing-closing-decor home-landing-closing-decor--pink" />
@@ -213,6 +219,15 @@ export function HomeLandingBody() {
           </div>
         </div>
       </section>
+
+      {/* From the blog — post-CTA since the 2026-07-02 narrative reorder
+          (editorial never sits inside the conversion path; every reference
+          page keeps resources out of it). Still on the homepage for crawler
+          discovery of new articles — real <a href> anchors. (The FAQ
+          accordion that once sat by the blog was removed earlier the same
+          day; HomeFaq.tsx and home-faq.css stay on disk, unreferenced.)
+          Rhythm: pricing(pink band) → closing(alt) → blog(plain) → footer. */}
+      <HomeBlogCards />
     </div>
   );
 }
