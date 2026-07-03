@@ -3124,6 +3124,70 @@
     }
   }
 
+  /* ── Card visual — SOC 2 wax seal (compliance receipt card) ── */
+
+  .home-trust-seal {
+    width: 100%;
+  }
+
+  .home-trust-seal__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .home-trust-seal__ring {
+    fill: none;
+    stroke: var(--palette-chrome-50);
+    stroke-width: 2;
+    stroke-dasharray: 1 8;
+    stroke-linecap: round;
+  }
+
+  .home-trust-seal__ringtext {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    fill: var(--palette-chrome-70);
+  }
+
+  .home-trust-seal__disc {
+    fill: var(--palette-chrome-20);
+  }
+
+  .home-trust-seal__face {
+    fill: var(--palette-chrome-100);
+  }
+
+  .home-trust-seal__smile {
+    fill: none;
+    stroke: var(--palette-chrome-100);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  /* Notary punch — knockout stroke matches the card surface so the disc
+     punches over the dotted ring. */
+  .home-trust-seal__tickdisc {
+    fill: var(--palette-green-10);
+    stroke: var(--surface);
+    stroke-width: 4;
+  }
+
+  .home-trust-seal__tick {
+    fill: none;
+    stroke: var(--palette-green-30);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .home-trust-seal__mail {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
   /* ── Card visual — connected-tool toggles (reach card) ── */
 
   .home-trust-toggle {

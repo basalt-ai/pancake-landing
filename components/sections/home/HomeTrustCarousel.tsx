@@ -30,14 +30,15 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { animate, motion, useMotionValue, useMotionValueEvent, useTransform } from "framer-motion";
 import type { MotionValue } from "framer-motion";
+import { PANCAKE_TINTS } from "@/lib/pancake-palette";
 
 /* ─────────────────────────────── geometry ─────────────────────────────── */
 
-const CARD_COUNT = 6;
+const CARD_COUNT = 7;
 /** Degrees between adjacent faces on the cylinder. */
 const STEP = 360 / CARD_COUNT;
-/** Cylinder radius: 368/2 ÷ tan(30°) ≈ 319 minimum; 380 keeps ~70px of air. */
-const RADIUS = 380;
+/** Cylinder radius: 368/2 ÷ tan(180°/7) ≈ 382 minimum; 425 keeps air between faces. */
+const RADIUS = 425;
 /** Drag mapping — ≈273px of pointer travel per card. */
 const DEG_PER_PX = 0.22;
 
@@ -327,14 +328,64 @@ function IsolationVisual() {
   );
 }
 
+/* ─────────────────────── visual 7 — SOC 2 wax seal ────────────────────── */
+
+/**
+ * A rubber-stamp / wax-seal built from kit ingredients only: the dotted-ring
+ * idiom, a full circle of curved mono micro-text (the one idiom the carousel
+ * didn't use yet), and the shared two-tone pancake silhouette — smiling,
+ * because the pancake IS the seal emblem. The whole seal tilts −6° for
+ * stamp-hit energy; the green "notary punch" tick sits straight on the ring.
+ * Ring text says TYPE II (the get-started page already claims it) so the
+ * card copy can stay at plain "SOC 2" — division of labor, no double-claim.
+ */
+function Soc2SealVisual() {
+  const p = PANCAKE_TINTS.pink;
+  return (
+    <div className="home-trust-seal" aria-hidden>
+      <svg viewBox="0 0 304 200" className="home-trust-seal__svg">
+        <g transform="rotate(-6 152 100)">
+          <circle cx="152" cy="100" r="88" className="home-trust-seal__ring" />
+          <path id="home-trust-seal-arc" d="M 152 30 A 70 70 0 1 1 151.99 30" fill="none" />
+          <text className="home-trust-seal__ringtext">
+            <textPath href="#home-trust-seal-arc" startOffset="47">
+              SOC 2 TYPE II • PANCAKE • SOC 2 TYPE II • PANCAKE •&#160;
+            </textPath>
+          </text>
+          <circle cx="152" cy="100" r="52" className="home-trust-seal__disc" />
+          <g transform="translate(152 98) scale(1.714) translate(-24.5 -23)">
+            <path
+              d="M25.9537 42C33.3632 42 39.2879 37.7456 43.3461 33.4449C46.1317 30.4929 47.7828 26.7658 47.8255 22.5904C47.9308 12.2895 37.5877 4 24.9673 4C12.347 4 1.61512 11.2979 0.299682 22.5904C-0.498594 29.4427 3.49706 33.162 8.00699 36.2143C12.4861 39.2458 19.7274 42 25.9537 42Z"
+              fill={p.side}
+            />
+            <path
+              d="M25.8326 36C32.779 36 38.3334 32.4173 42.138 28.7957C44.7495 26.3098 46.2973 23.1712 46.3374 19.6551C46.4361 10.9807 36.7394 4 24.9078 4C13.0762 4 3.01515 10.1456 1.78193 19.6551C1.03355 25.4254 4.77947 28.5575 9.00753 31.1278C13.2067 33.6806 19.9955 36 25.8326 36Z"
+              fill={p.top}
+            />
+            <circle cx="17.5" cy="16.5" r="2" className="home-trust-seal__face" />
+            <circle cx="30.5" cy="16.5" r="2" className="home-trust-seal__face" />
+            <path d="M 18.5 22.5 Q 24 27.5 29.5 22.5" className="home-trust-seal__smile" />
+          </g>
+        </g>
+        {/* Notary punch — outside the rotated group so it sits straight;
+            (214,162) is the ring's 45° point, unchanged by the rotation
+            since it rotates about the ring's own center. */}
+        <circle cx="214" cy="162" r="12" className="home-trust-seal__tickdisc" />
+        <path d="M 209.5 162 L 212.6 165 L 218.5 159" className="home-trust-seal__tick" />
+      </svg>
+    </div>
+  );
+}
+
 /* ─────────────────────────────── the cards ────────────────────────────── */
 
 type TrustCardDef = {
   id: string;
-  badgeVariant?: "brand" | "brand-alt-1" | "brand-alt-2" | "inverted" | "success";
+  badgeVariant?: "brand" | "brand-alt-1" | "brand-alt-2" | "inverted" | "success" | "warning";
   kicker: string;
   title: string;
-  body: string;
+  /** ReactNode so a body can carry a live link (SOC 2's mailto). */
+  body: React.ReactNode;
   Visual: () => JSX.Element;
   /** Matches `.home-landing-control-card[data-card]` recipe hooks. */
   dataCard?: string;
@@ -387,6 +438,26 @@ const TRUST_CARDS: TrustCardDef[] = [
     title: "Never trains a model",
     body: "Your company runs in its own sealed workspace, memory included. None of it is shared — with other customers or with model makers.",
     Visual: IsolationVisual,
+  },
+  {
+    /* The compliance receipt closes the deck — for an SF reader SOC 2 is a
+       checkbox they scan for, not an argument. Copy stays at plain "SOC 2"
+       (the ring text on the seal carries TYPE II); the report is a live
+       mailto, not an NDA gate. */
+    id: "soc2",
+    badgeVariant: "warning",
+    kicker: "Not our word",
+    title: "SOC 2",
+    body: (
+      <>
+        Audited every year by people we don&rsquo;t employ. Want the report?{" "}
+        <a href="mailto:hey@pancake.ai" className="home-trust-seal__mail">
+          Email us
+        </a>
+        .
+      </>
+    ),
+    Visual: Soc2SealVisual,
   },
 ];
 
@@ -702,9 +773,10 @@ export function HomeTrustCarousel() {
         {TRUST_CARDS[frontIndex].title}
       </p>
 
-      {/* SOC 2, said the SF way: two words and a receipt. */}
+      {/* SOC 2 moved into its own seal card — the footnote keeps only what
+          the deck doesn't already claim. */}
       <p className="home-landing-trust__note">
-        SOC 2 audited. Report and subprocessor list one email away.
+        Subprocessor list available on request.
       </p>
     </div>
   );
