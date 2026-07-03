@@ -66,10 +66,12 @@ export const HOME_HERO_ORBIT_SATELLITES: readonly HomeHeroOrbitSatellite[] = [
     // hero frame edge in the comp, so the PNG slices the pancake's top-left).
     // In the coded hero it floats mid-air, so it renders as the full two-tone
     // pancake SVG instead; box restored to the silhouette's 49:48 aspect.
+    // Position slid UP along orbit 6 (founder: at the Figma dy it sat on the
+    // logo-marquee row and logos scrolled over it) — same radius, lower dy.
     figmaNode: "428:14911",
     orbit: 6,
-    dxFigma: -615.5639871583408,
-    dyFigma: 358.4359562268801,
+    dxFigma: -682.4,
+    dyFigma: 203,
     rotationFigmaPluginDeg: -32.467800351709045,
     widthFigma: 67,
     heightFigma: 66,
