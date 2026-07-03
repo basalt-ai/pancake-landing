@@ -2332,14 +2332,31 @@
        96px band paddings are mostly dead space. The height itself comes
        from the shortened 1920×720 artwork + the single-line header — no
        dynamic cropping (founder: logos must never get cut).
-       min-height + centering makes the band own EXACTLY one screen
-       (founder: at 100vh-fitting sizes the next band was peeking under
-       the fold — the section should fill the viewport, not undershoot
-       it). On windows too short for the content, it simply grows. */
+       min-height makes the band own EXACTLY one screen (founder: at
+       100vh-fitting sizes the next band was peeking under the fold). The
+       header pins to the TOP of the band — same relative position as the
+       org section's title (founder: centering pushed it oddly low) — and
+       the leftover height goes to the figure, where the cloud floats
+       centered, so the logos get breathing room above and below. On
+       windows too short for the content, the band simply grows. */
     section[aria-labelledby="home-landing-integrations-heading"] {
       box-sizing: border-box;
       padding-block: calc(2.5 * var(--spacing-xl)) calc(1.5 * var(--spacing-xl));
       min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    section[aria-labelledby="home-landing-integrations-heading"]
+      .home-landing-section__inner {
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+
+    section[aria-labelledby="home-landing-integrations-heading"]
+      .home-landing-section__figure {
+      flex: 1 1 auto;
+      min-height: 0;
       display: flex;
       flex-direction: column;
       justify-content: center;
