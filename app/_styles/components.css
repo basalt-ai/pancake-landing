@@ -1000,6 +1000,7 @@
        the 100vh audit flagged (slack +177, use-cases +211, ugc +126,
        faq +29, blog +47 at 1474×799) plus the org band. */
     .home-landing-section--org,
+    .home-landing-section--testimonials,
     section[aria-labelledby="home-landing-slack-heading"],
     section[aria-labelledby="home-landing-usecases-heading"],
     section[aria-labelledby="home-landing-ugc-heading"],
@@ -1008,6 +1009,7 @@
     }
 
     .home-landing-section--org,
+    .home-landing-section--testimonials,
     section[aria-labelledby="home-landing-slack-heading"] .home-landing-section__inner,
     section[aria-labelledby="home-landing-usecases-heading"] .home-landing-section__inner,
     section[aria-labelledby="home-landing-ugc-heading"] .home-landing-section__inner,
