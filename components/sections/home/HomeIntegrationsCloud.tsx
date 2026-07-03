@@ -1,5 +1,5 @@
 /**
- * Home — “Endless integrations” floating cloud (Figma `428:15019`) + callout copy (`428:15015`).
+ * Home — “Endless integrations” floating cloud (Figma `428:15019`).
  *
  * v4.5 "deep cloud" (founder ask: show ~10× the integrations while staying
  * cute and juicy). The original 8 single-chip tentacles became 16 CHAINS of
@@ -36,21 +36,11 @@ import { PancakeMonster } from "@/components/mascot/pancake-monster/PancakeMonst
 import { gsap } from "@/lib/gsap";
 import { PANCAKE_TINTS } from "@/lib/pancake-palette";
 
-const VB_W = 1786;
+const VB_W = 1920;
 const VB_H = 900;
 /** Tentacle anchor — pancake-monster centre in Figma container coords. */
 const ANCHOR_X = 960;
 const ANCHOR_Y = 435;
-
-/**
- * Figma `428:15015` — callout in inner-container coords (1786×900).
- * `white-space: pre` + explicit `\n` = exactly 3 lines. Chains keep clear of
- * this box (x ∈ [1278, 1758], y ∈ [48, ~230]).
- */
-const INTEGRATIONS_CALLOUT_VB = { x: 1278, y: 48, w: 480 };
-const INTEGRATIONS_CALLOUT_COPY = `Connect your tools. Your agents
-read, write, ship, and sell through
-them — like an employee would.`;
 
 /* ----------------------------------------------------------------------- */
 /* Pancake — inline SVG, parameterised colours, used for tails + decoration */
@@ -119,9 +109,8 @@ type TentacleDef = {
 };
 
 /**
- * Hand-authored chains. Sizes taper outward; heads keep (roughly) the
- * positions of the original 8-logo composition. The top-right zone stays
- * clear of chips ≥ the callout box.
+ * Hand-authored chains — full 1920×900 stage, monster dead-center at
+ * (960, 435). Sizes are deliberately non-monotone along a chain.
  */
 const TENTACLES: TentacleDef[] = [
   {
@@ -142,18 +131,18 @@ const TENTACLES: TentacleDef[] = [
     nodes: [
       { slug: "linear", alt: "Linear", cx: 1060, cy: 295, chip: 54 },
       { slug: "github", alt: "GitHub", src: "/integrations/github-fill.svg", cx: 1085, cy: 172, chip: 120, logoRotateDeg: 6.63, mobile: true },
-      { slug: "youtube", alt: "YouTube", cx: 1198, cy: 94, chip: 78, mobile: true },
+      { slug: "youtube", alt: "YouTube", cx: 1215, cy: 92, chip: 78, mobile: true },
     ],
-    tail: { x: 1300, y: -30, size: 16, palette: "yellow" },
+    tail: { x: 1325, y: -32, size: 16, palette: "yellow" },
   },
   {
     id: "ai",
     nodes: [
       { slug: "openai", alt: "OpenAI", cx: 1265, cy: 380, chip: 70, mobile: true },
-      { slug: "claude", alt: "Claude", cx: 1462, cy: 338, chip: 92 },
-      { slug: "perplexity", alt: "Perplexity", cx: 1625, cy: 282, chip: 54 },
+      { slug: "claude", alt: "Claude", cx: 1505, cy: 330, chip: 92 },
+      { slug: "perplexity", alt: "Perplexity", cx: 1680, cy: 268, chip: 54 },
     ],
-    exit: { x: 1760, y: 232 },
+    exit: { x: 1830, y: 215 },
   },
   {
     id: "x",
@@ -169,10 +158,10 @@ const TENTACLES: TentacleDef[] = [
     nodes: [
       { slug: "hubspot", alt: "HubSpot", cx: 1150, cy: 520, chip: 60 },
       { slug: "linkedin", alt: "LinkedIn", inline: "linkedin", cx: 1352, cy: 482, chip: 140, logoScale: 0.63, mobile: true },
-      { slug: "salesforce", alt: "Salesforce", cx: 1530, cy: 548, chip: 78 },
-      { slug: "apollo", alt: "Apollo", cx: 1660, cy: 602, chip: 52 },
+      { slug: "salesforce", alt: "Salesforce", cx: 1565, cy: 555, chip: 78 },
+      { slug: "apollo", alt: "Apollo", cx: 1715, cy: 612, chip: 52 },
     ],
-    exit: { x: 1795, y: 650 },
+    exit: { x: 1890, y: 665 },
   },
   {
     id: "vercel",
@@ -200,9 +189,9 @@ const TENTACLES: TentacleDef[] = [
       { slug: "notion", alt: "Notion", cx: 1242, cy: 720, chip: 140, logoRotateDeg: 6.49, mobile: true },
       { slug: "airtable", alt: "Airtable", cx: 1425, cy: 790, chip: 76, mobile: true },
       { slug: "asana", alt: "Asana", cx: 1555, cy: 840, chip: 60 },
-      { slug: "trello", alt: "Trello", cx: 1660, cy: 878, chip: 50 },
+      { slug: "trello", alt: "Trello", cx: 1695, cy: 880, chip: 50 },
     ],
-    tail: { x: 1745, y: 905, size: 16, palette: "orange" },
+    tail: { x: 1790, y: 908, size: 16, palette: "orange" },
   },
   {
     id: "stripe",
@@ -244,18 +233,27 @@ const TENTACLES: TentacleDef[] = [
     id: "instagram",
     nodes: [
       { slug: "instagram", alt: "Instagram", cx: 1148, cy: 275, chip: 78, mobile: true },
-      { slug: "calendly", alt: "Calendly", cx: 1232, cy: 206, chip: 50 },
+      { slug: "calendly", alt: "Calendly", cx: 1258, cy: 196, chip: 50 },
     ],
-    tail: { x: 1262, y: 148, size: 14, palette: "pink" },
+    tail: { x: 1310, y: 138, size: 14, palette: "pink" },
+  },
+  {
+    // Automation — a short chain that just ends on n8n, filling the bare
+    // stretch between the monster and the X/Gmail chains (founder note).
+    id: "automation",
+    nodes: [
+      { slug: "docker", alt: "Docker", cx: 660, cy: 385, chip: 54 },
+      { slug: "n8n", alt: "n8n", cx: 520, cy: 428, chip: 48 },
+    ],
   },
   {
     // Analytics — fills the right-mid gap and GROWS outward.
     id: "analytics",
     nodes: [
-      { slug: "googlesheets", alt: "Google Sheets", cx: 1420, cy: 655, chip: 56 },
-      { slug: "posthog", alt: "PostHog", cx: 1560, cy: 685, chip: 74 },
+      { slug: "googlesheets", alt: "Google Sheets", cx: 1445, cy: 660, chip: 56 },
+      { slug: "posthog", alt: "PostHog", cx: 1610, cy: 695, chip: 74 },
     ],
-    exit: { x: 1700, y: 718 },
+    exit: { x: 1790, y: 735 },
   },
   {
     // Comms — starts right next to the monster and just ENDS on WhatsApp
@@ -508,10 +506,13 @@ export function HomeIntegrationsCloud() {
   return (
     <div className="home-integrations-cloud" data-node-id="428:15019">
       <div className="home-integrations-cloud__viz">
+      {/* `slice`: on desktop the container ratio matches the viewBox so this
+          equals `meet`; on mobile the shorter 9/7 box crops the SIDES to a
+          ~1150-unit window — a natural zoom with no transform hacks. */}
       <svg
         className="home-integrations-cloud__svg"
         viewBox={`0 0 ${VB_W} ${VB_H}`}
-        preserveAspectRatio="xMidYMid meet"
+        preserveAspectRatio="xMidYMid slice"
         aria-hidden
         focusable="false"
       >
@@ -657,17 +658,6 @@ export function HomeIntegrationsCloud() {
       </div>
       </div>
 
-      <p
-        className="home-integrations-cloud__callout"
-        data-node-id="428:15015"
-        style={{
-          left: `${(INTEGRATIONS_CALLOUT_VB.x / VB_W) * 100}%`,
-          top: `${(INTEGRATIONS_CALLOUT_VB.y / VB_H) * 100}%`,
-          width: `${(INTEGRATIONS_CALLOUT_VB.w / VB_W) * 100}%`,
-        }}
-      >
-        {INTEGRATIONS_CALLOUT_COPY}
-      </p>
     </div>
   );
 }

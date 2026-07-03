@@ -2261,29 +2261,18 @@
   .home-integrations-cloud {
     position: relative;
     box-sizing: border-box;
-    width: 100%;
-    max-width: calc(71 * var(--spacing-xl));
-    margin-inline: auto;
-    aspect-ratio: 1786 / 900;
+    /* Full-bleed breakout (founder: the side margins were dead space) —
+       the 1920-unit stage spans the viewport, monster dead-center. */
+    --cloud-bleed: min(100vw, 1920px);
+    width: var(--cloud-bleed);
+    margin-inline: calc((100% - var(--cloud-bleed)) / 2);
+    aspect-ratio: 1920 / 900;
     container-type: inline-size;
     container-name: integrations-cloud;
     overflow: visible;
   }
 
-  /* Desktop only: the chip cluster + tentacle anchor live around viewBox
-     x=960 in a 1786-wide viewBox, which puts the monster at 53.75% of
-     the cloud width — visibly right of cloud centre and (because the
-     cloud is centred on the page) right of the page centre. Shift the
-     entire cloud left by the same 3.75% so the monster + node of
-     tentacles land on viewport centre, matching the centred heading
-     above. Chips, callout, and tentacles all move together so the
-     internal geometry stays intact. Mobile uses its own override block
-     (see `@media (max-width: 1023.98px)` below) and is unaffected. */
   @media (min-width: 1024px) {
-    .home-integrations-cloud {
-      transform: translateX(-3.75%);
-    }
-
     /* Tighten the gap between the "Endless integrations / Plug in your
        stack..." header and the cloud below — the default
        `--spacing-home-landing-header-to-media` is 4 × xl (64 px), which
@@ -2302,7 +2291,7 @@
    * Viz wrapper — holds the SVG cloud + the interactive monster. On desktop
    * it fills the aspect-ratio'd `.home-integrations-cloud` parent. On mobile
    * it carries the 1786/900 aspect ratio itself (the parent reflows to a
-   * flex column to stack the callout below the cloud).
+   * flex column on mobile).
    */
   .home-integrations-cloud__viz {
     position: relative;
@@ -2361,37 +2350,6 @@
     z-index: 4;
   }
 
-  /**
-   * Figma `428:15015` — copy block over the cloud (coords share `428:15019` viewBox).
-   * Warm surface + mono body stack match org-diagram chip copy treatment.
-   */
-  .home-integrations-cloud__callout {
-    position: absolute;
-    z-index: 5;
-    box-sizing: border-box;
-    margin: 0;
-    min-width: 0;
-    text-align: left;
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: var(--font-size-home-integrations-callout);
-    line-height: var(--line-height-home-integrations-callout);
-    font-weight: var(--font-normal);
-    font-style: normal;
-    /* `pre-line` keeps the comp's three-line stack at desktop but lets each
-       line wrap if the container narrows, instead of overflowing the box. */
-    white-space: pre-line;
-    background-color: var(--alt-weak-branded-surface-02);
-    border-radius: var(--radius-home-integrations-callout);
-    padding-inline: var(--spacing-home-integrations-callout-pad-inline);
-    padding-block: var(--spacing-home-integrations-callout-pad-block);
-  }
-
-  /* Below ~840 px container width the absolute box can no longer fit the
-     hard-coded copy without clipping. Detach it from the cloud's right edge,
-     centre it across the cloud, and let the text wrap naturally. The
-     positional `left/top/width` set inline by the component are overridden
-     here so the responsive rule wins. */
   /* Deep-cloud responsive gating: chains don't survive mobile's 1.4× zoomed
      crop, so mobile keeps only the big recognizable chips (data-mobile) and
      wires each straight to the monster; chain segments, satellite chips, and
@@ -2408,17 +2366,6 @@
     .home-integrations-cloud__svg [data-seg-depth],
     .home-integrations-cloud__svg [data-tail] {
       display: none;
-    }
-  }
-
-  @container integrations-cloud (max-width: 840px) {
-    .home-integrations-cloud__callout {
-      left: 50% !important;
-      top: 0 !important;
-      width: min(440px, calc(100% - 2 * var(--spacing-xl))) !important;
-      transform: translateX(-50%);
-      white-space: normal;
-      text-align: center;
     }
   }
 
@@ -5359,7 +5306,7 @@
       transform: translateY(19px);
     }
 
-    /* === Integrations cloud — restructure: cloud on top, callout below
+    /* === Integrations cloud — mobile restructure
        (Figma mobile 451:19545 stacks them vertically instead of overlaying).
        Also ZOOMED — viz is square + SVG scaled 2× so chips look as big as
        they do in the comp instead of the desktop's wide-and-shrunk band. === */
@@ -5376,14 +5323,17 @@
       /* Full-bleed: escape the section's horizontal padding so the cloud
          goes edge-to-edge on mobile. The chip cluster + tentacles read
          better when they have the whole viewport width to breathe. The
-         heading + callout above/below stay inside the page container's
+         heading above stays inside the page container's
          padding because they're separate flex children of
          `.home-integrations-cloud` (which uses flex-direction:column on
          mobile via the override above). */
       width: 100vw;
       max-width: 100vw;
       margin-inline: calc(50% - 50vw);
-      aspect-ratio: 5 / 6;
+      /* 9/7 box + the svg's `slice` = a ~1150-unit side-cropped window on
+         the 1920 stage — X and LinkedIn half-cut at the edges, monster
+         centered, no transform hacks. */
+      aspect-ratio: 9 / 7;
       overflow: hidden;
     }
     .home-integrations-cloud__svg {
@@ -5391,61 +5341,16 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      /*
-       * Compose two transforms:
-       *   1. translateX(-6.65%) shifts the SVG content LEFT so the visible
-       *      crop window centers on the CHIP CLUSTER (viewBox x≈978), not
-       *      on the viewBox center (x=893). The right-side chips (Notion,
-       *      LinkedIn, Claude) push the cluster center 85 viewBox units
-       *      right of the viewBox center, and without this shift the cloud
-       *      reads as drifting right and crops X on the left.
-       *   2. scale(1.4) zooms uniformly. 1.4× is the max we can use without
-       *      cropping the corner chips: the chip-cluster x span is 1196
-       *      viewBox units (X at 380 to Claude at 1576), and the visible
-       *      window after scale is 1786/scale viewBox units wide; scale
-       *      1.4 gives a 1276-unit window — 40 units of padding past each
-       *      extreme. Pushing scale higher (1.55, 1.7) crops X or Claude.
-       */
-      transform: translateX(-6.65%) scale(1.4);
-      transform-origin: center center;
     }
-    /* The monster div sits OUTSIDE the SVG so it doesn't inherit the SVG's
-       `translateX(-6.65%) scale(1.4)` — scale it manually AND replicate the
-       horizontal/vertical shift so it stays welded to the tentacle anchor
-       point (viewBox x=960, y=435 → mapped through the SVG transform).
-       Default monster width is `clamp(88px, 14.5cqi, 195px)`; the 88px
-       floor dwarfs the chips on the small mobile container, so override
-       to unclamped `14.5cqi` (matches desktop monster:chip ratio ~1.5×).
-
-       Math (mobile wrapper aspect 5/6, SVG viewBox aspect 1786/900):
-         X: SVG content fills wrapper width, so anchor x is at the same
-            % of the element as in the viewBox: 960/1786 = 53.75%.
-            Scale(1.4) about element center (50%): 50 + (53.75 − 50) × 1.4
-            = 55.25%. TranslateX(−6.65%): 55.25 − 6.65 = 48.6%.
-         Y: SVG content is letterboxed vertically (height 156.2 in a 372
-            element → 107.9px top padding). Anchor y in element coords:
-            107.9 + (435/900) × 156.2 = 183.4 → 49.30% of element height.
-            Scale(1.4) about element center (50%): 50 + (49.30 − 50) × 1.4
-            = 49.02%. No vertical translate. So top: 49.02%. */
+    /* `slice` fills the 9/7 box by height: anchor (960, 435) lands at
+         exactly 50% / 48.33% of the element — no scale compensation. */
     .home-integrations-cloud__monster {
-      width: 14.5cqi;
-      left: 48.6% !important;
-      top: 49.02% !important;
-      transform: translate(-50%, -50%) scale(1.4);
+      width: 17cqi; /* ≈ the 160-unit monster at the slice scale */
+      left: 50% !important;
+      top: 48.33% !important;
+      transform: translate(-50%, -50%);
     }
-    .home-integrations-cloud__callout {
-      position: relative !important;
-      left: auto !important;
-      top: auto !important;
-      width: 100% !important;
-      max-width: 440px;
-      margin-inline: auto;
-      transform: none !important;
-      white-space: normal;
-      text-align: center;
-    }
-
-    /* === Testimonials — mobile snap carousel replaces desktop ticker === */
+        /* === Testimonials — mobile snap carousel replaces desktop ticker === */
     .home-landing-testimonials__track--desktop { display: none; }
     .home-landing-testimonials__mobile { display: block; }
 

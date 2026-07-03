@@ -128,7 +128,10 @@ export function HomeLandingBody() {
             <H2 id="home-landing-integrations-heading" className="heading home-landing-section__title text-center">
               Endless integrations
             </H2>
-            <p className="home-landing-section__lede text-center">Plug in your stack, let the agents do the rest.</p>
+            <p className="home-landing-section__lede text-center">
+              Plug in your stack. Your agents read, write, ship, and sell through it — like an
+              employee would.
+            </p>
           </header>
           <div className="home-landing-section__figure">
             <HomeIntegrationsCloud />
