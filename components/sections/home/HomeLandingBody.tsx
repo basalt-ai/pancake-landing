@@ -16,7 +16,7 @@ import { HOME_PAGE_CONTAINER_CLASS } from "@/components/sections/home/home-layou
 import { HomeBlogCards } from "@/components/sections/home/HomeBlogCards";
 import { HomeIntegrationsCloud } from "@/components/sections/home/HomeIntegrationsCloud";
 import { HomeLandingTestimonials } from "@/components/sections/home/HomeLandingTestimonials";
-import { HomeLandingTrust } from "@/components/sections/home/HomeLandingTrust";
+import { HomeTrustCarousel } from "@/components/sections/home/HomeTrustCarousel";
 import { HomeOrgDiagram } from "@/components/sections/home/HomeOrgDiagram";
 import { HomeOrgDiagramMobile } from "@/components/sections/home/HomeOrgDiagramMobile";
 import { HomePricingTeaser } from "@/components/sections/home/HomePricingTeaser";
@@ -154,20 +154,22 @@ export function HomeLandingBody() {
           testimonial band. */}
       <HomeUGCWall alt />
 
-      {/* Trust — merged security + control (founder call 2026-07-03: one
-          block, three pillars). SOC 2 checklist, per-person account access
-          with the approval last-word, and the private pod. Replaces the
-          former "Secure by design" and "You're always in control" sections;
-          HomeLandingSecurity.tsx / HomeLandingControl.tsx stay on disk
-          unreferenced. Single-line header per the one-screen budget. */}
+      {/* Trust — six-card drag carousel (founder call 2026-07-02, second
+          rebuild): one card per buyer question, anxiety-descending —
+          approvals, reach, accounts, audit, secrets, data isolation. SOC 2
+          lives in the sober footnote. Replaces the three-pillar
+          HomeLandingTrust (stays on disk unreferenced, like
+          HomeLandingSecurity/Control before it). Single-line header per
+          the one-screen budget; H2 names the substance — it acts as you,
+          you keep the veto. */}
       <section className="home-landing-section" aria-labelledby="home-landing-trust-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             <H2 id="home-landing-trust-heading" className="heading home-landing-section__title text-center">
-              Secure enough to hand it your real accounts
+              It acts as you. You keep the last word.
             </H2>
           </header>
-          <HomeLandingTrust />
+          <HomeTrustCarousel />
         </div>
       </section>
 

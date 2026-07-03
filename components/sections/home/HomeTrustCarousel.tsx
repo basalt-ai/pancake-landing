@@ -1,0 +1,711 @@
+"use client";
+
+/**
+ * Home — trust carousel (founder call 2026-07-02, second rebuild of the
+ * merged security + control block).
+ *
+ * Six 368×448 cards on a 3D drag-rotate cylinder, one trust question each,
+ * ordered by buyer anxiety: approvals → reach → accounts → audit → secrets
+ * → data isolation. Every card = kit `.badge` kicker + one-line title
+ * (the ANSWER, not the question) + dry 3-line body + a product-flavored
+ * visual reusing the control-card recipes (approve rows, audit terminal,
+ * sandbox ellipses) plus two new ones (owner blobs, secrets vault).
+ *
+ * Copy decisions from the competitor research (Viktor first):
+ *  - concrete irreversibles over abstractions ("money moves, code pushes"),
+ *  - mechanisms over adjectives ("agents use them without ever seeing them"),
+ *  - SOC 2 stated sober, once, in the footnote — the SF norm, not a
+ *    theatrical card (founder: "il faut juste dire SOC 2"),
+ *  - no unexplained jargon: "pod"/"sandbox" → "sealed workspace".
+ *
+ * Carousel mechanics: framer-motion motionValue drives the cylinder's
+ * rotateY; pointer drag maps px→deg, release springs to the nearest 60°
+ * snap (fling momentum projects the target). Arrows + dots + arrow keys
+ * as non-drag paths; reduced-motion swaps springs for a 200ms tween.
+ * Mobile (<1024px) drops the 3D for the testimonials scroll-snap recipe —
+ * both variants are in the DOM, CSS media queries pick one.
+ */
+
+import Image from "next/image";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { animate, motion, useMotionValue, useMotionValueEvent, useTransform } from "framer-motion";
+import type { MotionValue } from "framer-motion";
+
+/* ─────────────────────────────── geometry ─────────────────────────────── */
+
+const CARD_COUNT = 6;
+/** Degrees between adjacent faces on the cylinder. */
+const STEP = 360 / CARD_COUNT;
+/** Cylinder radius: 368/2 ÷ tan(30°) ≈ 319 minimum; 380 keeps ~70px of air. */
+const RADIUS = 380;
+/** Drag mapping — ≈273px of pointer travel per card. */
+const DEG_PER_PX = 0.22;
+
+/* ─────────────────────────────── icons ────────────────────────────────── */
+
+/** Single tick for the pink approve button (from the control card). */
+function CheckIcon() {
+  return (
+    <svg viewBox="0 0 14 11" className="home-landing-control-card__btn-icon" aria-hidden>
+      <path
+        d="M1 5.5 L5.2 9.5 L13 1.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </svg>
+  );
+}
+
+/** X for the cream reject button (from the control card). */
+function CloseIcon() {
+  return (
+    <svg viewBox="0 0 12 12" className="home-landing-control-card__btn-icon" aria-hidden>
+      <path
+        d="M1.5 1.5 L10.5 10.5 M10.5 1.5 L1.5 10.5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/** Green tick disc for the isolation checklist rows. */
+function TickDisc() {
+  return (
+    <span className="home-landing-trust-check__tick" aria-hidden>
+      <svg viewBox="0 0 14 11">
+        <path
+          d="M1 5.5 L5.2 9.5 L13 1.5"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+        />
+      </svg>
+    </span>
+  );
+}
+
+/* ─────────────────────── visual 1 — approval rows ─────────────────────── */
+
+type ApprovalRow = {
+  id: string;
+  dotSrc: string;
+  role: string;
+  action: string;
+  amount?: string;
+};
+
+const APPROVAL_ROWS: ApprovalRow[] = [
+  { id: "row-1", dotSrc: "/control/dot-1.svg", role: "Ad Manager", action: "Send invoice", amount: "$4,820" },
+  { id: "row-2", dotSrc: "/control/dot-2.svg", role: "Full stack Engineer", action: "Push to production" },
+  { id: "row-3", dotSrc: "/control/dot-3.svg", role: "Ops", action: "Renew domain", amount: "$12" },
+];
+
+function ApproveVisual() {
+  return (
+    <ul className="home-landing-control-approve-list" aria-hidden>
+      {APPROVAL_ROWS.map((row) => (
+        <li key={row.id} className="home-landing-control-approve-row">
+          <div className="home-landing-control-approve-row__main">
+            <p className="home-landing-control-approve-row__role">
+              <Image src={row.dotSrc} alt="" width={7} height={7} aria-hidden unoptimized />
+              <span>{row.role}</span>
+            </p>
+            <p className="home-landing-control-approve-row__action">{row.action}</p>
+          </div>
+          {row.amount ? (
+            <span className="home-landing-control-approve-row__amount">{row.amount}</span>
+          ) : null}
+          <div className="home-landing-control-approve-row__buttons">
+            <button
+              type="button"
+              tabIndex={-1}
+              aria-hidden
+              className="home-landing-control-card__btn home-landing-control-card__btn--approve"
+            >
+              <CheckIcon />
+            </button>
+            <button
+              type="button"
+              tabIndex={-1}
+              aria-hidden
+              className="home-landing-control-card__btn home-landing-control-card__btn--reject"
+            >
+              <CloseIcon />
+            </button>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/* ─────────────────── visual 2 — connected-tool toggles ────────────────── */
+
+type ReachTool = { id: string; src: string; name: string; on: boolean };
+
+const REACH_TOOLS: ReachTool[] = [
+  { id: "notion", src: "/integrations/notion.svg", name: "Notion", on: true },
+  { id: "stripe", src: "/integrations/stripe.svg", name: "Stripe", on: true },
+  { id: "hubspot", src: "/integrations/hubspot.svg", name: "HubSpot", on: false },
+];
+
+function ReachVisual() {
+  return (
+    <ul className="home-landing-control-approve-list" aria-hidden>
+      {REACH_TOOLS.map((tool) => (
+        <li key={tool.id} className="home-landing-control-approve-row">
+          {/* eslint-disable-next-line @next/next/no-img-element -- integration mark */}
+          <img className="home-landing-trust-conn__mark" src={tool.src} alt="" />
+          <div className="home-landing-control-approve-row__main">
+            <p className="home-landing-control-approve-row__role">
+              {tool.on ? "Connected" : "Not connected"}
+            </p>
+            <p className="home-landing-control-approve-row__action">{tool.name}</p>
+          </div>
+          <span className={`home-trust-toggle${tool.on ? " home-trust-toggle--on" : ""}`}>
+            <span className="home-trust-toggle__knob" />
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/* ─────────────────────── visual 3 — owner blobs ───────────────────────── */
+
+/** Organic cream chip blob — same path as the integrations cloud chips. */
+const BLOB_D =
+  "M172.13 77.2048C172.13 125.026 134.869 169.339 87.3369 169.339C63.9016 169.339 38.4144 165.431 22.8941 150.144C6.93551 134.426 0 105.714 0 81.4702C0 54.3473 14.515 36.3508 33.9172 20.4742C48.7239 8.35805 66.7634 0 87.3369 0C134.869 0 172.13 29.3831 172.13 77.2048Z";
+
+type OwnerBlob = {
+  id: string;
+  /** Blob box: x/y top-left, d = diameter, rotate in deg. */
+  x: number;
+  y: number;
+  d: number;
+  rotate: number;
+  /** Owner tag chip position. */
+  tagX: number;
+  tagY: number;
+  tag: string;
+  logo: { kind: "img"; src: string } | { kind: "linkedin" };
+};
+
+const OWNER_BLOBS: OwnerBlob[] = [
+  { id: "linkedin", x: 12, y: 14, d: 84, rotate: -8, tagX: 26, tagY: 102, tag: "tristan", logo: { kind: "linkedin" } },
+  { id: "gmail", x: 116, y: 76, d: 72, rotate: 6, tagX: 128, tagY: 152, tag: "maya", logo: { kind: "img", src: "/integrations/gmail.svg" } },
+  { id: "slack", x: 212, y: 22, d: 78, rotate: -4, tagX: 226, tagY: 104, tag: "you", logo: { kind: "img", src: "/integrations/slack.svg" } },
+];
+
+function AccountsVisual() {
+  return (
+    <div className="home-trust-blobs" aria-hidden>
+      <svg viewBox="0 0 304 182" className="home-trust-blobs__svg">
+        {/* Dotted connectors between blob rims — the sandbox-ellipse idiom. */}
+        <path className="home-trust-blobs__wire" d="M92 66 C 108 84, 116 96, 130 106" />
+        <path className="home-trust-blobs__wire" d="M186 108 C 200 96, 208 82, 218 68" />
+        {OWNER_BLOBS.map((b) => {
+          const s = b.d / 172.13;
+          const logoSize = b.d * 0.42;
+          const logoOff = (b.d - logoSize) / 2;
+          return (
+            <g key={b.id} transform={`translate(${b.x} ${b.y}) rotate(${b.rotate} ${b.d / 2} ${b.d / 2})`}>
+              <path d={BLOB_D} transform={`scale(${s})`} fill="#FFF7EC" stroke="var(--stroke)" strokeWidth={1 / s} />
+              {b.logo.kind === "linkedin" ? (
+                <g transform={`translate(${logoOff} ${logoOff}) scale(${logoSize / 24})`}>
+                  <rect width="24" height="24" rx="4" fill="#0A66C2" />
+                  <path
+                    fill="#FFFFFF"
+                    d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43A2.06 2.06 0 1 1 5.34 3.3a2.06 2.06 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45z"
+                  />
+                </g>
+              ) : (
+                <image href={b.logo.src} x={logoOff} y={logoOff} width={logoSize} height={logoSize} />
+              )}
+              {/* Active dot on the blob's upper-right rim. */}
+              <circle cx={b.d * 0.86} cy={b.d * 0.16} r="4" fill="var(--palette-green-20)" />
+            </g>
+          );
+        })}
+      </svg>
+      {OWNER_BLOBS.map((b) => (
+        <span key={b.id} className="home-trust-blobs__tag" style={{ left: b.tagX, top: b.tagY }}>
+          {b.tag}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/* ─────────────────────── visual 4 — audit terminal ────────────────────── */
+
+type LogLine = { time: string; role: string; text: string };
+
+const AUDIT_LOG: LogLine[] = [
+  { time: "04:12:08", role: "growth/copy", text: "drafted post → x.com/pancake" },
+  { time: "04:12:14", role: "eng/full-stack", text: "opened PR #1284" },
+  { time: "04:12:31", role: "ops/invoice", text: "queued for approval" },
+  { time: "04:12:45", role: "ops/support", text: "resolved ticket-9117" },
+  { time: "04:12:51", role: "ops/invoice", text: "queued for approval" },
+];
+
+function AuditVisual() {
+  return (
+    <pre className="home-landing-control-audit-log" aria-hidden>
+      {AUDIT_LOG.map((line) => (
+        <span key={`${line.time}-${line.role}`} className="home-landing-control-audit-log__line">
+          <span className="home-landing-control-audit-log__time">{line.time}</span>{" "}
+          <span className="home-landing-control-audit-log__role">{line.role}</span>{" "}
+          <span className="home-landing-control-audit-log__text">{line.text}</span>
+          {"\n"}
+        </span>
+      ))}
+    </pre>
+  );
+}
+
+/* ─────────────────────── visual 5 — secrets vault ─────────────────────── */
+
+const VAULT_ROWS = [
+  "vault://stripe/live",
+  "vault://gmail/oauth",
+  "vault://aws/deploy-key",
+  "vault://linkedin/session",
+];
+
+function VaultVisual() {
+  return (
+    <div className="home-trust-vault" aria-hidden>
+      {/* Peach key-pancake overlapping the panel's top-right corner. */}
+      <span className="home-trust-vault__pancake">
+        {/* eslint-disable-next-line @next/next/no-img-element -- Figma SVG export */}
+        <img className="home-trust-vault__pancake-side" src="/features/feature-247-side.svg" alt="" width={64} height={64} />
+        {/* eslint-disable-next-line @next/next/no-img-element -- Figma SVG export */}
+        <img className="home-trust-vault__pancake-top" src="/features/feature-247-top.svg" alt="" width={61} height={59} />
+        {/* eslint-disable-next-line @next/next/no-img-element -- local SVG glyph */}
+        <img className="home-trust-vault__pancake-key" src="/features/feature-key.svg" alt="" width={26} height={26} />
+      </span>
+      <div className="home-trust-vault__panel">
+        {VAULT_ROWS.map((path) => (
+          <span key={path} className="home-trust-vault__row">
+            <span className="home-trust-vault__dot" />
+            <span className="home-trust-vault__path">{path}</span>
+            <span className="home-trust-vault__mask">••••••••</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ────────────────────── visual 6 — isolation checks ───────────────────── */
+
+const ISOLATION_CHECKS = [
+  "Sealed workspace per company",
+  "Memory stays yours",
+  "Encrypted in transit and at rest",
+  "Nothing shared across customers",
+];
+
+function IsolationVisual() {
+  return (
+    <ul className="home-landing-trust-check-list" aria-hidden>
+      {ISOLATION_CHECKS.map((label) => (
+        <li key={label} className="home-landing-control-approve-row home-landing-trust-check">
+          <TickDisc />
+          <span className="home-landing-trust-check__label">{label}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/* ─────────────────────────────── the cards ────────────────────────────── */
+
+type TrustCardDef = {
+  id: string;
+  badgeVariant?: "brand" | "brand-alt-1" | "brand-alt-2" | "inverted" | "success";
+  kicker: string;
+  title: string;
+  body: string;
+  Visual: () => JSX.Element;
+  /** Matches `.home-landing-control-card[data-card]` recipe hooks. */
+  dataCard?: string;
+};
+
+const TRUST_CARDS: TrustCardDef[] = [
+  {
+    id: "approve",
+    badgeVariant: "brand",
+    kicker: "Your call",
+    title: "Approve before it ships",
+    body: "Money moves, code pushes, outbound emails — anything it can't undo waits for your one-tap approval in Slack.",
+    Visual: ApproveVisual,
+  },
+  {
+    id: "scope",
+    badgeVariant: "brand-alt-1",
+    kicker: "What it reaches",
+    title: "Only the tools you connect",
+    body: "It can't reach anything you haven't connected. Each agent works in a sealed workspace with the tools you allow.",
+    Visual: ReachVisual,
+  },
+  {
+    id: "accounts",
+    kicker: "Your accounts",
+    title: "Your accounts stay yours",
+    body: "Each teammate connects their own logins — your LinkedIn acts as you and no one else. One click disconnects any of them.",
+    Visual: AccountsVisual,
+  },
+  {
+    id: "audit",
+    badgeVariant: "inverted",
+    kicker: "On the record",
+    title: "See and undo everything",
+    body: "Every tool call and decision lands in a log no one can edit. Replay any agent's work, roll back what you don't like.",
+    Visual: AuditVisual,
+  },
+  {
+    id: "vault",
+    badgeVariant: "brand-alt-2",
+    kicker: "Your secrets",
+    title: "Secrets stay sealed",
+    body: "Keys live in an encrypted vault — agents use them without ever seeing them, and nothing sensitive touches the chat.",
+    Visual: VaultVisual,
+  },
+  {
+    id: "data",
+    badgeVariant: "success",
+    kicker: "Your data",
+    title: "Never trains a model",
+    body: "Your company runs in its own sealed workspace, memory included. None of it is shared — with other customers or with model makers.",
+    Visual: IsolationVisual,
+  },
+];
+
+function TrustCard({ card }: { card: TrustCardDef }) {
+  return (
+    <article className="home-landing-control-card" data-card={card.dataCard}>
+      <header className="home-landing-control-card__header">
+        <span
+          className="badge home-landing-control-card__kicker"
+          data-variant={card.badgeVariant}
+        >
+          {card.kicker}
+        </span>
+        <h3 className="home-landing-control-card__title">{card.title}</h3>
+        <p className="home-landing-control-card__body">{card.body}</p>
+      </header>
+      <card.Visual />
+    </article>
+  );
+}
+
+/* ────────────────────────────── the carousel ──────────────────────────── */
+
+const VISUALLY_HIDDEN: React.CSSProperties = {
+  position: "absolute",
+  width: 1,
+  height: 1,
+  margin: -1,
+  padding: 0,
+  overflow: "hidden",
+  clip: "rect(0 0 0 0)",
+  whiteSpace: "nowrap",
+  border: 0,
+};
+
+/** Front-facing card index for a given cylinder rotation. */
+function frontIndexFor(rotation: number): number {
+  return ((Math.round(-rotation / STEP) % CARD_COUNT) + CARD_COUNT) % CARD_COUNT;
+}
+
+function CarouselFace({
+  index,
+  rotation,
+  front,
+  card,
+}: {
+  index: number;
+  rotation: MotionValue<number>;
+  front: boolean;
+  card: TrustCardDef;
+}) {
+  /* Exit fade only — no dim/scale/blur on visible side cards (brand rule);
+     perspective alone recedes them. Fades out as the face turns away. */
+  const opacity = useTransform(rotation, (r) => {
+    let a = (index * STEP + r) % 360;
+    if (a > 180) a -= 360;
+    if (a < -180) a += 360;
+    const abs = Math.abs(a);
+    if (abs <= 66) return 1;
+    if (abs >= 108) return 0;
+    return 1 - (abs - 66) / 42;
+  });
+
+  return (
+    <motion.div
+      className="home-trust-carousel__face"
+      data-front={front || undefined}
+      aria-hidden={!front}
+      style={{
+        opacity,
+        transform: `rotateY(${index * STEP}deg) translateZ(${RADIUS}px)`,
+      }}
+    >
+      <TrustCard card={card} />
+    </motion.div>
+  );
+}
+
+export function HomeTrustCarousel() {
+  const rotation = useMotionValue(0);
+  const ringTransform = useTransform(
+    rotation,
+    (r) => `translateZ(${-RADIUS}px) rotateY(${r}deg)`
+  );
+  /* Backdrop orbit spins at 0.15× the drag rate — ties the carousel to the
+     hero's orbit language. */
+  const orbitRotate = useTransform(rotation, (r) => r * 0.15);
+
+  const [frontIndex, setFrontIndex] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const [hinted, setHinted] = useState(false);
+  const [mobileIndex, setMobileIndex] = useState(0);
+
+  const reducedMotion = useRef(false);
+  useEffect(() => {
+    reducedMotion.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }, []);
+
+  useMotionValueEvent(rotation, "change", (r) => {
+    const next = frontIndexFor(r);
+    setFrontIndex((prev) => (prev === next ? prev : next));
+  });
+
+  const settleTo = useCallback(
+    (target: number) => {
+      animate(
+        rotation,
+        target,
+        reducedMotion.current
+          ? { duration: 0.2, ease: "linear" }
+          : { type: "spring", stiffness: 170, damping: 26 }
+      );
+    },
+    [rotation]
+  );
+
+  /* Manual pointer drag → rotation. Velocity is sampled per-move; release
+     projects the fling and springs to the nearest 60° snap. */
+  const drag = useRef({ active: false, startX: 0, startRot: 0, lastX: 0, lastT: 0, vel: 0 });
+
+  const onPointerDown = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      rotation.stop();
+      drag.current = {
+        active: true,
+        startX: e.clientX,
+        startRot: rotation.get(),
+        lastX: e.clientX,
+        lastT: e.timeStamp,
+        vel: 0,
+      };
+      setDragging(true);
+      setHinted(true);
+      e.currentTarget.setPointerCapture(e.pointerId);
+    },
+    [rotation]
+  );
+
+  const onPointerMove = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      const d = drag.current;
+      if (!d.active) return;
+      rotation.set(d.startRot + (e.clientX - d.startX) * DEG_PER_PX);
+      const dt = e.timeStamp - d.lastT;
+      if (dt > 0) {
+        /* deg/s, lightly smoothed. */
+        const v = ((e.clientX - d.lastX) * DEG_PER_PX * 1000) / dt;
+        d.vel = d.vel * 0.6 + v * 0.4;
+      }
+      d.lastX = e.clientX;
+      d.lastT = e.timeStamp;
+    },
+    [rotation]
+  );
+
+  const onPointerUp = useCallback(() => {
+    const d = drag.current;
+    if (!d.active) return;
+    d.active = false;
+    setDragging(false);
+    /* Project the momentum ~0.35s out, capped at two faces per fling so a
+       hard flick can't send the cylinder spinning through full turns, then
+       snap to the nearest face. */
+    const here = rotation.get();
+    const fling = reducedMotion.current ? 0 : d.vel * 0.35;
+    const projected = here + Math.max(-2 * STEP, Math.min(2 * STEP, fling));
+    settleTo(Math.round(projected / STEP) * STEP);
+  }, [rotation, settleTo]);
+
+  const stepBy = useCallback(
+    (dir: 1 | -1) => {
+      setHinted(true);
+      const snapped = Math.round(rotation.get() / STEP) * STEP;
+      settleTo(snapped - dir * STEP);
+    },
+    [rotation, settleTo]
+  );
+
+  const goToIndex = useCallback(
+    (i: number) => {
+      setHinted(true);
+      /* Shortest path on the ring to the target face. */
+      const n = -rotation.get() / STEP;
+      const k = Math.round(n);
+      let delta = (((i - k) % CARD_COUNT) + CARD_COUNT) % CARD_COUNT;
+      if (delta > CARD_COUNT / 2) delta -= CARD_COUNT;
+      settleTo(-(k + delta) * STEP);
+    },
+    [rotation, settleTo]
+  );
+
+  const onKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        stepBy(1);
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        stepBy(-1);
+      }
+    },
+    [stepBy]
+  );
+
+  /* Mobile scroll-snap track — active dot follows scroll position. */
+  const mobileTrackRef = useRef<HTMLDivElement>(null);
+  const onMobileScroll = useCallback(() => {
+    const el = mobileTrackRef.current;
+    if (!el) return;
+    const max = el.scrollWidth - el.clientWidth;
+    if (max <= 0) return;
+    const next = Math.round((el.scrollLeft / max) * (CARD_COUNT - 1));
+    setMobileIndex((prev) => (prev === next ? prev : next));
+  }, []);
+
+  const scrollMobileTo = useCallback((i: number) => {
+    const el = mobileTrackRef.current;
+    if (!el) return;
+    const max = el.scrollWidth - el.clientWidth;
+    el.scrollTo({ left: (max * i) / (CARD_COUNT - 1), behavior: "smooth" });
+  }, []);
+
+  return (
+    <div className="home-landing-trust home-trust-carousel">
+      {/* Desktop — the 3D cylinder. */}
+      <div
+        className="home-trust-carousel__stage"
+        role="group"
+        aria-roledescription="carousel"
+        aria-label="How Pancake keeps you in control"
+        tabIndex={0}
+        data-dragging={dragging || undefined}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        onKeyDown={onKeyDown}
+      >
+        {/* Dotted orbit peeking from behind the front card. */}
+        <motion.span className="home-trust-carousel__orbit" style={{ rotate: orbitRotate }} aria-hidden>
+          <Image src="/control/sandbox-e1.svg" alt="" fill unoptimized />
+        </motion.span>
+        <motion.div className="home-trust-carousel__ring" style={{ transform: ringTransform }}>
+          {TRUST_CARDS.map((card, i) => (
+            <CarouselFace key={card.id} index={i} rotation={rotation} front={i === frontIndex} card={card} />
+          ))}
+        </motion.div>
+        {!hinted ? <span className="home-trust-carousel__hint" aria-hidden>‹ drag ›</span> : null}
+      </div>
+
+      {/* Desktop nav — arrows + dots. */}
+      <div className="home-trust-carousel__nav">
+        <button
+          type="button"
+          className="home-trust-carousel__arrow"
+          aria-label="Previous card"
+          onClick={() => stepBy(-1)}
+        >
+          <svg viewBox="0 0 14 14" aria-hidden>
+            <path d="M9 2.5 L4.5 7 L9 11.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          </svg>
+        </button>
+        <div className="home-trust-carousel__dots">
+          {TRUST_CARDS.map((card, i) => (
+            <button
+              key={card.id}
+              type="button"
+              className={`home-trust-carousel__dot${i === frontIndex ? " home-trust-carousel__dot--active" : ""}`}
+              aria-label={card.title}
+              aria-current={i === frontIndex}
+              onClick={() => goToIndex(i)}
+            />
+          ))}
+        </div>
+        <button
+          type="button"
+          className="home-trust-carousel__arrow"
+          aria-label="Next card"
+          onClick={() => stepBy(1)}
+        >
+          <svg viewBox="0 0 14 14" aria-hidden>
+            <path d="M5 2.5 L9.5 7 L5 11.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Mobile — testimonials scroll-snap recipe, same six cards. */}
+      <div
+        ref={mobileTrackRef}
+        className="home-trust-carousel__mobile"
+        onScroll={onMobileScroll}
+      >
+        {TRUST_CARDS.map((card) => (
+          <div key={card.id} className="home-trust-carousel__mobile-slide">
+            <TrustCard card={card} />
+          </div>
+        ))}
+      </div>
+      <div className="home-trust-carousel__dots home-trust-carousel__dots--mobile">
+        {TRUST_CARDS.map((card, i) => (
+          <button
+            key={card.id}
+            type="button"
+            className={`home-trust-carousel__dot${i === mobileIndex ? " home-trust-carousel__dot--active" : ""}`}
+            aria-label={card.title}
+            onClick={() => scrollMobileTo(i)}
+          />
+        ))}
+      </div>
+
+      <p aria-live="polite" style={VISUALLY_HIDDEN}>
+        {TRUST_CARDS[frontIndex].title}
+      </p>
+
+      {/* SOC 2, said the SF way: two words and a receipt. */}
+      <p className="home-landing-trust__note">
+        SOC 2 audited. Report and subprocessor list one email away.
+      </p>
+    </div>
+  );
+}

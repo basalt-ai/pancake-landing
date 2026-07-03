@@ -2927,6 +2927,358 @@
     transform: scaleY(-1);
   }
 
+  /* ─────────────────── Trust carousel (HomeTrustCarousel.tsx) ───────────────────
+     Six control-cards on a 3D drag-rotate cylinder at desktop; the
+     testimonials scroll-snap recipe on mobile. Geometry lives in the
+     component (STEP/RADIUS); these recipes carry the chrome. Side cards
+     keep full color — perspective alone recedes them (no dim per brand);
+     opacity is an exit-fade for back-facing cards only, set inline. */
+
+  /* The wrapper shares `.home-landing-trust` (flex column, centered). As a
+     flex item of the centered section inner it would otherwise size to
+     fit-content — which the mobile track's max-content blows out to the
+     six-card row width. Pin it to the container. */
+  .home-trust-carousel {
+    width: 100%;
+  }
+
+  .home-trust-carousel__stage,
+  .home-trust-carousel__nav {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .home-trust-carousel__stage {
+      display: block;
+      position: relative;
+      width: 100%;
+      height: 500px;
+      perspective: 1400px;
+      perspective-origin: 50% 45%;
+      cursor: grab;
+      touch-action: pan-y;
+    }
+
+    .home-trust-carousel__stage[data-dragging] {
+      cursor: grabbing;
+    }
+
+    .home-trust-carousel__stage:focus-visible {
+      outline: 2px solid var(--stroke);
+      outline-offset: 4px;
+      border-radius: 16px;
+    }
+
+    .home-trust-carousel__nav {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+  }
+
+  /* Dotted orbit peeking from behind the front card — hero orbit language.
+     Sized to poke ~75px past each side of the 368px front card while
+     staying inside the 500px stage, clear of the H2 and the nav dots. */
+  .home-trust-carousel__orbit {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 520px;
+    height: 507px;
+    margin: -253px 0 0 -260px;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .home-trust-carousel__ring {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    z-index: 1;
+  }
+
+  .home-trust-carousel__face {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 368px;
+    height: 448px;
+    margin: -224px 0 0 -184px;
+    backface-visibility: hidden;
+    pointer-events: none;
+  }
+
+  .home-trust-carousel__face[data-front] {
+    pointer-events: auto;
+  }
+
+  .home-trust-carousel__face .home-landing-control-card {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Drag affordance — mono chip under the front card, gone after first touch. */
+  .home-trust-carousel__hint {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    padding: 4px 10px;
+    background-color: var(--elevated-surface);
+    border: 0.844px solid var(--stroke);
+    border-radius: 10px;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 11px;
+    line-height: 16px;
+    color: var(--subtle-text);
+    pointer-events: none;
+  }
+
+  .home-trust-carousel__arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border-radius: 10px;
+    background-color: var(--alt-surface);
+    border: 0.844px solid var(--stroke);
+    color: var(--text);
+    cursor: pointer;
+    appearance: none;
+  }
+
+  /* Kit ghost pattern — a fill change on hover, never a dim. */
+  .home-trust-carousel__arrow:hover {
+    background-color: var(--weak-branded-surface);
+  }
+
+  .home-trust-carousel__arrow svg {
+    display: block;
+    width: 14px;
+    height: 14px;
+  }
+
+  .home-trust-carousel__dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+  }
+
+  .home-trust-carousel__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 0;
+    padding: 0;
+    background-color: var(--stroke);
+    cursor: pointer;
+  }
+
+  .home-trust-carousel__dot--active {
+    background-color: var(--inverted-surface);
+  }
+
+  /* Mobile — the testimonials scroll-snap recipe, same six cards.
+     `display` flips inside the max-width query below — declaring it here
+     would out-cascade the desktop gating (same specificity, later rule). */
+  .home-trust-carousel__mobile {
+    display: none;
+    gap: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 16%;
+    padding-inline: 16%;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .home-trust-carousel__mobile::-webkit-scrollbar {
+    display: none;
+  }
+
+  .home-trust-carousel__mobile-slide {
+    flex: 0 0 calc(100vw - 64px);
+    max-width: 368px;
+    /* The fixed-width control card inside would otherwise set the slide's
+       min-content to 368px and defeat the flex-basis on small screens. */
+    min-width: 0;
+    scroll-snap-align: center;
+  }
+
+  .home-trust-carousel__dots--mobile {
+    display: none;
+  }
+
+  @media (max-width: 1023.98px) {
+    .home-trust-carousel__mobile {
+      display: flex;
+    }
+
+    .home-trust-carousel__dots--mobile {
+      display: flex;
+    }
+  }
+
+  /* ── Card visual — connected-tool toggles (reach card) ── */
+
+  .home-trust-toggle {
+    position: relative;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    width: 36px;
+    height: 20px;
+    border-radius: 999px;
+    background-color: var(--alt-surface);
+    border: 0.844px solid var(--stroke);
+  }
+
+  .home-trust-toggle__knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    box-sizing: border-box;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: var(--surface);
+    border: 0.844px solid var(--stroke);
+  }
+
+  .home-trust-toggle--on {
+    background-color: var(--palette-green-20);
+    border-color: var(--palette-green-20);
+  }
+
+  .home-trust-toggle--on .home-trust-toggle__knob {
+    left: auto;
+    right: 2px;
+    border-color: transparent;
+  }
+
+  /* ── Card visual — owner blobs (accounts card) ── */
+
+  .home-trust-blobs {
+    position: relative;
+    width: 100%;
+  }
+
+  .home-trust-blobs__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .home-trust-blobs__wire {
+    fill: none;
+    stroke: var(--palette-chrome-50);
+    stroke-width: 2;
+    stroke-dasharray: 1 8;
+    stroke-linecap: round;
+  }
+
+  /* Owner tag — the mono namespace-chip recipe. */
+  .home-trust-blobs__tag {
+    position: absolute;
+    padding: 4px 10px;
+    background-color: var(--elevated-surface);
+    border: 0.844px solid var(--stroke);
+    border-radius: 10px;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 11px;
+    line-height: 16px;
+    color: var(--subtle-text);
+  }
+
+  /* ── Card visual — secrets vault (dark panel + key pancake) ── */
+
+  .home-trust-vault {
+    position: relative;
+    width: 100%;
+    /* Room for the key pancake poking above the panel. */
+    padding-top: 18px;
+  }
+
+  .home-trust-vault__panel {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 200px;
+    padding: 20px;
+    background-color: var(--inverted-surface);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-family: var(--font-mono, ui-monospace, "JetBrains Mono", "SFMono-Regular", Menlo, monospace);
+    font-size: 13px;
+    line-height: 21px;
+    font-weight: 500;
+  }
+
+  .home-trust-vault__row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .home-trust-vault__dot {
+    flex-shrink: 0;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--palette-green-20);
+  }
+
+  .home-trust-vault__path {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--text-on-inverted-surface);
+  }
+
+  .home-trust-vault__mask {
+    flex-shrink: 0;
+    letter-spacing: 1px;
+    color: var(--palette-chrome-60);
+  }
+
+  .home-trust-vault__pancake {
+    position: absolute;
+    top: 0;
+    right: -6px;
+    width: 64px;
+    height: 64px;
+    transform: rotate(-8deg);
+    z-index: 1;
+  }
+
+  .home-trust-vault__pancake img {
+    position: absolute;
+    display: block;
+  }
+
+  .home-trust-vault__pancake-side {
+    left: 0;
+    bottom: 0;
+  }
+
+  .home-trust-vault__pancake-top {
+    left: 1px;
+    top: -4px;
+  }
+
+  .home-trust-vault__pancake-key {
+    left: 19px;
+    top: 10px;
+  }
+
   /* ─────────────────── Pricing page ───────────────────
      Copy lives in `lib/copy.ts → pricing.*`. Layout mirrors the home-landing
      section grammar (centered header + figure) so the page feels like a sibling
