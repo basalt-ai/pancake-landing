@@ -2251,7 +2251,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--spacing-xl);
+    gap: var(--spacing-xxl);
     width: 100%;
   }
 
@@ -2259,8 +2259,10 @@
     position: relative;
     width: min(640px, 100%);
     aspect-ratio: 640 / 200;
-    /* Stage → title reads a step wider than the text stack's rhythm. */
-    margin-bottom: var(--spacing-md);
+    /* Stage → title gets a real pause (founder: the title sat glued to the
+       orbit's bleeding bottom arc). 40px + the 24px flex gap leaves ~44px
+       of air past the 20px arc bleed. */
+    margin-bottom: calc(2.5 * var(--spacing-xl));
   }
 
   /* The outer ellipse deliberately bottoms 20px past the design box (the

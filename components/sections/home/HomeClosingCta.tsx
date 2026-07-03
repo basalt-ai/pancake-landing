@@ -14,17 +14,17 @@
  *
  * Visual bookends the hero: the eye-tracking mascot sits among two dotted
  * orbits (hero stroke recipe verbatim) with four two-tone satellite
- * pancakes placed parametrically ON the rings, gaze locked on the CTA
- * button — the character points at the ask, which also works on touch.
- * Entrance: play-once GSAP fly-in along each satellite's radial vector;
- * slow CSS floats after. Reduced-motion / no-JS render the assembled
- * state. One client component so the button ref feeding `getTarget` lives
- * beside the mascot (the HomeIntegrationsCloud split — client components
- * still SSR, no SEO cost). Stage geometry is percentage-based, so the
- * composition holds at any width without a mobile fork.
+ * pancakes placed parametrically ON the rings. The mascot follows the
+ * cursor exactly like the hero's (founder call 2026-07-03 — no
+ * `getTarget`, so `useCursorTracking` falls back to the real pointer);
+ * the fork-cursor swap stays off next to the primary button. Entrance:
+ * play-once GSAP fly-in along each satellite's radial vector; slow CSS
+ * floats after. Reduced-motion / no-JS render the assembled state.
+ * Stage geometry is percentage-based, so the composition holds at any
+ * width without a mobile fork.
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { gsap, useGSAP, ScrollTrigger } from "@/lib/gsap";
 import { PancakeMonster } from "@/components/mascot/pancake-monster/PancakeMonster";
@@ -78,15 +78,6 @@ function DecorPancake({ variant, className }: { variant: keyof typeof PANCAKE_TI
 export function HomeClosingCta() {
   const rootRef = useRef<HTMLDivElement>(null);
   const monsterSlotRef = useRef<HTMLDivElement>(null);
-  const ctaRef = useRef<HTMLAnchorElement>(null);
-
-  /* Mascot gaze target = the CTA button's live center. */
-  const getCtaTarget = useCallback(() => {
-    const el = ctaRef.current;
-    if (!el) return null;
-    const r = el.getBoundingClientRect();
-    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
-  }, []);
 
   /* PancakeMonster takes a px size — measure the CSS-clamped slot, the
      same pattern the integrations cloud uses. */
@@ -186,12 +177,7 @@ export function HomeClosingCta() {
           </span>
         ))}
         <div ref={monsterSlotRef} className="home-closing__monster">
-          <PancakeMonster
-            size={monsterSize}
-            pancakeColor="yellow"
-            getTarget={getCtaTarget}
-            disableForkCursor
-          />
+          <PancakeMonster size={monsterSize} pancakeColor="yellow" disableForkCursor />
         </div>
       </div>
 
@@ -206,7 +192,6 @@ export function HomeClosingCta() {
       </p>
       <div className="home-landing-closing-cta">
         <a
-          ref={ctaRef}
           href="https://app.getpancake.ai"
           className="button inline-flex w-fit shrink-0 items-center justify-center no-underline"
           data-size="lg"
