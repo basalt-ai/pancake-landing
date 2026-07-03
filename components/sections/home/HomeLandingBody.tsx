@@ -127,10 +127,12 @@ export function HomeLandingBody() {
         <HomeLandingTestimonials />
       </section>
 
-      {/* UGC video wall — real founders on camera, following the X posts so
-          the two proof formats read as one arc. Reads public/ugc/*.mp4 at
-          build time; production renders nothing until clips are dropped in
-          (see public/ugc/README.md); dev + Vercel previews show the designed
+      {/* UGC video wall — real founders on camera, riding the X-posts'
+          "Take it from them" title: no header of its own (founder call
+          2026-07-03 — its old H2 read as AI slop, and one title covers
+          both proof formats). Reads public/ugc/*.mp4 at build time;
+          production renders nothing until clips are dropped in (see
+          public/ugc/README.md); dev + Vercel previews show the designed
           empty state. `alt` keeps the surface alternation vs the plain
           testimonial band. */}
       <HomeUGCWall alt />

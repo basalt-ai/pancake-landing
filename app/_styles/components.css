@@ -1007,9 +1007,9 @@
        faq +29, blog +47 at 1474×799) plus the org band. */
     .home-landing-section--org,
     .home-landing-section--testimonials,
+    .home-ugc,
     section[aria-labelledby="home-landing-slack-heading"],
     section[aria-labelledby="home-landing-usecases-heading"],
-    section[aria-labelledby="home-landing-ugc-heading"],
     section[aria-labelledby="home-landing-trust-heading"],
     section[aria-labelledby="home-landing-blog-heading"] {
       padding-block: calc(2.5 * var(--spacing-xl)) calc(1.5 * var(--spacing-xl));
@@ -1019,7 +1019,6 @@
     .home-landing-section--testimonials,
     section[aria-labelledby="home-landing-slack-heading"] .home-landing-section__inner,
     section[aria-labelledby="home-landing-usecases-heading"] .home-landing-section__inner,
-    section[aria-labelledby="home-landing-ugc-heading"] .home-landing-section__inner,
     section[aria-labelledby="home-landing-trust-heading"] .home-landing-section__inner,
     section[aria-labelledby="home-landing-blog-heading"] .home-landing-section__inner {
       gap: calc(2 * var(--spacing-xl));

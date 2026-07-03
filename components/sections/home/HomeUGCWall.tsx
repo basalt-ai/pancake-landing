@@ -23,8 +23,6 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { HOME_PAGE_CONTAINER_CLASS } from "@/components/sections/home/home-layout";
-import { H2 } from "@/components/ui/Headings";
 
 /* ────────────────────────── Filesystem contract ────────────────────────── */
 
@@ -260,20 +258,15 @@ export function HomeUGCWall({ alt = false }: { alt?: boolean } = {}) {
   if (!hasClips && !showPlaceholders) return null;
 
   return (
+    /* No visible header (founder call 2026-07-03: "Founders on camera, real
+       workloads handed off" read as AI slop) — the wall rides under the
+       X-posts' "Take it from them", so the two proof formats literally share
+       one title. aria-label keeps the landmark named for screen readers. */
     <section
       className={`home-landing-section${alt ? " home-landing-section--alt" : ""} home-ugc`}
-      aria-labelledby="home-landing-ugc-heading"
+      aria-label="Founders on camera"
       data-ugc-wall
     >
-      <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
-        <header className="home-landing-section__header">
-          {/* Single-line header — one-screen budget (founder rule). */}
-          <H2 id="home-landing-ugc-heading" className="heading home-landing-section__title text-center">
-            Founders on camera, real workloads handed off
-          </H2>
-        </header>
-      </div>
-
       {/* Full-bleed band OUTSIDE the page container — same recipe as the
           X-posts and org bands. The strip is centered on the page axis by
           the init script when it overflows (symmetric crops both edges);
