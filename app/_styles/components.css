@@ -993,18 +993,34 @@
   }
 
   @media (min-width: 1024px) {
-    /* One-screen cap (same founder rule as the integrations cloud). The org
-       chart is structured content — squad cards with live task rows — so
-       instead of cropping it scales DOWN: a height-driven width cap on the
-       stage, whose children are all container-relative. Band paddings and
-       the header gap get the same trim as the integrations section. The
-       260px allowance = paddings (80) + header (~132) + gap (32) + the
-       stage's 12px paint fudge; tall viewports never hit the cap (the
-       1136px design width wins), tiny ones floor at 780px so the cards
-       stay readable. */
-    .home-landing-section--org {
+    /* One-screen budget (founder rule: every section fits 100svh at common
+       desktop sizes — never by shrinking or cropping content). Levers are
+       always the same: single-line headers in the TSX, trimmed band
+       paddings, and a halved header-to-media gap. Applied to every section
+       the 100vh audit flagged (slack +177, use-cases +211, ugc +126,
+       faq +29, blog +47 at 1474×799) plus the org band. */
+    .home-landing-section--org,
+    section[aria-labelledby="home-landing-slack-heading"],
+    section[aria-labelledby="home-landing-usecases-heading"],
+    section[aria-labelledby="home-landing-ugc-heading"],
+    section[aria-labelledby="home-faq-heading"],
+    section[aria-labelledby="home-landing-blog-heading"] {
       padding-block: calc(2.5 * var(--spacing-xl)) calc(1.5 * var(--spacing-xl));
+    }
+
+    .home-landing-section--org,
+    section[aria-labelledby="home-landing-slack-heading"] .home-landing-section__inner,
+    section[aria-labelledby="home-landing-usecases-heading"] .home-landing-section__inner,
+    section[aria-labelledby="home-landing-ugc-heading"] .home-landing-section__inner,
+    section[aria-labelledby="home-faq-heading"] .home-landing-section__inner,
+    section[aria-labelledby="home-landing-blog-heading"] .home-landing-section__inner {
       gap: calc(2 * var(--spacing-xl));
+    }
+
+    /* The card fan runs 3px over the budget at 799-tall windows — shave
+       its bottom band padding only (the fan's own stage is untouchable). */
+    section[aria-labelledby="home-landing-usecases-heading"] {
+      padding-block-end: var(--spacing-xl);
     }
   }
 

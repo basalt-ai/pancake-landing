@@ -249,10 +249,10 @@ export function HomeUGCWall({ alt = false }: { alt?: boolean } = {}) {
     >
       <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
         <header className="home-landing-section__header">
+          {/* Single-line header — one-screen budget (founder rule). */}
           <H2 id="home-landing-ugc-heading" className="heading home-landing-section__title text-center">
-            Founders on camera
+            Founders on camera, real workloads handed off
           </H2>
-          <p className="home-landing-section__lede text-center">Real people. Real workloads handed off.</p>
         </header>
       </div>
 

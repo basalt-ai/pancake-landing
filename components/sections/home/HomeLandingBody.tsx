@@ -69,10 +69,10 @@ export function HomeLandingBody() {
       <section className="home-landing-section" aria-labelledby="home-landing-slack-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
+            {/* Single-line header — one-screen budget (founder rule). */}
             <H2 id="home-landing-slack-heading" className="heading home-landing-section__title text-center">
-              Pancake lives in Slack
+              Pancake lives in Slack and doesn’t wait to be asked
             </H2>
-            <p className="home-landing-section__lede text-center">It doesn’t wait to be asked.</p>
           </header>
           <div className="home-landing-section__figure home-landing-section__figure--slack">
             <SlackUI />
@@ -87,10 +87,10 @@ export function HomeLandingBody() {
       <section className="home-landing-section home-landing-section--alt" aria-labelledby="home-landing-usecases-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
+            {/* Single-line header — one-screen budget (founder rule). */}
             <H2 id="home-landing-usecases-heading" className="heading home-landing-section__title text-center">
-              Give Pancake a job
+              Give Pancake a job, come back to finished work
             </H2>
-            <p className="home-landing-section__lede text-center">Ask in Slack. Come back to finished work.</p>
           </header>
           <HomeUseCases />
         </div>
