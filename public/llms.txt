@@ -95,3 +95,4 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 ---
 
 Last updated: July 3, 2026
+- [How to Run a One-Person Company in 2026 (The Complete Playbook)](https://getpancake.ai/blog/how-to-run-one-person-company-2026) — A complete playbook for building and running a one-person company (OPC) in 2026 using AI agents. Covers the OPC stack, three proven revenue models (productized service, micro-SaaS, content-driven affiliate), step-by-step build guide, and how AI co-founder platforms like Pancake make it achievable without hiring. July 3, 2026.
