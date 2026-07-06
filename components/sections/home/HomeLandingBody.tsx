@@ -169,7 +169,9 @@ export function HomeLandingBody() {
           orbits scene around the button — the old edge-bleed decor
           pancakes are gone, absorbed into the orbit satellites. (SOC 2
           left the note deliberately: the trust carousel owns compliance
-          two sections up.) */}
+          two sections up.) (Merge note: main's stopgap inline-styled
+          "From the blog" link list from PR #172 is superseded by
+          HomeBlogCards below — same crawler-facing real anchors, designed.) */}
       <section className="home-landing-section home-landing-section--alt home-landing-section--closing" aria-labelledby="home-landing-closing-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner home-landing-section__inner--closing`}>
           <HomeClosingCta />
