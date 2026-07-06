@@ -51,7 +51,7 @@ const USE_CASES: UseCase[] = [
     id: "engineering",
     accent: "purple",
     kicker: "Engineering",
-    headline: "Ships while you sleep.",
+    headline: "Fixes bugs, opens PRs.",
     body: "Report the bug on your way to bed. Wake up to a tested fix and an open pull request, not a ticket.",
     user: {
       name: "Sam",
@@ -75,8 +75,8 @@ const USE_CASES: UseCase[] = [
     id: "finance",
     accent: "orange",
     kicker: "Finance",
-    headline: "It never forgets.",
-    body: "Hand off the chasing you keep postponing. It reminds, tracks replies, and keeps nudging until the money lands.",
+    headline: "Chases overdue invoices.",
+    body: "It emails every late client, tracks replies, and keeps nudging until the money lands.",
     user: {
       name: "Priya",
       initial: "P",
@@ -99,8 +99,8 @@ const USE_CASES: UseCase[] = [
     id: "outbound",
     accent: "pink",
     kicker: "Outbound",
-    headline: "One ask, every tool.",
-    body: "Ask once. It works across your CRM, inbox, and analytics in a single run. It does the legwork.",
+    headline: "Flags hot leads, drafts replies.",
+    body: "It watches your signups, cross-checks CRM, inbox, and analytics, and puts the follow-ups in your drafts.",
     user: {
       name: "Mara",
       initial: "M",
@@ -123,8 +123,8 @@ const USE_CASES: UseCase[] = [
     id: "content",
     accent: "yellow",
     kicker: "Content",
-    headline: "Real work, attached.",
-    body: "Get answers with the work attached: posts, PDFs, one-pagers. Grounded in your docs and your codebase.",
+    headline: "Writes your launch content.",
+    body: "Give it a changelog, get the blog post, the X thread, and the one-pager. Grounded in your docs.",
     user: {
       name: "Leo",
       initial: "L",
