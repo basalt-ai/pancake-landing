@@ -148,8 +148,12 @@ export function HomeLandingBody() {
       <section className="home-landing-section" aria-labelledby="home-landing-trust-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
+            {/* Title spans the whole deck (founder 2026-07-06: the old
+                "It acts as you. You keep the last word." only covered the
+                approval card): accounts (accounts/vault/reach cards), data
+                (isolation/audit cards), call (approve/SOC 2 cards). */}
             <H2 id="home-landing-trust-heading" className="heading home-landing-section__title text-center">
-              It acts as you. You keep the last word.
+              Your accounts, your data, your call.
             </H2>
           </header>
           <HomeTrustCarousel />
