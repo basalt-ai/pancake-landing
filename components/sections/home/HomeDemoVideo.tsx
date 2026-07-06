@@ -163,17 +163,10 @@ export function HomeDemoVideo() {
       <div className={`home-demo-video__wrap ${HOME_PAGE_CONTAINER_CLASS}`} onPointerEnter={warmFilm}>
         <div className="home-film">
           <div className="home-film__intro">
+            {/* Heading only — the lede + "Watch with sound" link read as
+                clutter (founder call 2026-07-03); the frame click target
+                carries the play affordance. */}
             <h2 className="heading home-film__heading">Meet Pancake in 51 seconds</h2>
-            <p className="home-film__body">
-              One coworker in Slack. A whole team behind it. Watch the autonomy level climb to
-              99.86%.
-            </p>
-            <button type="button" className="home-film__watch" onClick={startFilm}>
-              Watch with sound
-              <span className="home-film__watch-arrow" aria-hidden>
-                →
-              </span>
-            </button>
           </div>
 
           <div className="home-film__media">
@@ -212,8 +205,7 @@ export function HomeDemoVideo() {
               {!started && (
                 <>
                   {/* Whole-frame click target — no play chip: the ambient
-                      teaser already signals video, and the "Watch with
-                      sound" link carries the visible affordance. */}
+                      teaser already signals video. */}
                   <button
                     type="button"
                     className="home-film__cta"

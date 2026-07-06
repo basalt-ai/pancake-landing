@@ -54,50 +54,6 @@
     color: var(--text);
   }
 
-  .home-film__body {
-    margin: 0;
-    font-family: var(--font-body);
-    font-size: var(--font-size-body-regular);
-    line-height: 1.5;
-    color: var(--subtle-text);
-  }
-
-  /* Low-commitment text CTA (leaders reserve primary buttons for hero +
-     closing band). Zero padding so it left-aligns with the copy above. */
-  .home-film__watch {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    width: fit-content;
-    margin: var(--spacing-sm) 0 0;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-    font-family: var(--font-body);
-    font-size: var(--font-size-body-regular);
-    font-weight: var(--font-heavy);
-    color: var(--text);
-    transition: color 150ms ease;
-  }
-
-  .home-film__watch:hover {
-    color: var(--interactive-text);
-  }
-
-  .home-film__watch:focus-visible {
-    outline: 2px solid var(--interactive-text);
-    outline-offset: 2px;
-  }
-
-  .home-film__watch-arrow {
-    transition: translate 200ms ease;
-  }
-
-  .home-film__watch:hover .home-film__watch-arrow {
-    translate: 3px 0;
-  }
-
   /* ── Film frame ──────────────────────────────────────────────────────── */
   /* Mascot peeking over the frame's top edge; the scroll-scale entrance
      (frame starts at 0.94) reveals a bit more of it early. */
@@ -152,7 +108,7 @@
   }
 
   /* Whole-frame click target — no visible play chip (the ambient teaser
-     already signals video; "Watch with sound" is the labeled affordance). */
+     already signals video). */
   .home-film__cta {
     position: absolute;
     inset: 0;
@@ -202,9 +158,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .home-film__film,
-    .home-film__watch,
-    .home-film__watch-arrow {
+    .home-film__film {
       transition: none;
     }
   }
