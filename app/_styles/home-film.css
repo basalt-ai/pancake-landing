@@ -1,0 +1,165 @@
+/**
+ * "Living film band" chrome for `components/sections/home/HomeDemoVideo.tsx`
+ * (self-imported by the component). Structural section classes
+ * (.home-demo-video, __wrap) stay in components.css — this file owns the
+ * v4.4 split layout: copy column LEFT (claim), film RIGHT (proof), the
+ * pattern every leader (Linear/Stripe/Attio/Clay/Loom/Figma/Notion) uses
+ * for the first media+copy row.
+ */
+@layer component {
+  /* ── Split grid ────────────────────────────────────────────────────────
+     Mobile: intro → film. Desktop: copy column left at ~42%, film right —
+     the 58% film keeps the band roughly half the scroll cost of the old
+     full-width version. */
+  .home-film {
+    display: grid;
+    grid-template-areas:
+      "intro"
+      "media";
+    gap: var(--spacing-xxl);
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .home-film {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      grid-template-areas: "intro media";
+      column-gap: calc(3 * var(--spacing-xxl));
+      align-items: center;
+    }
+  }
+
+  .home-film__intro {
+    grid-area: intro;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .home-film__media {
+    grid-area: media;
+    position: relative;
+  }
+
+  /* ── Copy column ─────────────────────────────────────────────────────── */
+  /* Benefit heading — one visual tier below the page's section H2s
+     (split rows share horizontal space; every leader sizes down). */
+  .home-film__heading {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--font-size-header-03);
+    line-height: 1.12;
+    letter-spacing: -0.4px;
+    color: var(--text);
+  }
+
+  /* ── Film frame ──────────────────────────────────────────────────────── */
+  /* Mascot peeking over the frame's top edge; the scroll-scale entrance
+     (frame starts at 0.94) reveals a bit more of it early. */
+  .home-film__mascot {
+    position: absolute;
+    top: -24px;
+    right: 8%;
+    z-index: 0;
+    width: 68px;
+    height: auto;
+    rotate: -8deg;
+    pointer-events: none;
+  }
+
+  .home-film__frame {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-xl);
+    corner-shape: squircle;
+    overflow: hidden;
+    background-color: var(--weak-branded-surface);
+    box-shadow:
+      0 2px 6px color-mix(in srgb, var(--text) 8%, transparent),
+      0 32px 72px -28px color-mix(in srgb, var(--text) 30%, transparent);
+  }
+
+  .home-film__player {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Full film sits above the teaser, revealed in place on click. */
+  .home-film__film {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 220ms ease;
+  }
+
+  .home-film__frame--playing .home-film__film {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .home-film__frame--playing .home-film__teaser {
+    visibility: hidden;
+  }
+
+  /* Whole-frame click target — no visible play chip (the ambient teaser
+     already signals video). */
+  .home-film__cta {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .home-film__cta:focus-visible {
+    outline: 3px solid var(--surface);
+    outline-offset: -3px;
+    border-radius: inherit;
+  }
+
+  /* Small corner duration badge (replaces the old stacked pill). */
+  .home-film__duration {
+    position: absolute;
+    right: var(--spacing-lg);
+    bottom: var(--spacing-lg);
+    z-index: 2;
+    padding: calc(var(--spacing-sm) + 1px) var(--spacing-lg);
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--inverted-surface) 55%, transparent);
+    color: var(--text-on-inverted-surface);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-small);
+    font-weight: var(--font-heavy);
+    font-variant-numeric: tabular-nums;
+    pointer-events: none;
+  }
+
+  /* Transcript stays in the DOM for WCAG 1.2.1 + GEO crawlers but is
+     visually removed (the visible disclosure line read as clutter). */
+  .home-film__transcript {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-film__film {
+      transition: none;
+    }
+  }
+}

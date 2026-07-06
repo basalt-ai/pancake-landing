@@ -100,7 +100,7 @@ const SEED_IDEAS_RAW: Omit<RoadmapIdea, "commentCount">[] = [
     id: "seed-ux-research-squad",
     title: "UX research squad",
     description:
-      "A dedicated squad that runs user interviews, synthesises transcripts, and ships a prioritised insights doc every week — so product decisions stop being vibes.",
+      "A dedicated squad that runs user interviews, synthesises transcripts, and ships a prioritised insights doc every week. Product decisions stop being vibes.",
     tag: "squads",
     status: "planned",
     authorName: "Camille",
@@ -120,7 +120,7 @@ const SEED_IDEAS_RAW: Omit<RoadmapIdea, "commentCount">[] = [
     id: "seed-linear-two-way-sync",
     title: "Two-way Linear sync",
     description:
-      "Let a squad open, update, and close Linear issues — and reflect status changes back on the roadmap automatically. No more copy-pasting between tools.",
+      "Let a squad open, update, and close Linear issues. Status changes sync back to the roadmap automatically. No more copy-pasting between tools.",
     tag: "integrations",
     status: "planned",
     authorName: null,
@@ -130,7 +130,7 @@ const SEED_IDEAS_RAW: Omit<RoadmapIdea, "commentCount">[] = [
     id: "seed-voice-briefings",
     title: "Voice briefings",
     description:
-      "A spoken daily standup from Pancake — what shipped overnight, what's blocked, what needs a decision — playable from your phone before you open the laptop.",
+      "A spoken daily standup from Pancake: what shipped overnight, what's blocked, what needs a decision. Playable from your phone before you open the laptop.",
     tag: "core-features",
     status: "open",
     authorName: "Guillaume",
@@ -160,7 +160,7 @@ const SEED_IDEAS_RAW: Omit<RoadmapIdea, "commentCount">[] = [
     id: "seed-shared-company-memory",
     title: "Shared company memory",
     description:
-      "One memory every squad reads from and writes to — decisions, brand voice, customer facts — so the engineering agent knows what the growth agent just learned.",
+      "One memory every squad reads from and writes to: decisions, brand voice, customer facts. That way the engineering agent knows what the growth agent just learned.",
     tag: "core-features",
     status: "in-progress",
     authorName: "François",

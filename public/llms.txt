@@ -1,10 +1,10 @@
 # Pancake
 
-> Pancake is the AI co-founder infrastructure that takes you from $1 to $1M in revenue without hiring. It deploys an org of AI agents — growth, engineering, operations — that run 24/7, work while you sleep, and report back in Slack. Solo or multiplayer. Pancake runs on Pancake.
+> Pancake is the AI coworker that does the work for you. One coworker in your Slack, a whole team of agents behind it — growth, engineering, operations — running 24/7 and reporting back in Slack. $49/month flat, tokens at the labs' public price, no tiers. Built on the OpenClaw runtime. Takes founding teams from $1 to $1M without hiring.
 
 ## What Pancake does
 
-Pancake gives you an AI co-founder that knows your company better than you and handles 50% of the job. Every agent, role, and workflow is defined in Markdown files you control. Agents pull context from your Notion, docs, and meeting notes — they know your business. Every tool call, message, and decision is written to an immutable log. You always have the last word.
+Pancake gives you an AI coworker that knows your company better than you and handles 50–70% of recurring work by default. Behind it, squads of agents with their own memory, tools, and schedules work continuously. Agents pull context from your Notion, docs, and meeting notes — they know your business. Every tool call, message, and decision is written to an immutable log. You always have the last word.
 
 ## Who it's for
 
@@ -22,7 +22,7 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 - [OpenClaw vs Pancake](https://getpancake.ai/openclaw-vs-pancake) — head-to-head comparison: the open-source agent runtime you assemble yourself vs the managed product built on top of it that runs your company. The engine vs the car. June 26, 2026.
 - [Pricing](https://getpancake.ai/pricing) — plans and what's included
 - [Blog](https://getpancake.ai/blog) — founder stories and industry analysis
-- [Sign up](https://getpancake.ai/signup) — try for free, no credit card needed
+- [Sign up](https://app.getpancake.ai) — try for free, no credit card needed, $100 in free credits
 
 ## Blog
 

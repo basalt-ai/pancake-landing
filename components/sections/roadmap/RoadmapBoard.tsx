@@ -179,7 +179,7 @@ export function RoadmapBoard({
     } catch {
       setIdeas(prev); // revert (would re-open the detail modal) …
       setSelectedId(null); // … so close it, otherwise it covers the notice
-      setNotice("Couldn't delete that idea — your admin session may have expired.");
+      setNotice("Couldn't delete that idea. Your admin session may have expired.");
     }
   }
 
@@ -276,7 +276,7 @@ export function RoadmapBoard({
         <p className="roadmap-empty">
           {query.trim()
             ? `No ideas match “${query.trim()}”.`
-            : "No ideas yet — be the first to share one."}
+            : "No ideas yet. Be the first to share one."}
         </p>
       ) : (
         <>
@@ -309,7 +309,7 @@ export function RoadmapBoard({
             </div>
           ) : truncated ? (
             <p className="roadmap-showmore__count">
-              Showing the top {filteredIdeas.length} — search to find more.
+              Showing the top {filteredIdeas.length}. Search to find more.
             </p>
           ) : filteredIdeas.length > PAGE_SIZE ? (
             <p className="roadmap-showmore__count">Showing all {filteredIdeas.length}</p>
@@ -323,7 +323,7 @@ export function RoadmapBoard({
         <div className="roadmap-authbar">
           {!backendEnabled ? (
             <span className="roadmap-authbar__note">
-              Preview mode — connect Supabase to enable posting and saved votes.
+              Preview mode: connect Supabase to enable posting and saved votes.
             </span>
           ) : (
             <span className="roadmap-authbar__note">
@@ -379,7 +379,7 @@ function IdeaCard({
         className="roadmap-vote"
         data-voted={voted ? "" : undefined}
         aria-pressed={voted}
-        aria-label={`Upvote “${idea.title}” — ${idea.voteCount} votes`}
+        aria-label={`Upvote “${idea.title}”, ${idea.voteCount} votes`}
         onClick={onVote}
       >
         <CaretUpIcon />

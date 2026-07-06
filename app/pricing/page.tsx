@@ -22,16 +22,16 @@ import { H3 } from "@/components/ui/Headings";
 import { pricing } from "@/lib/copy";
 
 export const metadata: Metadata = {
-  title: "Pricing — $49/month for an always-on AI agent · Pancake",
+  title: "Pricing: $49/month for an always-on AI agent · Pancake",
   description: pricing.subtitle,
   openGraph: {
-    title: "Pancake Pricing — $49/month flat for an AI agent",
+    title: "Pancake Pricing: $49/month flat for an AI agent",
     description: pricing.subtitle,
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pancake Pricing — $49/month flat for an AI agent",
+    title: "Pancake Pricing: $49/month flat for an AI agent",
     description: pricing.subtitle,
   },
 };
@@ -62,7 +62,7 @@ const faqPageJsonLd = {
 const productJsonLd = {
   "@context": "https://schema.org",
   "@type": "Product",
-  name: "Pancake — always-on AI agent",
+  name: "Pancake: always-on AI agent",
   description: pricing.subtitle,
   brand: { "@type": "Brand", name: "Pancake" },
   offers: {
@@ -73,7 +73,7 @@ const productJsonLd = {
     offerCount: pricing.tiers.length,
     offers: pricing.tiers.map((t) => ({
       "@type": "Offer",
-      name: `${t.planName} — ${pricing.currencySymbol}${
+      name: `${t.planName}: ${pricing.currencySymbol}${
         t.totalDollars - pricing.infrastructureDollars
       } token pack`,
       price: t.totalDollars,

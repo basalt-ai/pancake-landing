@@ -5,8 +5,8 @@ import { Footer } from "@/components/shared/Footer";
 import { Nav } from "@/components/shared/Nav";
 
 export const metadata: Metadata = {
-  title: "Meeting booked — Pancake",
-  description: "Thanks for booking — see you soon.",
+  title: "Meeting booked · Pancake",
+  description: "Thanks for booking. See you soon.",
   robots: { index: false, follow: false },
 };
 

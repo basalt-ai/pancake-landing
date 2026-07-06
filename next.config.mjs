@@ -29,6 +29,9 @@ const nextConfig = {
       // only — clients must not cache these past a future revival.
       { source: "/creators", destination: "/", permanent: false },
       { source: "/influencers", destination: "/", permanent: false },
+      // llms.txt (and possibly LLM answers built from it) link /signup;
+      // the route never existed — send those visitors to the real signup.
+      { source: "/signup", destination: "https://app.getpancake.ai", permanent: false },
       ...dead.map((path) => ({
         source: `/${path}`,
         destination: "/",

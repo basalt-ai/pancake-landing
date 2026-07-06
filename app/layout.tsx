@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { Lato } from "next/font/google";
 import "./globals.css";
 import "./_styles/components.css";
+import "./_styles/home-ugc.css";
 import { AnalyticsEvents } from "@/components/analytics/AnalyticsEvents";
 import { PostHogAttribution } from "@/components/analytics/PostHogAttribution";
 import { ProductHuntBadge } from "@/components/shared/ProductHuntBadge";
@@ -57,40 +58,50 @@ const aeonikFono = localFont({
   display: "swap",
 });
 
+// Canonical host is the apex domain: https://getpancake.ai serves 200 directly,
+// and the www host 308-redirects to it (verified via curl -sI).
+// Every absolute URL below (canonical, og:url, JSON-LD) uses the apex host.
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.getpancake.ai"),
-  title: "The superagent that makes your company autonomous",
-  description: "Pancake gets you a superagent that knows your company better than you and handles 50% of the job.",
+  metadataBase: new URL("https://getpancake.ai"),
+  title: "Pancake: The AI coworker that does the work for you",
+  description:
+    "Pancake connects to your tools and does the work for you. Autonomously. One AI coworker in Slack, a whole team of agents behind it. $49/month, no tiers.",
   alternates: {
-    canonical: "https://www.getpancake.ai",
+    canonical: "https://getpancake.ai",
   },
   openGraph: {
     type: "website",
-    url: "https://www.getpancake.ai",
-    title: "The superagent that makes your company autonomous",
-    description: "Pancake gets you a superagent that knows your company better than you and handles 50% of the job.",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake — The superagent" }],
+    url: "https://getpancake.ai",
+    title: "Pancake: The AI coworker that does the work for you",
+    description:
+      "Pancake connects to your tools and does the work for you. Autonomously. One AI coworker in Slack, a whole team of agents behind it. $49/month, no tiers.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake, the AI coworker" }],
     siteName: "Pancake",
   },
   twitter: {
     card: "summary_large_image",
-    title: "The superagent that makes your company autonomous",
-    description: "Pancake gets you a superagent that knows your company better than you and handles 50% of the job.",
+    title: "Pancake: The AI coworker that does the work for you",
+    description:
+      "Pancake connects to your tools and does the work for you. Autonomously. One AI coworker in Slack, a whole team of agents behind it. $49/month, no tiers.",
     images: ["/og-image.png"],
   },
 };
 
 // Organization JSON-LD — injected on every page via root layout.
 // Helps search engines and AI crawlers understand what Pancake is.
+// This is the SINGLE Organization schema for the site (a second, conflicting
+// copy used to live in <body> — merged here so crawlers see one story).
+// sameAs = union of the two former lists, minus the stale trypancake.ai
+// domain; LinkedIn slug matches what the Footer actually links to (get-pancake).
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Pancake",
   alternateName: "Pancake AI",
   url: "https://getpancake.ai",
-  logo: "https://getpancake.ai/logo.png",
+  logo: "https://getpancake.ai/pancake-mark.png",
   description:
-    "Pancake is the superagent that makes your company autonomous. Deploy an org of AI agents — growth, engineering, operations — that run 24/7 and let you go from $1 to $1M in revenue without hiring.",
+    "Pancake is the AI coworker that does the work for you. It connects to your tools and works autonomously. One AI coworker in Slack, a whole team of agents behind it.",
   foundingDate: "2024",
   address: {
     "@type": "PostalAddress",
@@ -106,8 +117,16 @@ const organizationJsonLd = {
     "https://www.linkedin.com/company/get-pancake",
     "https://www.tiktok.com/@getpancake",
     "https://www.instagram.com/get.pancake/",
-    "https://trypancake.ai",
   ],
+};
+
+// WebSite JSON-LD — no SearchAction: the site has no /search route, and a
+// SearchAction pointing at a 404 hurts more than it helps.
+const webSiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Pancake",
+  url: "https://getpancake.ai",
 };
 
 const googleTagManagerId = "GTM-P3Z79WKD";
@@ -182,10 +201,14 @@ rdt("init", "${redditPixelId}");
 rdt("track", "PageVisit");`,
           }}
         />
-        {/* Organization JSON-LD — present on every page */}
+        {/* Organization + WebSite JSON-LD — present on every page */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
         />
       </head>
       {/* Body styles (margin: 0; background-color: var(--surface); color:
@@ -225,39 +248,6 @@ rdt("track", "PageVisit");`,
         <a href="#main-content" className="skip-to-content">
           Skip to main content
         </a>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify([
-              {
-                "@context": "https://schema.org",
-                "@type": "Organization",
-                name: "Pancake",
-                url: "https://www.getpancake.ai",
-                logo: "https://www.getpancake.ai/icon.png",
-                description:
-                  "Pancake gets you a superagent that knows your company better than you and handles 50% of the job.",
-                sameAs: [
-                  "https://x.com/getpancake_ai",
-                  "https://www.linkedin.com/company/getpancake",
-                  "https://www.tiktok.com/@getpancake",
-                  "https://www.instagram.com/get.pancake/",
-                ],
-              },
-              {
-                "@context": "https://schema.org",
-                "@type": "WebSite",
-                name: "Pancake",
-                url: "https://www.getpancake.ai",
-                potentialAction: {
-                  "@type": "SearchAction",
-                  target: "https://www.getpancake.ai/search?q={search_term_string}",
-                  "query-input": "required name=search_term_string",
-                },
-              },
-            ]),
-          }}
-        />
         {children}
         <AnalyticsEvents />
         <ProductHuntBadge />

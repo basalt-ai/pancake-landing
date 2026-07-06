@@ -38,10 +38,23 @@
     font-synthesis: none;
     cursor: pointer;
     corner-shape: squircle;
+    /* Hover feedback fades rather than snaps. Color-only transition — no
+       motion, so no reduced-motion override needed. */
+    transition: background-color 150ms ease, border-color 150ms ease;
   }
 
+  /**
+   * Hover — darken the pink fill slightly by mixing a touch of --text into
+   * it. (Replaces an invalid `background-opacity: 0.8` that browsers
+   * silently dropped, leaving the primary CTA with zero hover feedback.)
+   * This rule ties for specificity (0,2,0) with the data-variant rules
+   * below, so source order lets each variant's own value win at rest and
+   * the per-variant `:hover` rules (0,3,0) win on hover — this default
+   * only ever paints the brand (pink) button.
+   */
   .button:hover {
-    background-opacity: 0.8;
+    --button-background-color: color-mix(in srgb, var(--strong-branded-surface) 88%, var(--text));
+    --button-border-color: color-mix(in srgb, var(--strong-branded-surface) 88%, var(--text));
   }
 
   .button[data-size="sm"] {
@@ -90,6 +103,30 @@
   .button[data-variant="ghost"] {
     --button-background-color: transparent;
     --button-border-color: transparent;
+  }
+
+  /**
+   * Per-variant hover — same "mix a touch of --text into the fill" recipe
+   * as the default brand hover above so every filled variant darkens
+   * consistently; transparent variants (outline, ghost) gain a faint fill
+   * instead, since darkening `transparent` does nothing visible.
+   */
+  .button[data-variant="subtle"]:hover {
+    --button-background-color: color-mix(in srgb, var(--elevated-surface) 92%, var(--text));
+  }
+
+  .button[data-variant="alternative"]:hover {
+    --button-background-color: color-mix(in srgb, var(--alt-strong-branded-surface-01) 88%, var(--text));
+    --button-border-color: color-mix(in srgb, var(--alt-strong-branded-surface-01) 88%, var(--text));
+  }
+
+  .button[data-variant="outline"]:hover {
+    --button-background-color: var(--alt-surface);
+  }
+
+  .button[data-variant="negative"]:hover {
+    --button-background-color: color-mix(in srgb, var(--negative-surface) 88%, var(--text));
+    --button-border-color: color-mix(in srgb, var(--negative-surface) 88%, var(--text));
   }
 
   .button[data-variant="ghost"]:hover {
@@ -664,8 +701,14 @@
   .home-demo-video {
     width: 100%;
     background-color: var(--surface);
-    padding-top: var(--spacing-xxl);
-    padding-bottom: var(--spacing-xxl);
+    /* Founder call 2026-07-03: the hero → film seam was brutal — the dark
+       frame started 35px under the marquee's last logo while the hero
+       carries ~300px of internal air. A wide pause before the claim
+       (top) and a smaller one after (bottom) so the band breathes without
+       drifting from the use-case section below. Mobile keeps its tighter
+       override. */
+    padding-top: calc(4 * var(--spacing-xxl));
+    padding-bottom: calc(2.5 * var(--spacing-xxl));
   }
 
   .home-demo-video__wrap {
@@ -955,6 +998,39 @@
     gap: var(--spacing-home-landing-header-to-media);
   }
 
+  @media (min-width: 1024px) {
+    /* One-screen budget (founder rule: every section fits 100svh at common
+       desktop sizes — never by shrinking or cropping content). Levers are
+       always the same: single-line headers in the TSX, trimmed band
+       paddings, and a halved header-to-media gap. Applied to every section
+       the 100vh audit flagged (slack +177, use-cases +211, ugc +126,
+       faq +29, blog +47 at 1474×799) plus the org band. */
+    .home-landing-section--org,
+    .home-landing-section--testimonials,
+    .home-ugc,
+    section[aria-labelledby="home-landing-slack-heading"],
+    section[aria-labelledby="home-landing-usecases-heading"],
+    section[aria-labelledby="home-landing-trust-heading"],
+    section[aria-labelledby="home-landing-blog-heading"] {
+      padding-block: calc(2.5 * var(--spacing-xl)) calc(1.5 * var(--spacing-xl));
+    }
+
+    .home-landing-section--org,
+    .home-landing-section--testimonials,
+    section[aria-labelledby="home-landing-slack-heading"] .home-landing-section__inner,
+    section[aria-labelledby="home-landing-usecases-heading"] .home-landing-section__inner,
+    section[aria-labelledby="home-landing-trust-heading"] .home-landing-section__inner,
+    section[aria-labelledby="home-landing-blog-heading"] .home-landing-section__inner {
+      gap: calc(2 * var(--spacing-xl));
+    }
+
+    /* The card fan runs 3px over the budget at 799-tall windows — shave
+       its bottom band padding only (the fan's own stage is untouchable). */
+    section[aria-labelledby="home-landing-usecases-heading"] {
+      padding-block-end: var(--spacing-xl);
+    }
+  }
+
   .home-landing-section__inner--closing {
     gap: var(--spacing-home-hero-after-title);
   }
@@ -1063,7 +1139,7 @@
     overflow-x: clip;
     /** Extra paint area when squad cards extend below the fixed-aspect stage
         (must stay inside the mask box — mask-clip defaults to border-box). */
-    padding-bottom: clamp(0.75rem, 2.5vw, 2rem);
+    padding-bottom: 0.75rem;
     -webkit-mask-image: linear-gradient(
       to right,
       transparent 0,
@@ -1083,9 +1159,14 @@
   .home-org-diagram__stage {
     position: relative;
     width: 100%;
+    /* Fixed design width — founder: the squad boxes' size and proportions
+       are untouchable (an svh-driven shrink got reverted; it cropped card
+       rows and pulled the edge cards inside the viewport). The one-screen
+       fit comes from the single-line section heading + trimmed paddings
+       instead. */
     max-width: calc(71 * var(--spacing-xl));
     margin-inline: auto;
-    aspect-ratio: 1136 / 706;
+    aspect-ratio: 1136 / 632; /* live-row churn peaks ~618 in stage units — the Figma frame (706) kept 90-130px of dead air (founder: way too much white space) */
     container-type: inline-size;
     container-name: org-diagram;
   }
@@ -1158,7 +1239,7 @@
     /** Right edge at Figma (212+101)/1136; shrink-wrap width so empty rail next to copy is gone. */
     right: calc((1136 - 212 - 101) / 1136 * 100%);
     left: auto;
-    top: calc(70 / 706 * 100%);
+    top: calc(70 / 632 * 100%);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -1173,7 +1254,7 @@
     /** Left edge at Figma 800/1136; shrink-wrap so the label sits tight to the icon-side arrow. */
     left: calc(800 / 1136 * 100%);
     right: auto;
-    top: calc(8 / 706 * 100%);
+    top: calc(8 / 632 * 100%);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -1243,9 +1324,9 @@
 
   .home-org-diagram__you-avatar {
     left: calc(380 / 1136 * 100%);
-    top: calc(10 / 706 * 100%);
+    top: calc(10 / 632 * 100%);
     width: calc(108 / 1136 * 100%);
-    height: calc(108 / 706 * 100%);
+    height: calc(108 / 632 * 100%);
     border-radius: 50%;
     overflow: hidden;
     z-index: 4;
@@ -1261,7 +1342,7 @@
     left: calc(608 / 1136 * 100%);
     top: 0;
     width: calc(128 / 1136 * 100%);
-    height: calc(128 / 706 * 100%);
+    height: calc(128 / 632 * 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1304,49 +1385,49 @@
      (seo) sits highest, shortest wire. No two adjacent cards share a palette. */
   .home-org-diagram__dept--posthog {
     left: calc(-292 / 1136 * 100%);
-    top: calc(312 / 706 * 100%);
+    top: calc(312 / 632 * 100%);
     background-color: var(--alt-weak-branded-surface-03);
     border-color: var(--branded-stroke-04);
   }
 
   .home-org-diagram__dept--meta {
     left: calc(-44 / 1136 * 100%);
-    top: calc(296 / 706 * 100%);
+    top: calc(296 / 632 * 100%);
     background-color: var(--alt-weak-branded-surface-01);
     border-color: var(--branded-stroke-02);
   }
 
   .home-org-diagram__dept--outreach {
     left: calc(204 / 1136 * 100%);
-    top: calc(332 / 706 * 100%);
+    top: calc(332 / 632 * 100%);
     background-color: var(--alt-weak-branded-surface-02);
     border-color: var(--branded-stroke-03);
   }
 
   .home-org-diagram__dept--seo {
     left: calc(452 / 1136 * 100%);
-    top: calc(272 / 706 * 100%);
+    top: calc(272 / 632 * 100%);
     background-color: var(--alt-weak-branded-surface-01);
     border-color: var(--branded-stroke-02);
   }
 
   .home-org-diagram__dept--triage {
     left: calc(700 / 1136 * 100%);
-    top: calc(300 / 706 * 100%);
+    top: calc(300 / 632 * 100%);
     background-color: var(--weak-branded-surface);
     border-color: var(--branded-stroke-01);
   }
 
   .home-org-diagram__dept--ads {
     left: calc(948 / 1136 * 100%);
-    top: calc(336 / 706 * 100%);
+    top: calc(336 / 632 * 100%);
     background-color: var(--alt-weak-branded-surface-03);
     border-color: var(--branded-stroke-04);
   }
 
   .home-org-diagram__dept--reddit {
     left: calc(1196 / 1136 * 100%);
-    top: calc(308 / 706 * 100%);
+    top: calc(308 / 632 * 100%);
     background-color: var(--weak-branded-surface);
     border-color: var(--branded-stroke-01);
   }
@@ -1370,46 +1451,6 @@
       corner-shape: squircle;
       border-radius: 88px;
     }
-    .home-org-diagram__build {
-      corner-shape: squircle;
-      border-radius: 88px;
-    }
-  }
-
-  /* "Build your own" — static dashed invitation below the stage. Deliberately
-     unwired and unanimated: it's an invitation, not an eighth squad. Fixed px
-     width (the parent band now stretches to 1536) with an inline-padding
-     guard for narrow desktop widths. */
-  .home-org-diagram__build {
-    box-sizing: border-box;
-    width: min(560px, calc(100% - 2 * var(--spacing-home-page-inline)));
-    margin: var(--spacing-xl) auto 0;
-    padding: var(--spacing-xl) var(--spacing-xxl);
-    border: 1px dashed var(--stroke);
-    border-radius: var(--radius-xl);
-    background-color: transparent;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--spacing-sm);
-    text-align: center;
-  }
-
-  .home-org-diagram__build-title {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: var(--font-size-header-04);
-    line-height: 1.2;
-    font-weight: var(--font-semibold);
-    color: var(--text);
-  }
-
-  .home-org-diagram__build-sub {
-    margin: 0;
-    font-family: var(--font-body);
-    font-size: var(--font-size-body-regular, 16px);
-    line-height: 1.4;
-    color: var(--subtle-text);
   }
 
   .home-org-diagram__dept-title {
@@ -1606,10 +1647,18 @@
     color: var(--text);
   }
 
-  /* ─── "three real jobs" use-case triptych ───
+  /* ─── "four real jobs" use-case row (four across on desktop) ───
      Headerless cards under the demo video: faux-Slack exchange on top,
      kicker + headline + body below. Chat recipe matches `.pricing-buys__chat`
      so the Slack grammar reads identically across the site. */
+  /* ── Use-case "chat theater" cards ─────────────────────────────────────
+     Landing v4.1 redesign (founder: "flat, not juicy, fixed"). Three layers:
+     tinted per-accent mat (10-step) → floating white Slack panel (two-layer
+     warm shadow) → design-kit badge kicker. Cards rest at hand-placed offsets/tilts
+     (individual `translate`/`rotate` props so GSAP's transform-based nudges
+     in HomeUseCases.tsx compose instead of clobbering). The conversation is
+     choreographed play-once by GSAP; CSS defaults ARE the final state, so
+     no-JS and prefers-reduced-motion users see the finished exchange. */
   .home-use-cases {
     width: 100%;
     display: grid;
@@ -1619,34 +1668,173 @@
 
   @media (min-width: 1024px) {
     .home-use-cases {
-      grid-template-columns: repeat(3, 1fr);
-      align-items: stretch;
+      /* Four vertical cards in one row (founder call). Full-bleed breakout —
+         the row escapes the page container into the side margins so the
+         cards keep the proportions they had at three-up; capped so ultrawide
+         screens don't stretch them. minmax(0) so long artifact titles can't
+         blow a track open. */
+      --uc-bleed: min(100vw - 2 * var(--spacing-xl), 1680px);
+      width: var(--uc-bleed);
+      margin-inline: calc((100% - var(--uc-bleed)) / 2);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      /* `start`, not `stretch` — asymmetric heights are the composition */
+      align-items: start;
+      gap: var(--spacing-xxl);
+    }
+
+    .home-use-case-card:nth-child(1) {
+      --uc-rest-y: 24px;
+      --uc-rest-r: -1.25deg;
+    }
+
+    .home-use-case-card:nth-child(3) {
+      --uc-rest-y: 14px;
+      --uc-rest-r: 1deg;
+    }
+
+    .home-use-case-card:nth-child(4) {
+      --uc-rest-y: 8px;
+      --uc-rest-r: -0.75deg;
     }
   }
 
   .home-use-case-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xl);
     padding: var(--spacing-xxl);
-    background-color: var(--surface);
-    border: 1px solid var(--subtle-stroke);
+    background-color: var(--uc-mat, var(--surface));
+    border: 1px solid var(--uc-stroke, var(--subtle-stroke));
     border-radius: var(--radius-lg);
     corner-shape: squircle;
+    translate: 0 var(--uc-rest-y, 0px);
+    rotate: var(--uc-rest-r, 0deg);
   }
 
-  /* `flex: 1` lets the chat block absorb height differences so the three
-     copy blocks start on the same baseline across the row. */
+  /* ── Fan mode — class applied by HomeUseCases.tsx at ≥1024px when motion
+     is allowed. The row becomes a fixed-height stage (JS sets it from the
+     tallest card) and the cards an overlapping hand; GSAP owns x/rotation/
+     scale/z from a centered anchor. The rest-offset translate/rotate are
+     neutralized so they don't double-apply on top of GSAP's transform.
+     The grid above stays the no-JS / reduced-motion fallback. */
+  .home-use-cases--fan {
+    display: block;
+    position: relative;
+  }
+
+  .home-use-cases--fan .home-use-case-card {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: clamp(360px, 30vw, 420px);
+    margin-left: calc(clamp(360px, 30vw, 420px) / -2);
+    translate: none;
+    rotate: none;
+  }
+
+  .home-use-cases--fan .home-use-case-card:hover {
+    /* GSAP does the lift in fan mode; the grid's -6px hover nudge would
+       fight it. The ::after shadow bloom + sibling dim still apply. */
+    translate: none;
+  }
+
+  /* Copy stays left-justified on every card (founder call). The 72px
+     right padding on the LEFT half reserves the overlap seam so body
+     lines wrap before the covering card instead of being amputated
+     mid-word — position of the text is unchanged. */
+  .home-use-cases--fan .home-use-case-card:nth-child(-n + 2) .home-use-case-card__copy {
+    padding-right: 72px;
+  }
+
+  /* Per-card accent family: mat = 10-step, stroke/kicker = 20-step. */
+  .home-use-case-card[data-accent="purple"] {
+    --uc-mat: var(--palette-purple-10);
+    --uc-stroke: var(--palette-purple-20);
+  }
+
+  .home-use-case-card[data-accent="pink"] {
+    --uc-mat: var(--palette-pink-10);
+    --uc-stroke: var(--palette-pink-20);
+  }
+
+  .home-use-case-card[data-accent="yellow"] {
+    --uc-mat: var(--palette-yellow-10);
+    --uc-stroke: var(--palette-yellow-20);
+  }
+
+  .home-use-case-card[data-accent="orange"] {
+    --uc-mat: var(--palette-orange-10);
+    /* Raw orange-20 (#FFA45F) is a saturated warning tone, not a pastel
+       like the other families' 20-steps — mix it toward the mat so the
+       FINANCE sticker sits at the same pastel rank as its siblings. */
+    --uc-stroke: color-mix(in srgb, var(--palette-orange-10) 55%, var(--palette-orange-20));
+  }
+
+  /* Pre-rendered hover shadow bloom — only its opacity transitions, so the
+     lift stays compositor-only (animating box-shadow itself repaints). */
+  .home-use-case-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    corner-shape: squircle;
+    box-shadow: 0 24px 48px -16px color-mix(in srgb, var(--text) 24%, transparent);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms ease;
+  }
+
+  @media (hover: hover) {
+    .home-use-case-card {
+      transition:
+        translate 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+        opacity 250ms ease,
+        filter 250ms ease;
+    }
+
+    .home-use-case-card:hover {
+      translate: 0 calc(var(--uc-rest-y, 0px) - 6px);
+    }
+
+    .home-use-case-card:hover::after {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-use-case-card,
+    .home-use-case-card::after {
+      transition: none;
+    }
+
+    .home-use-case-card:hover {
+      translate: 0 var(--uc-rest-y, 0px);
+    }
+  }
+
+  /* Floating white Slack panel — two-layer warm shadow (tight + ambient,
+     toned from the brand ink via color-mix, never pure black).
+     space-between: when fan mode fixes every panel to the tallest one's
+     height, the slack distributes around the time-jump divider (ask pinned
+     top, reply + receipt pinned bottom — Slack-accurate, and the stretch
+     reads as time passing) instead of pooling as dead white under the
+     receipt. With natural heights the gap governs, so grid/mobile are
+     unchanged. */
   .home-use-case-card__chat {
-    flex: 1;
+    position: relative; /* anchors the "Pancake is typing" presence line */
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     gap: var(--spacing-xl);
     padding: var(--spacing-xl);
     background-color: var(--surface);
-    border: 1px solid var(--subtle-stroke);
+    border: 1px solid color-mix(in srgb, var(--text) 6%, transparent);
     border-radius: var(--radius-md);
     corner-shape: squircle;
+    box-shadow:
+      0 1px 2px color-mix(in srgb, var(--text) 6%, transparent),
+      0 12px 32px -12px color-mix(in srgb, var(--text) 18%, transparent);
   }
 
   /* Same workaround as `.pricing-buys__chat`: `app/_styles/style.css` slams
@@ -1658,25 +1846,99 @@
       "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   }
 
+  /* "Pancake is typing" — Slack's presence line at the panel foot. Exists
+     only during the GSAP timeline (display is flipped by the animation);
+     no-JS and reduced-motion never see it. Absolutely positioned OUT of
+     the flow so toggling it never changes the card's height — founder:
+     card heights are fixed from the start. */
+  .home-use-case-typing {
+    display: none;
+    position: absolute;
+    left: var(--spacing-xl);
+    bottom: var(--spacing-xl);
+    align-items: center;
+    gap: 3px;
+    font-size: 13px;
+    color: #616061;
+  }
+
+  .home-use-case-typing i {
+    display: block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #616061;
+  }
+
+  .home-use-case-typing i:first-of-type {
+    margin-left: 3px;
+  }
+
+  /* Slack-style emoji reaction on the ask — pops in after the artifact
+     lands (visible statically without JS). Recipe matches the canonical
+     StaticReactions in SlackUI.tsx: 15px emoji, 12px/400 count, #f0f0f0
+     pill — the two Slack surfaces must agree. */
+  .home-use-case-reaction {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: var(--spacing-md);
+    padding: 2px 10px;
+    background: #f0f0f0;
+    border-radius: 999px;
+  }
+
+  .home-use-case-reaction__emoji {
+    font-size: 15px;
+    line-height: 1;
+  }
+
+  .home-use-case-reaction__count {
+    font-size: 12px;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+    color: #1d1c1d;
+  }
+
+  /* Slack's app-mention token — the "@Pancake" that opens every ask. */
+  .home-use-case-mention {
+    padding: 0 2px;
+    color: #1264a3;
+    background-color: rgba(29, 155, 209, 0.1);
+    border-radius: 3px;
+  }
+
   .home-use-case-card__copy {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
+    align-items: flex-start;
   }
 
+  /* Kicker — the design kit's `.badge` recipe (small uppercase label),
+     tinted with the card's 20-step. Flat, straight, no offset shadow:
+     the old "sticker" treatment was off-kit. */
   .home-use-case-card__kicker {
     margin: 0;
+    display: inline-flex;
+    align-items: center;
+    padding: var(--spacing-xs) var(--spacing-md);
     font-family: var(--font-body);
     font-size: var(--font-size-eyebrow);
+    font-weight: var(--font-semibold);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--subtle-text);
+    letter-spacing: 0.453px;
+    color: var(--text);
+    background-color: var(--uc-stroke, var(--alt-surface));
+    border: 1px solid var(--uc-stroke, var(--alt-surface));
+    border-radius: var(--radius-sm);
+    corner-shape: squircle;
   }
 
   .home-use-case-card__headline {
     margin: 0;
     font-family: var(--font-display);
-    font-weight: 500;
+    font-weight: var(--font-semibold);
     font-size: var(--font-size-header-04);
     line-height: 1.15;
     letter-spacing: -0.3px;
@@ -1689,11 +1951,21 @@
     font-size: 16px;
     line-height: 1.45;
     font-weight: var(--font-normal);
-    color: var(--subtle-text);
+    color: var(--text);
+    opacity: 0.78;
   }
 
-  /* Slack-attachment-style artifact chip inside the agent reply. Icon tones
-     reuse the site's status palette (positive/warning/negative text). */
+  /* Kills one-word widows in the hovered (reading) state — progressive
+     enhancement, no-op where unsupported. */
+  .home-use-case-card__chat p,
+  .home-use-case-card__body {
+    text-wrap: pretty;
+  }
+
+  /* Slack-attachment-style artifact chip inside the agent reply — the
+     receipt of the job. GSAP stamps it in and settles it square (parallel
+     to the chat panel); these defaults are the static/no-JS resting state.
+     Icon tones reuse the site's status palette. */
   .home-use-case-artifact {
     margin: var(--spacing-md) 0 0 0;
     display: flex;
@@ -1718,17 +1990,23 @@
 
   .home-use-case-artifact__icon[data-icon="pr"] {
     color: var(--positive-text);
-    background-color: rgba(3, 125, 72, 0.1);
+    background-color: color-mix(in srgb, var(--positive-text) 10%, transparent);
   }
 
   .home-use-case-artifact__icon[data-icon="leads"] {
     color: var(--warning-text);
-    background-color: rgba(212, 57, 0, 0.1);
+    background-color: color-mix(in srgb, var(--warning-text) 10%, transparent);
   }
 
   .home-use-case-artifact__icon[data-icon="pdf"] {
     color: var(--negative-text);
-    background-color: rgba(229, 0, 46, 0.1);
+    background-color: color-mix(in srgb, var(--negative-text) 10%, transparent);
+  }
+
+  /* Spreadsheets read green in Slack (Excel/Sheets) — same tone as "pr". */
+  .home-use-case-artifact__icon[data-icon="sheet"] {
+    color: var(--positive-text);
+    background-color: color-mix(in srgb, var(--positive-text) 10%, transparent);
   }
 
   .home-use-case-artifact__text {
@@ -1913,7 +2191,11 @@
     color: var(--subtle-text);
   }
 
-  .home-landing-section__closing-title {
+  /* `h2` prefix is load-bearing: the kit's `h2.heading` (0,1,1) otherwise
+     out-cascades this class (0,1,0) per-property and pins font-size at
+     header-02 (31.25px) under the 64px line-height — the airy, undersized
+     title the founder flagged. Same specificity + later source = we win. */
+  h2.home-landing-section__closing-title {
     margin: 0;
     max-width: var(--width-home-landing-heading);
     font-family: var(--font-display);
@@ -1956,11 +2238,123 @@
     color: var(--subtle-text);
   }
 
-  /* Decorative pancakes around the closing CTA — mobile-only (Figma `451:20112`).
-     Default is hidden so they never appear on desktop. The mobile @media block
-     positions and shows them. */
-  .home-landing-closing-decor {
-    display: none;
+  /* ─────────────── Closing CTA finale (HomeClosingCta.tsx) ───────────────
+     The hero's constellation restaged around the ask: eye-tracking mascot
+     centered between two dotted orbits (hero stroke recipe), four two-tone
+     satellite pancakes ON the rings. Geometry is percentage-based against
+     the 640×200 design box, so the composition holds at any width. The old
+     edge-bleed `.home-landing-closing-decor` pancakes are gone — absorbed
+     into these satellites. */
+
+  .home-closing {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xxl);
+    width: 100%;
+  }
+
+  .home-closing__stage {
+    position: relative;
+    width: min(640px, 100%);
+    aspect-ratio: 640 / 200;
+    /* Stage → title gets a real pause (founder: the title sat glued to the
+       orbit's bleeding bottom arc). 40px + the 24px flex gap leaves ~44px
+       of air past the 20px arc bleed. */
+    margin-bottom: calc(2.5 * var(--spacing-xl));
+  }
+
+  /* The outer ellipse deliberately bottoms 20px past the design box (the
+     hero's orbits bleed the same way) — keep every overflow visible so the
+     dotted arc fades naturally instead of clipping mid-dot. */
+  .home-closing__orbits {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .home-closing__orbit {
+    fill: none;
+    stroke: var(--text);
+    stroke-width: 1;
+    stroke-dasharray: 0.578125 6.9375;
+    stroke-linecap: round;
+  }
+
+  .home-closing-sat {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .home-closing-sat[data-layer="behind"] {
+    z-index: 2;
+  }
+
+  .home-closing-sat[data-layer="front"] {
+    z-index: 4;
+  }
+
+  .home-closing-sat__fly,
+  .home-closing-sat__float {
+    display: block;
+  }
+
+  /* Slow ambient drift once the entrance settles — desynced via per-sat
+     delays so the constellation breathes instead of bouncing in unison. */
+  .home-closing-sat__float {
+    animation: home-closing-float 7s ease-in-out infinite alternate;
+    animation-delay: var(--sat-float-delay, 0s);
+  }
+
+  @keyframes home-closing-float {
+    from {
+      transform: translateY(-6px);
+    }
+
+    to {
+      transform: translateY(6px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-closing-sat__float {
+      animation: none;
+    }
+  }
+
+  .home-closing-sat__pancake {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* Mascot slot — anchored on the orbit center (134/200 of the stage).
+     The monster drawing carries generous internal padding (the hero's
+     interactive variant runs a 275px canvas for a ~160px body), so the
+     slot runs bigger than the satellites suggest: 176px canvas ≈ 95px
+     visible pancake. Width clamps to the mobile floor; the component
+     measures this box and renders the SVG sharp at that size. */
+  .home-closing__monster {
+    position: absolute;
+    left: 50%;
+    top: 67%;
+    transform: translate(-50%, -50%);
+    width: clamp(112px, 27.5%, 176px);
+    aspect-ratio: 1 / 1;
+    z-index: 3;
+  }
+
+  .home-landing-section--closing {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .home-landing-section--closing .home-landing-section__inner {
+    position: relative;
+    z-index: 1;
   }
 
   /**
@@ -1971,31 +2365,25 @@
   .home-integrations-cloud {
     position: relative;
     box-sizing: border-box;
-    width: 100%;
-    max-width: calc(71 * var(--spacing-xl));
-    margin-inline: auto;
-    aspect-ratio: 1786 / 900;
+    /* Full-bleed breakout (founder: the side margins were dead space) —
+       the 1920-unit stage spans the viewport, monster dead-center. The 720
+       height is baked into the ARTWORK (was 900): the founder killed the
+       svh-driven slice crop because it sliced logos at arbitrary heights,
+       so the stage itself got recomposed shorter — no dynamic cropping,
+       every chip fully inside. overflow-hidden only trims the exiting
+       wires at the image edge (that's their design). */
+    --cloud-bleed: min(100vw, 1920px);
+    width: var(--cloud-bleed);
+    margin-inline: calc((100% - var(--cloud-bleed)) / 2);
+    aspect-ratio: 1920 / 720;
     container-type: inline-size;
     container-name: integrations-cloud;
-    overflow: visible;
+    overflow: hidden;
   }
 
-  /* Desktop only: the chip cluster + tentacle anchor live around viewBox
-     x=960 in a 1786-wide viewBox, which puts the monster at 53.75% of
-     the cloud width — visibly right of cloud centre and (because the
-     cloud is centred on the page) right of the page centre. Shift the
-     entire cloud left by the same 3.75% so the monster + node of
-     tentacles land on viewport centre, matching the centred heading
-     above. Chips, callout, and tentacles all move together so the
-     internal geometry stays intact. Mobile uses its own override block
-     (see `@media (max-width: 1023.98px)` below) and is unaffected. */
   @media (min-width: 1024px) {
-    .home-integrations-cloud {
-      transform: translateX(-3.75%);
-    }
-
-    /* Tighten the gap between the "Endless integrations / Plug in your
-       stack..." header and the cloud below — the default
+    /* Tighten the gap between the "Plugged into everything" header and the
+       cloud below — the default
        `--spacing-home-landing-header-to-media` is 4 × xl (64 px), which
        reads as too much whitespace because the cloud has built-in top
        padding (the topmost chip — GitHub — sits ~104 viewBox units down
@@ -2006,13 +2394,70 @@
       .home-landing-section__inner {
       gap: calc(2 * var(--spacing-xl));
     }
+
+    /* One-screen trim: the full-bleed cloud IS the band, so the default
+       96px band paddings are mostly dead space. The height itself comes
+       from the shortened 1920×720 artwork + the single-line header — no
+       dynamic cropping (founder: logos must never get cut).
+       min-height makes the band own EXACTLY one screen (founder: at
+       100vh-fitting sizes the next band was peeking under the fold). The
+       header pins to the TOP of the band — same relative position as the
+       org section's title (founder: centering pushed it oddly low) — and
+       the leftover height goes to the figure, where the cloud floats
+       centered, so the logos get breathing room above and below. On
+       windows too short for the content, the band simply grows. */
+    section[aria-labelledby="home-landing-integrations-heading"] {
+      box-sizing: border-box;
+      padding-block: calc(2.5 * var(--spacing-xl)) calc(1.5 * var(--spacing-xl));
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    section[aria-labelledby="home-landing-integrations-heading"]
+      .home-landing-section__inner {
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+
+    section[aria-labelledby="home-landing-integrations-heading"]
+      .home-landing-section__figure {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* The stage grows into the band's leftover height (founder: expand the
+       logo floating zone above and below the artwork). The component reads
+       the box ratio and spreads the composition vertically to match — the
+       floor is the natural 720 artwork (so `slice` never crops), the cap is
+       the 880-unit spread (justify-center absorbs anything past it). */
+    .home-integrations-cloud {
+      flex: 1 1 auto;
+      aspect-ratio: auto;
+      min-height: calc(var(--cloud-bleed) * 720 / 1920);
+      max-height: calc(var(--cloud-bleed) * 880 / 1920);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* The viz can't use `height: 100%` here — the flex-grown parent has no
+       definite height for percentages (circular), which resolved to 0 and
+       froze the spread at 720. Flex sizing instead. */
+    .home-integrations-cloud__viz {
+      height: auto;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
   }
 
   /**
    * Viz wrapper — holds the SVG cloud + the interactive monster. On desktop
    * it fills the aspect-ratio'd `.home-integrations-cloud` parent. On mobile
    * it carries the 1786/900 aspect ratio itself (the parent reflows to a
-   * flex column to stack the callout below the cloud).
+   * flex column on mobile).
    */
   .home-integrations-cloud__viz {
     position: relative;
@@ -2048,6 +2493,11 @@
     opacity: 0.7;
   }
 
+  /* Chain middle segments (deep-cloud) — between inner and tail fade. */
+  .home-integrations-cloud__tentacle--mid {
+    opacity: 0.5;
+  }
+
   .home-integrations-cloud__tentacle--outer {
     opacity: 0.32;
   }
@@ -2066,45 +2516,22 @@
     z-index: 4;
   }
 
-  /**
-   * Figma `428:15015` — copy block over the cloud (coords share `428:15019` viewBox).
-   * Warm surface + mono body stack match org-diagram chip copy treatment.
-   */
-  .home-integrations-cloud__callout {
-    position: absolute;
-    z-index: 5;
-    box-sizing: border-box;
-    margin: 0;
-    min-width: 0;
-    text-align: left;
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: var(--font-size-home-integrations-callout);
-    line-height: var(--line-height-home-integrations-callout);
-    font-weight: var(--font-normal);
-    font-style: normal;
-    /* `pre-line` keeps the comp's three-line stack at desktop but lets each
-       line wrap if the container narrows, instead of overflowing the box. */
-    white-space: pre-line;
-    background-color: var(--alt-weak-branded-surface-02);
-    border-radius: var(--radius-home-integrations-callout);
-    padding-inline: var(--spacing-home-integrations-callout-pad-inline);
-    padding-block: var(--spacing-home-integrations-callout-pad-block);
+  /* Deep-cloud responsive gating: chains don't survive mobile's 1.4× zoomed
+     crop, so mobile keeps only the big recognizable chips (data-mobile) and
+     wires each straight to the monster; chain segments, satellite chips, and
+     tail berries hide. Desktop shows the full chains and hides the mobile
+     wires. */
+  @media (min-width: 1024px) {
+    .home-integrations-cloud__tentacle--mobile {
+      display: none;
+    }
   }
 
-  /* Below ~840 px container width the absolute box can no longer fit the
-     hard-coded copy without clipping. Detach it from the cloud's right edge,
-     centre it across the cloud, and let the text wrap naturally. The
-     positional `left/top/width` set inline by the component are overridden
-     here so the responsive rule wins. */
-  @container integrations-cloud (max-width: 840px) {
-    .home-integrations-cloud__callout {
-      left: 50% !important;
-      top: 0 !important;
-      width: min(440px, calc(100% - 2 * var(--spacing-xl))) !important;
-      transform: translateX(-50%);
-      white-space: normal;
-      text-align: center;
+  @media (max-width: 1023.98px) {
+    .home-integrations-cloud__svg [data-mobile="0"],
+    .home-integrations-cloud__svg [data-seg-depth],
+    .home-integrations-cloud__svg [data-tail] {
+      display: none;
     }
   }
 
@@ -2288,7 +2715,9 @@
 
   .home-landing-control-card__btn--approve {
     background-color: var(--strong-branded-surface);
-    color: var(--surface);
+    /* Kit contrast rule: on a pink surface (pink-30 here) the foreground
+       must be pink-40 or chrome-100 — `--text` (chrome-100), not white. */
+    color: var(--text);
   }
 
   .home-landing-control-card__btn--reject {
@@ -2368,6 +2797,145 @@
     height: 100%;
   }
 
+  /* ------------------------------------------------------------------ */
+  /*  Trust section (merged security + control) — extra recipes on top   */
+  /*  of the control-card skeleton. See HomeLandingTrust.tsx.             */
+  /* ------------------------------------------------------------------ */
+
+  .home-landing-trust {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+    align-items: center;
+  }
+
+  /* Trust cards run denser than the old control comp (kicker + 2-line
+     titles + three rows) — taller box so the SOC 2 checklist and the
+     approval row are fully visible; only the last connection row rides
+     the comp's deliberate bottom overflow. */
+  .home-landing-trust .home-landing-control-card {
+    height: 448px;
+  }
+
+  /* Sandbox graphic was composed for the 402px card — nudge it down into
+     the extra room so the pod body text clears the dotted ellipses. */
+  .home-landing-trust .home-landing-control-scope {
+    inset: 40px 0 -40px 0;
+  }
+
+  .home-landing-trust .home-landing-control-approve-row__role {
+    white-space: nowrap;
+  }
+
+  /* Kit badge as card kicker — pinned left in the column header. */
+  .home-landing-control-card__kicker {
+    align-self: flex-start;
+  }
+
+  /* SOC 2 checklist rows — approve-row shell, tick + label only. */
+  .home-landing-trust-check-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 13.511px;
+    width: 100%;
+    flex-shrink: 0;
+  }
+
+  .home-landing-trust-check {
+    gap: 12px;
+    padding: 10px 14px;
+  }
+
+  .home-landing-trust-check__tick {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background-color: var(--palette-green-10);
+    color: var(--palette-green-30);
+  }
+
+  .home-landing-trust-check__tick svg {
+    width: 11px;
+    height: 9px;
+  }
+
+  .home-landing-trust-check__label {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 22px;
+    color: var(--text);
+  }
+
+  /* Connection rows — integration mark + owner line + live status. */
+  .home-landing-trust-conn__mark {
+    display: block;
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    border-radius: 6px;
+  }
+
+  .home-landing-trust-conn__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: var(--font-medium, 500);
+    color: var(--positive-text);
+  }
+
+  .home-landing-trust-conn__status::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--palette-green-20);
+  }
+
+  /* One-click revocation, shown not told. */
+  .home-landing-trust-conn__revoke {
+    flex-shrink: 0;
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--subtle-text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* Pod namespace chip — floats over the sandbox graphic. */
+  .home-landing-trust-pod-label {
+    position: absolute;
+    left: 32px;
+    bottom: 84px;
+    padding: 4px 10px;
+    background-color: var(--elevated-surface);
+    border: 0.844px solid var(--stroke);
+    border-radius: 10px;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 11px;
+    line-height: 16px;
+    color: var(--subtle-text);
+  }
+
+  /* Proof line under the grid — quiet, honest, forwardable. */
+  .home-landing-trust__note {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--subtle-text);
+    text-align: center;
+  }
+
   /**
    * Coordinates from Figma `428:15140` (the scope card frame, 368×402).
    * Each ellipse retains its in-Figma rotation so the overlapping
@@ -2422,6 +2990,369 @@
     width: 42px;
     height: 40px;
     transform: scaleY(-1);
+  }
+
+  /* ─────────────────── Trust carousel (HomeTrustCarousel.tsx) ───────────────────
+     Six control-cards on a 3D drag-rotate cylinder at desktop; the
+     testimonials scroll-snap recipe on mobile. Geometry lives in the
+     component (STEP/RADIUS); these recipes carry the chrome. Side cards
+     keep full color — perspective alone recedes them (no dim per brand);
+     opacity is an exit-fade for back-facing cards only, set inline. */
+
+  /* The wrapper shares `.home-landing-trust` (flex column, centered). As a
+     flex item of the centered section inner it would otherwise size to
+     fit-content — which the mobile track's max-content blows out to the
+     six-card row width. Pin it to the container. */
+  .home-trust-carousel {
+    width: 100%;
+  }
+
+  .home-trust-carousel__stage,
+  .home-trust-carousel__nav {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .home-trust-carousel__stage {
+      display: block;
+      position: relative;
+      width: 100%;
+      height: 500px;
+      perspective: 1400px;
+      perspective-origin: 50% 45%;
+      cursor: grab;
+      touch-action: pan-y;
+      /* The drag gesture must never start a text selection — a mouse drag
+         across the 3D faces paints giant skewed highlight quads. */
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .home-trust-carousel__stage[data-dragging] {
+      cursor: grabbing;
+    }
+
+    .home-trust-carousel__stage:focus-visible {
+      outline: 2px solid var(--stroke);
+      outline-offset: 4px;
+      border-radius: 16px;
+    }
+
+    .home-trust-carousel__nav {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+  }
+
+  .home-trust-carousel__ring {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    z-index: 1;
+  }
+
+  .home-trust-carousel__face {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 368px;
+    height: 448px;
+    margin: -224px 0 0 -184px;
+    backface-visibility: hidden;
+    pointer-events: none;
+  }
+
+  .home-trust-carousel__face[data-front] {
+    pointer-events: auto;
+  }
+
+  .home-trust-carousel__face .home-landing-control-card {
+    width: 100%;
+    height: 100%;
+  }
+
+  .home-trust-carousel__dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+  }
+
+  .home-trust-carousel__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 0;
+    padding: 0;
+    background-color: var(--stroke);
+    cursor: pointer;
+  }
+
+  .home-trust-carousel__dot--active {
+    background-color: var(--inverted-surface);
+  }
+
+  /* Mobile — the testimonials scroll-snap recipe, same six cards.
+     `display` flips inside the max-width query below — declaring it here
+     would out-cascade the desktop gating (same specificity, later rule). */
+  .home-trust-carousel__mobile {
+    display: none;
+    gap: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 16%;
+    padding-inline: 16%;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .home-trust-carousel__mobile::-webkit-scrollbar {
+    display: none;
+  }
+
+  .home-trust-carousel__mobile-slide {
+    flex: 0 0 calc(100vw - 64px);
+    max-width: 368px;
+    /* The fixed-width control card inside would otherwise set the slide's
+       min-content to 368px and defeat the flex-basis on small screens. */
+    min-width: 0;
+    scroll-snap-align: center;
+  }
+
+  .home-trust-carousel__dots--mobile {
+    display: none;
+  }
+
+  @media (max-width: 1023.98px) {
+    .home-trust-carousel__mobile {
+      display: flex;
+    }
+
+    .home-trust-carousel__dots--mobile {
+      display: flex;
+    }
+  }
+
+  /* ── Card visual — SOC 2 wax seal (compliance receipt card) ── */
+
+  .home-trust-seal {
+    width: 100%;
+  }
+
+  .home-trust-seal__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .home-trust-seal__ring {
+    fill: none;
+    stroke: var(--palette-chrome-50);
+    stroke-width: 2;
+    stroke-dasharray: 1 8;
+    stroke-linecap: round;
+  }
+
+  .home-trust-seal__ringtext {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    fill: var(--palette-chrome-70);
+  }
+
+  .home-trust-seal__disc {
+    fill: var(--palette-chrome-20);
+  }
+
+  .home-trust-seal__face {
+    fill: var(--palette-chrome-100);
+  }
+
+  .home-trust-seal__smile {
+    fill: none;
+    stroke: var(--palette-chrome-100);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  /* Notary punch — knockout stroke matches the card surface so the disc
+     punches over the dotted ring. */
+  .home-trust-seal__tickdisc {
+    fill: var(--palette-green-10);
+    stroke: var(--surface);
+    stroke-width: 4;
+  }
+
+  .home-trust-seal__tick {
+    fill: none;
+    stroke: var(--palette-green-30);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .home-trust-seal__mail {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* ── Card visual — connected-tool toggles (reach card) ── */
+
+  .home-trust-toggle {
+    position: relative;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    width: 36px;
+    height: 20px;
+    border-radius: 999px;
+    background-color: var(--alt-surface);
+    border: 0.844px solid var(--stroke);
+  }
+
+  .home-trust-toggle__knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    box-sizing: border-box;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: var(--surface);
+    border: 0.844px solid var(--stroke);
+  }
+
+  .home-trust-toggle--on {
+    background-color: var(--palette-green-20);
+    border-color: var(--palette-green-20);
+  }
+
+  .home-trust-toggle--on .home-trust-toggle__knob {
+    left: auto;
+    right: 2px;
+    border-color: transparent;
+  }
+
+  /* ── Card visual — owner blobs (accounts card) ── */
+
+  .home-trust-blobs {
+    position: relative;
+    width: 100%;
+  }
+
+  .home-trust-blobs__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .home-trust-blobs__wire {
+    fill: none;
+    stroke: var(--palette-chrome-50);
+    stroke-width: 2;
+    stroke-dasharray: 1 8;
+    stroke-linecap: round;
+  }
+
+  /* Owner tag — the mono namespace-chip recipe. */
+  .home-trust-blobs__tag {
+    position: absolute;
+    padding: 4px 10px;
+    background-color: var(--elevated-surface);
+    border: 0.844px solid var(--stroke);
+    border-radius: 10px;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 11px;
+    line-height: 16px;
+    color: var(--subtle-text);
+  }
+
+  /* ── Card visual — secrets vault (dark panel + key pancake) ── */
+
+  .home-trust-vault {
+    position: relative;
+    width: 100%;
+    /* Room for the key pancake poking above the panel. */
+    padding-top: 18px;
+  }
+
+  .home-trust-vault__panel {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 200px;
+    padding: 20px;
+    background-color: var(--inverted-surface);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-family: var(--font-mono, ui-monospace, "JetBrains Mono", "SFMono-Regular", Menlo, monospace);
+    font-size: 13px;
+    line-height: 21px;
+    font-weight: 500;
+  }
+
+  .home-trust-vault__row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .home-trust-vault__dot {
+    flex-shrink: 0;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--palette-green-20);
+  }
+
+  .home-trust-vault__path {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--text-on-inverted-surface);
+  }
+
+  .home-trust-vault__mask {
+    flex-shrink: 0;
+    letter-spacing: 1px;
+    color: var(--palette-chrome-60);
+  }
+
+  .home-trust-vault__pancake {
+    position: absolute;
+    top: 0;
+    right: -6px;
+    width: 64px;
+    height: 64px;
+    transform: rotate(-8deg);
+    z-index: 1;
+  }
+
+  .home-trust-vault__pancake img {
+    position: absolute;
+    display: block;
+  }
+
+  .home-trust-vault__pancake-side {
+    left: 0;
+    bottom: 0;
+  }
+
+  .home-trust-vault__pancake-top {
+    left: 1px;
+    top: -4px;
+  }
+
+  .home-trust-vault__pancake-key {
+    left: 19px;
+    top: 10px;
   }
 
   /* ─────────────────── Pricing page ───────────────────
@@ -2537,7 +3468,7 @@
     font-family: var(--font-body);
     font-size: 18px;
     line-height: 28px;
-    color: rgba(44, 0, 42, 0.64);
+    color: color-mix(in srgb, var(--text) 64%, transparent);
   }
 
   /* ─── Pricing hero — single card, two columns inside ─── */
@@ -2941,7 +3872,7 @@
     border-radius: 999px;
     background-color: var(--surface);
     border: 3.5px solid var(--strong-branded-surface);
-    box-shadow: 0 2px 8px rgba(44, 0, 42, 0.22);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--text) 22%, transparent);
     cursor: grab;
     transition: transform 120ms ease, box-shadow 120ms ease;
   }
@@ -2952,18 +3883,18 @@
     border-radius: 999px;
     background-color: var(--surface);
     border: 3.5px solid var(--strong-branded-surface);
-    box-shadow: 0 2px 8px rgba(44, 0, 42, 0.22);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--text) 22%, transparent);
     cursor: grab;
   }
 
   .pricing-hero__slider:hover::-webkit-slider-thumb {
     transform: scale(1.08);
-    box-shadow: 0 3px 12px rgba(44, 0, 42, 0.28);
+    box-shadow: 0 3px 12px color-mix(in srgb, var(--text) 28%, transparent);
   }
 
   .pricing-hero__slider:focus-visible::-webkit-slider-thumb {
     box-shadow: 0 0 0 4px var(--weak-branded-surface),
-      0 2px 8px rgba(44, 0, 42, 0.22);
+      0 2px 8px color-mix(in srgb, var(--text) 22%, transparent);
   }
 
   .pricing-hero__slider:active::-webkit-slider-thumb {
@@ -3312,7 +4243,7 @@
     background-color: var(--surface);
     border: 1px solid var(--subtle-stroke);
     border-radius: var(--radius-md);
-    box-shadow: 0 4px 12px rgba(44, 0, 42, 0.06);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--text) 6%, transparent);
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
@@ -3898,7 +4829,7 @@
   }
 
   .signup-card__body--lede {
-    color: rgba(44, 0, 42, 0.64);
+    color: color-mix(in srgb, var(--text) 64%, transparent);
   }
 
   .signup-card__eyebrow {
@@ -4236,7 +5167,7 @@
     border-radius: 12px;
     background-color: var(--inverted-surface, #2c002a);
     color: var(--text-on-inverted-surface, #ffffff);
-    box-shadow: 0 12px 24px rgba(44, 0, 42, 0.18);
+    box-shadow: 0 12px 24px color-mix(in srgb, var(--text) 18%, transparent);
     text-align: left;
   }
 
@@ -4655,28 +5586,6 @@
     border-color: var(--branded-stroke-04);
   }
 
-  /* Static "Build your own" finale slide — dashed invitation, no live rows. */
-  .home-org-mobile-card--build {
-    background-color: var(--surface);
-    border: 1px dashed var(--stroke);
-    justify-content: center;
-    align-items: center;
-    gap: var(--spacing-sm);
-    text-align: center;
-  }
-
-  .home-org-mobile-card--build .home-org-mobile-card__title {
-    font-size: 20px;
-  }
-
-  .home-org-mobile-card__sub {
-    margin: 0;
-    font-family: var(--font-body);
-    font-size: 14px;
-    line-height: 1.4;
-    color: var(--subtle-text);
-  }
-
   .home-org-mobile-card__title {
     margin: 0;
     font-family: var(--font-display);
@@ -5065,7 +5974,7 @@
       transform: translateY(19px);
     }
 
-    /* === Integrations cloud — restructure: cloud on top, callout below
+    /* === Integrations cloud — mobile restructure
        (Figma mobile 451:19545 stacks them vertically instead of overlaying).
        Also ZOOMED — viz is square + SVG scaled 2× so chips look as big as
        they do in the comp instead of the desktop's wide-and-shrunk band. === */
@@ -5082,14 +5991,18 @@
       /* Full-bleed: escape the section's horizontal padding so the cloud
          goes edge-to-edge on mobile. The chip cluster + tentacles read
          better when they have the whole viewport width to breathe. The
-         heading + callout above/below stay inside the page container's
+         heading above stays inside the page container's
          padding because they're separate flex children of
          `.home-integrations-cloud` (which uses flex-direction:column on
          mobile via the override above). */
       width: 100vw;
       max-width: 100vw;
       margin-inline: calc(50% - 50vw);
-      aspect-ratio: 5 / 6;
+      /* 8/5 box + the svg's `slice` = a ~1150-unit side-cropped window on
+         the 1920×720 stage (same window and chip px sizes as the old 9/7
+         box had on the 900-tall stage) — X and LinkedIn half-cut at the
+         edges, monster centered, no transform hacks. */
+      aspect-ratio: 8 / 5;
       overflow: hidden;
     }
     .home-integrations-cloud__svg {
@@ -5097,61 +6010,16 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      /*
-       * Compose two transforms:
-       *   1. translateX(-6.65%) shifts the SVG content LEFT so the visible
-       *      crop window centers on the CHIP CLUSTER (viewBox x≈978), not
-       *      on the viewBox center (x=893). The right-side chips (Notion,
-       *      LinkedIn, Claude) push the cluster center 85 viewBox units
-       *      right of the viewBox center, and without this shift the cloud
-       *      reads as drifting right and crops X on the left.
-       *   2. scale(1.4) zooms uniformly. 1.4× is the max we can use without
-       *      cropping the corner chips: the chip-cluster x span is 1196
-       *      viewBox units (X at 380 to Claude at 1576), and the visible
-       *      window after scale is 1786/scale viewBox units wide; scale
-       *      1.4 gives a 1276-unit window — 40 units of padding past each
-       *      extreme. Pushing scale higher (1.55, 1.7) crops X or Claude.
-       */
-      transform: translateX(-6.65%) scale(1.4);
-      transform-origin: center center;
     }
-    /* The monster div sits OUTSIDE the SVG so it doesn't inherit the SVG's
-       `translateX(-6.65%) scale(1.4)` — scale it manually AND replicate the
-       horizontal/vertical shift so it stays welded to the tentacle anchor
-       point (viewBox x=960, y=435 → mapped through the SVG transform).
-       Default monster width is `clamp(88px, 14.5cqi, 195px)`; the 88px
-       floor dwarfs the chips on the small mobile container, so override
-       to unclamped `14.5cqi` (matches desktop monster:chip ratio ~1.5×).
-
-       Math (mobile wrapper aspect 5/6, SVG viewBox aspect 1786/900):
-         X: SVG content fills wrapper width, so anchor x is at the same
-            % of the element as in the viewBox: 960/1786 = 53.75%.
-            Scale(1.4) about element center (50%): 50 + (53.75 − 50) × 1.4
-            = 55.25%. TranslateX(−6.65%): 55.25 − 6.65 = 48.6%.
-         Y: SVG content is letterboxed vertically (height 156.2 in a 372
-            element → 107.9px top padding). Anchor y in element coords:
-            107.9 + (435/900) × 156.2 = 183.4 → 49.30% of element height.
-            Scale(1.4) about element center (50%): 50 + (49.30 − 50) × 1.4
-            = 49.02%. No vertical translate. So top: 49.02%. */
+    /* `slice` fills the 8/5 box by height: anchor (960, 360) is the exact
+         stage centre, so it lands at 50% / 50% — no scale compensation. */
     .home-integrations-cloud__monster {
-      width: 14.5cqi;
-      left: 48.6% !important;
-      top: 49.02% !important;
-      transform: translate(-50%, -50%) scale(1.4);
+      width: 17cqi; /* ≈ the 160-unit monster at the slice scale */
+      left: 50% !important;
+      top: 50% !important;
+      transform: translate(-50%, -50%);
     }
-    .home-integrations-cloud__callout {
-      position: relative !important;
-      left: auto !important;
-      top: auto !important;
-      width: 100% !important;
-      max-width: 440px;
-      margin-inline: auto;
-      transform: none !important;
-      white-space: normal;
-      text-align: center;
-    }
-
-    /* === Testimonials — mobile snap carousel replaces desktop ticker === */
+        /* === Testimonials — mobile snap carousel replaces desktop ticker === */
     .home-landing-testimonials__track--desktop { display: none; }
     .home-landing-testimonials__mobile { display: block; }
 
@@ -5160,38 +6028,11 @@
       gap: var(--spacing-xxl);
     }
 
-    /* === Closing CTA — decorative pancake satellites (Figma 451:20112). === */
-    .home-landing-section--closing {
-      position: relative;
-      overflow: hidden;
-    }
-    .home-landing-closing-decor {
-      display: block;
-      position: absolute;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .home-landing-closing-decor--purple {
-      top: var(--spacing-md);
-      left: calc(-1 * var(--spacing-md));
-      width: 76px;
-      height: 76px;
-    }
-    .home-landing-closing-decor--pink {
-      bottom: var(--spacing-xxl);
-      left: calc(-1 * var(--spacing-xl));
-      width: 96px;
-      height: 96px;
-    }
-    .home-landing-closing-decor--orange {
-      top: 18%;
-      right: calc(-2 * var(--spacing-xl));
-      width: 76px;
-      height: 76px;
-    }
+    /* === Closing CTA — the orbit finale keeps its own geometry (percent-
+       based stage in HomeClosingCta); mobile only centers the text stack.
+       The old mobile edge-decor pancakes (Figma 451:20112) are gone with
+       their desktop siblings. === */
     .home-landing-section--closing .home-landing-section__inner {
-      position: relative;
-      z-index: 1;
       align-items: center;
       text-align: center;
     }

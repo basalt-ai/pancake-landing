@@ -30,10 +30,10 @@ export const metadata: Metadata = {
   title: "Influencer Program — Post a Pancake, get cash or tokens · Pancake",
   description:
     "Show what your Pancake is doing on X or LinkedIn. Get paid in cash or Pancake tokens (50% richer). No application form.",
-  alternates: { canonical: "https://www.getpancake.ai/influencers" },
+  alternates: { canonical: "https://getpancake.ai/influencers" },
   openGraph: {
     type: "website",
-    url: "https://www.getpancake.ai/influencers",
+    url: "https://getpancake.ai/influencers",
     title: "Pancake Influencer Program — Post a Pancake, get cash or tokens",
     description:
       "Post about Pancake on X or LinkedIn and get paid in cash or tokens (50% richer). No application form.",
@@ -76,13 +76,13 @@ const influencerProgramJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Pancake Influencer Program",
-  url: "https://www.getpancake.ai/influencers",
+  url: "https://getpancake.ai/influencers",
   description:
     "Earn cash or Pancake tokens (50% richer) by posting about Pancake on X or LinkedIn.",
   isPartOf: {
     "@type": "WebSite",
     name: "Pancake",
-    url: "https://www.getpancake.ai",
+    url: "https://getpancake.ai",
   },
 };
 
