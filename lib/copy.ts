@@ -74,7 +74,7 @@ export const orgChart = {
     },
     {
       title: "Always on",
-      description: "Your agent org runs 24/7 — no downtime, no sick days",
+      description: "Your agent org runs 24/7. No downtime, no sick days",
     },
   ],
 } as const;
@@ -131,7 +131,7 @@ export const safeCompliant = {
 export const stackIntegrations = {
   title: "Plug in your stack. Agents do the rest.",
   subtitle:
-    "Connect your tools. Your agents read, write, ship, and sell through them — like an employee would.",
+    "Connect your tools. Your agents read, write, ship, and sell through them, like an employee would.",
   integrations: [
     {
       id: "github",
@@ -237,7 +237,7 @@ export const pricing = {
    *  tools that run on it) plus a monthly token allocation. One slider,
    *  one total. Doubles as the SEO meta description. */
   subtitle:
-    "Pancake is $49/month flat for an always-on AI agent — Slack, iMessage, phone, email, browser, model-agnostic harness, and more. Pick your token pack. No tiers, no tricks.",
+    "Pancake is $49/month flat for an always-on AI agent: Slack, iMessage, phone, email, browser, model-agnostic harness, and more. Pick your token pack. No tiers, no tricks.",
   perMonth: "/ month",
   /** Two-card hero. LEFT card = the fixed-price promise; RIGHT card =
    *  the variable token pack the user picks. Reads as "Pancake is $49
@@ -293,7 +293,7 @@ export const pricing = {
     items: [
       { name: "Always-on compute",            detail: "Private cloud computer, 50GB storage", icon: "linux" },
       { name: "Encrypted secrets",            detail: "API keys + credentials, E2E",          icon: "vault" },
-      { name: "Any LLM, your choice",         detail: "Claude, GPT, Gemini — model-agnostic", icon: "harness" },
+      { name: "Any LLM, your choice",         detail: "Claude, GPT, Gemini. Model-agnostic", icon: "harness" },
       { name: "Slack-native",                 detail: "Lives in your channels and DMs",       icon: "slack" },
       { name: "Phone number for your Pancake", detail: "SMS + voice",                         icon: "phone" },
       { name: "Email inbox for your Pancake", detail: "Send and receive email",               icon: "mail" },
@@ -352,11 +352,11 @@ export const pricing = {
           accent: "#E8E0F2",
           accentInk: "#4A3C7B",
           time: "8:14am",
-          text: "@Pancake — write me an X thread about why we pivoted last month. Use the framing from my last 3 threads. Schedule it for 2pm today.",
+          text: "@Pancake write me an X thread about why we pivoted last month. Use the framing from my last 3 threads. Schedule it for 2pm today.",
         },
         agent: {
           time: "8:19am",
-          text: "Drafted, edited, scheduled in Typefully for 2pm — pancake.dev/t/9f2. 6 posts, opens with a hook on the \"we were wrong\" angle you used in your March 12 thread. Want me to draft a LinkedIn version too?",
+          text: "Drafted, edited, scheduled in Typefully for 2pm: pancake.dev/t/9f2. 6 posts, opens with a hook on the \"we were wrong\" angle you used in your March 12 thread. Want me to draft a LinkedIn version too?",
         },
       },
       {
@@ -370,11 +370,11 @@ export const pricing = {
           accent: "#D5E4EB",
           accentInk: "#1F4660",
           time: "10:04am",
-          text: "@Pancake — 27 demo requests came in over the weekend. Qualify each against our ICP (B2B SaaS, 20+ employees, US/EU). Reject the bottom half politely, book the top half on my Cal.com with a 1-pager prep doc for each.",
+          text: "@Pancake 27 demo requests came in over the weekend. Qualify each against our ICP (B2B SaaS, 20+ employees, US/EU). Reject the bottom half politely, book the top half on my Cal.com with a 1-pager prep doc for each.",
         },
         agent: {
           time: "1:47pm",
-          text: "Done. 14 disqualified with a polite \"not a fit right now\" reply (drafts in your Gmail, awaiting your send). 13 qualified — 11 booked themselves on Cal, 2 pending. Prep docs in pancake.dev/inbound. Three look like fast closers — flagged at the top.",
+          text: "Done. 14 disqualified with a polite \"not a fit right now\" reply (drafts in your Gmail, awaiting your send). 13 qualified: 11 booked themselves on Cal, 2 pending. Prep docs in pancake.dev/inbound. Three look like fast closers. Flagged at the top.",
         },
       },
       {
@@ -388,11 +388,11 @@ export const pricing = {
           accent: "#EAE2D2",
           accentInk: "#6E5520",
           time: "Monday 9:02am",
-          text: "@Pancake — I want 30 sales calls booked by Friday. ICP is mid-market e-commerce, 50-500 employees, hiring growth or marketing roles. Find them, write personalized outbound, send from my Apollo, book demos on my Cal.com when they reply. Check in with me Wednesday.",
+          text: "@Pancake I want 30 sales calls booked by Friday. ICP is mid-market e-commerce, 50-500 employees, hiring growth or marketing roles. Find them, write personalized outbound, send from my Apollo, book demos on my Cal.com when they reply. Check in with me Wednesday.",
         },
         agent: {
           time: "Wednesday 4:18pm",
-          text: "Day 3 update. 184 prospects sourced, 142 emails sent, 38 replies, 19 demos booked so far. 4 hot conversations need you (in #pancake-hot in Slack). Disqualified 8 that didn't match ICP on closer look. Tracking to ~32 demos by Friday — want me to push harder on the LinkedIn channel to hit 35?",
+          text: "Day 3 update. 184 prospects sourced, 142 emails sent, 38 replies, 19 demos booked so far. 4 hot conversations need you (in #pancake-hot in Slack). Disqualified 8 that didn't match ICP on closer look. Tracking to ~32 demos by Friday. Want me to push harder on the LinkedIn channel to hit 35?",
           artifact: "outbound-tracker",
         },
       },
@@ -404,15 +404,15 @@ export const pricing = {
     items: [
       {
         q: "What is the $49 for?",
-        a: "Your AI agent's full setup — an always-on cloud computer with 50GB storage, a real phone number for SMS and voice, an email inbox, Slack (and iMessage coming soon) access, an encrypted secret vault, a model-agnostic harness (Claude, GPT, Gemini), authenticated browser automation, live web fetch, agentic deep search, and unlimited sub-agents. No tiers, no upgrades — every account gets the full kit for $49/month.",
+        a: "Your AI agent's full setup: an always-on cloud computer with 50GB storage, a real phone number for SMS and voice, an email inbox, Slack (and iMessage coming soon) access, an encrypted secret vault, a model-agnostic harness (Claude, GPT, Gemini), authenticated browser automation, live web fetch, agentic deep search, and unlimited sub-agents. No tiers, no upgrades. Every account gets the full kit for $49/month.",
       },
       {
         q: "How do token packs work?",
-        a: "You pick one of five monthly packs at signup — $50, $100, $250, $500, or $1000 — and that pack covers your agent's LLM and tool usage for the month. Bump up or down any time from your settings; changes take effect immediately, prorated. We pass tokens through at the labs' public price, no markup — our margin is the volume discount we get for buying in bulk.",
+        a: "You pick one of five monthly packs at signup ($50, $100, $250, $500, or $1000) and that pack covers your agent's LLM and tool usage for the month. Bump up or down any time from your settings; changes take effect immediately, prorated. We pass tokens through at the labs' public price, no markup. Our margin is the volume discount we get for buying in bulk.",
       },
       {
         q: "Which LLMs can I use?",
-        a: "Any of them. The harness is model-agnostic — Claude, GPT, Gemini, and others. Your agents can pick the best model for each task, or you can pin a default in your config.",
+        a: "Any of them. The harness is model-agnostic: Claude, GPT, Gemini, and others. Your agents can pick the best model for each task, or you can pin a default in your config.",
       },
       {
         q: "Does my token allocation roll over?",

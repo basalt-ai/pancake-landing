@@ -85,11 +85,11 @@ Preview cards:`,
         rows: [
           {
             lead: "→ Sarah Chen, VP Eng @ Raycast",
-            body: `"Saw your post on scaling reviews across 12 repos — we built an API for that. 2-min demo?"`,
+            body: `"Saw your post on scaling reviews across 12 repos. We built an API for that. 2-min demo?"`,
           },
           {
             lead: "→ Priya Sharma, Head of Platform @ Vercel",
-            body: `"Loved your Next.js Conf talk on CI. We cut review time by 60% — worth a look?"`,
+            body: `"Loved your Next.js Conf talk on CI. We cut review time by 60%. Worth a look?"`,
           },
         ],
         moreLabel: "⋯ 145 more",
@@ -124,8 +124,8 @@ Here's the breakdown:
 📊 2,340 likes · 412 reposts · 89 replies · 4.2x your avg engagement
 
 Notable replies:
-  · @guillaumepalayer (22K followers) — "This is the future of code review"
-  · @swyx (178K followers) — quoted your thread with "underrated tool"
+  · @guillaumepalayer (22K followers): "This is the future of code review"
+  · @swyx (178K followers) quoted your thread with "underrated tool"
   · 2 partners at a16z liked it
 
 I already replied to the top 8 high-follower accounts to keep
@@ -144,7 +144,7 @@ momentum going. Also:
       time: "3:47 AM",
       text: `🔴 Incident auto-resolved.
 
-3:12 AM — Sentry flagged 340 TypeError on /api/v2/webhooks. Root cause: PR #291, payload.metadata is null when source is Stripe.
+3:12 AM: Sentry flagged 340 TypeError on /api/v2/webhooks. Root cause: PR #291, payload.metadata is null when source is Stripe.
 
 1. Fixed in webhook_handler.ts:L142 → PR #294 (null coalescing + fallback)
 2. 14/14 tests passing, new edge case covered
@@ -468,7 +468,7 @@ function SlackComposer({ activeChannel }: { activeChannel: Channel }) {
               <div className={slackTooltipWrap} role="tooltip">
                 <div className={slackTooltipCard}>
                   <p className="whitespace-nowrap text-[12px] font-medium leading-tight text-white/95">
-                    Nice try — no upload yet 😅
+                    Nice try. No upload yet 😅
                   </p>
                 </div>
                 <div className={slackTooltipCaret} aria-hidden />

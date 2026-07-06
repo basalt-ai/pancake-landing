@@ -32,24 +32,24 @@ const dmMono = DM_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Get started — The AI coworker that does the work for you · Pancake",
+  title: "Get started: The AI coworker that does the work for you · Pancake",
   description:
-    "Create your Pancake account — $100 in free credits, no card required. Stack autonomous agents across growth, engineering and ops so your company keeps running even while you sleep.",
+    "Create your Pancake account. $100 in free credits, no card required. Stack autonomous agents across growth, engineering and ops so your company keeps running even while you sleep.",
   alternates: { canonical: "https://getpancake.ai/get-started" },
   openGraph: {
     type: "website",
     url: "https://getpancake.ai/get-started",
-    title: "Get started with Pancake — the AI coworker that does the work for you",
+    title: "Get started with Pancake, the AI coworker that does the work for you",
     description:
-      "Create your account — $100 in free credits, no card required. Stack autonomous agents across growth, engineering and ops.",
+      "Create your account. $100 in free credits, no card required. Stack autonomous agents across growth, engineering and ops.",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Get started with Pancake" }],
     siteName: "Pancake",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Get started with Pancake — the AI coworker that does the work for you",
+    title: "Get started with Pancake, the AI coworker that does the work for you",
     description:
-      "Create your account — $100 in free credits, no card required.",
+      "Create your account. $100 in free credits, no card required.",
     images: ["/og-image.png"],
   },
 };
@@ -87,7 +87,7 @@ export default function GetStartedPage() {
             </h1>
 
             <p className="subline">
-              Pancake stacks autonomous agents across growth, engineering and ops — so your company keeps running even while you sleep.
+              Pancake stacks autonomous agents across growth, engineering and ops, so your company keeps running even while you sleep.
             </p>
 
             <div className="features">
@@ -95,21 +95,21 @@ export default function GetStartedPage() {
                 <div className="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5 3.5 6.5 7.5 2.5" stroke="#ff7aa0" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></div>
                 <div className="feat-copy">
                   <strong>An entire org in one account</strong>
-                  <span>Copywriter, DevOps, Customer Support, Ad Manager — working in parallel, 24/7, no sick days.</span>
+                  <span>Copywriter, DevOps, Customer Support, Ad Manager. Working in parallel, 24/7, no sick days.</span>
                 </div>
               </div>
               <div className="feat">
                 <div className="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5 3.5 6.5 7.5 2.5" stroke="#ff7aa0" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></div>
                 <div className="feat-copy">
                   <strong>Lives where your team already is</strong>
-                  <span>Morning briefings, autonomous actions, one-tap approvals — all in Slack, not another dashboard.</span>
+                  <span>Morning briefings, autonomous actions, one-tap approvals. All in Slack, not another dashboard.</span>
                 </div>
               </div>
               <div className="feat">
                 <div className="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5 3.5 6.5 7.5 2.5" stroke="#ff7aa0" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></div>
                 <div className="feat-copy">
                   <strong>Connects to your whole stack</strong>
-                  <span>Notion, GitHub, Stripe, Gmail — agents read, write and ship through your tools like a real employee.</span>
+                  <span>Notion, GitHub, Stripe, Gmail. Agents read, write and ship through your tools like a real employee.</span>
                 </div>
               </div>
               <div className="feat">
@@ -142,7 +142,7 @@ export default function GetStartedPage() {
 
             <div className="gs-card">
               <h2 className="card-title">Welcome to Pancake</h2>
-              <p className="card-sub">Create your account — $100 in free credits, no card required.</p>
+              <p className="card-sub">Create your account. $100 in free credits, no card required.</p>
 
               <a className="btn-google" href="https://app.getpancake.ai">
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -184,15 +184,15 @@ export default function GetStartedPage() {
             <div className="reassurance">
               <div className="re-item">
                 <div className="re-icon re-green">🛡️</div>
-                <span><strong>SOC 2 compliant</strong> — Your data is encrypted at rest and in transit.</span>
+                <span><strong>SOC 2 compliant</strong>. Your data is encrypted at rest and in transit.</span>
               </div>
               <div className="re-item">
                 <div className="re-icon re-purple">⚡</div>
-                <span><strong>Up and running in 5 min</strong> — Connect Slack, plug in your stack, go.</span>
+                <span><strong>Up and running in 5 min</strong>. Connect Slack, plug in your stack, go.</span>
               </div>
               <div className="re-item">
                 <div className="re-icon re-yellow">💸</div>
-                <span><strong>$100 in free credits included</strong> — Explore the full product before committing.</span>
+                <span><strong>$100 in free credits included</strong>. Explore the full product before committing.</span>
               </div>
             </div>
 
@@ -203,7 +203,7 @@ export default function GetStartedPage() {
         <div className="how-section">
           <span className="section-eyebrow">How it works</span>
           <h2 className="section-title">From signup to autonomous<br />company in minutes.</h2>
-          <p className="section-sub">No engineers needed. No complex setup. Just connect, configure, and go.</p>
+          <p className="section-sub">No engineers needed. No complex setup. Connect, configure, and go.</p>
 
           <div className="steps">
             <div className="step">
@@ -214,7 +214,7 @@ export default function GetStartedPage() {
             <div className="step">
               <div className="step-pill">STEP 02</div>
               <h4>Configure your agents</h4>
-              <p>Define roles and workflows in plain Markdown. You control exactly what each agent can see and do — nothing more, nothing less.</p>
+              <p>Define roles and workflows in plain Markdown. You control exactly what each agent can see and do. Nothing more, nothing less.</p>
             </div>
             <div className="step">
               <div className="step-pill">STEP 03</div>

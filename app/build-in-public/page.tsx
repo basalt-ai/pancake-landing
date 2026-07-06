@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Build in Public — Pancake",
+  title: "Build in Public · Pancake",
   description: "Live signup and ambassador metrics for Pancake.",
 };
 

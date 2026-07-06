@@ -6,14 +6,14 @@ import { HomeNav } from "@/components/sections/home/HomeNav";
 import { Footer } from "@/components/shared/Footer";
 
 export const metadata: Metadata = {
-  title: "Blog — Pancake",
-  description: "Guides, strategies, and insights on AI-native company building, automation, and the future of work.",
+  title: "Blog · Pancake",
+  description: "Guides and strategies on AI-native company building, automation, and the future of work.",
   alternates: { canonical: "https://getpancake.ai/blog" },
   openGraph: {
     type: "website",
     url: "https://getpancake.ai/blog",
-    title: "Blog — Pancake",
-    description: "Guides, strategies, and insights on AI-native company building, automation, and the future of work.",
+    title: "Blog · Pancake",
+    description: "Guides and strategies on AI-native company building, automation, and the future of work.",
     siteName: "Pancake",
   },
 };
@@ -33,11 +33,11 @@ export default function BlogIndex() {
           Blog
         </h1>
         <p className="mb-16" style={{ color: "var(--subtle-text)", fontSize: "var(--font-scale-1)" }}>
-          We are Pancake and we help small teams achieve great things by leveraging AI. This is where we share our recipes, come cook with us!
+          We are Pancake and we help small teams achieve great things with AI. This is where we share our recipes, come cook with us!
         </p>
 
         {posts.length === 0 ? (
-          <p style={{ color: "var(--subtle-text)" }}>No posts yet — check back soon.</p>
+          <p style={{ color: "var(--subtle-text)" }}>No posts yet. Check back soon.</p>
         ) : (
           <ul className="flex flex-col gap-12" style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {posts.map((post) => (

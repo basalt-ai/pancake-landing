@@ -397,7 +397,7 @@ const TRUST_CARDS: TrustCardDef[] = [
     badgeVariant: "brand",
     kicker: "Your call",
     title: "Approve before it ships",
-    body: "Money moves, code pushes, outbound emails — anything it can't undo waits for your one-tap approval in Slack.",
+    body: "Money moves, code pushes, outbound emails. Anything it can't undo waits for your one-tap approval in Slack.",
     Visual: ApproveVisual,
   },
   {
@@ -412,7 +412,7 @@ const TRUST_CARDS: TrustCardDef[] = [
     id: "accounts",
     kicker: "Your accounts",
     title: "Your accounts stay yours",
-    body: "Each teammate connects their own logins — your LinkedIn acts as you and no one else. One click disconnects any of them.",
+    body: "Each teammate connects their own logins. Your LinkedIn acts as you and no one else. One click disconnects any of them.",
     Visual: AccountsVisual,
   },
   {
@@ -428,7 +428,7 @@ const TRUST_CARDS: TrustCardDef[] = [
     badgeVariant: "brand-alt-2",
     kicker: "Your secrets",
     title: "Secrets stay sealed",
-    body: "Keys live in an encrypted vault — agents use them without ever seeing them, and nothing sensitive touches the chat.",
+    body: "Keys live in an encrypted vault. Agents use them without ever seeing them, and nothing sensitive touches the chat.",
     Visual: VaultVisual,
   },
   {
@@ -436,7 +436,7 @@ const TRUST_CARDS: TrustCardDef[] = [
     badgeVariant: "success",
     kicker: "Your data",
     title: "Never trains a model",
-    body: "Your company runs in its own sealed workspace, memory included. None of it is shared — with other customers or with model makers.",
+    body: "Your company runs in its own sealed workspace, memory included. None of it is shared with other customers or with model makers.",
     Visual: IsolationVisual,
   },
   {

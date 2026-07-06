@@ -117,8 +117,8 @@ export function HomePricingTeaser() {
               {pricing.currencySymbol}
               {pricing.infrastructureDollars}/month flat
             </strong>{" "}
-            for your always-on AI coworker. Tokens at the labs’ public price —
-            our margin is the volume discount, not a markup.
+            for your always-on AI coworker. Tokens at the labs’ public price.
+            Our margin is the volume discount, not a markup.
           </p>
         </div>
 

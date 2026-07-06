@@ -13,7 +13,7 @@ const softwareApplicationJsonLd = {
   operatingSystem: "Web",
   url: "https://getpancake.ai",
   description:
-    "Pancake is the AI coworker that does the work for you — one coworker in Slack, backed by squads of agents (growth, engineering, operations) that run 24/7. Built for solo and multiplayer founding teams going from $1 to $1M without hiring.",
+    "Pancake is the AI coworker that does the work for you. One coworker in Slack, backed by squads of agents (growth, engineering, operations) that run 24/7. Built for solo and multiplayer founding teams going from $1 to $1M without hiring.",
   offers: {
     "@type": "Offer",
     url: "https://getpancake.ai/pricing",
@@ -35,7 +35,7 @@ const softwareApplicationJsonLd = {
 const videoObjectJsonLd = {
   "@context": "https://schema.org",
   "@type": "VideoObject",
-  name: "Meet Pancake — the film",
+  name: "Meet Pancake: the film",
   description:
     "A 51-second film introducing Pancake, the AI coworker that lives in your Slack, staffs squads of agents, and pushes your company's autonomy level toward 99%.",
   thumbnailUrl: "https://getpancake.ai/demo-video-poster-live.jpg",

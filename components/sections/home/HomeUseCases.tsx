@@ -52,18 +52,18 @@ const USE_CASES: UseCase[] = [
     accent: "purple",
     kicker: "Engineering",
     headline: "Ships while you sleep.",
-    body: "Report the bug on your way to bed. Wake up to a tested fix and an open pull request — not a ticket.",
+    body: "Report the bug on your way to bed. Wake up to a tested fix and an open pull request, not a ticket.",
     user: {
       name: "Sam",
       initial: "S",
       accent: "#E8E0F2",
       accentInk: "#4A3C7B",
       time: "11:48 PM",
-      text: "@Pancake checkout's crashing on prod. I'm going to bed — take it.",
+      text: "@Pancake checkout's crashing on prod. I'm going to bed. Take it.",
     },
     agent: {
       time: "7:02 AM",
-      text: "Found it — guest carts hit a null session on the new flow. Fixed, tested, PR open for your review.",
+      text: "Found it: guest carts hit a null session on the new flow. Fixed, tested, PR open for your review.",
     },
     artifact: {
       icon: "pr",
@@ -87,7 +87,7 @@ const USE_CASES: UseCase[] = [
     },
     agent: {
       time: "8:17 AM",
-      text: "14 overdue, $38,400 outstanding. Reminders sent to every client — 3 have already opened theirs. I'll nudge the rest every 3 days until they clear.",
+      text: "14 overdue, $38,400 outstanding. Reminders sent to every client. 3 have already opened theirs. I'll nudge the rest every 3 days until they clear.",
     },
     artifact: {
       icon: "sheet",
@@ -100,7 +100,7 @@ const USE_CASES: UseCase[] = [
     accent: "pink",
     kicker: "Outbound",
     headline: "One ask, every tool.",
-    body: "Ask once — it works across your CRM, inbox, and analytics in a single run. It does the legwork.",
+    body: "Ask once. It works across your CRM, inbox, and analytics in a single run. It does the legwork.",
     user: {
       name: "Mara",
       initial: "M",
@@ -111,7 +111,7 @@ const USE_CASES: UseCase[] = [
     },
     agent: {
       time: "9:21 AM",
-      text: "12 new leads since yesterday — cross-checked CRM, inbox, and analytics. 3 are hot, drafts ready to send. I'll flag new ones as they land.",
+      text: "12 new leads since yesterday. Cross-checked CRM, inbox, and analytics. 3 are hot, drafts ready to send. I'll flag new ones as they land.",
     },
     artifact: {
       icon: "leads",
@@ -124,7 +124,7 @@ const USE_CASES: UseCase[] = [
     accent: "yellow",
     kicker: "Content",
     headline: "Real work, attached.",
-    body: "Get answers with the work attached — posts, PDFs, one-pagers. Grounded in your docs and your codebase.",
+    body: "Get answers with the work attached: posts, PDFs, one-pagers. Grounded in your docs and your codebase.",
     user: {
       name: "Leo",
       initial: "L",
@@ -135,7 +135,7 @@ const USE_CASES: UseCase[] = [
     },
     agent: {
       time: "4:41 PM",
-      text: "Drafted from the changelog and the docs — blog post and X thread are in your drafts, one-pager attached.",
+      text: "Drafted from the changelog and the docs. Blog post and X thread are in your drafts, one-pager attached.",
     },
     artifact: {
       icon: "pdf",

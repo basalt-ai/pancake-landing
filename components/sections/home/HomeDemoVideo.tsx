@@ -39,10 +39,10 @@ const FILM_SRC = "/demo-video.mp4"; // 51s master
 const FILM_TRANSCRIPT = [
   "Meet Pancake. The OpenClaw cofounder that makes your company autonomous. Lives with you in Slack, Messages, Mail.",
   "Pancake: “Hey hey! 👋 I'm Pancake, I'm here to help make your company more autonomous. I already went through all the material you provided about your company. Adding to company brain.”",
-  "Mike: “I suck at GTM, can you run it for me?” — Pancake spins up a LinkedIn outreach agent, a content skill, a lead magnet agent, and hires a Reddit squad. Autonomy level: 24.28%.",
-  "Mike: “What would I do without you.” Pancake: “Probably miss your 2pm.” — “What squads do you think I should hire next?” The squad store: AI SEO squad, Outreach squad, Reddit squad.",
+  "Mike: “I suck at GTM, can you run it for me?” Pancake spins up a LinkedIn outreach agent, a content skill, a lead magnet agent, and hires a Reddit squad. Autonomy level: 24.28%.",
+  "Mike: “What would I do without you.” Pancake: “Probably miss your 2pm.” Mike: “What squads do you think I should hire next?” The squad store: AI SEO squad, Outreach squad, Reddit squad.",
   "Daily digest delivered, blog post live, weekly citation audit complete, PR merged. Autonomy level: 79.00%… 99.86%.",
-  "Stop hiring agents — Pancake handles. getpancake.ai",
+  "Stop hiring agents. Pancake handles. getpancake.ai",
 ].join(" ");
 
 export function HomeDemoVideo() {
@@ -159,7 +159,7 @@ export function HomeDemoVideo() {
   };
 
   return (
-    <section ref={sectionRef} className="home-demo-video" aria-label="Meet Pancake — the film">
+    <section ref={sectionRef} className="home-demo-video" aria-label="Meet Pancake: the film">
       <div className={`home-demo-video__wrap ${HOME_PAGE_CONTAINER_CLASS}`} onPointerEnter={warmFilm}>
         <div className="home-film">
           <div className="home-film__intro">
@@ -218,7 +218,7 @@ export function HomeDemoVideo() {
                     type="button"
                     className="home-film__cta"
                     onClick={startFilm}
-                    aria-label="Play the Pancake film — 51 seconds, with sound"
+                    aria-label="Play the Pancake film, 51 seconds, with sound"
                   />
                   <span className="home-film__duration" aria-hidden>
                     0:51

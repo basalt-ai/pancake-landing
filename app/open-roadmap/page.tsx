@@ -24,14 +24,14 @@ import { getIdeas } from "@/lib/roadmap/ideas";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Open roadmap — Vote on what Pancake builds next · Pancake",
+  title: "Open roadmap: Vote on what Pancake builds next · Pancake",
   description:
     "Pancake's public roadmap. Upvote the squads, features, and integrations you want, post your own ideas, and see what's planned, in progress, and shipped.",
   alternates: { canonical: "https://getpancake.ai/open-roadmap" },
   openGraph: {
     type: "website",
     url: "https://getpancake.ai/open-roadmap",
-    title: "Pancake Open Roadmap — Vote on what we build next",
+    title: "Pancake Open Roadmap: Vote on what we build next",
     description:
       "Upvote the squads, features, and integrations you want, and post your own ideas. See what's planned, in progress, and shipped.",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake Open Roadmap" }],
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pancake Open Roadmap — Vote on what we build next",
+    title: "Pancake Open Roadmap: Vote on what we build next",
     description:
       "Upvote the squads, features, and integrations you want, and post your own ideas.",
     images: ["/og-image.png"],
@@ -114,7 +114,7 @@ export default async function OpenRoadmapPage() {
           </h2>
           <p className="home-landing-section__lede home-landing-section__lede--closing text-center">
             The best ideas come from the people using Pancake every day. Post
-            yours on the board — no account needed.
+            yours on the board. No account needed.
           </p>
           <div className="home-landing-closing-cta">
             <a
