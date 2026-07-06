@@ -38,8 +38,11 @@ function OrbitSatellitePancake({ palette }: { palette: keyof typeof PANCAKE_TINT
 
 const HERO_TITLE = "The AI coworker that does the work for you";
 
+/* Founder copy 2026-07-06 — three imperatives, the visitor's actual first
+   hour. Replaces the old sub that restated the H1's "does the work for
+   you" word for word. */
 const HERO_SUB =
-  "Pancake connects to your tools and starts doing the work for you. Autonomously.";
+  "Onboard Pancake in Slack. Connect your tools.\nCome back with finished work.";
 
 export function HomeHero() {
   return (
