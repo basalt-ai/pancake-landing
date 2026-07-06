@@ -1,64 +1,34 @@
-"use client";
-
 /**
- * Home — closing CTA finale (founder call 2026-07-03, full rebuild: the old
- * band was generic and "Make your company autonomous" drifted from the
- * hero's value prop; its three edge-bleed decor pancakes sat so far out
- * they never appeared in a screenshot of the center).
+ * Home — closing CTA finale (founder brief 2026-07-06: reproduce Figma
+ * `1892:4502`, the design that was already strong — full-bleed band,
+ * concentric dotted arcs grazing the edges, three two-tone pancakes
+ * scattered on the arcs, a stacked centered title with a bold tail,
+ * one pink button, one quiet note).
  *
- * Copy cashes the hero claim ("The AI coworker that does the work for you")
- * with the page's own verb: "Give Pancake its first job" — the ask is the
- * same action the use-case section promised. Button label matches the hero
- * and pricing CTAs verbatim (one primary verb top-to-bottom); the note
- * derives from `pricing.trial` instead of hardcoding figures.
+ * Text keeps the established direction: the title cashes the hero claim
+ * ("Give Pancake its first job"), the note derives from `pricing.trial`.
+ * The previous orbit-stage + eye-tracking mascot version is gone per the
+ * brief ("do not reinvent" the Figma layout); the decor layer spans the
+ * SECTION, not the container — `.home-landing-section--closing` carries
+ * `position: relative` for it.
  *
- * Visual bookends the hero: the eye-tracking mascot sits among two dotted
- * orbits (hero stroke recipe verbatim) with four two-tone satellite
- * pancakes placed parametrically ON the rings. The mascot follows the
- * cursor exactly like the hero's (founder call 2026-07-03 — no
- * `getTarget`, so `useCursorTracking` falls back to the real pointer);
- * the fork-cursor swap stays off next to the primary button. Entrance:
- * play-once GSAP fly-in along each satellite's radial vector; slow CSS
- * floats after. Reduced-motion / no-JS render the assembled state.
- * Stage geometry is percentage-based, so the composition holds at any
- * width without a mobile fork.
+ * Static server component: the arcs and pancakes are plain SVG/CSS (slow
+ * float keyframes only), no GSAP, no client hooks.
  */
 
-import { useEffect, useRef, useState } from "react";
-import type { CSSProperties } from "react";
-import { gsap, useGSAP, ScrollTrigger } from "@/lib/gsap";
-import { PancakeMonster } from "@/components/mascot/pancake-monster/PancakeMonster";
 import { pricing } from "@/lib/copy";
 import { PANCAKE_TINTS } from "@/lib/pancake-palette";
 
-/** One line at 64px — measures 683px against the 752px heading column
- *  (founder call); small screens wrap naturally on the max-width. */
-const CLOSING_TITLE = "Give Pancake its first job";
-
-/** Stage design space — all positions below are % of this box. */
-const STAGE_W = 640;
-const STAGE_H = 200;
-/** Orbit center (the mascot's anchor). */
-const ORBIT_CX = 320;
-const ORBIT_CY = 134;
-
-/**
- * Satellites ON the rings — centers computed parametrically at
- * (cx + rx·cosθ, cy + ry·sinθ) so they sit exactly on the dotted paths:
- * outer ring rx300 ry86 — purple θ=190°, pink θ=335°, yellow θ=285°;
- * inner ring rx210 ry60 — orange θ=160° (front layer).
- */
-const SATELLITES = [
-  { id: "purple", variant: "purple", size: 44, x: 24.6, y: 119.1, layer: "behind" },
-  { id: "yellow", variant: "yellow", size: 28, x: 397.6, y: 50.9, layer: "behind" },
-  { id: "pink", variant: "pink", size: 36, x: 591.9, y: 97.7, layer: "front" },
-  { id: "orange", variant: "orange", size: 40, x: 122.7, y: 154.5, layer: "front" },
+/** Figma design space — positions below are % of the 1920×574 band. */
+const PANCAKES = [
+  { id: "purple", variant: "purple", size: 46, x: 26.0, y: 11.5 },
+  { id: "pink", variant: "pink", size: 92, x: 11.5, y: 72.0 },
+  { id: "orange", variant: "orange", size: 108, x: 96.2, y: 38.0 },
 ] as const;
 
-const FLOAT_DELAYS = ["0s", "1.3s", "2.7s", "4s"];
+const FLOAT_DELAYS = ["0s", "2.3s", "4.1s"];
 
-/** Shared two-tone pancake silhouette (moved from HomeLandingBody — the
- *  old edge-bleed decors were this component's only other caller). */
+/** Shared two-tone pancake silhouette (same drawing as the hero orbits). */
 function DecorPancake({ variant, className }: { variant: keyof typeof PANCAKE_TINTS; className: string }) {
   const p = PANCAKE_TINTS[variant];
   return (
@@ -76,119 +46,48 @@ function DecorPancake({ variant, className }: { variant: keyof typeof PANCAKE_TI
 }
 
 export function HomeClosingCta() {
-  const rootRef = useRef<HTMLDivElement>(null);
-  const monsterSlotRef = useRef<HTMLDivElement>(null);
-
-  /* PancakeMonster takes a px size — measure the CSS-clamped slot, the
-     same pattern the integrations cloud uses. */
-  const [monsterSize, setMonsterSize] = useState(132);
-  useEffect(() => {
-    const slot = monsterSlotRef.current;
-    if (!slot) return;
-    const measure = () => {
-      const w = slot.getBoundingClientRect().width;
-      if (w > 0) setMonsterSize(Math.round(w));
-    };
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(slot);
-    return () => ro.disconnect();
-  }, []);
-
-  /* Play-once entrance — satellites fly in from 40px further out along
-     their radial vector. Reduced-motion renders the final state. */
-  useGSAP(
-    () => {
-      const root = rootRef.current;
-      if (!root) return;
-      const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const sats = gsap.utils.toArray<HTMLElement>(root.querySelectorAll("[data-sat-fly]"));
-        if (!sats.length) return;
-        const radial = (el: HTMLElement) => {
-          const dx = Number(el.dataset.dx ?? 0);
-          const dy = Number(el.dataset.dy ?? 0);
-          const len = Math.hypot(dx, dy) || 1;
-          return { x: (dx / len) * 40, y: (dy / len) * 40 };
-        };
-        gsap.from(sats, {
-          x: (_i: number, el: HTMLElement) => radial(el).x,
-          y: (_i: number, el: HTMLElement) => radial(el).y,
-          scale: 0.4,
-          opacity: 0,
-          duration: 0.7,
-          ease: "back.out(1.6)",
-          stagger: 0.08,
-          scrollTrigger: { trigger: root, start: "top 70%", once: true },
-        });
-      });
-    },
-    { scope: rootRef },
-  );
-
   const note = `${pricing.trial.days}-day free trial • ${pricing.currencySymbol}${pricing.trial.freeTokensDollars} in free credits • No credit card required`;
 
   return (
-    <div ref={rootRef} className="home-closing">
-      {/* Orbit stage — the hero's constellation, gathered around the ask. */}
-      <div className="home-closing__stage" aria-hidden>
-        <svg className="home-closing__orbits" viewBox={`0 0 ${STAGE_W} ${STAGE_H}`} preserveAspectRatio="none">
-          <ellipse
-            cx={ORBIT_CX}
-            cy={ORBIT_CY}
-            rx={300}
-            ry={86}
-            className="home-closing__orbit"
-            opacity={0.5}
-          />
-          <ellipse
-            cx={ORBIT_CX}
-            cy={ORBIT_CY}
-            rx={210}
-            ry={60}
-            className="home-closing__orbit"
-            opacity={0.7}
-          />
+    <div className="home-closing">
+      {/* Full-band decor — concentric dotted arcs (empty middle keeps the
+          copy clean) + pancakes riding them, Figma positions. */}
+      <div className="home-closing__decor" aria-hidden>
+        <svg className="home-closing__arcs" viewBox="0 0 1920 574" preserveAspectRatio="xMidYMid slice">
+          {[520, 700, 880, 1060].map((r, i) => (
+            <circle
+              key={r}
+              cx={960}
+              cy={287}
+              r={r}
+              className="home-closing__orbit"
+              opacity={0.6 - i * 0.1}
+            />
+          ))}
         </svg>
-        {SATELLITES.map((s, i) => (
+        {PANCAKES.map((p, i) => (
           <span
-            key={s.id}
-            className="home-closing-sat"
-            data-layer={s.layer}
-            style={
-              {
-                left: `${(s.x / STAGE_W) * 100}%`,
-                top: `${(s.y / STAGE_H) * 100}%`,
-                width: `${(s.size / STAGE_W) * 100}%`,
-                "--sat-float-delay": FLOAT_DELAYS[i],
-              } as CSSProperties
-            }
+            key={p.id}
+            className="home-closing-pancake"
+            style={{
+              left: `${p.x}%`,
+              top: `${p.y}%`,
+              width: `clamp(${Math.round(p.size * 0.55)}px, ${(p.size / 1920) * 100}vw, ${p.size}px)`,
+              animationDelay: FLOAT_DELAYS[i],
+            }}
           >
-            <span
-              className="home-closing-sat__fly"
-              data-sat-fly
-              data-dx={s.x - ORBIT_CX}
-              data-dy={s.y - ORBIT_CY}
-            >
-              <span className="home-closing-sat__float">
-                <DecorPancake variant={s.variant} className="home-closing-sat__pancake" />
-              </span>
-            </span>
+            <DecorPancake variant={p.variant} className="home-closing-pancake__art" />
           </span>
         ))}
-        <div ref={monsterSlotRef} className="home-closing__monster">
-          <PancakeMonster size={monsterSize} pancakeColor="yellow" disableForkCursor />
-        </div>
       </div>
 
-      <h2
-        id="home-landing-closing-heading"
-        className="heading home-landing-section__closing-title whitespace-pre-line text-center"
-      >
-        {CLOSING_TITLE}
+      <h2 id="home-landing-closing-heading" className="heading home-landing-section__closing-title text-center">
+        Give Pancake
+        <br />
+        its <strong>first job</strong>
       </h2>
       <p className="home-landing-section__lede home-landing-section__lede--closing text-center">
-        Onboards in Slack. Comes back with finished work.
+        Onboards in Slack. Hands back finished work.
       </p>
       <div className="home-landing-closing-cta">
         <a

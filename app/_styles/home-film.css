@@ -54,6 +54,17 @@
     color: var(--text);
   }
 
+  /* Three-step film summary — one line per beat of the film, revealed
+     with a GSAP stagger (see HomeDemoVideo). Block spans inside the one
+     heading keep it a single accessible title. */
+  .home-film__step {
+    display: block;
+  }
+
+  .home-film__step + .home-film__step {
+    margin-top: var(--spacing-lg);
+  }
+
   /* ── Film frame ──────────────────────────────────────────────────────── */
   /* Mascot peeking over the frame's top edge; the scroll-scale entrance
      (frame starts at 0.94) reveals a bit more of it early. */

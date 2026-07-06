@@ -38,11 +38,13 @@ function OrbitSatellitePancake({ palette }: { palette: keyof typeof PANCAKE_TINT
 
 const HERO_TITLE = "The AI coworker that does the work for you";
 
-/* Founder copy 2026-07-06 — three imperatives, the visitor's actual first
-   hour. Replaces the old sub that restated the H1's "does the work for
-   you" word for word. */
+/* Founder brief 2026-07-06: "come back with finished work" read as the
+   USER finishing the work — Pancake must be the actor. This sub carries
+   the mechanism the H1 skips (one interlocutor, a team of agents, your
+   tools) with zero word overlap; the film band below owns the
+   three-step onboarding list. */
 const HERO_SUB =
-  "Onboard Pancake in Slack. Connect your tools.\nCome back with finished work.";
+  "You talk to one Pancake.\nBehind it, a team of agents works across your tools.";
 
 export function HomeHero() {
   return (

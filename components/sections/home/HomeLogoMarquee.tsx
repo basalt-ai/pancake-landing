@@ -19,6 +19,10 @@ type MarqueeLogo = {
   ratio: number;
   /** Optical height in px at desktop scale — tuned per mark. */
   heightPx: number;
+  /** Optional proof link attached under the mark (founder brief
+   *  2026-07-06: the AgentMail story rides its logo instead of a
+   *  dedicated blog section). */
+  story?: { href: string; label: string };
 };
 
 const TRUSTED_BY: MarqueeLogo[] = [
@@ -31,7 +35,16 @@ const TRUSTED_BY: MarqueeLogo[] = [
 const POWERED_BY: MarqueeLogo[] = [
   { name: "Exa", src: "/logos/exa.svg", ratio: 277.273 / 100, heightPx: 32 },
   { name: "Anchor Browser", src: "/logos/anchorbrowser.svg", ratio: 115.674 / 20, heightPx: 27 },
-  { name: "AgentMail", src: "/logos/agentmail.svg", ratio: 1986 / 363, heightPx: 30 },
+  {
+    name: "AgentMail",
+    src: "/logos/agentmail.svg",
+    ratio: 1986 / 363,
+    heightPx: 30,
+    story: {
+      href: "https://www.agentmail.to/blog/how-pancake-gives-its-superagent-a-real-inbox-with-agentmail",
+      label: "Read story",
+    },
+  },
   { name: "LiteLLM", src: "/logos/litellm.svg", ratio: 3538 / 735, heightPx: 24 },
 ];
 
@@ -68,12 +81,28 @@ function MarqueeGroup({
               {...(copy > 0 ? { "aria-hidden": true } : {})}
             >
               {logos.map((logo) => (
-                <li key={logo.name} className="home-logo-marquee__item">
+                <li
+                  key={logo.name}
+                  className={`home-logo-marquee__item${logo.story ? " home-logo-marquee__item--story" : ""}`}
+                >
                   <span
                     className="home-logo-marquee__logo"
                     {...(copy === 0 ? { role: "img", "aria-label": logo.name } : {})}
                     style={logoStyle(logo)}
                   />
+                  {logo.story ? (
+                    /* Marquee pauses on hover (CSS), so the chip is
+                       clickable; clones stay out of the tab order. */
+                    <a
+                      className="home-logo-marquee__story"
+                      href={logo.story.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      {...(copy > 0 ? { tabIndex: -1, "aria-hidden": true } : {})}
+                    >
+                      {logo.story.label}
+                    </a>
+                  ) : null}
                 </li>
               ))}
             </ul>
