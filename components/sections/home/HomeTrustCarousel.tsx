@@ -20,8 +20,10 @@
  *
  * Carousel mechanics: framer-motion motionValue drives the cylinder's
  * rotateY; pointer drag maps px→deg, release springs to the nearest 60°
- * snap (fling momentum projects the target). Arrows + dots + arrow keys
- * as non-drag paths; reduced-motion swaps springs for a 200ms tween.
+ * snap (fling momentum projects the target). Horizontal trackpad scroll
+ * rotates it the same way (non-passive wheel listener, snap after a
+ * 140ms quiet window); dots + arrow keys as non-drag paths;
+ * reduced-motion swaps springs for a 200ms tween.
  * Mobile (<1024px) drops the 3D for the testimonials scroll-snap recipe —
  * both variants are in the DOM, CSS media queries pick one.
  */
@@ -655,6 +657,33 @@ export function HomeTrustCarousel() {
     [stepBy]
   );
 
+  /* Horizontal scroll (trackpad wheel) rotates the cylinder like a drag;
+     a short quiet window then snaps to the nearest face. Native listener
+     because wheel must be non-passive for preventDefault to block the
+     browser's history swipe. Vertical scroll passes through untouched. */
+  const stageRef = useRef<HTMLDivElement>(null);
+  const wheelTimer = useRef<number | null>(null);
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+      e.preventDefault();
+      rotation.stop();
+      rotation.set(rotation.get() - e.deltaX * DEG_PER_PX);
+      if (wheelTimer.current !== null) window.clearTimeout(wheelTimer.current);
+      wheelTimer.current = window.setTimeout(() => {
+        wheelTimer.current = null;
+        settleTo(Math.round(rotation.get() / STEP) * STEP);
+      }, 140);
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      el.removeEventListener("wheel", onWheel);
+      if (wheelTimer.current !== null) window.clearTimeout(wheelTimer.current);
+    };
+  }, [rotation, settleTo]);
+
   /* Mobile scroll-snap track — active dot follows scroll position. */
   const mobileTrackRef = useRef<HTMLDivElement>(null);
   const onMobileScroll = useCallback(() => {
@@ -677,6 +706,7 @@ export function HomeTrustCarousel() {
     <div className="home-landing-trust home-trust-carousel">
       {/* Desktop — the 3D cylinder. */}
       <div
+        ref={stageRef}
         className="home-trust-carousel__stage"
         role="group"
         aria-roledescription="carousel"
@@ -696,18 +726,9 @@ export function HomeTrustCarousel() {
         </motion.div>
       </div>
 
-      {/* Desktop nav — arrows + dots. */}
+      {/* Desktop nav — dots only (arrows dropped, founder call 2026-07-03:
+          drag + horizontal scroll + dots + arrow keys cover every path). */}
       <div className="home-trust-carousel__nav">
-        <button
-          type="button"
-          className="home-trust-carousel__arrow"
-          aria-label="Previous card"
-          onClick={() => stepBy(-1)}
-        >
-          <svg viewBox="0 0 14 14" aria-hidden>
-            <path d="M9 2.5 L4.5 7 L9 11.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-          </svg>
-        </button>
         <div className="home-trust-carousel__dots">
           {TRUST_CARDS.map((card, i) => (
             <button
@@ -720,16 +741,6 @@ export function HomeTrustCarousel() {
             />
           ))}
         </div>
-        <button
-          type="button"
-          className="home-trust-carousel__arrow"
-          aria-label="Next card"
-          onClick={() => stepBy(1)}
-        >
-          <svg viewBox="0 0 14 14" aria-hidden>
-            <path d="M5 2.5 L9.5 7 L5 11.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-          </svg>
-        </button>
       </div>
 
       {/* Mobile — testimonials scroll-snap recipe, same six cards. */}
