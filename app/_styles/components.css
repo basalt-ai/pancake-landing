@@ -3017,7 +3017,9 @@
       display: block;
       position: relative;
       width: 100%;
-      height: 500px;
+      /* 448px front card + 8px margins — the extra 500px headroom existed
+         for the (removed) orbit backdrop and read as dead air under the H2. */
+      height: 464px;
       perspective: 1400px;
       perspective-origin: 50% 45%;
       cursor: grab;
