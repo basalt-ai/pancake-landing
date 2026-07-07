@@ -142,6 +142,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${aeonik.variable} ${aeonikFono.variable} ${lato.variable}`}>
       <head>
+        {/* eslint-disable-next-line @next/next/no-sync-scripts -- Attribution must run before a bounce. */}
+        <script src="/pancake-attribution.min.js"></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
