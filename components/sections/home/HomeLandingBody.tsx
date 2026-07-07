@@ -119,10 +119,11 @@ export function HomeLandingBody() {
       {/* Figma `428:15015` integrations */}
       <section className="home-landing-section home-landing-section--alt" aria-labelledby="home-landing-integrations-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
-          <header className="home-landing-section__header">
+          <header className="home-landing-section__header home-landing-section__header--wide">
             {/* Single-line header (founder: one efficient sentence — the freed
                 line keeps the full artwork visible without cropping logos).
-                "natively into the 2000+ tools" dictated by founder 2026-07-07. */}
+                "natively into the 2000+ tools" dictated by founder 2026-07-07;
+                --wide lifts the shared 752px cap so it fits on one line. */}
             <H2
               id="home-landing-integrations-heading"
               className="heading home-landing-section__title text-center [text-wrap:balance]"
