@@ -44,15 +44,25 @@ export function HomeLandingBody() {
       <section className="home-landing-section" aria-labelledby="home-landing-usecases-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
-            {/* Single-line header — one-screen budget (founder rule). */}
-            {/* "Give Pancake a job, come back to finished work" collided
-                with the film's "Put Pancake to work" line directly above
-                and the closing lede's "finished work" (review 2026-07-06);
-                the four cards ARE the four jobs, the title just counts
-                them. */}
-            <H2 id="home-landing-usecases-heading" className="heading home-landing-section__title text-center">
-              Four real jobs, start to finish
+            {/* Founder 2026-07-07: "Four real jobs" counted the cards but
+                said nothing — the header must carry the actual claim (any
+                kind of job, in any tool), Viktor-style; the cards below
+                are the proof. Avoids "finished work" (hero H2 + closing
+                lede) and "the tools you already use" (integrations H2). */}
+            <H2
+              id="home-landing-usecases-heading"
+              className="heading home-landing-section__title text-center [text-wrap:balance]"
+            >
+              Any job, in any tool
             </H2>
+            {/* Wraps to two lines inside the heading cap — the sm+ break
+                lands on the clause seam (balance split "every | team");
+                mobile needs three lines, so there it wraps naturally. */}
+            <p className="home-landing-section__lede text-center">
+              Pancake picks up work from every team{" "}
+              <br className="hidden sm:inline" />
+              and runs it start to finish.
+            </p>
           </header>
           <HomeUseCases />
         </div>
