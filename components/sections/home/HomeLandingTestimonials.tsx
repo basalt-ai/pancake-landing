@@ -176,9 +176,14 @@ function Card({ t }: { t: Testimonial }) {
 export function HomeLandingTestimonials() {
   const trackRef = useRef<HTMLDivElement | null>(null);
   const mobileTrackRef = useRef<HTMLDivElement | null>(null);
+  const pausedRef = useRef(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  /* The drift track is the visible one everywhere EXCEPT reduced-motion on
+     mobile, which falls back to the swipeable snap carousel. */
+  const mobileDrift = isMobile && !reducedMotion;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -199,9 +204,9 @@ export function HomeLandingTestimonials() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  // Desktop only — the infinite GSAP ticker scroll.
+  // The infinite GSAP ticker drift — runs on desktop AND mobile (motion),
+  // matching the ambient feel across breakpoints (founder 2026-07-07).
   useEffect(() => {
-    if (isMobile) return;
     const track = trackRef.current;
     if (!track) return;
     if (reducedMotion) {
@@ -220,7 +225,15 @@ export function HomeLandingTestimonials() {
     measure();
 
     const tick = (_time: number, deltaTime: number) => {
-      if (stride <= 0) return;
+      // Self-heal: the track can start hidden (mobile hydration flip), so
+      // scrollWidth reads 0 until it lays out — re-measure until it sticks.
+      if (stride <= 0) {
+        measure();
+        if (stride <= 0) return;
+      }
+      // Paused while a finger is down (the touch analog of hover-pause) so
+      // a reader can hold a card still — WCAG 2.2.2.
+      if (pausedRef.current) return;
       offset -= (deltaTime / 1000) * CAROUSEL_SPEED_PX_PER_S;
       while (offset <= -stride) offset += stride;
       track.style.transform = `translate3d(${offset.toFixed(2)}px, 0, 0)`;
@@ -237,11 +250,12 @@ export function HomeLandingTestimonials() {
       gsap.ticker.remove(tick);
       window.removeEventListener("resize", handleResize);
     };
-  }, [reducedMotion, isMobile]);
+  }, [reducedMotion, mobileDrift]);
 
-  // Mobile — track which card is centered for the dots indicator.
+  // Snap-carousel dot tracking — only the reduced-motion mobile fallback
+  // uses that carousel, so skip the listener when the track drifts.
   useEffect(() => {
-    if (!isMobile) return;
+    if (!isMobile || !reducedMotion) return;
     const track = mobileTrackRef.current;
     if (!track) return;
     const update = () => {
@@ -264,7 +278,7 @@ export function HomeLandingTestimonials() {
     track.addEventListener("scroll", update, { passive: true });
     update();
     return () => track.removeEventListener("scroll", update);
-  }, [isMobile]);
+  }, [isMobile, reducedMotion]);
 
   function scrollToTestimonial(i: number) {
     const track = mobileTrackRef.current;
@@ -279,12 +293,27 @@ export function HomeLandingTestimonials() {
   // Desktop loop renders cards twice for seamless looping.
   const looped = [...TESTIMONIALS, ...TESTIMONIALS];
 
+  const pause = () => {
+    pausedRef.current = true;
+  };
+  const resume = () => {
+    pausedRef.current = false;
+  };
+
   return (
-    <div className="home-landing-testimonials" aria-roledescription="carousel">
-      {/* Desktop track — infinite GSAP scroll. */}
+    <div
+      className={`home-landing-testimonials${mobileDrift ? " home-landing-testimonials--mobile-drift" : ""}`}
+      aria-roledescription="carousel"
+    >
+      {/* Drift track — infinite GSAP scroll on desktop and mobile (motion).
+          Pointer-down pauses it so a reader can hold a card still. */}
       <div
         ref={trackRef}
         className="home-landing-testimonials__track home-landing-testimonials__track--desktop"
+        onPointerDown={pause}
+        onPointerUp={resume}
+        onPointerCancel={resume}
+        onPointerLeave={resume}
       >
         {looped.map((t, i) => (
           <Card key={`${t.id}-${i}`} t={t} />

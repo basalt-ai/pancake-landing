@@ -2096,14 +2096,29 @@
     );
   }
 
-  /* Mobile swaps the drifting ticker for a snap carousel whose cards REST
-     in view — the edge fade would permanently dim the resting neighbours
-     (mobile review 2026-07-07), so it comes off below lg. */
-  @media (max-width: 1023.98px) {
+  /* Mobile keeps the drifting ticker (founder 2026-07-07) so the edge fade
+     stays, like desktop. Only the reduced-motion fallback swaps in a snap
+     carousel whose cards REST in view — there the fade would permanently
+     dim the resting neighbours, so it comes off. */
+  @media (prefers-reduced-motion: reduce) and (max-width: 1023.98px) {
     .home-landing-testimonials {
       -webkit-mask-image: none;
       mask-image: none;
     }
+  }
+
+  /* Mobile drift (motion): keep the desktop drift track and hide the snap
+     carousel. Two-class selectors out-specify the single-class mobile-width
+     rules that would otherwise hide the track / show the carousel. Cards
+     drop the 320px floor so a peek shows at 320. */
+  .home-landing-testimonials--mobile-drift .home-landing-testimonials__track--desktop {
+    display: flex;
+  }
+  .home-landing-testimonials--mobile-drift .home-landing-testimonials__mobile {
+    display: none;
+  }
+  .home-landing-testimonials--mobile-drift .home-landing-testimonial {
+    width: min(84vw, 360px);
   }
 
   .home-landing-testimonials__track {
@@ -5898,9 +5913,11 @@
      preserving the underlying animations.
      ───────────────────────────────────────────────────────────────── */
   @media (max-width: 1023.98px) {
-    /* === Org section: swap desktop diagram for mobile component === */
-    .home-landing-org-desktop { display: none; }
-    .home-landing-org-mobile { display: block; }
+    /* === Org section removed on mobile (founder 2026-07-07) — the squad
+       chart's at-a-glance team gestalt can't survive a portrait crop; hidden
+       here (still in the DOM for SEO), the mobile diagram is dropped in the
+       TSX so its ticker doesn't run unseen. === */
+    .home-landing-section--org { display: none; }
 
     /* === Hero — pancake monster centered above the headline. ===
        Desktop puts the pancake stack to the right of the title; the
