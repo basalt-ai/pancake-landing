@@ -5,10 +5,10 @@
  * the `home-landing-section` shell, the `.button` CTA anchor, the
  * `HomeLandingTestimonials` banner, and the `.influencers-tiers__table`
  * chrome — plus the shared `vvp-*` classes. Captures "claude tag vs pancake"
- * / "claude tag alternative" search intent. Honest framing: Claude Tag is a
- * genuinely strong, Anthropic-native AI teammate in Slack; Pancake wins by
- * being a different category — a coordinated team of agents that runs your
- * company, built on the same Claude models via OpenClaw.
+ * / "claude tag alternative" search intent. Lead message: Pancake is ~75%
+ * cheaper because it mixes Anthropic's Claude with open-source models
+ * (routing each task to the model that fits) and connects to 1,000+ tools
+ * instead of an admin-approved connector list.
  */
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -25,24 +25,24 @@ import { H2, H3 } from "@/components/ui/Headings";
 const APP_URL = "https://app.getpancake.ai";
 
 export const metadata: Metadata = {
-  title: "Claude Tag vs Pancake: One AI Teammate vs a Company That Runs Itself",
+  title: "Claude Tag vs Pancake: The Same Claude, 75% Cheaper, 1,000+ Tools",
   description:
-    "Claude Tag gives your Slack one powerful AI teammate from Anthropic. Pancake gives you a team of coordinating agents with persistent memory, a company brain, and dedicated infrastructure. All on the same Claude models. See the real difference.",
+    "Claude Tag runs every task on Anthropic's premium models at premium prices. Pancake mixes Claude with open-source models, so the same work costs about 75% less, and its agents connect to 1,000+ tools. See the real difference.",
   alternates: { canonical: "https://getpancake.ai/claude-tag-vs-pancake" },
   openGraph: {
     type: "website",
     url: "https://getpancake.ai/claude-tag-vs-pancake",
-    title: "Claude Tag vs Pancake: One AI Teammate vs a Company That Runs Itself",
+    title: "Claude Tag vs Pancake: The Same Claude, 75% Cheaper, 1,000+ Tools",
     description:
-      "Claude Tag gives your Slack one powerful AI teammate from Anthropic. Pancake gives you a team of coordinating agents with persistent memory, a company brain, and dedicated infrastructure. See the real difference.",
+      "Claude Tag runs every task on Anthropic's premium models at premium prices. Pancake mixes Claude with open-source models, so the same work costs about 75% less, and its agents connect to 1,000+ tools.",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Claude Tag vs Pancake" }],
     siteName: "Pancake",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Claude Tag vs Pancake: One AI Teammate vs a Company That Runs Itself",
+    title: "Claude Tag vs Pancake: The Same Claude, 75% Cheaper, 1,000+ Tools",
     description:
-      "Claude Tag gives your Slack one powerful AI teammate. Pancake gives you a team of coordinating agents with persistent memory, a company brain, and dedicated infrastructure.",
+      "Pancake mixes Claude with open-source models, so the same work costs about 75% less, and its agents connect to 1,000+ tools instead of an approved-connector list.",
     images: ["/og-image.png"],
   },
 };
@@ -51,33 +51,33 @@ export const metadata: Metadata = {
 const DIFFERENTIATORS = [
   {
     n: "01",
+    title: "75% cheaper: the right model for every task",
+    body: "Claude Tag runs every single task through Anthropic's premium models, at Anthropic's premium prices. Pancake routes each task to the model that fits: Claude handles the reasoning-heavy work, and open-source models handle the volume work like drafts, research sweeps, and data cleanup, at a fraction of the token price. Same quality where it matters, roughly 75% off the bill.",
+    angle: "Claude for the thinking. Open source for the typing.",
+  },
+  {
+    n: "02",
+    title: "1,000+ tools, not an approved-connector list",
+    body: "Claude Tag's integrations are connectors your admin approves one by one. Pancake's agents connect to 1,000+ tools out of the box: CRMs, ad platforms, analytics, code, email, calendars. And when something isn't on the list, they can wire it up themselves with an API key, right in the conversation.",
+    angle: "If it has an API, Pancake connects to it.",
+  },
+  {
+    n: "03",
     title: "A team of specialists, not one shared teammate",
     body: "Claude Tag is a single AI identity everyone in the workspace tags into a thread. Pancake coordinates a full org-chart of specialists running in parallel: SEO, ads, code, ops, finance. The right agent picks up the right job and works without being asked. A real team, not one teammate stretched across every channel.",
     angle: "One @-mention for everything vs the right agent for every job.",
   },
   {
-    n: "02",
-    title: "Owns functions, not tagged tasks",
-    body: "Claude Tag takes initiative on the tasks you tag it into and monitors what it's scoped to. Pancake's agents own whole functions: they run cron jobs overnight, chase blockers, file reports, and pursue their own goals without being prompted. It's the difference between a teammate you delegate to and a workforce that owns the outcome.",
-    angle: "Claude Tag works when you tag it. Pancake works when you sleep.",
-  },
-  {
-    n: "03",
+    n: "04",
     title: "A company brain, not channel-scoped memory",
     body: "Claude Tag builds org memory that admins scope per channel and per tool. Pancake maintains a live, structured org brain (goals, decisions, metrics, meeting notes), linked and actively maintained by your agents. When one agent learns something, every agent knows it. No silos between channels, no context resets between sessions.",
     angle: "Institutional knowledge, not scoped memory.",
   },
   {
-    n: "04",
-    title: "Your own infrastructure, not a governed sandbox",
-    body: "Claude Tag runs inside Anthropic's managed, admin-scoped environment. Every Pancake customer gets a dedicated pod: 50GB RAM, full package install, persistent agent profiles, and long-running processes. Your agents have been here before: they're not starting fresh, and they're not boxed into pre-approved tools.",
-    angle: "Not a chat window. A machine.",
-  },
-  {
     n: "05",
-    title: "OpenClaw: the same Claude, with the limits removed",
-    body: "Claude Tag and Pancake both run on Claude. The difference is the harness. Pancake runs on OpenClaw: Claude extended with a real browser, a filesystem, and the ability to integrate with anything that has an API key. Claude Tag's tools are admin-approved connectors. Pancake's agents can wire up new tools on the fly.",
-    angle: "Same model. Different league.",
+    title: "Owns functions, not tagged tasks",
+    body: "Claude Tag takes initiative on the tasks you tag it into and monitors what it's scoped to. Pancake's agents own whole functions: they run cron jobs overnight, chase blockers, file reports, and pursue their own goals without being prompted. It's the difference between a teammate you delegate to and a workforce that owns the outcome.",
+    angle: "Claude Tag works when you tag it. Pancake works when you sleep.",
   },
 ];
 
@@ -87,6 +87,21 @@ type Row = { feature: string; competitor: Cell; pancake: Cell };
 /** Feature comparison. Marks are honest — Claude Tag keeps its real wins (Anthropic-native model, enterprise governance). */
 const TABLE_ROWS: Row[] = [
   {
+    feature: "Cost",
+    competitor: { text: "Premium Anthropic pricing on every task" },
+    pancake: { text: "~75% cheaper thanks to the model mix", mark: "yes" },
+  },
+  {
+    feature: "Models",
+    competitor: { text: "Claude only" },
+    pancake: { text: "Claude + open-source, routed per task", mark: "yes" },
+  },
+  {
+    feature: "Integrations",
+    competitor: { text: "Admin-approved connectors" },
+    pancake: { text: "1,000+ tools, plus anything with an API key", mark: "yes" },
+  },
+  {
     feature: "Agent architecture",
     competitor: { text: "One shared AI teammate" },
     pancake: { text: "A coordinated team of specialists", mark: "yes" },
@@ -95,11 +110,6 @@ const TABLE_ROWS: Row[] = [
     feature: "Works without prompting",
     competitor: { text: "Takes initiative on tagged tasks" },
     pancake: { text: "Agents own functions, run on cron", mark: "yes" },
-  },
-  {
-    feature: "Agent coordination",
-    competitor: { text: "Single identity, no inter-agent handoff", mark: "no" },
-    pancake: { text: "Agents share one company brain", mark: "yes" },
   },
   {
     feature: "Company memory",
@@ -112,19 +122,9 @@ const TABLE_ROWS: Row[] = [
     pancake: { text: "Dedicated pod per customer (50GB RAM)", mark: "yes" },
   },
   {
-    feature: "Browser & custom integrations",
-    competitor: { text: "Admin-approved tools" },
-    pancake: { text: "Any tool with an API key", mark: "yes" },
-  },
-  {
     feature: "Enterprise governance",
     competitor: { text: "Tightly admin-scoped access & audit", mark: "yes" },
     pancake: { text: "Isolated per-customer pod" },
-  },
-  {
-    feature: "Underlying model",
-    competitor: { text: "Claude, Anthropic-native", mark: "yes" },
-    pancake: { text: "Claude via OpenClaw, limits removed" },
   },
   {
     feature: "Getting started",
@@ -141,24 +141,28 @@ const TABLE_ROWS: Row[] = [
 /** FAQ — answers are plain strings so they can feed both the page and FAQPage JSON-LD. */
 const FAQS = [
   {
+    q: "How is Pancake 75% cheaper than Claude Tag?",
+    a: "Claude Tag runs everything on Anthropic's premium models, so you pay premium token prices on every task. Pancake mixes models: Claude handles the reasoning-heavy work, and open-source models handle high-volume work like drafts, research sweeps, and data cleanup at a fraction of the token price. Across a real workload, that mix cuts the bill by about 75%. And tokens are passed through at the labs' public prices, with no markup.",
+  },
+  {
+    q: "Doesn't mixing in open-source models hurt quality?",
+    a: "No, because routing is per task, not per customer. The work that needs Claude's reasoning still gets Claude. Open-source models only pick up the tasks where they perform just as well: formatting, summarizing, bulk research, data cleanup. You get the same output quality where it matters and a much smaller bill everywhere else.",
+  },
+  {
+    q: "What counts in the 1,000+ tools?",
+    a: "Native integrations across every function your agents work in: CRMs, ad platforms, analytics, email, calendars, code repositories, payment tools, and more. On top of that, Pancake's agents can connect to anything with an API key on the fly, so the real ceiling is any tool with an API, not a fixed list your admin approves.",
+  },
+  {
     q: "How fast can I get started with Pancake?",
     a: "As fast as adding it to Slack. You talk to Pancake like a teammate, and it sets up its agents and connects your tools right in the conversation. No engineering, no dashboards, no enterprise plan required. Most teams have their first agents doing real work the same day.",
   },
   {
     q: "Isn't Claude Tag from Anthropic, the same company behind Claude?",
-    a: "Yes, and Pancake runs on Claude too, via OpenClaw. So the underlying intelligence is the same. The difference is the product around it: Claude Tag is one AI teammate your whole workspace tags into threads; Pancake is a coordinated team of specialist agents that own functions, share a company brain, and run on dedicated infrastructure.",
+    a: "Yes, and Pancake runs on Claude too, for the work that needs it. The difference is that Pancake isn't locked to one lab: it mixes Claude with open-source models to cut costs by about 75%, connects to 1,000+ tools instead of an approved-connector list, and coordinates a team of specialist agents instead of one shared teammate.",
   },
   {
     q: "Can I use both?",
-    a: "Potentially. Claude Tag is excellent for enterprise teams that want one governed AI teammate handling tagged tasks across Slack. Pancake is for the founder or founding team who wants a workforce running proactively. They're not mutually exclusive.",
-  },
-  {
-    q: "What does “partially autonomous company” actually mean?",
-    a: "It means AI handles 50-70% of the work by default (GTM motions, engineering tasks, ops workflows) without a human prompting each step. Humans act like board members: they set direction, review decisions, and unblock edge cases.",
-  },
-  {
-    q: "How is Pancake different from just running OpenClaw yourself?",
-    a: "OpenClaw is the runtime. Pancake is the product built on top of it: pre-configured teams, a company-brain architecture, Slack-native UX, and the playbooks that make it actually work. OpenClaw is the engine; Pancake is the car.",
+    a: "Potentially. Claude Tag is excellent for enterprise teams that want one governed AI teammate handling tagged tasks across Slack. Pancake is for the founder or founding team who wants a workforce running proactively, at a quarter of the model cost. They're not mutually exclusive.",
   },
 ];
 
@@ -169,7 +173,7 @@ const webPageJsonLd = {
   name: "Claude Tag vs Pancake",
   url: "https://getpancake.ai/claude-tag-vs-pancake",
   description:
-    "A head-to-head comparison of Claude Tag and Pancake: one AI teammate you tag in Slack vs a team of coordinating agents that run your company autonomously, both built on Claude.",
+    "A head-to-head comparison of Claude Tag and Pancake: Anthropic-only pricing and admin-approved connectors vs a team of agents that mixes Claude with open-source models to cost about 75% less and connects to 1,000+ tools.",
   isPartOf: { "@type": "WebSite", name: "Pancake", url: "https://getpancake.ai" },
   author: { "@type": "Person", name: "François de Fitte" },
   about: [
@@ -226,11 +230,12 @@ export default function ClaudeTagVsPancakePage() {
               Claude Tag v. Pancake
             </h1>
             <p className="home-landing-section__lede text-center">
-              One teammate versus an AI workforce.
+              The same intelligence, at a quarter of the cost.
             </p>
             <p className="vvp-hero__summary text-center">
-              Claude Tag answers when you tag it. Pancake&apos;s specialist agents own your sales,
-              marketing, ops and engineering. They get the work done.
+              Claude Tag runs everything on Anthropic&apos;s models at Anthropic&apos;s prices.
+              Pancake mixes Claude with open-source models, so the same work costs about 75% less,
+              and its agents connect to 1,000+ tools.
             </p>
           </header>
 
@@ -278,7 +283,8 @@ export default function ClaudeTagVsPancakePage() {
               <p className="vvp-pcard__body">
                 Anthropic&apos;s AI teammate that lives in your Slack. Tag it on a task and it works
                 through the steps with approved tools and data, builds memory over time, and replies
-                when done. One capable, governed teammate your whole workspace can hand things to.
+                when done. Every task runs on Anthropic&apos;s premium models, at Anthropic&apos;s
+                premium prices.
               </p>
               <p className="vvp-pcard__choose">
                 Like a brilliant teammate who works on what you tag.
@@ -291,9 +297,10 @@ export default function ClaudeTagVsPancakePage() {
               </span>
               <H3 className="heading vvp-pcard__title">Pancake</H3>
               <p className="vvp-pcard__body">
-                A team of specialist agents in your Slack: one for sales, one for marketing, one
-                for engineering, one for ops. They own the work and get it done. Just as easy to talk to, but it feels like hiring a whole team that
-                already knows your company.
+                A team of specialist agents in your Slack: one for sales, one for marketing, one for
+                engineering, one for ops. They route each task to the right model, Claude for the
+                hard thinking, open source for the volume work, and connect to 1,000+ tools. The
+                same work, at about a quarter of the cost.
               </p>
               <p className="vvp-pcard__choose">
                 Like hiring a team for every part of your company.
@@ -309,7 +316,7 @@ export default function ClaudeTagVsPancakePage() {
           <div className="vvp-verdict-aside">
             <Badge variant="brand-alt-1">The verdict</Badge>
             <H2 id="vvp-verdict-heading" className="heading vvp-verdict-aside__title">
-              One helps you work better. The other runs the work for you.
+              The same work, at a quarter of the price.
             </H2>
             <p className="vvp-verdict-aside__lede">
               The honest bottom line, and what founders tell us after they switch.
@@ -328,8 +335,8 @@ export default function ClaudeTagVsPancakePage() {
               <FaXTwitter className="vvp-tweet__logo" aria-hidden />
             </div>
             <blockquote className="vvp-tweet__text">
-              Claude Tag was the smartest teammate in our Slack. Pancake feels like the team
-              running the company while we sleep.
+              Switched from Claude Tag and our AI bill dropped by 75%. Still Claude on the hard
+              problems, open-source models on the grunt work, and it plugs into every tool we use.
             </blockquote>
             <figcaption className="vvp-tweet__foot">Founder &amp; CEO, Northbound</figcaption>
           </figure>
@@ -341,10 +348,10 @@ export default function ClaudeTagVsPancakePage() {
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             <H2 id="vvp-diffs-heading" className="heading home-landing-section__title text-center">
-              Five reasons Pancake is a different category
+              Five reasons founders pick Pancake
             </H2>
             <p className="home-landing-section__lede text-center">
-              Not a better teammate. A workforce with its own goals, memory, and infrastructure.
+              A quarter of the cost, 1,000+ tools, and a workforce instead of a teammate.
             </p>
           </header>
           <ol className="vvp-diffs">
@@ -415,7 +422,7 @@ export default function ClaudeTagVsPancakePage() {
       >
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner home-landing-section__inner--closing`}>
           <h2 id="vvp-closing-heading" className="heading home-landing-section__closing-title text-center">
-            Ready to build a company that runs itself?
+            Ready to cut your AI bill by 75%?
           </h2>
           <p className="home-landing-section__lede home-landing-section__lede--closing text-center">
             Join founders who&apos;ve already handed off the work AI should own.
