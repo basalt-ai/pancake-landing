@@ -249,7 +249,14 @@
     --line-height-home-landing-section-lede: 32px;
     --width-home-landing-heading: calc(752 / 16 * 1rem);
     --width-home-landing-narrow-copy: calc(368 / 16 * 1rem);
-    --spacing-home-landing-section-y: calc(6 * var(--spacing-xl));
+    /* 7×xl (112px) matches viktor.com's section rhythm (founder 2026-07-07:
+       "la faire respirer... regarde comment viktor fait" — they run py-112
+       desktop / ~56 mobile, i.e. 224px of air between adjacent sections).
+       Mobile keeps the original 6×xl. */
+    --spacing-home-landing-section-y: calc(7 * var(--spacing-xl));
+    @media (max-width: 1023.98px) {
+      --spacing-home-landing-section-y: calc(6 * var(--spacing-xl));
+    }
     --spacing-home-landing-header-to-media: calc(4 * var(--spacing-xl));
     --spacing-home-landing-section-gap: calc(5 * var(--spacing-xxl));
     --font-size-home-landing-closing-title: calc(64 * var(--font-size-base) / 16);
