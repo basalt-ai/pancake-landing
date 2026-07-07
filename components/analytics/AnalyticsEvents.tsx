@@ -4,9 +4,26 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
 type AnalyticsParams = Record<string, string | number | boolean | null | undefined>;
-type MetaEventName = "ViewContent" | "Lead" | "Contact" | "Schedule";
+type MetaStandardEventName = "ViewContent" | "Lead" | "Contact" | "Schedule";
+type MetaCustomEventName = "trial_click";
+type MetaEventName = MetaStandardEventName | MetaCustomEventName;
 type MetaPixelOptions = { eventID?: string };
 type RedditEventName = "PageVisit";
+type TrackedLinkEvent =
+  | {
+      dataLayerEvent: "trial_click";
+      metaEvent: "trial_click";
+      metaCustom: true;
+      conversionName: "trial_click";
+      destinationUrl: string;
+    }
+  | {
+      dataLayerEvent: "meeting_click";
+      metaEvent: "Contact";
+      metaCustom: false;
+      conversionName: "meeting_click";
+      destinationUrl: string;
+    };
 
 type Fbq = {
   (
@@ -101,12 +118,23 @@ function trackReddit(eventName: RedditEventName, params?: AnalyticsParams) {
 }
 
 function trackMetaWithConversionsApi(
-  eventName: MetaEventName,
+  eventName: MetaStandardEventName,
   params?: AnalyticsParams,
   customData?: AnalyticsParams,
 ) {
   const eventId = createEventId(eventName);
   trackMeta(eventName, params, false, eventId);
+  sendMetaConversion(eventName, eventId, customData ?? params);
+  return eventId;
+}
+
+function trackMetaCustomWithConversionsApi(
+  eventName: MetaCustomEventName,
+  params?: AnalyticsParams,
+  customData?: AnalyticsParams,
+) {
+  const eventId = createEventId(eventName);
+  trackMeta(eventName, params, true, eventId);
   sendMetaConversion(eventName, eventId, customData ?? params);
   return eventId;
 }
@@ -119,13 +147,14 @@ function linkText(anchor: HTMLAnchorElement) {
   ).slice(0, 120);
 }
 
-function trackedLinkEvent(anchor: HTMLAnchorElement) {
+function trackedLinkEvent(anchor: HTMLAnchorElement): TrackedLinkEvent | null {
   const url = new URL(anchor.href, window.location.href);
 
   if (url.hostname === APP_HOST) {
     return {
       dataLayerEvent: "trial_click",
-      metaEvent: "Lead",
+      metaEvent: "trial_click",
+      metaCustom: true,
       conversionName: "trial_click",
       destinationUrl: url.toString(),
     };
@@ -135,6 +164,7 @@ function trackedLinkEvent(anchor: HTMLAnchorElement) {
     return {
       dataLayerEvent: "meeting_click",
       metaEvent: "Contact",
+      metaCustom: false,
       conversionName: "meeting_click",
       destinationUrl: url.toString(),
     };
@@ -224,19 +254,18 @@ export function AnalyticsEvents() {
         page_location: window.location.href,
         trigger,
       };
-      const eventId = trackMetaWithConversionsApi(
-        trackedEvent.metaEvent as MetaEventName,
-        params,
-        {
-          content_category: "landing_page",
-          content_name: trackedEvent.conversionName,
-          conversion_name: trackedEvent.conversionName,
-          destination_url: trackedEvent.destinationUrl,
-          link_text: params.link_text,
-          page_path: params.page_path,
-          trigger,
-        },
-      );
+      const customData = {
+        content_category: "landing_page",
+        content_name: trackedEvent.conversionName,
+        conversion_name: trackedEvent.conversionName,
+        destination_url: trackedEvent.destinationUrl,
+        link_text: params.link_text,
+        page_path: params.page_path,
+        trigger,
+      };
+      const eventId = trackedEvent.metaCustom
+        ? trackMetaCustomWithConversionsApi(trackedEvent.metaEvent, params, customData)
+        : trackMetaWithConversionsApi(trackedEvent.metaEvent, params, customData);
 
       pushDataLayer(trackedEvent.dataLayerEvent, {
         ...params,
