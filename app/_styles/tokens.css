@@ -245,6 +245,18 @@
      */
     --font-size-home-landing-section-title: calc(4523 * var(--font-size-base) / 1000);
     --line-height-home-landing-section-title: 52px;
+    /* Phones: the fixed 45.23px H2 wrapped long titles to 5-6 lines with
+       single-word lines at 320 (mobile review 2026-07-07). */
+    @media (max-width: 640px) {
+      --font-size-home-landing-section-title: calc(36 * var(--font-size-base) / 16);
+      --line-height-home-landing-section-title: 42px;
+    }
+    /* Sub-375 devices: one more step so the long integrations title
+       holds 4 lines instead of 6. */
+    @media (max-width: 374.98px) {
+      --font-size-home-landing-section-title: calc(30 * var(--font-size-base) / 16);
+      --line-height-home-landing-section-title: 36px;
+    }
     --font-size-home-landing-section-lede: calc(24 * var(--font-size-base) / 16);
     --line-height-home-landing-section-lede: 32px;
     --width-home-landing-heading: calc(752 / 16 * 1rem);
@@ -261,6 +273,13 @@
     --spacing-home-landing-section-gap: calc(5 * var(--spacing-xxl));
     --font-size-home-landing-closing-title: calc(64 * var(--font-size-base) / 16);
     --line-height-home-landing-closing-title: 64px;
+    /* Phones: 64px fixed wrapped "Give Pancake" onto two lines (orphaned
+       "Give") — 44px keeps the comp's two-line break at 320-428
+       (mobile review 2026-07-07). */
+    @media (max-width: 640px) {
+      --font-size-home-landing-closing-title: calc(44 * var(--font-size-base) / 16);
+      --line-height-home-landing-closing-title: 46px;
+    }
 
     /*
      * Integrations callout — Figma `428:15015` (smaller than section lede; roomier padding).

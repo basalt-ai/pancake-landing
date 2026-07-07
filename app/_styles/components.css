@@ -772,10 +772,9 @@
   }
 
   @media (max-width: 640px) {
-    .home-demo-video {
-      padding-top: var(--spacing-xl);
-      padding-bottom: var(--spacing-xl);
-    }
+    /* The film band follows the shared mobile rhythm like every other
+       section (mobile review 2026-07-07: its old 16px override made it
+       the only cramped band on the page — a 6× rhythm break). */
 
     .home-demo-video__wrap {
       padding-inline: var(--spacing-xl);
@@ -919,6 +918,19 @@
 
   .home-logo-marquee__story:hover {
     text-decoration: underline;
+  }
+
+  /* Touch devices: the chip is a moving target riding the marquee — give
+     it a real thumb-sized box (mobile review 2026-07-07: 82×20 was the
+     page's hardest tap). */
+  @media (hover: none) {
+    .home-logo-marquee__story {
+      padding: 8px var(--spacing-xl);
+    }
+
+    .home-logo-marquee__band:has(.home-logo-marquee__story) {
+      padding-bottom: calc(32px + var(--spacing-md));
+    }
   }
 
   /* Wordmark = monochrome asset used as an alpha mask over `currentColor`,
@@ -1674,8 +1686,20 @@
   .home-use-cases {
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr;
+    /* minmax(0) mirrors the desktop guard below: without it the single
+       track blows open to the cards' 358px min-content and the page gets
+       horizontal scroll under ~375px (54px doc overflow at 320). */
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--spacing-xl);
+  }
+
+  /* Tablet (single column up to 1023px): cap the card measure — at 768
+     a 736px-wide chat card reads as a stretched desktop squeeze. */
+  @media (min-width: 641px) and (max-width: 1023.98px) {
+    .home-use-cases {
+      max-width: 560px;
+      margin-inline: auto;
+    }
   }
 
   @media (min-width: 1024px) {
@@ -2072,6 +2096,16 @@
     );
   }
 
+  /* Mobile swaps the drifting ticker for a snap carousel whose cards REST
+     in view — the edge fade would permanently dim the resting neighbours
+     (mobile review 2026-07-07), so it comes off below lg. */
+  @media (max-width: 1023.98px) {
+    .home-landing-testimonials {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+  }
+
   .home-landing-testimonials__track {
     display: flex;
     gap: 16px;
@@ -2291,6 +2325,18 @@
     height: auto;
     transform: translate(-50%, -50%);
     overflow: visible;
+  }
+
+  /* Phones: center-cropping the 1920 canvas pushes ALL three pancakes
+     out of frame (they live at x≈245 and x≈1834). Anchor the canvas to
+     the left edge instead so the purple + pink pancakes ride their arcs
+     inside the frame; the arcs sweep in from the right (mobile review
+     2026-07-07: the finale had lost its signature decor). */
+  @media (max-width: 640px) {
+    .home-closing__arcs {
+      left: 0;
+      transform: translate(0, -50%);
+    }
   }
 
   .home-closing__orbit {
@@ -2784,6 +2830,10 @@
     flex-direction: column;
     gap: var(--spacing-xl);
     align-items: center;
+    /* Without an explicit width the flex-centered wrapper sizes to the
+       cards' 368px max-content and overflows sub-368 viewports (the last
+       24px of doc overflow at 320 — mobile review 2026-07-07). */
+    width: 100%;
   }
 
   /* Trust cards run denser than the old control comp (kicker + 2-line
@@ -2797,6 +2847,16 @@
        ellipses resolving against the page). */
     position: relative;
     height: 448px;
+  }
+
+  /* Stacked mobile cards don't need the equal-height lock — let a card
+     grow past 448px instead of clipping the vault rows on narrow phones
+     (mobile review 2026-07-07: sub-390 widths ran out of room). */
+  @media (max-width: 1023.98px) {
+    .home-landing-trust .home-landing-control-card {
+      height: auto;
+      min-height: 448px;
+    }
   }
 
   /* Sandbox graphic was composed for the 402px card — nudge it down into
@@ -5512,8 +5572,10 @@
     gap: var(--spacing-md);
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    scroll-padding-inline: 16%;
-    padding-inline: 16%;
+    /* Same centered-rest math as the testimonials track (card =
+       min(100vw − 64px, 320px)). */
+    scroll-padding-inline: max(32px, calc((100% - 320px) / 2));
+    padding-inline: max(32px, calc((100% - 320px) / 2));
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
   }
@@ -5620,17 +5682,32 @@
     gap: var(--spacing-md);
   }
 
+  /* Dots stay 8px visually, but the button box is a 40px touch target
+     (mobile review 2026-07-07: 8×8 was untappable) — the dot itself is
+     painted by the ::before so the hit area is invisible. */
   .home-org-mobile-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+    position: relative;
+    width: 40px;
+    height: 40px;
     border: 0;
     padding: 0;
-    background-color: var(--stroke);
+    background: transparent;
     cursor: pointer;
   }
 
-  .home-org-mobile-dot--active {
+  .home-org-mobile-dot::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--stroke);
+  }
+
+  .home-org-mobile-dot--active::before {
     background-color: var(--inverted-surface);
   }
 
@@ -5650,8 +5727,11 @@
     box-sizing: border-box;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    scroll-padding-inline: 16%;
-    padding-inline: 16%;
+    /* (100% − card) / 2 so snapped cards rest CENTERED — the fixed 16%
+       left the first card ~30px right of center at 390 (mobile review
+       2026-07-07). Card = min(100vw − 64px, 360px). */
+    scroll-padding-inline: max(32px, calc((100% - 360px) / 2));
+    padding-inline: max(32px, calc((100% - 360px) / 2));
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
   }
@@ -5673,17 +5753,30 @@
     margin-top: var(--spacing-xl);
   }
 
+  /* Same 40px-hit / 8px-paint pattern as .home-org-mobile-dot. */
   .home-landing-testimonials__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+    position: relative;
+    width: 40px;
+    height: 40px;
     border: 0;
     padding: 0;
-    background-color: var(--stroke);
+    background: transparent;
     cursor: pointer;
   }
 
-  .home-landing-testimonials__dot--active {
+  .home-landing-testimonials__dot::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--stroke);
+  }
+
+  .home-landing-testimonials__dot--active::before {
     background-color: var(--inverted-surface);
   }
 
@@ -5943,6 +6036,21 @@
     .home-hero {
       overflow: hidden;
     }
+
+    /* Phones 391-767px: the pink orbit-2 satellite's fixed ~197px offset
+       lands it mid-headline on 412/414/428/430 devices (the 768+ branch
+       caps the text instead). Pin its center 4px past the right edge so
+       every phone reproduces the deliberate 390px edge-slice — at ≤390
+       max() resolves within 2px of the original offset, so the approved
+       comps are pixel-stable. */
+    @media (max-width: 767.98px) {
+      .home-hero-orbit-satellite[data-orbit="2"] {
+        transform: translate(
+          calc(-50% + max(var(--sat-dx, 0px), 50vw + 4px)),
+          calc(-50% + var(--sat-dy, 0px))
+        );
+      }
+    }
     .home-hero-pancake-stack-inner {
       /* Pin the layout slot to the monster's actual rendered size (108 px),
          NOT to `--size-home-hero-monster-max-width` (which we hijacked to
@@ -5982,11 +6090,12 @@
       width: 100vw;
       max-width: 100vw;
       margin-inline: calc(50% - 50vw);
-      /* 8/5 box + the svg's `slice` = a ~1150-unit side-cropped window on
-         the 1920×720 stage (same window and chip px sizes as the old 9/7
-         box had on the 900-tall stage) — X and LinkedIn half-cut at the
-         edges, monster centered, no transform hacks. */
-      aspect-ratio: 8 / 5;
+      /* 4/5 portrait box matching the hand-authored 1000×1250 mobile stage
+         (HomeIntegrationsCloud `MVB_*`) — the svg viewBox is the same
+         ratio, so `slice` = `meet` = zero crop. Replaces the old 8/5
+         side-crop of the desktop canvas (founder 2026-07-07: it read as
+         a shrunken desktop). */
+      aspect-ratio: 4 / 5;
       overflow: hidden;
     }
     .home-integrations-cloud__svg {
@@ -5995,13 +6104,22 @@
       width: 100%;
       height: 100%;
     }
-    /* `slice` fills the 8/5 box by height: anchor (960, 360) is the exact
-         stage centre, so it lands at 50% / 50% — no scale compensation. */
+    /* Portrait stage: anchor (500, 625) is the exact centre. 34cqi = a
+       340-unit monster on the 1000-unit stage — ~2× the old crop size,
+       the mascot is the hero of the metaphor (founder 2026-07-07). */
     .home-integrations-cloud__monster {
-      width: 17cqi; /* ≈ the 160-unit monster at the slice scale */
+      width: 38cqi;
       left: 50% !important;
       top: 50% !important;
       transform: translate(-50%, -50%);
+    }
+
+    /* Wire weight compensation: 1 stage unit ≈ 0.39px at 390 (vs ~0.8 on
+       the desktop slice), so the dotted wires double their unit widths to
+       land at the same ~2px rendered weight. */
+    .home-integrations-cloud__tentacle--mobile {
+      stroke-width: 5.5;
+      stroke-dasharray: 2.5 26;
     }
         /* === Testimonials — mobile snap carousel replaces desktop ticker === */
     .home-landing-testimonials__track--desktop { display: none; }

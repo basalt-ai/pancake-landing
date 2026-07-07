@@ -202,16 +202,27 @@ const UGC_SCRIPT = `(function () {
   }, true);
   // Founder rule: sound never keeps playing off-screen. When a sound-on
   // card leaves the viewport (page scroll OR the strip's own horizontal
-  // scroll), mute it back — the muted loop keeps running, only audio stops.
+  // scroll), mute it back — and pause the loop itself (mobile review
+  // 2026-07-07: five looping videos decoding for the whole visit is a
+  // battery drain; they resume as soon as the card scrolls back in, and
+  // the document-level play handler still enforces the PRM gate).
   if ("IntersectionObserver" in window) {
     var muteOffscreen = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
-        if (entry.isIntersecting) return;
         var v = entry.target.querySelector("video");
-        if (v && !v.muted) {
+        if (!v) return;
+        if (entry.isIntersecting) {
+          if (v.paused) {
+            var resumed = v.play();
+            if (resumed && resumed.catch) resumed.catch(function () {});
+          }
+          return;
+        }
+        if (!v.muted) {
           v.muted = true;
           entry.target.setAttribute("data-ugc-sound", "off");
         }
+        v.pause();
       });
     }, { threshold: 0.3 });
     document.querySelectorAll("[data-ugc-card]").forEach(function (card) {

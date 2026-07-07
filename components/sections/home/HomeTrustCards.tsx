@@ -141,7 +141,14 @@ function AccountsVisual() {
         })}
       </svg>
       {OWNER_BLOBS.map((b) => (
-        <span key={b.id} className="home-trust-blobs__tag" style={{ left: b.tagX, top: b.tagY }}>
+        /* % of the 304×182 design box, not px — the svg scales with the
+           card width and fixed-px tags drifted off their blobs on phones
+           (mobile review 2026-07-07). */
+        <span
+          key={b.id}
+          className="home-trust-blobs__tag"
+          style={{ left: `${(b.tagX / 304) * 100}%`, top: `${(b.tagY / 182) * 100}%` }}
+        >
           {b.tag}
         </span>
       ))}
