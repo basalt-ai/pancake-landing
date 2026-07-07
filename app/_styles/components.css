@@ -903,7 +903,9 @@
   .home-logo-marquee__story {
     position: absolute;
     top: calc(100% + var(--spacing-sm));
-    left: 50%;
+    /* --story-center lets a lockup that bundles icon + wordmark anchor
+       the chip on the wordmark alone (set per logo in HomeLogoMarquee). */
+    left: var(--story-center, 50%);
     transform: translateX(-50%);
     padding: 2px var(--spacing-md);
     border-radius: 6px;
