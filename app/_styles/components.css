@@ -888,6 +888,38 @@
     flex-shrink: 0;
   }
 
+  /* Item with a proof chip attached (AgentMail "Read story") — the logo
+     keeps the shared baseline; the chip hangs below, Khan-Academy-badge
+     style. The band clips overflow, so it grows a bottom lane for the
+     chip when one is present. */
+  .home-logo-marquee__item--story {
+    position: relative;
+  }
+
+  .home-logo-marquee__band:has(.home-logo-marquee__story) {
+    padding-bottom: calc(16px + var(--spacing-md));
+  }
+
+  .home-logo-marquee__story {
+    position: absolute;
+    top: calc(100% + var(--spacing-sm));
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 2px var(--spacing-md);
+    border-radius: 6px;
+    background-color: var(--inverted-surface);
+    color: var(--text-on-inverted-surface);
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 11px;
+    line-height: 16px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .home-logo-marquee__story:hover {
+    text-decoration: underline;
+  }
+
   /* Wordmark = monochrome asset used as an alpha mask over `currentColor`,
      so every mark paints the same solid ink regardless of source colors. */
   .home-logo-marquee__logo {
@@ -2239,12 +2271,13 @@
   }
 
   /* ─────────────── Closing CTA finale (HomeClosingCta.tsx) ───────────────
-     The hero's constellation restaged around the ask: eye-tracking mascot
-     centered between two dotted orbits (hero stroke recipe), four two-tone
-     satellite pancakes ON the rings. Geometry is percentage-based against
-     the 640×200 design box, so the composition holds at any width. The old
-     edge-bleed `.home-landing-closing-decor` pancakes are gone — absorbed
-     into these satellites. */
+     Figma `1892:4502` reproduced (founder brief 2026-07-06): a full-bleed
+     band with concentric dotted arcs grazing the edges (empty middle keeps
+     the copy clean), three two-tone pancakes riding the arcs, stacked
+     title with a bold tail, button + quiet note. The decor layer escapes
+     the container: it positions against the SECTION (which isolates so
+     the negative z-index stays above the band background but under the
+     in-flow copy). */
 
   .home-closing {
     display: flex;
@@ -2252,26 +2285,31 @@
     align-items: center;
     gap: var(--spacing-xxl);
     width: 100%;
+    /* The Figma band runs roomy (574px at 1920) — pad the content instead
+       of forcing a height so mobile stays natural. */
+    padding-block: calc(1.5 * var(--spacing-xxl));
   }
 
-  .home-closing__stage {
-    position: relative;
-    width: min(640px, 100%);
-    aspect-ratio: 640 / 200;
-    /* Stage → title gets a real pause (founder: the title sat glued to the
-       orbit's bleeding bottom arc). 40px + the 24px flex gap leaves ~44px
-       of air past the 20px arc bleed. */
-    margin-bottom: calc(2.5 * var(--spacing-xl));
-  }
-
-  /* The outer ellipse deliberately bottoms 20px past the design box (the
-     hero's orbits bleed the same way) — keep every overflow visible so the
-     dotted arc fades naturally instead of clipping mid-dot. */
-  .home-closing__orbits {
+  .home-closing__decor {
     position: absolute;
     inset: 0;
-    width: 100%;
-    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* Width-locked uniform scale: 1 svg unit = band-width/1920, so the
+     pancakes stay ON their arcs at any width (slice cropping used to
+     shove the side pancakes off-frame on sub-1920 screens). The full
+     circles overflow the svg's own box vertically; the section's
+     overflow:hidden does the final clip. Floor at 1100px on small
+     screens so the decor doesn't collapse into a thin strip. */
+  .home-closing__arcs {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 1100px);
+    height: auto;
+    transform: translate(-50%, -50%);
     overflow: visible;
   }
 
@@ -2283,30 +2321,11 @@
     stroke-linecap: round;
   }
 
-  .home-closing-sat {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-  }
-
-  .home-closing-sat[data-layer="behind"] {
-    z-index: 2;
-  }
-
-  .home-closing-sat[data-layer="front"] {
-    z-index: 4;
-  }
-
-  .home-closing-sat__fly,
-  .home-closing-sat__float {
-    display: block;
-  }
-
-  /* Slow ambient drift once the entrance settles — desynced via per-sat
-     delays so the constellation breathes instead of bouncing in unison. */
-  .home-closing-sat__float {
+  /* Float lives on the middle svg group, between the orbit-position
+     translate (outer) and the tilt/scale (inner), so the ±6px drift is
+     in band units regardless of each pancake's scale. */
+  .home-closing-pancake {
     animation: home-closing-float 7s ease-in-out infinite alternate;
-    animation-delay: var(--sat-float-delay, 0s);
   }
 
   @keyframes home-closing-float {
@@ -2320,41 +2339,17 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .home-closing-sat__float {
+    .home-closing-pancake {
       animation: none;
     }
-  }
-
-  .home-closing-sat__pancake {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-
-  /* Mascot slot — anchored on the orbit center (134/200 of the stage).
-     The monster drawing carries generous internal padding (the hero's
-     interactive variant runs a 275px canvas for a ~160px body), so the
-     slot runs bigger than the satellites suggest: 176px canvas ≈ 95px
-     visible pancake. Width clamps to the mobile floor; the component
-     measures this box and renders the SVG sharp at that size. */
-  .home-closing__monster {
-    position: absolute;
-    left: 50%;
-    top: 67%;
-    transform: translate(-50%, -50%);
-    width: clamp(112px, 27.5%, 176px);
-    aspect-ratio: 1 / 1;
-    z-index: 3;
   }
 
   .home-landing-section--closing {
     position: relative;
     overflow: hidden;
-  }
-
-  .home-landing-section--closing .home-landing-section__inner {
-    position: relative;
-    z-index: 1;
+    /* New stacking context so the decor's z-index -1 paints above this
+       band's background instead of disappearing under it. */
+    isolation: isolate;
   }
 
   /**
@@ -2814,6 +2809,11 @@
      approval row are fully visible; only the last connection row rides
      the comp's deliberate bottom overflow. */
   .home-landing-trust .home-landing-control-card {
+    /* Anchor for the absolutely-positioned scope visual — the base card
+       recipe lost its positioning when the carousel wrapped cards in
+       positioned faces (2026-07-06 static rebuild found the sandbox
+       ellipses resolving against the page). */
+    position: relative;
     height: 448px;
   }
 

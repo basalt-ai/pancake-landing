@@ -13,7 +13,7 @@ const softwareApplicationJsonLd = {
   operatingSystem: "Web",
   url: "https://getpancake.ai",
   description:
-    "Pancake is the AI coworker that does the work for you. One coworker in Slack, backed by squads of agents (growth, engineering, operations) that run 24/7. Built for solo and multiplayer founding teams going from $1 to $1M without hiring.",
+    "Pancake is the AI employee that does the work for you. One employee in Slack, backed by squads of agents (growth, engineering, operations) that run 24/7. Built for solo and multiplayer founding teams going from $1 to $1M without hiring.",
   offers: {
     "@type": "Offer",
     url: "https://getpancake.ai/pricing",

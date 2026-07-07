@@ -101,6 +101,19 @@ export function HomeDemoVideo() {
             scrollTrigger: { trigger: section, start: "top 85%", end: "top 35%", scrub: 0.8 },
           },
         );
+        /* The three summary lines land one after another — play-once,
+           same trigger family as the frame reveal. */
+        const steps = gsap.utils.toArray<HTMLElement>(section.querySelectorAll("[data-film-step]"));
+        if (steps.length) {
+          gsap.from(steps, {
+            y: 14,
+            autoAlpha: 0,
+            duration: 0.5,
+            ease: "power2.out",
+            stagger: 0.22,
+            scrollTrigger: { trigger: section, start: "top 70%", once: true },
+          });
+        }
       });
     },
     { scope: sectionRef },
@@ -163,10 +176,22 @@ export function HomeDemoVideo() {
       <div className={`home-demo-video__wrap ${HOME_PAGE_CONTAINER_CLASS}`} onPointerEnter={warmFilm}>
         <div className="home-film">
           <div className="home-film__intro">
-            {/* Heading only — the lede + "Watch with sound" link read as
-                clutter (founder call 2026-07-03); the frame click target
-                carries the play affordance. */}
-            <h2 className="heading home-film__heading">Meet Pancake in 51 seconds</h2>
+            {/* Three-step film summary (founder brief 2026-07-06: "Meet
+                Pancake in 51 seconds" said nothing — the title should tell
+                you what the film shows so nobody is forced to watch it).
+                Lines reveal one by one on the band's GSAP system; the
+                frame click target still carries the play affordance. */}
+            <h2 className="heading home-film__heading">
+              <span className="home-film__step" data-film-step>
+                Onboard Pancake
+              </span>
+              <span className="home-film__step" data-film-step>
+                Connect your tools
+              </span>
+              <span className="home-film__step" data-film-step>
+                Put Pancake to work
+              </span>
+            </h2>
           </div>
 
           <div className="home-film__media">

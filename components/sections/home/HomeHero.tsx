@@ -36,13 +36,16 @@ function OrbitSatellitePancake({ palette }: { palette: keyof typeof PANCAKE_TINT
   );
 }
 
-const HERO_TITLE = "The AI coworker that does the work for you";
+/* "AI employee" per founder 2026-07-06 (lifts the old ban — his call);
+   text-wrap: balance on the H1 picks the clean two-line break at any
+   width instead of the orphan-prone natural wrap. */
+const HERO_TITLE = "The AI employee that does the work for you";
 
-/* Founder copy 2026-07-06 — three imperatives, the visitor's actual first
-   hour. Replaces the old sub that restated the H1's "does the work for
-   you" word for word. */
+/* Founder copy (restored 2026-07-06 — the full rewrite went too far).
+   Only the last beat changed: "Come back with finished work" read as the
+   USER finishing the work, so Pancake takes the verb. */
 const HERO_SUB =
-  "Onboard Pancake in Slack. Connect your tools.\nCome back with finished work.";
+  "Onboard Pancake in Slack. Connect your tools.\nIt comes back with finished work.";
 
 export function HomeHero() {
   return (
@@ -55,7 +58,7 @@ export function HomeHero() {
         style={{ rowGap: "var(--spacing-xl)" }}
       >
         <div className="home-hero-text-stack relative z-[1] lg:pr-[var(--spacing-md)]">
-          <H1 className="whitespace-pre-line">{HERO_TITLE}</H1>
+          <H1 className="whitespace-pre-line [text-wrap:balance]">{HERO_TITLE}</H1>
           <p className="home-hero-body whitespace-pre-line">{HERO_SUB}</p>
           <div className="home-hero-cta-row">
             <a

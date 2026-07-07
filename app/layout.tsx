@@ -63,7 +63,7 @@ const aeonikFono = localFont({
 // Every absolute URL below (canonical, og:url, JSON-LD) uses the apex host.
 export const metadata: Metadata = {
   metadataBase: new URL("https://getpancake.ai"),
-  title: "Pancake: The AI coworker that does the work for you",
+  title: "Pancake: The AI employee that does the work for you",
   description:
     "Pancake connects to your tools and does the work for you. Autonomously. One AI coworker in Slack, a whole team of agents behind it. $49/month, no tiers.",
   alternates: {
@@ -72,7 +72,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "https://getpancake.ai",
-    title: "Pancake: The AI coworker that does the work for you",
+    title: "Pancake: The AI employee that does the work for you",
     description:
       "Pancake connects to your tools and does the work for you. Autonomously. One AI coworker in Slack, a whole team of agents behind it. $49/month, no tiers.",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake, the AI coworker" }],
@@ -80,7 +80,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pancake: The AI coworker that does the work for you",
+    title: "Pancake: The AI employee that does the work for you",
     description:
       "Pancake connects to your tools and does the work for you. Autonomously. One AI coworker in Slack, a whole team of agents behind it. $49/month, no tiers.",
     images: ["/og-image.png"],
@@ -101,7 +101,7 @@ const organizationJsonLd = {
   url: "https://getpancake.ai",
   logo: "https://getpancake.ai/pancake-mark.png",
   description:
-    "Pancake is the AI coworker that does the work for you. It connects to your tools and works autonomously. One AI coworker in Slack, a whole team of agents behind it.",
+    "Pancake is the AI employee that does the work for you. It connects to your tools and works autonomously. One AI employee in Slack, a whole team of agents behind it.",
   foundingDate: "2024",
   address: {
     "@type": "PostalAddress",

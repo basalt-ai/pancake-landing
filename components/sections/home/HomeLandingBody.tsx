@@ -19,11 +19,10 @@
  */
 
 import { HOME_PAGE_CONTAINER_CLASS } from "@/components/sections/home/home-layout";
-import { HomeBlogCards } from "@/components/sections/home/HomeBlogCards";
 import { HomeClosingCta } from "@/components/sections/home/HomeClosingCta";
 import { HomeIntegrationsCloud } from "@/components/sections/home/HomeIntegrationsCloud";
 import { HomeLandingTestimonials } from "@/components/sections/home/HomeLandingTestimonials";
-import { HomeTrustCarousel } from "@/components/sections/home/HomeTrustCarousel";
+import { HomeTrustCards } from "@/components/sections/home/HomeTrustCards";
 import { HomeOrgDiagram } from "@/components/sections/home/HomeOrgDiagram";
 import { HomeOrgDiagramMobile } from "@/components/sections/home/HomeOrgDiagramMobile";
 import { HomePricingTeaser } from "@/components/sections/home/HomePricingTeaser";
@@ -46,8 +45,13 @@ export function HomeLandingBody() {
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             {/* Single-line header — one-screen budget (founder rule). */}
+            {/* "Give Pancake a job, come back to finished work" collided
+                with the film's "Put Pancake to work" line directly above
+                and the closing lede's "finished work" (review 2026-07-06);
+                the four cards ARE the four jobs, the title just counts
+                them. */}
             <H2 id="home-landing-usecases-heading" className="heading home-landing-section__title text-center">
-              Give Pancake a job, come back to finished work
+              Four real jobs, start to finish
             </H2>
           </header>
           <HomeUseCases />
@@ -86,8 +90,11 @@ export function HomeLandingBody() {
           <header className="home-landing-section__header">
             {/* Single-line header (founder: one efficient sentence frees the
                 vertical room that keeps the squad boxes at full size). */}
+            {/* The hero sub now carries "one Pancake, a team of agents
+                behind it" — this H2 advances instead of restating it
+                (review 2026-07-06: near-verbatim duplicate). */}
             <H2 id="home-landing-org-heading" className="heading home-landing-section__title text-center">
-              One coworker, a whole team of agents behind it
+              Meet the team behind it
             </H2>
           </header>
           <div className="home-landing-section__figure home-landing-org-mobile">
@@ -137,26 +144,22 @@ export function HomeLandingBody() {
           testimonial band. */}
       <HomeUGCWall alt />
 
-      {/* Trust — six-card drag carousel (founder call 2026-07-02, second
-          rebuild): one card per buyer question, anxiety-descending —
-          approvals, reach, accounts, audit, secrets, data isolation. SOC 2
-          lives in the sober footnote. Replaces the three-pillar
-          HomeLandingTrust (stays on disk unreferenced, like
-          HomeLandingSecurity/Control before it). Single-line header per
-          the one-screen budget; H2 names the substance — it acts as you,
-          you keep the veto. */}
+      {/* Trust — three static security/privacy cards (founder brief
+          2026-07-06, Figma `428:15125`): secrets vault, sealed workspace,
+          accounts stay yours. Replaces the 3D carousel (HomeTrustCarousel
+          stays on disk unreferenced); SOC 2 / approvals / tool-scope cards
+          dropped per the brief. Title + lede order mirrors the cards. */}
       <section className="home-landing-section" aria-labelledby="home-landing-trust-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
-            {/* Title spans the whole deck (founder 2026-07-06: the old
-                "It acts as you. You keep the last word." only covered the
-                approval card): accounts (accounts/vault/reach cards), data
-                (isolation/audit cards), call (approve/SOC 2 cards). */}
             <H2 id="home-landing-trust-heading" className="heading home-landing-section__title text-center">
-              Your accounts, your data, your call.
+              Your keys, your space, your accounts.
             </H2>
+            <p className="home-landing-section__lede text-center">
+              Everything Pancake touches stays inside your company.
+            </p>
           </header>
-          <HomeTrustCarousel />
+          <HomeTrustCards />
         </div>
       </section>
 
@@ -182,14 +185,11 @@ export function HomeLandingBody() {
         </div>
       </section>
 
-      {/* From the blog — post-CTA since the 2026-07-02 narrative reorder
-          (editorial never sits inside the conversion path; every reference
-          page keeps resources out of it). Still on the homepage for crawler
-          discovery of new articles — real <a href> anchors. (The FAQ
-          accordion that once sat by the blog was removed earlier the same
-          day; HomeFaq.tsx and home-faq.css stay on disk, unreferenced.)
-          Rhythm: pricing(pink band) → closing(alt) → blog(plain) → footer. */}
-      <HomeBlogCards />
+      {/* No blog section (founder brief 2026-07-06: it made the page
+          heavier; the AgentMail story now rides its logo in the hero
+          marquee as a "Read story" chip). HomeBlogCards.tsx stays on
+          disk unreferenced; /blog + llms.txt keep crawler discovery.
+          Rhythm: pricing(pink band) → closing(alt) → footer. */}
     </div>
   );
 }

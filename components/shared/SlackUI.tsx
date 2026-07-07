@@ -170,6 +170,15 @@ momentum going. Also:
   ],
 };
 
+/** Muted topic line in the channel header — Slack idiom, and a one-glance
+ *  summary of what each channel demos. */
+const CHANNEL_TOPICS: Record<Channel, string> = {
+  "#briefing": "Daily digest, 8:00 AM",
+  "#outbound": "Leads, invites, follow-ups",
+  "#content": "Threads, posts, repurposing",
+  "#product": "Incidents, PRs, releases",
+};
+
 const COMPOSER_TEMPLATE: Record<Channel, string> = {
   "#briefing": "What needs me today?",
   "#outbound": "Send. Skip under Series A.",
@@ -758,7 +767,7 @@ export function SlackUI() {
     <section className="px-4 sm:px-6">
       <div className="mx-auto max-w-5xl">
         <div className="mx-auto w-full max-w-5xl">
-          <div className="w-full rounded-theme brut-border box-border bg-white">
+          <div className="w-full box-border">
             {/*
              * Hard-locked dimensions — height stays at `h-[560px]` (mobile) /
              * `md:h-[620px]` (desktop) and width is pinned to the parent's
@@ -766,13 +775,20 @@ export function SlackUI() {
              * inner column, switching channels can never push the window's
              * width or height: long messages scroll inside the message
              * column, short ones leave whitespace.
+             *
+             * Window chrome (founder brief 2026-07-06 premium pass): kit
+             * radius + squircle and the film frame's layered shadow replace
+             * the legacy `brut-border` + square corners, so the two media
+             * windows on the page share one language. The hairline ring
+             * reads as the window edge on the cream band.
              */}
             <div
-              className="relative box-border flex h-[560px] w-full flex-col overflow-hidden border border-solid border-[#e0e0e0] shadow-[0_1px_4px_rgba(0,0,0,0.06)] md:h-[620px] md:flex-row"
+              className="relative box-border flex h-[560px] w-full flex-col overflow-hidden rounded-[var(--radius-xl)] shadow-[0_2px_6px_rgba(44,0,42,0.08),0_32px_72px_-28px_rgba(44,0,42,0.30)] ring-1 ring-black/[0.06] md:h-[620px] md:flex-row"
               style={{
                 fontFamily:
                   'var(--font-lato), "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-              }}
+                cornerShape: "squircle",
+              } as React.CSSProperties}
             >
               {/*
                * Sidebar — vertical channel rail at md+ (matches Slack desktop),
@@ -809,7 +825,7 @@ export function SlackUI() {
                   Channels
                 </p>
                 <ul
-                  className="flex min-w-0 flex-1 flex-row gap-1 overflow-x-auto md:flex-col md:gap-0 md:space-y-0.5 md:overflow-visible"
+                  className="flex min-w-0 flex-1 flex-row gap-1 overflow-x-auto md:flex-none md:flex-col md:gap-0 md:space-y-0.5 md:overflow-visible"
                   style={{ scrollbarWidth: "none" }}
                 >
                   {slack.channels.map((ch) => {
@@ -845,6 +861,30 @@ export function SlackUI() {
                     );
                   })}
                 </ul>
+
+                {/* Ghost DM group — fills the rail's dead lower half with
+                    the idiom real Slack puts there (review 2026-07-06).
+                    Decorative only: no handlers, hidden on the mobile
+                    strip. Names reuse the page's cast (maya owns Gmail in
+                    the trust cards). */}
+                <div className="mt-5 hidden w-full md:block" aria-hidden>
+                  <p
+                    className="px-2 pb-2 text-[11px] font-bold uppercase tracking-[0.12em]"
+                    style={{ color: SLACK_MUTED }}
+                  >
+                    Direct messages
+                  </p>
+                  <ul className="space-y-0.5">
+                    <li className="flex items-center gap-2 rounded-md px-2 py-1.5 text-[15px] text-white/80">
+                      <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#2BAC76]" />
+                      <span className="truncate">maya</span>
+                    </li>
+                    <li className="flex items-center gap-2 rounded-md px-2 py-1.5 text-[15px] text-white/60">
+                      <span className="h-2.5 w-2.5 shrink-0 rounded-full border border-white/45" />
+                      <span className="truncate">leo</span>
+                    </li>
+                  </ul>
+                </div>
               </aside>
 
               {/*
@@ -858,20 +898,31 @@ export function SlackUI() {
                * actually triggers when content exceeds it.
                */}
               <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-white">
-                <header className="flex items-center border-b border-[#e8e8e8] bg-white px-4 py-3">
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-[22px] font-black leading-none text-[#1d1c1d]">#</span>
-                    <h3 className="text-[18px] font-bold leading-tight text-[#1d1c1d]">
+                <header className="flex items-center gap-3 border-b border-[#ececec] bg-white px-5 py-3.5">
+                  <div className="flex min-w-0 items-baseline gap-1.5">
+                    <span className="text-[20px] font-black leading-none text-[#1d1c1d]">#</span>
+                    <h3 className="text-[17px] font-bold leading-tight text-[#1d1c1d]">
                       {activeChannel.replace("#", "")}
                     </h3>
                   </div>
+                  {/* Channel topic — the muted line real Slack headers carry;
+                      doubles as a one-glance summary of what the channel demos. */}
+                  <p className="min-w-0 truncate border-l border-[#e8e8e8] pl-3 text-[13px] font-normal leading-tight text-[#616061]">
+                    {CHANNEL_TOPICS[activeChannel]}
+                  </p>
                 </header>
 
                 <div className="flex min-h-0 flex-1 flex-col">
-                  <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-4 py-4 sm:px-5 sm:py-5">
-                    {messages.map((m) => (
-                      <SlackMessageBlock key={m.id} message={m} />
-                    ))}
+                  {/* `mt-auto` on the stack bottom-anchors short channels
+                      against the composer like real Slack (review: the
+                      top-anchored digest left ~150px of dead white);
+                      long channels overflow and scroll as before. */}
+                  <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-5 py-5 sm:px-6">
+                    <div className="mt-auto space-y-6">
+                      {messages.map((m) => (
+                        <SlackMessageBlock key={m.id} message={m} />
+                      ))}
+                    </div>
                   </div>
                   <SlackComposer activeChannel={activeChannel} />
                 </div>
