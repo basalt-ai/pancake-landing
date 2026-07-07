@@ -126,7 +126,7 @@ export function HomeNav() {
             </Link>
             {/* Persistent conversion path — the page previously had zero CTAs
                 between hero and closing. Real <a> to app.getpancake.ai so the
-                hostname-based Lead tracking in AnalyticsEvents fires. */}
+                hostname-based trial_click tracking in AnalyticsEvents fires. */}
             <a
               href="https://app.getpancake.ai"
               className="button inline-flex w-fit shrink-0 items-center justify-center no-underline"
