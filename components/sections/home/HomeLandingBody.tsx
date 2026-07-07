@@ -121,9 +121,13 @@ export function HomeLandingBody() {
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             {/* Single-line header (founder: one efficient sentence — the freed
-                line keeps the full artwork visible without cropping logos). */}
-            <H2 id="home-landing-integrations-heading" className="heading home-landing-section__title text-center">
-              Pancake plugs into the tools you already use
+                line keeps the full artwork visible without cropping logos).
+                "natively into the 2000+ tools" dictated by founder 2026-07-07. */}
+            <H2
+              id="home-landing-integrations-heading"
+              className="heading home-landing-section__title text-center [text-wrap:balance]"
+            >
+              Pancake plugs natively into the 2000+ tools you already use
             </H2>
           </header>
           <div className="home-landing-section__figure">

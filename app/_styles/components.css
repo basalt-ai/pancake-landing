@@ -2330,13 +2330,15 @@
     animation: home-closing-float 7s ease-in-out infinite alternate;
   }
 
+  /* ±3px only — the pancakes sit ON the dotted orbits (Figma 1892:4502),
+     so a larger drift reads as misalignment rather than float. */
   @keyframes home-closing-float {
     from {
-      transform: translateY(-6px);
+      transform: translateY(-3px);
     }
 
     to {
-      transform: translateY(6px);
+      transform: translateY(3px);
     }
   }
 
