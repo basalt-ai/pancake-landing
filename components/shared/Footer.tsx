@@ -96,7 +96,7 @@ export function Footer() {
               <PancakeLogo variant="inverted" className="h-11" />
             </Link>
             <p className="max-w-[260px] text-sm leading-relaxed">
-              The AI coworker that does the work for you.
+              The AI employee that does the work for you.
             </p>
             <div className="flex items-center gap-4">
               {socials.map(({ href, label, Icon }) => (
