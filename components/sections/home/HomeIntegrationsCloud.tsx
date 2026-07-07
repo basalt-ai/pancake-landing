@@ -45,6 +45,19 @@ const VB_MAX_H = 880;
 const ANCHOR_X = 960;
 const ANCHOR_Y = 360;
 
+/**
+ * Mobile portrait stage — a hand-authored recomposition, NOT a crop of the
+ * desktop canvas (founder 2026-07-07: the sliced 1920 stage read as a
+ * shrunken desktop — tiny chips, dead space, half-cut edges). 4:5 canvas,
+ * monster dead-center and ~2× bigger, 14 hero chips in two loose rings,
+ * every chip wired straight to the monster. Per-node placements live in
+ * `NodeDef.m`; nodes without `m` simply don't exist on phones.
+ */
+const MVB_W = 1000;
+const MVB_H = 1250;
+const M_ANCHOR_X = 500;
+const M_ANCHOR_Y = 625;
+
 /* ----------------------------------------------------------------------- */
 /* Pancake — inline SVG, parameterised colours, used for tails + decoration */
 /* ----------------------------------------------------------------------- */
@@ -94,9 +107,12 @@ type NodeDef = {
   logoRotateDeg?: number;
   /** Inline-rendered logo (LinkedIn kept from the original implementation). */
   inline?: "linkedin";
-  /** Kept in the mobile crop (big recognizable chips only, wired straight
-   *  to the monster — chains don't survive the 1.4× zoomed crop). */
+  /** Kept in the mobile composition (pre-hydration CSS fallback — the
+   *  data-mobile attribute gates the SSR-painted crop). */
   mobile?: boolean;
+  /** Mobile portrait placement on the 1000×1250 stage (see MVB_* above).
+   *  Presence = the chip is part of the hand-authored phone composition. */
+  m?: { cx: number; cy: number; chip: number };
 };
 
 type TentacleDef = {
@@ -127,7 +143,7 @@ const TENTACLES: TentacleDef[] = [
     id: "gmail",
     nodes: [
       { slug: "googlecalendar", alt: "Google Calendar", cx: 790, cy: 286, chip: 64 },
-      { slug: "gmail", alt: "Gmail", cx: 560, cy: 196, chip: 130, mobile: true },
+      { slug: "gmail", alt: "Gmail", cx: 560, cy: 196, chip: 130, mobile: true, m: { cx: 285, cy: 395, chip: 160 } },
       { slug: "googledrive", alt: "Google Drive", cx: 400, cy: 138, chip: 68 },
       { slug: "producthunt", alt: "Product Hunt", cx: 268, cy: 99, chip: 52 },
       { slug: "loom", alt: "Loom", cx: 150, cy: 67, chip: 46 },
@@ -138,7 +154,7 @@ const TENTACLES: TentacleDef[] = [
     id: "github",
     nodes: [
       { slug: "linear", alt: "Linear", cx: 1060, cy: 250, chip: 54 },
-      { slug: "github", alt: "GitHub", src: "/integrations/github-fill.svg", cx: 1085, cy: 150, chip: 120, logoRotateDeg: 6.63, mobile: true },
+      { slug: "github", alt: "GitHub", src: "/integrations/github-fill.svg", cx: 1085, cy: 150, chip: 120, logoRotateDeg: 6.63, mobile: true, m: { cx: 715, cy: 385, chip: 150 } },
       { slug: "youtube", alt: "YouTube", cx: 1215, cy: 100, chip: 78, mobile: true },
     ],
     tail: { x: 1320, y: 26, size: 16, palette: "yellow" },
@@ -146,7 +162,7 @@ const TENTACLES: TentacleDef[] = [
   {
     id: "ai",
     nodes: [
-      { slug: "openai", alt: "OpenAI", cx: 1265, cy: 322, chip: 70, mobile: true },
+      { slug: "openai", alt: "OpenAI", cx: 1265, cy: 322, chip: 70, mobile: true, m: { cx: 855, cy: 200, chip: 100 } },
       { slug: "claude", alt: "Claude", cx: 1505, cy: 286, chip: 92 },
       { slug: "perplexity", alt: "Perplexity", cx: 1680, cy: 243, chip: 54 },
     ],
@@ -155,7 +171,7 @@ const TENTACLES: TentacleDef[] = [
   {
     id: "x",
     nodes: [
-      { slug: "x", alt: "X", cx: 380, cy: 384, chip: 100, mobile: true },
+      { slug: "x", alt: "X", cx: 380, cy: 384, chip: 100, mobile: true, m: { cx: 160, cy: 625, chip: 130 } },
       { slug: "reddit", alt: "Reddit", cx: 240, cy: 410, chip: 84, mobile: true },
       { slug: "tiktok", alt: "TikTok", cx: 132, cy: 445, chip: 56 },
     ],
@@ -165,7 +181,7 @@ const TENTACLES: TentacleDef[] = [
     id: "linkedin",
     nodes: [
       { slug: "hubspot", alt: "HubSpot", cx: 1150, cy: 420, chip: 60 },
-      { slug: "linkedin", alt: "LinkedIn", inline: "linkedin", cx: 1362, cy: 400, chip: 140, logoScale: 0.63, mobile: true },
+      { slug: "linkedin", alt: "LinkedIn", inline: "linkedin", cx: 1362, cy: 400, chip: 140, logoScale: 0.63, mobile: true, m: { cx: 835, cy: 625, chip: 150 } },
       { slug: "salesforce", alt: "Salesforce", cx: 1565, cy: 444, chip: 78 },
       { slug: "apollo", alt: "Apollo", cx: 1715, cy: 484, chip: 52 },
     ],
@@ -175,7 +191,7 @@ const TENTACLES: TentacleDef[] = [
     id: "vercel",
     nodes: [
       { slug: "supabase", alt: "Supabase", cx: 770, cy: 451, chip: 58 },
-      { slug: "vercel", alt: "Vercel", cx: 480, cy: 505, chip: 120, logoScale: 0.4, mobile: true },
+      { slug: "vercel", alt: "Vercel", cx: 480, cy: 505, chip: 120, logoScale: 0.4, mobile: true, m: { cx: 135, cy: 1050, chip: 120 } },
       { slug: "sentry", alt: "Sentry", cx: 330, cy: 562, chip: 74 },
       { slug: "cloudflare", alt: "Cloudflare", cx: 208, cy: 610, chip: 56 },
       { slug: "aws", alt: "AWS", cx: 108, cy: 650, chip: 48 },
@@ -185,8 +201,8 @@ const TENTACLES: TentacleDef[] = [
   {
     id: "slack",
     nodes: [
-      { slug: "slack", alt: "Slack", cx: 870, cy: 542, chip: 130, logoRotateDeg: -9.15, mobile: true },
-      { slug: "discord", alt: "Discord", cx: 770, cy: 634, chip: 80, mobile: true },
+      { slug: "slack", alt: "Slack", cx: 870, cy: 542, chip: 130, logoRotateDeg: -9.15, mobile: true, m: { cx: 270, cy: 855, chip: 160 } },
+      { slug: "discord", alt: "Discord", cx: 770, cy: 634, chip: 80, mobile: true, m: { cx: 500, cy: 1080, chip: 110 } },
       { slug: "zapier", alt: "Zapier", cx: 700, cy: 680, chip: 56 },
     ],
     exit: { x: 660, y: 760 },
@@ -194,7 +210,7 @@ const TENTACLES: TentacleDef[] = [
   {
     id: "notion",
     nodes: [
-      { slug: "notion", alt: "Notion", cx: 1242, cy: 560, chip: 140, logoRotateDeg: 6.49, mobile: true },
+      { slug: "notion", alt: "Notion", cx: 1242, cy: 560, chip: 140, logoRotateDeg: 6.49, mobile: true, m: { cx: 730, cy: 860, chip: 160 } },
       { slug: "airtable", alt: "Airtable", cx: 1425, cy: 608, chip: 76, mobile: true },
       { slug: "asana", alt: "Asana", cx: 1555, cy: 644, chip: 60 },
       { slug: "trello", alt: "Trello", cx: 1695, cy: 672, chip: 50 },
@@ -204,7 +220,7 @@ const TENTACLES: TentacleDef[] = [
   {
     id: "stripe",
     nodes: [
-      { slug: "stripe", alt: "Stripe", cx: 855, cy: 150, chip: 100, mobile: true },
+      { slug: "stripe", alt: "Stripe", cx: 855, cy: 150, chip: 100, mobile: true, m: { cx: 500, cy: 300, chip: 130 } },
       { slug: "paypal", alt: "PayPal", cx: 770, cy: 84, chip: 64 },
       { slug: "quickbooks", alt: "QuickBooks", cx: 690, cy: 44, chip: 54 },
     ],
@@ -213,7 +229,7 @@ const TENTACLES: TentacleDef[] = [
   {
     id: "figma",
     nodes: [
-      { slug: "figma", alt: "Figma", cx: 300, cy: 266, chip: 90, mobile: true },
+      { slug: "figma", alt: "Figma", cx: 300, cy: 266, chip: 90, mobile: true, m: { cx: 130, cy: 220, chip: 120 } },
       { slug: "canva", alt: "Canva", cx: 185, cy: 232, chip: 64 },
       { slug: "webflow", alt: "Webflow", cx: 92, cy: 202, chip: 54 },
     ],
@@ -222,7 +238,7 @@ const TENTACLES: TentacleDef[] = [
   {
     id: "shopify",
     nodes: [
-      { slug: "shopify", alt: "Shopify", cx: 1062, cy: 608, chip: 92, mobile: true },
+      { slug: "shopify", alt: "Shopify", cx: 1062, cy: 608, chip: 92, mobile: true, m: { cx: 880, cy: 1060, chip: 120 } },
       { slug: "mailchimp", alt: "Mailchimp", cx: 1150, cy: 668, chip: 60 },
       { slug: "intercom", alt: "Intercom", cx: 1235, cy: 682, chip: 52 },
     ],
@@ -231,7 +247,7 @@ const TENTACLES: TentacleDef[] = [
   {
     id: "meta",
     nodes: [
-      { slug: "meta", alt: "Meta Ads", cx: 200, cy: 315, chip: 80, mobile: true },
+      { slug: "meta", alt: "Meta Ads", cx: 200, cy: 315, chip: 80, mobile: true, m: { cx: 85, cy: 830, chip: 110 } },
       { slug: "googleads", alt: "Google Ads", cx: 112, cy: 355, chip: 58 },
       { slug: "googleanalytics", alt: "Google Analytics", cx: 40, cy: 374, chip: 50 },
     ],
@@ -240,7 +256,7 @@ const TENTACLES: TentacleDef[] = [
   {
     id: "instagram",
     nodes: [
-      { slug: "instagram", alt: "Instagram", cx: 1148, cy: 248, chip: 78, mobile: true },
+      { slug: "instagram", alt: "Instagram", cx: 1148, cy: 248, chip: 78, mobile: true, m: { cx: 930, cy: 400, chip: 110 } },
       { slug: "calendly", alt: "Calendly", cx: 1258, cy: 193, chip: 50 },
     ],
     tail: { x: 1310, y: 152, size: 14, palette: "pink" },
@@ -300,6 +316,9 @@ const TENTACLES: TentacleDef[] = [
 
 /** Flat list — handy for building refs/wobbles once. */
 const ALL_NODES: NodeDef[] = TENTACLES.flatMap((t) => t.nodes);
+
+/** Phone composition — the hand-placed subset (see `NodeDef.m`). */
+const MOBILE_NODES: NodeDef[] = ALL_NODES.filter((n) => n.m);
 
 /* ----------------------------------------------------------------------- */
 /* Per-element wobble seed                                                  */
@@ -392,6 +411,18 @@ export function HomeIntegrationsCloud() {
   const vizRef = useRef<HTMLDivElement | null>(null);
   const [vbH, setVbH] = useState(VB_H);
   const spreadRef = useRef(1);
+
+  /* Portrait recomposition switch — SSR renders the desktop stage (the
+     data-mobile CSS crop keeps the first paint identical to the old
+     behavior); hydration flips phones onto the hand-authored 4:5 stage. */
+  const [isMobile, setIsMobile] = useState(false);
+  useLayoutEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023.98px)");
+    const apply = () => setIsMobile(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
 
   useLayoutEffect(() => {
     const viz = vizRef.current;
@@ -508,6 +539,27 @@ export function HomeIntegrationsCloud() {
     const tick = () => {
       if (disposed) return;
       const t = performance.now() / 1000 - start;
+
+      /* Phone stage: 14 chips, straight monster wires, no chains/tails
+         (those aren't rendered at all on mobile). */
+      if (isMobile) {
+        for (const node of MOBILE_NODES) {
+          const m = node.m!;
+          const w = wobbles.get(node.slug)!;
+          const s = ampScaleFor(m.chip);
+          const x = m.cx + Math.sin(t * w.freqX * Math.PI + w.phaseX) * w.ampX * s;
+          const y = m.cy + Math.sin(t * w.freqY * Math.PI + w.phaseY) * w.ampY * s;
+          const chipEl = chipRefs.current.get(node.slug);
+          if (chipEl) chipEl.setAttribute("transform", `translate(${x.toFixed(2)} ${y.toFixed(2)})`);
+          const mWire = mobileWireRefs.current.get(node.slug);
+          if (mWire) {
+            const curl = w.restCurl + Math.sin(t * w.ctrlFreqA * Math.PI + w.ctrlPhaseA) * w.ctrlAmpA * 0.5;
+            mWire.setAttribute("d", segD(M_ANCHOR_X, M_ANCHOR_Y, x, y, curl * 0.6));
+          }
+        }
+        return;
+      }
+
       // Vertical spread — every base y scales; wobble amplitudes don't.
       const sp = spreadRef.current;
 
@@ -558,7 +610,7 @@ export function HomeIntegrationsCloud() {
       disposed = true;
       gsap.ticker.remove(tick);
     };
-  }, [reducedMotion, wobbles]);
+  }, [reducedMotion, wobbles, isMobile]);
 
   /** Static segment d for SSR/no-JS/reduced-motion (straight midpoint quadratic). */
   const staticSegD = (x1: number, y1: number, x2: number, y2: number) =>
@@ -573,13 +625,15 @@ export function HomeIntegrationsCloud() {
           zoom with no transform hacks. */}
       <svg
         className="home-integrations-cloud__svg"
-        viewBox={`0 0 ${VB_W} ${vbH}`}
+        viewBox={isMobile ? `0 0 ${MVB_W} ${MVB_H}` : `0 0 ${VB_W} ${vbH}`}
         preserveAspectRatio="xMidYMid slice"
         aria-hidden
         focusable="false"
       >
-        {/* Chain segments — depth-faded (inner .7 → mid .5 → tail .32). */}
-        {TENTACLES.map((tent) => {
+        {/* Chain segments — depth-faded (inner .7 → mid .5 → tail .32).
+            Desktop only: the phone stage wires every chip straight to the
+            monster instead. */}
+        {!isMobile && TENTACLES.map((tent) => {
           const pts = [
             { x: ANCHOR_X, y: sy(ANCHOR_Y) },
             ...tent.nodes.map((n) => ({ x: n.cx, y: sy(n.cy) })),
@@ -608,9 +662,11 @@ export function HomeIntegrationsCloud() {
           });
         })}
 
-        {/* Mobile-only wires: each kept chip connects straight to the monster
-            (chains don't survive the zoomed mobile crop). */}
-        {ALL_NODES.filter((n) => n.mobile).map((node) => (
+        {/* Mobile-only wires: each kept chip connects straight to the
+            monster. Pre-hydration (isMobile still false) they carry the
+            desktop coords for the CSS-crop fallback; after the flip they
+            use the portrait placements. */}
+        {(isMobile ? MOBILE_NODES : ALL_NODES.filter((n) => n.mobile)).map((node) => (
           <path
             key={`${node.slug}-mwire`}
             ref={(el) => {
@@ -618,13 +674,18 @@ export function HomeIntegrationsCloud() {
               else mobileWireRefs.current.delete(node.slug);
             }}
             className="home-integrations-cloud__tentacle home-integrations-cloud__tentacle--inner home-integrations-cloud__tentacle--mobile"
-            d={staticSegD(ANCHOR_X, sy(ANCHOR_Y), node.cx, sy(node.cy))}
+            d={
+              isMobile
+                ? staticSegD(M_ANCHOR_X, M_ANCHOR_Y, node.m!.cx, node.m!.cy)
+                : staticSegD(ANCHOR_X, sy(ANCHOR_Y), node.cx, sy(node.cy))
+            }
           />
         ))}
 
         {/* Tail pancakes — only chains that end INSIDE the frame get a berry;
-            the rest just run off-canvas (founder: not everything terminates). */}
-        {TENTACLES.filter((tent) => tent.tail).map((tent) => (
+            the rest just run off-canvas (founder: not everything terminates).
+            Desktop only. */}
+        {!isMobile && TENTACLES.filter((tent) => tent.tail).map((tent) => (
           <g
             key={`${tent.id}-tail`}
             ref={(el) => {
@@ -646,9 +707,15 @@ export function HomeIntegrationsCloud() {
          * all segments so ropes pass underneath.
          */}
         {TENTACLES.map((tent) =>
-          tent.nodes.map((node, depth) => {
+          tent.nodes
+            .filter((node) => !isMobile || node.m)
+            .map((node, depth) => {
             const w = wobbles.get(node.slug)!;
-            const logoW = node.chip * (node.logoScale ?? (node.chip < 70 ? 0.62 : 0.56));
+            /* Portrait stage swaps position AND size per chip. */
+            const chip = isMobile && node.m ? node.m.chip : node.chip;
+            const px = isMobile && node.m ? node.m.cx : node.cx;
+            const py = isMobile && node.m ? node.m.cy : sy(node.cy);
+            const logoW = chip * (node.logoScale ?? (chip < 70 ? 0.62 : 0.56));
             return (
               <g
                 key={node.slug}
@@ -656,14 +723,14 @@ export function HomeIntegrationsCloud() {
                   if (el) chipRefs.current.set(node.slug, el);
                   else chipRefs.current.delete(node.slug);
                 }}
-                transform={`translate(${node.cx} ${sy(node.cy)})`}
+                transform={`translate(${px} ${py})`}
                 data-logo={node.slug}
                 data-depth={depth}
                 data-mobile={node.mobile ? "1" : "0"}
               >
                 <g transform={`rotate(${w.tiltDeg})`}>
                   <g
-                    transform={`scale(${node.chip / BLOB_W}) translate(${-BLOB_W / 2} ${-BLOB_H / 2})`}
+                    transform={`scale(${chip / BLOB_W}) translate(${-BLOB_W / 2} ${-BLOB_H / 2})`}
                   >
                     <path d={BLOB_D} fill={BLOB_FILL} />
                   </g>
@@ -706,8 +773,8 @@ export function HomeIntegrationsCloud() {
         ref={monsterSlotRef}
         className="home-integrations-cloud__monster"
         style={{
-          left: `${(ANCHOR_X / VB_W) * 100}%`,
-          top: `${(ANCHOR_Y / VB_H) * 100}%`,
+          left: `${((isMobile ? M_ANCHOR_X : ANCHOR_X) / (isMobile ? MVB_W : VB_W)) * 100}%`,
+          top: `${((isMobile ? M_ANCHOR_Y : ANCHOR_Y) / (isMobile ? MVB_H : VB_H)) * 100}%`,
         }}
         aria-hidden
       >
