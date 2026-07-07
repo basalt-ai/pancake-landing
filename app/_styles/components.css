@@ -2297,11 +2297,20 @@
     pointer-events: none;
   }
 
+  /* Width-locked uniform scale: 1 svg unit = band-width/1920, so the
+     pancakes stay ON their arcs at any width (slice cropping used to
+     shove the side pancakes off-frame on sub-1920 screens). The full
+     circles overflow the svg's own box vertically; the section's
+     overflow:hidden does the final clip. Floor at 1100px on small
+     screens so the decor doesn't collapse into a thin strip. */
   .home-closing__arcs {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 1100px);
+    height: auto;
+    transform: translate(-50%, -50%);
+    overflow: visible;
   }
 
   .home-closing__orbit {
@@ -2312,19 +2321,20 @@
     stroke-linecap: round;
   }
 
+  /* Float lives on the middle svg group, between the orbit-position
+     translate (outer) and the tilt/scale (inner), so the ±6px drift is
+     in band units regardless of each pancake's scale. */
   .home-closing-pancake {
-    position: absolute;
-    transform: translate(-50%, -50%);
     animation: home-closing-float 7s ease-in-out infinite alternate;
   }
 
   @keyframes home-closing-float {
     from {
-      transform: translate(-50%, calc(-50% - 6px));
+      transform: translateY(-6px);
     }
 
     to {
-      transform: translate(-50%, calc(-50% + 6px));
+      transform: translateY(6px);
     }
   }
 
@@ -2332,21 +2342,6 @@
     .home-closing-pancake {
       animation: none;
     }
-  }
-
-  .home-closing-pancake__art {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-
-  /* Bold tail of the stacked title — Figma weighs the promise's last two
-     words ("its first job") a full step over the rest. Family + weight
-     both pinned: something hands `strong` the fono face at runtime, and
-     Aeonik registers no 800 (the browser jumped to Black). */
-  h2.home-landing-section__closing-title strong {
-    font-family: var(--font-display);
-    font-weight: 700;
   }
 
   .home-landing-section--closing {

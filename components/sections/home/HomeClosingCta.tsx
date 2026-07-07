@@ -19,23 +19,30 @@
 import { pricing } from "@/lib/copy";
 import { PANCAKE_TINTS } from "@/lib/pancake-palette";
 
-/** Figma design space — positions below are % of the 1920×574 band.
- *  Sizes track the reference (review 2026-07-06: the first pass ran
- *  60-70% scale and read timid); the orange one bleeds off the right
- *  edge like the comp, the section's overflow clips it. */
+/** Figma `1892:4502` geometry, verbatim: three dotted orbits concentric
+ *  on (960, 374) of the 1920×574 band; each pancake's center sits ON an
+ *  orbit (purple r≈533, pink r≈723, orange r≈880 bleeding off the right
+ *  edge) with the comp's own tilts. Everything lives in ONE svg so the
+ *  `slice` scaling can never separate the pancakes from their arcs
+ *  (founder 2026-07-06: "les pancakes ne sont pas sur les orbites"). */
+const ORBIT_CX = 960;
+const ORBIT_CY = 374;
+const ORBIT_RADII = [533, 723, 880];
+
 const PANCAKES = [
-  { id: "purple", variant: "purple", size: 56, x: 26.0, y: 11.5 },
-  { id: "pink", variant: "pink", size: 104, x: 11.5, y: 72.0 },
-  { id: "orange", variant: "orange", size: 148, x: 100.4, y: 40.0 },
+  { id: "purple", variant: "purple", x: 496.7, y: 95.6, size: 63.5, rotate: 0 },
+  { id: "pink", variant: "pink", x: 222.5, y: 485.7, size: 142.9, rotate: -74.27 },
+  { id: "orange", variant: "orange", x: 1863.2, y: 270, size: 171.2, rotate: 20.86 },
 ] as const;
 
 const FLOAT_DELAYS = ["0s", "2.3s", "4.1s"];
 
-/** Shared two-tone pancake silhouette (same drawing as the hero orbits). */
-function DecorPancake({ variant, className }: { variant: keyof typeof PANCAKE_TINTS; className: string }) {
+/** Two-tone pancake paths in their native 49×48 box (same drawing as the
+ *  hero orbits) — plain <g> content so it can live inside the arcs svg. */
+function PancakeGlyph({ variant }: { variant: keyof typeof PANCAKE_TINTS }) {
   const p = PANCAKE_TINTS[variant];
   return (
-    <svg className={className} viewBox="0 0 49 48" aria-hidden focusable="false">
+    <>
       <path
         d="M25.9537 42C33.3632 42 39.2879 37.7456 43.3461 33.4449C46.1317 30.4929 47.7828 26.7658 47.8255 22.5904C47.9308 12.2895 37.5877 4 24.9673 4C12.347 4 1.61512 11.2979 0.299682 22.5904C-0.498594 29.4427 3.49706 33.162 8.00699 36.2143C12.4861 39.2458 19.7274 42 25.9537 42Z"
         fill={p.side}
@@ -44,7 +51,7 @@ function DecorPancake({ variant, className }: { variant: keyof typeof PANCAKE_TI
         d="M25.8326 36C32.779 36 38.3334 32.4173 42.138 28.7957C44.7495 26.3098 46.2973 23.1712 46.3374 19.6551C46.4361 10.9807 36.7394 4 24.9078 4C13.0762 4 3.01515 10.1456 1.78193 19.6551C1.03355 25.4254 4.77947 28.5575 9.00753 31.1278C13.2067 33.6806 19.9955 36 25.8326 36Z"
         fill={p.top}
       />
-    </svg>
+    </>
   );
 }
 
@@ -55,41 +62,38 @@ export function HomeClosingCta() {
 
   return (
     <div className="home-closing">
-      {/* Full-band decor — concentric dotted arcs (empty middle keeps the
-          copy clean) + pancakes riding them, Figma positions. */}
+      {/* Full-band decor — one svg carries arcs AND pancakes so they scale
+          together; the outer translate positions each pancake on its
+          orbit, the middle g floats (CSS, unscaled units), the inner g
+          applies the comp's tilt and scale. */}
       <div className="home-closing__decor" aria-hidden>
-        <svg className="home-closing__arcs" viewBox="0 0 1920 574" preserveAspectRatio="xMidYMid slice">
-          {[520, 700, 880, 1060].map((r, i) => (
+        <svg className="home-closing__arcs" viewBox="0 0 1920 574">
+          {ORBIT_RADII.map((r, i) => (
             <circle
               key={r}
-              cx={960}
-              cy={287}
+              cx={ORBIT_CX}
+              cy={ORBIT_CY}
               r={r}
               className="home-closing__orbit"
-              opacity={0.6 - i * 0.1}
+              opacity={0.65 - i * 0.12}
             />
           ))}
+          {PANCAKES.map((p, i) => (
+            <g key={p.id} transform={`translate(${p.x} ${p.y})`}>
+              <g className="home-closing-pancake" style={{ animationDelay: FLOAT_DELAYS[i] }}>
+                <g transform={`rotate(${p.rotate}) scale(${p.size / 49}) translate(-24.5 -24)`}>
+                  <PancakeGlyph variant={p.variant} />
+                </g>
+              </g>
+            </g>
+          ))}
         </svg>
-        {PANCAKES.map((p, i) => (
-          <span
-            key={p.id}
-            className="home-closing-pancake"
-            style={{
-              left: `${p.x}%`,
-              top: `${p.y}%`,
-              width: `clamp(${Math.round(p.size * 0.55)}px, ${(p.size / 1920) * 100}vw, ${p.size}px)`,
-              animationDelay: FLOAT_DELAYS[i],
-            }}
-          >
-            <DecorPancake variant={p.variant} className="home-closing-pancake__art" />
-          </span>
-        ))}
       </div>
 
       <h2 id="home-landing-closing-heading" className="heading home-landing-section__closing-title text-center">
         Give Pancake
         <br />
-        its <strong>first job</strong>
+        its first job
       </h2>
       <p className="home-landing-section__lede home-landing-section__lede--closing text-center">
         Onboards in Slack. Hands back finished work.

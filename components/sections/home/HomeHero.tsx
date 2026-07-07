@@ -38,13 +38,11 @@ function OrbitSatellitePancake({ palette }: { palette: keyof typeof PANCAKE_TINT
 
 const HERO_TITLE = "The AI coworker that does the work for you";
 
-/* Founder brief 2026-07-06: "come back with finished work" read as the
-   USER finishing the work — Pancake must be the actor. This sub carries
-   the mechanism the H1 skips (one interlocutor, a team of agents, your
-   tools) without restating its claim; the film band below owns the
-   three-step onboarding list. */
+/* Founder copy (restored 2026-07-06 — the full rewrite went too far).
+   Only the last beat changed: "Come back with finished work" read as the
+   USER finishing the work, so Pancake takes the verb. */
 const HERO_SUB =
-  "You talk to one Pancake.\nBehind it, a team of agents works across your tools.";
+  "Onboard Pancake in Slack. Connect your tools.\nIt comes back with finished work.";
 
 export function HomeHero() {
   return (
