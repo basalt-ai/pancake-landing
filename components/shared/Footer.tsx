@@ -43,8 +43,10 @@ const columns: { title: string; links: FooterLink[] }[] = [
   },
 ];
 
+/* inline-block + py-1.5 gives each link a ~32px touch box without changing
+   the column's optical rhythm (the -my-1.5 on the li absorbs the padding). */
 const linkClassName =
-  "text-base transition-colors hover:text-[var(--text-on-inverted-surface,#fff7ec)]";
+  "-my-1.5 inline-block py-1.5 text-base transition-colors hover:text-[var(--text-on-inverted-surface,#fff7ec)]";
 
 function FooterLinkItem({ href, label }: FooterLink) {
   if (href.startsWith("http")) {
@@ -98,7 +100,11 @@ export function Footer() {
             <p className="max-w-[260px] text-sm leading-relaxed">
               The AI employee that does the work for you.
             </p>
-            <div className="flex items-center gap-4">
+            {/* -m-3 offsets the p-3 hit padding so the icon row keeps its
+                optical position; each icon is a 42px touch target (mobile
+                review 2026-07-07: bare 18px icons were untappable). Hover
+                brightens via color, not opacity (brand: no hover dim). */}
+            <div className="-m-3 flex items-center gap-1">
               {socials.map(({ href, label, Icon }) => (
                 <a
                   key={href}
@@ -106,7 +112,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="transition-opacity hover:opacity-80"
+                  className="p-3 transition-colors hover:text-white"
                   style={{ color: "var(--text-on-inverted-surface, #fff7ec)" }}
                 >
                   <Icon size={18} />
@@ -143,7 +149,7 @@ export function Footer() {
           <span className="whitespace-nowrap">© {year} Pancake. All rights reserved.</span>
 
           <div className="flex flex-col gap-1 sm:items-end">
-            <span className="whitespace-nowrap sm:text-right">
+            <span className="sm:whitespace-nowrap sm:text-right">
               535 Mission St, San Francisco, CA 94105, USA
             </span>
             <nav aria-label="Legal" className="flex items-center gap-4">
