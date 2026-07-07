@@ -54,6 +54,18 @@
     color: var(--text);
   }
 
+  /* Phones: the h2.heading recipe (specificity 0,1,1) overrides the
+     header-03 size above (0,1,0) and blows the three steps up to the
+     ~45px section-H2 tier — six lines of display type at 390px. The
+     doubled selector wins the cascade and restores the intended tier
+     where it hurts; desktop keeps its long-approved look. */
+  @media (max-width: 1023.98px) {
+    h2.home-film__heading.heading {
+      font-size: var(--font-size-header-03);
+      letter-spacing: -0.64px;
+    }
+  }
+
   /* Three-step film summary — one line per beat of the film, revealed
      with a GSAP stagger (see HomeDemoVideo). Block spans inside the one
      heading keep it a single accessible title. */
