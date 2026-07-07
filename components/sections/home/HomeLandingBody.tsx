@@ -45,8 +45,13 @@ export function HomeLandingBody() {
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
             {/* Single-line header — one-screen budget (founder rule). */}
+            {/* "Give Pancake a job, come back to finished work" collided
+                with the film's "Put Pancake to work" line directly above
+                and the closing lede's "finished work" (review 2026-07-06);
+                the four cards ARE the four jobs, the title just counts
+                them. */}
             <H2 id="home-landing-usecases-heading" className="heading home-landing-section__title text-center">
-              Give Pancake a job, come back to finished work
+              Four real jobs, start to finish
             </H2>
           </header>
           <HomeUseCases />
@@ -85,8 +90,11 @@ export function HomeLandingBody() {
           <header className="home-landing-section__header">
             {/* Single-line header (founder: one efficient sentence frees the
                 vertical room that keeps the squad boxes at full size). */}
+            {/* The hero sub now carries "one Pancake, a team of agents
+                behind it" — this H2 advances instead of restating it
+                (review 2026-07-06: near-verbatim duplicate). */}
             <H2 id="home-landing-org-heading" className="heading home-landing-section__title text-center">
-              One coworker, a whole team of agents behind it
+              Meet the team behind it
             </H2>
           </header>
           <div className="home-landing-section__figure home-landing-org-mobile">

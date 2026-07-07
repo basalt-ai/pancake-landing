@@ -19,11 +19,14 @@
 import { pricing } from "@/lib/copy";
 import { PANCAKE_TINTS } from "@/lib/pancake-palette";
 
-/** Figma design space — positions below are % of the 1920×574 band. */
+/** Figma design space — positions below are % of the 1920×574 band.
+ *  Sizes track the reference (review 2026-07-06: the first pass ran
+ *  60-70% scale and read timid); the orange one bleeds off the right
+ *  edge like the comp, the section's overflow clips it. */
 const PANCAKES = [
-  { id: "purple", variant: "purple", size: 46, x: 26.0, y: 11.5 },
-  { id: "pink", variant: "pink", size: 92, x: 11.5, y: 72.0 },
-  { id: "orange", variant: "orange", size: 108, x: 96.2, y: 38.0 },
+  { id: "purple", variant: "purple", size: 56, x: 26.0, y: 11.5 },
+  { id: "pink", variant: "pink", size: 104, x: 11.5, y: 72.0 },
+  { id: "orange", variant: "orange", size: 148, x: 100.4, y: 40.0 },
 ] as const;
 
 const FLOAT_DELAYS = ["0s", "2.3s", "4.1s"];
@@ -46,7 +49,9 @@ function DecorPancake({ variant, className }: { variant: keyof typeof PANCAKE_TI
 }
 
 export function HomeClosingCta() {
-  const note = `${pricing.trial.days}-day free trial • ${pricing.currencySymbol}${pricing.trial.freeTokensDollars} in free credits • No credit card required`;
+  /* Short note per the Figma comp — the pricing teaser one band up
+     already carries the credits line (review: the long note echoed it). */
+  const note = `${pricing.trial.days}-day free trial • No credit card required`;
 
   return (
     <div className="home-closing">

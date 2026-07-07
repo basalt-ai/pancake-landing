@@ -70,7 +70,9 @@
      (frame starts at 0.94) reveals a bit more of it early. */
   .home-film__mascot {
     position: absolute;
-    top: -24px;
+    /* -34px clears the full eyes above the frame edge (review: -24px
+       chopped the pupils and read as a clipping glitch). */
+    top: -34px;
     right: 8%;
     z-index: 0;
     width: 68px;

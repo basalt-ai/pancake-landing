@@ -41,7 +41,7 @@ const HERO_TITLE = "The AI coworker that does the work for you";
 /* Founder brief 2026-07-06: "come back with finished work" read as the
    USER finishing the work — Pancake must be the actor. This sub carries
    the mechanism the H1 skips (one interlocutor, a team of agents, your
-   tools) with zero word overlap; the film band below owns the
+   tools) without restating its claim; the film band below owns the
    three-step onboarding list. */
 const HERO_SUB =
   "You talk to one Pancake.\nBehind it, a team of agents works across your tools.";

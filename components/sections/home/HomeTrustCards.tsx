@@ -162,13 +162,13 @@ const TRUST_CARDS: TrustCard[] = [
   {
     id: "secrets",
     title: "Secrets locked in a vault",
-    body: "Keys and logins live encrypted in a vault. Agents use them to do the work without ever seeing them, and nothing sensitive touches the chat.",
+    body: "Keys and logins live encrypted. Agents use them without ever seeing them, and nothing sensitive touches the chat.",
     visual: <VaultVisual />,
   },
   {
     id: "workspace",
     title: "A sealed space per company",
-    body: "Your company runs in its own private environment, memory included. Nothing is shared with other customers and none of it trains a model.",
+    body: "You get your own private environment, memory included. Nothing is shared with other customers and none of it trains a model.",
     visual: <WorkspaceVisual />,
   },
   {
