@@ -29,10 +29,14 @@ const ORBIT_CX = 960;
 const ORBIT_CY = 374;
 const ORBIT_RADII = [533, 723, 880];
 
+/* Figma centers snapped onto their circles: the comp's orbits are near-
+   circular ellipses, so the raw centers land 8–29px outside our exact
+   circles — each point below is the Figma center projected radially onto
+   its r (founder 2026-07-07: "mieux centrés par rapport aux orbites"). */
 const PANCAKES = [
-  { id: "purple", variant: "purple", x: 496.7, y: 95.6, size: 63.5, rotate: 0 },
-  { id: "pink", variant: "pink", x: 222.5, y: 485.7, size: 142.9, rotate: -74.27 },
-  { id: "orange", variant: "orange", x: 1863.2, y: 270, size: 171.2, rotate: 20.86 },
+  { id: "purple", variant: "purple", x: 503.1, y: 99.5, size: 63.5, rotate: 0 },
+  { id: "pink", variant: "pink", x: 245.2, y: 482.3, size: 142.9, rotate: -74.27 },
+  { id: "orange", variant: "orange", x: 1834.2, y: 273.3, size: 171.2, rotate: 20.86 },
 ] as const;
 
 const FLOAT_DELAYS = ["0s", "2.3s", "4.1s"];

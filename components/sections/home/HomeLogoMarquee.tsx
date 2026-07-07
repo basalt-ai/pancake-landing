@@ -21,8 +21,10 @@ type MarqueeLogo = {
   heightPx: number;
   /** Optional proof link attached under the mark (founder brief
    *  2026-07-06: the AgentMail story rides its logo instead of a
-   *  dedicated blog section). */
-  story?: { href: string; label: string };
+   *  dedicated blog section). `centerPct` anchors the chip as a % of
+   *  the lockup width — set it to the WORDMARK's center when the asset
+   *  bundles an icon + wordmark (defaults to 50%). */
+  story?: { href: string; label: string; centerPct?: number };
 };
 
 const TRUSTED_BY: MarqueeLogo[] = [
@@ -43,6 +45,9 @@ const POWERED_BY: MarqueeLogo[] = [
     story: {
       href: "https://www.agentmail.to/blog/how-pancake-gives-its-superagent-a-real-inbox-with-agentmail",
       label: "Read story",
+      /* agentmail.svg (1986 wide): icon ends at x≈352, letters span
+         453–1986 → wordmark center = 1219.6 / 1986. */
+      centerPct: 61.4,
     },
   },
   { name: "LiteLLM", src: "/logos/litellm.svg", ratio: 3538 / 735, heightPx: 24 },
@@ -98,6 +103,13 @@ function MarqueeGroup({
                       href={logo.story.href}
                       target="_blank"
                       rel="noopener noreferrer"
+                      {...(logo.story.centerPct !== undefined
+                        ? {
+                            style: {
+                              "--story-center": `${logo.story.centerPct}%`,
+                            } as CSSProperties,
+                          }
+                        : {})}
                       {...(copy > 0 ? { tabIndex: -1, "aria-hidden": true } : {})}
                     >
                       {logo.story.label}

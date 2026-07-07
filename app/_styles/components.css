@@ -903,7 +903,9 @@
   .home-logo-marquee__story {
     position: absolute;
     top: calc(100% + var(--spacing-sm));
-    left: 50%;
+    /* --story-center lets a lockup that bundles icon + wordmark anchor
+       the chip on the wordmark alone (set per logo in HomeLogoMarquee). */
+    left: var(--story-center, 50%);
     transform: translateX(-50%);
     padding: 2px var(--spacing-md);
     border-radius: 6px;
@@ -2328,13 +2330,15 @@
     animation: home-closing-float 7s ease-in-out infinite alternate;
   }
 
+  /* ±3px only — the pancakes sit ON the dotted orbits (Figma 1892:4502),
+     so a larger drift reads as misalignment rather than float. */
   @keyframes home-closing-float {
     from {
-      transform: translateY(-6px);
+      transform: translateY(-3px);
     }
 
     to {
-      transform: translateY(6px);
+      transform: translateY(3px);
     }
   }
 

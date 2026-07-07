@@ -16,7 +16,8 @@
  *
  * Cards reuse the `.home-landing-control-card` recipes; visuals are the
  * carousel's (vault, blobs) plus the sandbox-ellipse graphic from the
- * old pod card, relabeled `workspace:` (founder: "pod" means nothing).
+ * old pod card, chipless like the Figma comp (founder 2026-07-07: the
+ * `workspace:` label wasn't in the design).
  */
 
 import Image from "next/image";
@@ -78,7 +79,6 @@ function WorkspaceVisual() {
       <div className="home-landing-control-scope__icon home-landing-control-scope__icon--c">
         <Image src="/control/sandbox-icon-3.svg" alt="" fill unoptimized />
       </div>
-      <span className="home-landing-trust-pod-label">workspace: your-company</span>
     </div>
   );
 }
