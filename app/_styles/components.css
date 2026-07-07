@@ -1079,6 +1079,13 @@
     text-align: center;
   }
 
+  /* Integrations header: its one-sentence title needs ~802px at desktop
+     size — 50px over the shared cap — so it gets room to stay on one
+     line (founder 2026-07-07); balance still guards the wrap below. */
+  .home-landing-section__header--wide {
+    max-width: 900px;
+  }
+
   .home-landing-section__title {
     margin: 0;
     font-size: var(--font-size-home-landing-section-title);
