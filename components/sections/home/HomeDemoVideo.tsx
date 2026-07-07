@@ -171,6 +171,29 @@ export function HomeDemoVideo() {
     if (film && film.preload === "none") film.preload = "metadata";
   };
 
+  // Touch devices have no hover intent — pointerenter only fires as part
+  // of the tap itself, too late to warm anything. Warm the master once
+  // the band scrolls into view instead (mobile review 2026-07-07).
+  useEffect(() => {
+    if (!window.matchMedia("(hover: none)").matches) return;
+    const section = sectionRef.current;
+    if (!section) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            warmFilm();
+            io.disconnect();
+          }
+        }
+      },
+      { threshold: 0.2 },
+    );
+    io.observe(section);
+    return () => io.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- warmFilm only touches refs
+  }, []);
+
   return (
     <section ref={sectionRef} className="home-demo-video" aria-label="Meet Pancake: the film">
       <div className={`home-demo-video__wrap ${HOME_PAGE_CONTAINER_CLASS}`} onPointerEnter={warmFilm}>

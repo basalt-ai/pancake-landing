@@ -15,13 +15,15 @@ export function ProductHuntBadge({
   height = 54,
 }: ProductHuntBadgeProps) {
   return (
-    /* Hidden below md (review 2026-07-06): at 375w the fixed badge spans
-       two thirds of the viewport and floats over section content. */
+    /* Hidden below lg: at 375w the fixed badge spans two thirds of the
+       viewport (review 2026-07-06), and at 768-1023 it parks on top of
+       the logo marquee pinned to the first-viewport bottom, burying the
+       AgentMail "Read story" chip (mobile review 2026-07-07). */
     <a
       href={PH_URL}
       target="_blank"
       rel="noopener noreferrer"
-      className="product-hunt-badge fixed bottom-4 right-4 z-50 hidden shrink-0 items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 md:inline-flex"
+      className="product-hunt-badge fixed bottom-4 right-4 z-50 hidden shrink-0 items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 lg:inline-flex"
       aria-label="Pancake, #1 Product of the Day on Product Hunt"
     >
       {/* eslint-disable-next-line @next/next/no-img-element -- external badge served by Product Hunt CDN */}
