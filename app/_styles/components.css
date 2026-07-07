@@ -703,12 +703,11 @@
     background-color: var(--surface);
     /* Founder call 2026-07-03: the hero → film seam was brutal — the dark
        frame started 35px under the marquee's last logo while the hero
-       carries ~300px of internal air. A wide pause before the claim
-       (top) and a smaller one after (bottom) so the band breathes without
-       drifting from the use-case section below. Mobile keeps its tighter
-       override. */
-    padding-top: calc(4 * var(--spacing-xxl));
-    padding-bottom: calc(2.5 * var(--spacing-xxl));
+       carries ~300px of internal air. Since the 2026-07-07 breathe pass
+       the band sits on the shared section rhythm like everything else.
+       Mobile keeps its tighter override. */
+    padding-top: var(--spacing-home-landing-section-y);
+    padding-bottom: var(--spacing-home-landing-section-y);
   }
 
   .home-demo-video__wrap {
@@ -1032,38 +1031,10 @@
     gap: var(--spacing-home-landing-header-to-media);
   }
 
-  @media (min-width: 1024px) {
-    /* One-screen budget (founder rule: every section fits 100svh at common
-       desktop sizes — never by shrinking or cropping content). Levers are
-       always the same: single-line headers in the TSX, trimmed band
-       paddings, and a halved header-to-media gap. Applied to every section
-       the 100vh audit flagged (slack +177, use-cases +211, ugc +126,
-       faq +29, blog +47 at 1474×799) plus the org band. */
-    .home-landing-section--org,
-    .home-landing-section--testimonials,
-    .home-ugc,
-    section[aria-labelledby="home-landing-slack-heading"],
-    section[aria-labelledby="home-landing-usecases-heading"],
-    section[aria-labelledby="home-landing-trust-heading"],
-    section[aria-labelledby="home-landing-blog-heading"] {
-      padding-block: calc(2.5 * var(--spacing-xl)) calc(1.5 * var(--spacing-xl));
-    }
-
-    .home-landing-section--org,
-    .home-landing-section--testimonials,
-    section[aria-labelledby="home-landing-slack-heading"] .home-landing-section__inner,
-    section[aria-labelledby="home-landing-usecases-heading"] .home-landing-section__inner,
-    section[aria-labelledby="home-landing-trust-heading"] .home-landing-section__inner,
-    section[aria-labelledby="home-landing-blog-heading"] .home-landing-section__inner {
-      gap: calc(2 * var(--spacing-xl));
-    }
-
-    /* The card fan runs 3px over the budget at 799-tall windows — shave
-       its bottom band padding only (the fan's own stage is untouchable). */
-    section[aria-labelledby="home-landing-usecases-heading"] {
-      padding-block-end: var(--spacing-xl);
-    }
-  }
+  /* The one-screen-budget compression (40/24 paddings + halved gaps on
+     most sections) is retired — founder 2026-07-07: the page read as too
+     loaded, sections must breathe like viktor.com's. Every section now
+     takes the shared `--spacing-home-landing-section-y` rhythm. */
 
   .home-landing-section__inner--closing {
     gap: var(--spacing-home-hero-after-title);
@@ -2401,20 +2372,20 @@
       gap: calc(2 * var(--spacing-xl));
     }
 
-    /* One-screen trim: the full-bleed cloud IS the band, so the default
-       96px band paddings are mostly dead space. The height itself comes
-       from the shortened 1920×720 artwork + the single-line header — no
-       dynamic cropping (founder: logos must never get cut).
-       min-height makes the band own EXACTLY one screen (founder: at
+    /* The full-bleed cloud IS the band; the height comes from the
+       shortened 1920×720 artwork + the single-line header — no dynamic
+       cropping (founder: logos must never get cut).
+       min-height makes the band own at least one screen (founder: at
        100vh-fitting sizes the next band was peeking under the fold). The
        header pins to the TOP of the band — same relative position as the
        org section's title (founder: centering pushed it oddly low) — and
        the leftover height goes to the figure, where the cloud floats
-       centered, so the logos get breathing room above and below. On
-       windows too short for the content, the band simply grows. */
+       centered, so the logos get breathing room above and below.
+       Padding follows the shared section rhythm since the 2026-07-07
+       breathe pass (the one-screen trim is retired). */
     section[aria-labelledby="home-landing-integrations-heading"] {
       box-sizing: border-box;
-      padding-block: calc(2.5 * var(--spacing-xl)) calc(1.5 * var(--spacing-xl));
+      padding-block: var(--spacing-home-landing-section-y);
       min-height: 100svh;
       display: flex;
       flex-direction: column;

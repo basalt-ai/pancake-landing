@@ -21,10 +21,10 @@
   .home-landing-section.home-pricing-teaser {
     /* pink-10 — breaks the plain/alt rhythm on purpose so the price moment pops */
     background-color: var(--weak-branded-surface);
-    /* Roomier than the old 64px strip (founder 2026-07-06: the block felt
-       packed) while staying tighter than a full 96px chapter */
-    padding-top: calc(5 * var(--spacing-xl));
-    padding-bottom: calc(5 * var(--spacing-xl));
+    /* Follows the shared section rhythm since the 2026-07-07 breathe pass
+       (every band on the viktor-parity 112px beat). */
+    padding-top: var(--spacing-home-landing-section-y);
+    padding-bottom: var(--spacing-home-landing-section-y);
     /* Anchor + clip for the decorative pancake that bleeds past the edge
        (clip, not hidden — avoids creating a scroll container) */
     position: relative;
