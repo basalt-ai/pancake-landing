@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-type MetaEventName = "ViewContent" | "Lead" | "Contact" | "Schedule" | "trial_click";
+type MetaEventName = "ViewContent" | "Lead" | "Contact" | "trial_click";
 
 const META_PIXEL_ID = process.env.META_PIXEL_ID ?? "1668160384441545";
 const META_ACCESS_TOKEN = process.env.META_CONVERSIONS_API_ACCESS_TOKEN;
@@ -13,7 +13,6 @@ const ALLOWED_EVENT_NAMES = new Set<MetaEventName>([
   "ViewContent",
   "Lead",
   "Contact",
-  "Schedule",
   "trial_click",
 ]);
 

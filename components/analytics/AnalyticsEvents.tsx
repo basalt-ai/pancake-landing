@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
 type AnalyticsParams = Record<string, string | number | boolean | null | undefined>;
-type MetaStandardEventName = "ViewContent" | "Lead" | "Contact" | "Schedule";
+type MetaStandardEventName = "ViewContent" | "Lead" | "Contact";
 type MetaCustomEventName = "trial_click";
 type MetaEventName = MetaStandardEventName | MetaCustomEventName;
 type MetaPixelOptions = { eventID?: string };
@@ -176,7 +176,6 @@ function trackedLinkEvent(anchor: HTMLAnchorElement): TrackedLinkEvent | null {
 export function AnalyticsEvents() {
   const pathname = usePathname();
   const previousPathRef = useRef<string | null>(null);
-  const bookedTrackedRef = useRef(false);
 
   useEffect(() => {
     const pagePath = currentPagePath();
@@ -210,27 +209,6 @@ export function AnalyticsEvents() {
 
     previousPathRef.current = pagePath;
 
-    if (pathname === "/booked" && !bookedTrackedRef.current) {
-      bookedTrackedRef.current = true;
-      const params = {
-        conversion_name: "meeting_booked",
-        page_path: pagePath,
-        page_location: window.location.href,
-        page_title: document.title,
-      };
-      const eventId = trackMetaWithConversionsApi("Schedule", params, {
-        content_category: "meeting",
-        content_name: "meeting_booked",
-        conversion_name: "meeting_booked",
-        page_path: pagePath,
-        page_title: document.title,
-      });
-
-      pushDataLayer("meeting_booked", {
-        ...params,
-        event_id: eventId,
-      });
-    }
   }, [pathname]);
 
   useEffect(() => {
