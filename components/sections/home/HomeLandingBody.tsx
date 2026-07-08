@@ -24,7 +24,6 @@ import { HomeIntegrationsCloud } from "@/components/sections/home/HomeIntegratio
 import { HomeLandingTestimonials } from "@/components/sections/home/HomeLandingTestimonials";
 import { HomeTrustCards } from "@/components/sections/home/HomeTrustCards";
 import { HomeOrgDiagram } from "@/components/sections/home/HomeOrgDiagram";
-import { HomeOrgDiagramMobile } from "@/components/sections/home/HomeOrgDiagramMobile";
 import { HomePricingTeaser } from "@/components/sections/home/HomePricingTeaser";
 import { HomeUGCWall } from "@/components/sections/home/HomeUGCWall";
 import { HomeUseCases } from "@/components/sections/home/HomeUseCases";
@@ -95,11 +94,15 @@ export function HomeLandingBody() {
           rows now show task-shaped work instead of job titles, so the section
           demonstrates "does the work for you" rather than an org shuffling
           headcount. Band keeps the plain surface for its edge-fade mask. */}
+      {/* Desktop only — the org chart's value is the whole-team-at-a-glance
+          gestalt, which collapses to a weak one-squad-at-a-time carousel on
+          phones (founder 2026-07-07). The section is CSS-hidden below lg
+          (kept in the DOM for SEO); the hero sub already carries "a team of
+          agents behind it" for mobile visitors. The mobile diagram component
+          is dropped entirely so its ungated ticker doesn't run unseen. */}
       <section className="home-landing-section home-landing-section--org" aria-labelledby="home-landing-org-heading">
         <div className={`${HOME_PAGE_CONTAINER_CLASS} home-landing-section__inner`}>
           <header className="home-landing-section__header">
-            {/* Single-line header (founder: one efficient sentence frees the
-                vertical room that keeps the squad boxes at full size). */}
             {/* The hero sub now carries "one Pancake, a team of agents
                 behind it" — this H2 advances instead of restating it
                 (review 2026-07-06: near-verbatim duplicate). */}
@@ -107,9 +110,6 @@ export function HomeLandingBody() {
               Meet the team behind it
             </H2>
           </header>
-          <div className="home-landing-section__figure home-landing-org-mobile">
-            <HomeOrgDiagramMobile />
-          </div>
         </div>
         <div className="home-landing-org-desktop">
           <HomeOrgDiagram />

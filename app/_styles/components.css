@@ -2096,15 +2096,9 @@
     );
   }
 
-  /* Mobile swaps the drifting ticker for a snap carousel whose cards REST
-     in view — the edge fade would permanently dim the resting neighbours
-     (mobile review 2026-07-07), so it comes off below lg. */
-  @media (max-width: 1023.98px) {
-    .home-landing-testimonials {
-      -webkit-mask-image: none;
-      mask-image: none;
-    }
-  }
+  /* The edge fade suits both the desktop transform ticker and the mobile
+     native-scroll marquee (cards enter/exit at both), so it stays at every
+     width (founder 2026-07-07). */
 
   .home-landing-testimonials__track {
     display: flex;
@@ -5711,27 +5705,18 @@
     background-color: var(--inverted-surface);
   }
 
-  /* Testimonials mobile — snap carousel + dots (Figma `451:19562`). */
-  .home-landing-testimonials__mobile {
-    display: none;
-  }
-
+  /* Testimonials mobile — native-scroll marquee: swipeable + auto-drift
+     (founder 2026-07-07). No scroll-snap (it fights the per-frame scrollLeft
+     the marquee sets); the strip is the scroll container, so it stays
+     viewport-wide and overflows via the duplicated cards. Hidden until the
+     mobile media query shows it. */
   .home-landing-testimonials__track--mobile {
-    display: flex;
+    display: none;
     gap: 16px;
-    /* Override the shared track's `width: max-content` — the mobile track is
-       the scroll container, so it must stay viewport-wide to overflow/snap
-       (and so the centered-card math measures the visible band, not the
-       full content width). */
     width: 100%;
     box-sizing: border-box;
     overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    /* (100% − card) / 2 so snapped cards rest CENTERED — the fixed 16%
-       left the first card ~30px right of center at 390 (mobile review
-       2026-07-07). Card = min(100vw − 64px, 360px). */
-    scroll-padding-inline: max(32px, calc((100% - 360px) / 2));
-    padding-inline: max(32px, calc((100% - 360px) / 2));
+    padding-inline: var(--spacing-xl);
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
   }
@@ -5743,7 +5728,6 @@
   .home-landing-testimonials__track--mobile .home-landing-testimonial {
     flex: 0 0 calc(100vw - 64px);
     max-width: 360px;
-    scroll-snap-align: center;
   }
 
   .home-landing-testimonials__dots {
@@ -5898,9 +5882,11 @@
      preserving the underlying animations.
      ───────────────────────────────────────────────────────────────── */
   @media (max-width: 1023.98px) {
-    /* === Org section: swap desktop diagram for mobile component === */
-    .home-landing-org-desktop { display: none; }
-    .home-landing-org-mobile { display: block; }
+    /* === Org section removed on mobile (founder 2026-07-07) — the squad
+       chart's at-a-glance team gestalt can't survive a portrait crop; hidden
+       here (still in the DOM for SEO), the mobile diagram is dropped in the
+       TSX so its ticker doesn't run unseen. === */
+    .home-landing-section--org { display: none; }
 
     /* === Hero — pancake monster centered above the headline. ===
        Desktop puts the pancake stack to the right of the title; the
@@ -6121,9 +6107,16 @@
       stroke-width: 5.5;
       stroke-dasharray: 2.5 26;
     }
-        /* === Testimonials — mobile snap carousel replaces desktop ticker === */
+        /* === Testimonials — mobile native-scroll marquee replaces the
+       desktop transform ticker === */
     .home-landing-testimonials__track--desktop { display: none; }
-    .home-landing-testimonials__mobile { display: block; }
+    .home-landing-testimonials__track--mobile { display: flex; }
+
+    /* Bring the video wall up against the tweets — they share the "Take it
+       from them" title, so the full section rhythm over-separates two halves
+       of one proof block (founder 2026-07-07). */
+    .home-landing-section--testimonials { padding-bottom: var(--spacing-xl); }
+    .home-landing-section.home-ugc { padding-top: var(--spacing-xl); }
 
     /* === Section title clearance === */
     .home-landing-section__inner {

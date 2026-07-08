@@ -19,6 +19,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
+import { startAutoMarquee } from "@/lib/autoMarquee";
 import { gsap } from "@/lib/gsap";
 
 const CARD_GAP_PX = 16;
@@ -178,7 +179,6 @@ export function HomeLandingTestimonials() {
   const mobileTrackRef = useRef<HTMLDivElement | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -189,7 +189,8 @@ export function HomeLandingTestimonials() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  // Track viewport — switch to a snap-scroll mobile carousel below `lg`.
+  // Below `lg` the transform ticker gives way to a native-scroll marquee so
+  // the strip is swipeable (founder 2026-07-07).
   useEffect(() => {
     if (typeof window === "undefined") return;
     const mq = window.matchMedia("(max-width: 1023.98px)");
@@ -199,7 +200,7 @@ export function HomeLandingTestimonials() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  // Desktop only — the infinite GSAP ticker scroll.
+  // Desktop — the infinite GSAP transform ticker.
   useEffect(() => {
     if (isMobile) return;
     const track = trackRef.current;
@@ -213,8 +214,7 @@ export function HomeLandingTestimonials() {
     let stride = 0;
 
     const measure = () => {
-      const total = track.scrollWidth;
-      stride = total / 2 + CARD_GAP_PX / 2;
+      stride = track.scrollWidth / 2 + CARD_GAP_PX / 2;
     };
 
     measure();
@@ -226,9 +226,7 @@ export function HomeLandingTestimonials() {
       track.style.transform = `translate3d(${offset.toFixed(2)}px, 0, 0)`;
     };
 
-    const handleResize = () => {
-      measure();
-    };
+    const handleResize = () => measure();
 
     gsap.ticker.add(tick);
     window.addEventListener("resize", handleResize);
@@ -239,49 +237,25 @@ export function HomeLandingTestimonials() {
     };
   }, [reducedMotion, isMobile]);
 
-  // Mobile — track which card is centered for the dots indicator.
+  // Mobile — native-scroll marquee: same 36 px/s drift, but swipeable, and
+  // it pauses while a finger is down (helper handles reduced-motion).
   useEffect(() => {
     if (!isMobile) return;
     const track = mobileTrackRef.current;
     if (!track) return;
-    const update = () => {
-      const trackRect = track.getBoundingClientRect();
-      const center = trackRect.left + trackRect.width / 2;
-      let best = 0;
-      let bestDist = Infinity;
-      const cards = track.querySelectorAll<HTMLElement>(".home-landing-testimonial");
-      cards.forEach((card, i) => {
-        const r = card.getBoundingClientRect();
-        const c = r.left + r.width / 2;
-        const d = Math.abs(c - center);
-        if (d < bestDist) {
-          bestDist = d;
-          best = i;
-        }
-      });
-      setActiveIndex(best);
-    };
-    track.addEventListener("scroll", update, { passive: true });
-    update();
-    return () => track.removeEventListener("scroll", update);
-  }, [isMobile]);
+    return startAutoMarquee(track, {
+      speed: CAROUSEL_SPEED_PX_PER_S,
+      direction: 1,
+      gap: CARD_GAP_PX,
+    });
+  }, [isMobile, reducedMotion]);
 
-  function scrollToTestimonial(i: number) {
-    const track = mobileTrackRef.current;
-    if (!track) return;
-    const cards = track.querySelectorAll<HTMLElement>(".home-landing-testimonial");
-    const target = cards[i];
-    if (!target) return;
-    const offset = target.offsetLeft - (track.clientWidth - target.clientWidth) / 2;
-    track.scrollTo({ left: offset, behavior: "smooth" });
-  }
-
-  // Desktop loop renders cards twice for seamless looping.
+  // Both tracks render the cards twice for a seamless loop / wrap.
   const looped = [...TESTIMONIALS, ...TESTIMONIALS];
 
   return (
     <div className="home-landing-testimonials" aria-roledescription="carousel">
-      {/* Desktop track — infinite GSAP scroll. */}
+      {/* Desktop track — infinite GSAP transform scroll. */}
       <div
         ref={trackRef}
         className="home-landing-testimonials__track home-landing-testimonials__track--desktop"
@@ -291,33 +265,14 @@ export function HomeLandingTestimonials() {
         ))}
       </div>
 
-      {/* Mobile track — native snap scroll + dot indicator. */}
-      <div className="home-landing-testimonials__mobile">
-        <div
-          ref={mobileTrackRef}
-          className="home-landing-testimonials__track home-landing-testimonials__track--mobile"
-        >
-          {TESTIMONIALS.map((t) => (
-            <Card key={`${t.id}-mobile`} t={t} />
-          ))}
-        </div>
-        <div
-          className="home-landing-testimonials__dots"
-          role="tablist"
-          aria-label="Customer stories"
-        >
-          {TESTIMONIALS.map((t, i) => (
-            <button
-              key={t.id}
-              type="button"
-              role="tab"
-              aria-selected={i === activeIndex}
-              aria-label={`Post by ${t.name}`}
-              className={`home-landing-testimonials__dot ${i === activeIndex ? "home-landing-testimonials__dot--active" : ""}`}
-              onClick={() => scrollToTestimonial(i)}
-            />
-          ))}
-        </div>
+      {/* Mobile track — native-scroll marquee (swipeable + auto-drift). */}
+      <div
+        ref={mobileTrackRef}
+        className="home-landing-testimonials__track home-landing-testimonials__track--mobile"
+      >
+        {looped.map((t, i) => (
+          <Card key={`${t.id}-mobile-${i}`} t={t} />
+        ))}
       </div>
     </div>
   );
