@@ -23,6 +23,8 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { HomeUGCMarquee } from "@/components/sections/home/HomeUGCMarquee";
+
 
 /* ────────────────────────── Filesystem contract ────────────────────────── */
 
@@ -291,6 +293,8 @@ export function HomeUGCWall({ alt = false }: { alt?: boolean } = {}) {
 
       {/* Interactivity only matters once real clips exist. */}
       {hasClips && <script dangerouslySetInnerHTML={{ __html: UGC_SCRIPT }} />}
+      {/* Mobile-only counter-drift (client island in this server component). */}
+      <HomeUGCMarquee />
     </section>
   );
 }

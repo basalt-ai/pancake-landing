@@ -81,6 +81,18 @@
     }
   }
 
+  @media (max-width: 1023.98px) {
+    /* Mobile: the auto-marquee (HomeUGCMarquee) drives scrollLeft every
+       frame, so scroll-snap would fight it — the strip stays a free
+       swipeable scroller instead. */
+    .home-ugc-track {
+      scroll-snap-type: none;
+    }
+    .home-ugc-card {
+      scroll-snap-align: none;
+    }
+  }
+
   /* ── Video layer ─────────────────────────────────────────────────────── */
   .home-ugc-card__media {
     position: absolute;
