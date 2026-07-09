@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
 type AnalyticsParams = Record<string, string | number | boolean | null | undefined>;
-type MetaStandardEventName = "ViewContent" | "Lead" | "Contact";
+type MetaStandardEventName = "ViewContent" | "Contact";
 type MetaCustomEventName = "trial_click";
 type MetaEventName = MetaStandardEventName | MetaCustomEventName;
 type MetaPixelOptions = { eventID?: string };
