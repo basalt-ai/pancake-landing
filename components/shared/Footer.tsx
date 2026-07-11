@@ -31,6 +31,7 @@ const columns: { title: string; links: FooterLink[] }[] = [
       { href: "/viktor-vs-pancake", label: "vs Viktor" },
       { href: "/claude-tag-vs-pancake", label: "vs Claude Tag" },
       { href: "/openclaw-vs-pancake", label: "vs OpenClaw" },
+      { href: "/pancake-vs-paperclips", label: "vs Paperclips" },
     ],
   },
   {

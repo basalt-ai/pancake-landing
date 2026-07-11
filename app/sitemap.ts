@@ -22,6 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: "https://getpancake.ai/viktor-vs-pancake", lastModified: new Date(), priority: 0.8 },
     { url: "https://getpancake.ai/claude-tag-vs-pancake", lastModified: new Date(), priority: 0.8 },
     { url: "https://getpancake.ai/openclaw-vs-pancake", lastModified: new Date(), priority: 0.8 },
+    { url: "https://getpancake.ai/pancake-vs-paperclips", lastModified: new Date(), priority: 0.8 },
     ...getAllPosts().map((post) => ({
       url: `https://getpancake.ai/blog/${post.slug}`,
       lastModified: safeDate(post.last_updated || post.date),
