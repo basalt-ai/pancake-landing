@@ -1,0 +1,86 @@
+---
+title: "How to Run Engineering Without a Dev Team in 2026"
+description: "A practical breakdown of how solo and small founding teams ship, maintain, and scale a product with AI coding agents instead of hiring engineers. What agents can own outright, where a human developer still has to sign off, and the engineering stack that keeps a small team shipping without headcount."
+publishedAt: "2026-07-15"
+updatedAt: "2026-07-15"
+author: "François de Fitte"
+faq:
+  - question: "Can AI coding agents actually replace a development team?"
+    answer: "Agents can own the bulk of day-to-day execution: writing features from a clear spec, fixing bugs with a reproducible trace, running tests, deploying to production behind a review gate, and monitoring for regressions after a release. What they can't reliably do is make architecture decisions with long-term consequences, review their own code for subtle correctness or security issues, or own an incident with real customer impact end-to-end without a human checking the outcome. The realistic split is agents handle the writing and the repetitive maintenance, a developer (founder or fractional) owns the architecture and the final review on anything that touches production in a meaningful way."
+  - question: "What engineering tasks should a founder automate first?"
+    answer: "Bug fixes with a clear reproduction and small feature work against an existing pattern in the codebase. Both are high-volume, bounded-judgment tasks: a bug with a stack trace and a repro case gives an agent everything it needs to find and fix the root cause, and a new feature that follows an existing pattern in the codebase (another CRUD endpoint, another settings page, another integration) doesn't require inventing new architecture. Save architecture decisions, security-sensitive code, and anything touching billing or auth for direct founder or fractional-CTO review."
+  - question: "How much does agent-based engineering cost compared to hiring a dev team?"
+    answer: "A single senior engineer costs $150K-$220K a year fully loaded in most US markets, and a small dev team of three or four runs $500K-$900K annually before you count management overhead. Running the same scope with coding agents plus a fractional CTO or senior contractor for architecture and review typically costs a few hundred to low thousands of dollars a month in model usage and tooling, plus hourly or retainer time from someone senior enough to catch what the agent misses. The gap holds until product complexity, scale, or compliance requirements (SOC 2, HIPAA, high-throughput infrastructure) outpace what a founder and a fractional senior engineer can realistically review."
+  - question: "Do I still need a human developer if agents write most of the code?"
+    answer: "Yes, for architecture, security review, and anything with real production risk. An agent can write a correct-looking pull request faster than most engineers, but it doesn't carry the accountability for a decision that shapes the codebase for the next two years, and it can be confidently wrong about a security implication a senior developer would catch immediately. Founders running this model use a fractional CTO or senior contractor for system design, security-sensitive review, and infrastructure decisions, and let agents run the day-to-day feature and bug-fix throughput underneath that foundation."
+  - question: "What engineering decisions should never be fully automated?"
+    answer: "Database schema changes with migration risk, anything touching authentication or payment processing, infrastructure changes that affect uptime or cost at scale, and any incident with real customer or data impact. Agents should propose changes, run tests, and flag risk clearly, but a human with production context should be the one who approves the deploy on anything in this category. A schema migration merged on an agent's confidence alone is how a manageable technical decision becomes a multi-day incident."
+---
+
+Most solo founders either write the product themselves at 2am or avoid a rewrite they know they need because there's no bandwidth to do it safely. The backlog grows, bugs get triaged by whichever one is loudest, and "we'll refactor this properly later" becomes a permanent line in the codebase.
+
+The fix is not hiring a three-person dev team at the first sign of technical debt. It's building an engineering pipeline where coding agents handle the bulk of feature work, bug fixes, and maintenance, with a founder or a fractional senior engineer owning architecture and reviewing anything that carries real production risk.
+
+## Why engineering feels different from other functions
+
+Engineering has a property that makes founders hesitant to hand it to agents even when they're comfortable doing so with marketing or support: a bad decision doesn't just look bad, it can take the product down, leak data, or lock in an architecture that's expensive to undo. A mediocre blog post gets fixed tomorrow. A database migration that goes wrong at 2pm on a Tuesday is an incident, not a typo.
+
+That instinct is correct, and it's also not a reason to avoid agents entirely. The mistake founders make is treating "AI writes code" as one undifferentiated category of risk, when in practice the bulk of engineering work, implementing a feature against an existing pattern, fixing a bug with a clear trace, writing tests, updating dependencies, is exactly the kind of bounded, well-specified work agents are good at. The genuinely risky 10%, schema changes, auth, payments, infrastructure, is a small slice of total engineering volume, and it's the slice that should still get a human in the loop every time.
+
+Founders who get this right split the two from the start: agents run the day-to-day implementation loop under a clear spec, a human with production context owns architecture and reviews the high-risk changes before they ship.
+
+## What a coding agent can actually own
+
+**Feature implementation against an existing pattern.** If your codebase already has three CRUD endpoints, a fourth one that follows the same shape is a template task for an agent: read the pattern, apply it to the new resource, write the tests, open the pull request. This is most of what a junior-to-mid engineer's day looks like, and it's where agents are strongest.
+
+**Bug fixes with a reproducible trace.** A stack trace, an error report, or a failing test gives an agent a concrete target. It can trace the code path, isolate the root cause, write a fix, and add a regression test so the same bug doesn't come back silently. This is the single highest-leverage task to hand an agent first: it's bounded, it's verifiable (the test either passes or it doesn't), and it's the task most founders resent doing manually.
+
+**Writing and maintaining tests.** Test coverage is the kind of work that always sounds important and rarely gets prioritized when a human has to choose between shipping a feature and writing tests for the last one. Agents don't make that trade-off the same way, they can write tests as a standing task without it competing against feature velocity.
+
+**Dependency updates and routine maintenance.** Bumping package versions, fixing the breakage that comes with a major version update, updating deprecated API calls. This is exactly the kind of unglamorous, high-volume work that piles up into a security or compatibility problem when nobody owns it.
+
+**Code review as a first pass.** An agent reviewing a pull request, whether written by another agent or a human, for obvious bugs, missing tests, or deviations from established patterns catches a real percentage of issues before a human reviewer's time gets spent on it. It doesn't replace a senior review, it filters what reaches one.
+
+**Monitoring and first-response triage.** When an error rate spikes or a deploy causes a regression, an agent watching logs and metrics can flag the issue, identify the likely commit, and in many cases propose or execute a rollback, faster than a human checking dashboards on a schedule.
+
+**Documentation that stays in sync with the code.** README updates, API documentation, internal runbooks. Documentation rots because updating it is never anyone's top priority. An agent can treat "does the doc match the code" as a standing check rather than a task that gets skipped under deadline pressure.
+
+## Where engineering still needs a human
+
+**Architecture decisions with long-term consequences.** Choosing a database, deciding how services communicate, picking a data model that the rest of the product will build on for years. These decisions are expensive to reverse, and an agent optimizing for "does this pass the tests I was given" doesn't have the context to weigh a five-year consequence against a five-minute implementation.
+
+**Anything touching authentication or payments.** A bug in a CRUD endpoint is an inconvenience. A bug in how you verify a user's identity or process a charge is a security or financial incident. These code paths should get senior human review on every change, agent-authored or not, no exceptions based on how confident the agent's output looks.
+
+**Database schema changes with migration risk.** A migration that looks correct in a test environment can behave very differently against production data volume and live traffic. This is exactly the kind of change where "the tests passed" is necessary but not sufficient, and where a human who understands the production environment needs to sign off before it runs.
+
+**Infrastructure changes that affect uptime or cost at scale.** Scaling decisions, changes to how services are deployed, anything that affects the bill or the blast radius of a failure. An agent can propose and even implement these changes, but the decision to apply them to production should sit with someone accountable for the outcome.
+
+**Incidents with real customer or data impact.** When something breaks in a way that affects real users or real data, the response needs a human making judgment calls under uncertainty, not just executing a runbook. Agents are useful for triage, root cause investigation, and drafting the postmortem. They shouldn't be the last decision-maker on how to resolve an active incident with customer impact.
+
+## The engineering stack that makes this work
+
+**1. A codebase with clear, consistent patterns.** Agents work from precedent. A codebase where every resource follows the same CRUD shape, every service follows the same error-handling convention, gives an agent something concrete to extend. A codebase with five different patterns for the same problem gives an agent five ways to get it subtly wrong.
+
+**2. A coding agent wired into your actual dev loop.** Not a chat window you copy-paste into, an agent that can read the repo, run the test suite, open pull requests, and see CI results. The value comes from the agent operating inside your existing tools (GitHub, your test runner, your CI), not from a disconnected suggestion engine.
+
+**3. A test suite the agent can trust and extend.** Tests are how an agent (and a human reviewer) verifies a change didn't break something else. A codebase with weak test coverage makes agent-authored changes riskier to trust, not less, because there's less signal that a change is actually safe.
+
+**4. A review gate before anything reaches production.** Every agent-authored change goes through the same pull request process a human's would: CI runs, a diff gets reviewed, and for anything touching the high-risk categories above, a specific human sign-off is required before merge. The gate is what makes agent-authored code as safe as human-authored code, not an inconvenience layered on top of it.
+
+**5. A fractional CTO or senior contractor for architecture and security review.** Not for daily code review, for the recurring cadence of decisions that need someone with production judgment: is this the right data model, does this new integration introduce a security gap, is this the moment to actually pay down that piece of technical debt. Know who that person is before a decision is urgent.
+
+## Stage-by-stage: what to automate when
+
+**Pre-product.** Get the initial architecture and core patterns right with direct founder or fractional-CTO involvement. This is the highest-leverage moment for getting the foundation right, before an agent (or anyone) is extending patterns that don't exist yet.
+
+**First users through $500K ARR.** Agents run feature implementation against established patterns, bug fixes with clear repros, tests, and dependency updates. Every pull request still goes through CI and a review gate, with the founder or a fractional senior engineer reviewing anything touching auth, payments, or schema changes before merge.
+
+**$500K to $2M ARR.** Feature velocity and bug-fix volume are now high enough that the agent pipeline is doing the majority of implementation work. A fractional CTO on a regular cadence, not just on-call for emergencies, is common at this stage, reviewing architecture decisions and higher-risk changes in batches.
+
+**$2M+ ARR, scale pressure, or compliance requirements.** This is usually when a founder brings on the first full-time engineering hire, not because agents stopped being useful, but because sustained scale, an expanding surface area of the product, or a compliance requirement (SOC 2, HIPAA) now justifies a dedicated person owning engineering operations directly, with agents still running underneath as the implementation layer.
+
+## What this looks like in practice
+
+Pancake runs on Pancake: feature implementation, bug fixes, and routine maintenance for the product go through an agent-run pipeline, with every pull request gated by CI and a review step, and anything touching architecture, auth, or production infrastructure reviewed by a human before it ships. The pattern holds whether you're a solo founder shipping your first feature or a small team managing a growing codebase: agents run the implementation loop, a human with production accountability owns the decisions that are expensive to get wrong.
+
+Solo or multiplayer, the split doesn't change. What changes is throughput, which is exactly the part agents scale without adding engineering headcount that doesn't match your stage yet.
