@@ -1,0 +1,787 @@
+/*
+ * /gtm landing — MindMarket × Pancake unified system.
+ *
+ * MindMarket contributes the editorial shell: cream-paper canvas, oversized
+ * display type (lh 0.95, tight tracking), 40-50px "sticker-soft" radii,
+ * floating pill nav, decorative color pops, no shadows.
+ * Pancake v1 contributes the voice: Aeonik display + Aeonik Fono body
+ * (already global), kit `.badge` labels, pancake SVG shapes as the
+ * paper-cut illustration layer, partner logos, 1200px editorial measure.
+ *
+ * All MindMarket hex values live ONLY in this token block — components
+ * below read the --gtm-* vars, mirroring the tokens.css discipline.
+ */
+.gtm-page {
+  /* MindMarket import tokens (page-scoped) */
+  --gtm-canvas: #f5f1e4; /* cream paper */
+  --gtm-ink: #2c2e2a; /* warm near-black */
+  --gtm-surface: #ffffff;
+  --gtm-sandstone: #e0dbce;
+  --gtm-muted: #80827f;
+  --gtm-hairline: #d5d5d4;
+  --gtm-grass: #8ed462;
+  --gtm-sky: #2ba0ff;
+  --gtm-coral: #ff705d;
+  --gtm-sunshine: #f5e211;
+
+  /* shape */
+  --gtm-radius-card: 40px;
+  --gtm-radius-panel: 44px;
+  --gtm-radius-pill: 999px;
+  --gtm-radius-small: 10px;
+
+  /* layout */
+  --gtm-inline: clamp(20px, 4vw, 32px);
+  --gtm-section-gap: clamp(72px, 9vw, 120px);
+
+  background: var(--gtm-canvas);
+  color: var(--gtm-ink);
+  overflow-x: clip;
+  min-height: 100vh;
+}
+
+.gtm-container {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 1240px;
+  padding-inline: var(--gtm-inline);
+}
+
+/* ---------- Type ---------- */
+
+.gtm-display,
+.gtm-heading,
+.gtm-band-title,
+.gtm-step-title,
+.gtm-panel-name,
+.gtm-modal-name {
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--gtm-ink);
+  margin: 0;
+}
+
+.gtm-display {
+  font-size: clamp(2.9rem, 8vw, 7rem);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  max-width: 12ch;
+  text-wrap: balance;
+}
+
+.gtm-heading {
+  font-size: clamp(2.1rem, 4.5vw, 3.375rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  max-width: 20ch;
+}
+
+.gtm-lede {
+  font-size: clamp(1.0625rem, 1.6vw, 1.25rem);
+  line-height: 1.5;
+  color: var(--gtm-ink);
+  opacity: 0.82;
+  max-width: 56ch;
+  margin: 0;
+}
+
+/* Kit badges sit on cream here — pin them to the white surface level. */
+.gtm-page .badge {
+  --badge-background-color: var(--gtm-surface);
+  --badge-border-color: var(--gtm-hairline);
+  color: var(--gtm-ink);
+  border-radius: var(--gtm-radius-pill);
+  gap: 8px;
+}
+
+.gtm-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gtm-grass);
+  flex: none;
+}
+
+.gtm-dot--sky {
+  background: var(--gtm-sky);
+}
+
+.gtm-dot--coral {
+  background: var(--gtm-coral);
+}
+
+/* ---------- Buttons (MindMarket pill + chromatic dot affordance) ---------- */
+
+.gtm-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 26px;
+  border-radius: var(--gtm-radius-pill);
+  background: var(--gtm-ink);
+  color: var(--gtm-surface);
+  font-weight: var(--font-heavy);
+  font-size: 1rem;
+  line-height: 1;
+  text-decoration: none;
+  border: 1px solid var(--gtm-ink);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.gtm-btn:hover {
+  transform: translateY(-1px);
+}
+
+.gtm-btn--ghost {
+  background: var(--gtm-surface);
+  color: var(--gtm-ink);
+  border-color: var(--gtm-hairline);
+}
+
+.gtm-btn--sm {
+  padding: 10px 20px;
+  font-size: 0.9375rem;
+}
+
+/* ---------- Floating pill nav ---------- */
+
+.gtm-nav-wrap {
+  position: sticky;
+  top: 14px;
+  z-index: 40;
+  padding-top: 18px;
+}
+
+.gtm-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--gtm-surface);
+  border: 1px solid var(--gtm-hairline);
+  border-radius: var(--gtm-radius-pill);
+  padding: 10px 12px 10px 22px;
+}
+
+.gtm-nav-logo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.gtm-nav-logo img {
+  display: block;
+  height: 34px;
+  width: auto;
+}
+
+.gtm-nav-links {
+  display: none;
+  align-items: center;
+  gap: 26px;
+}
+
+@media (min-width: 768px) {
+  .gtm-nav-links {
+    display: flex;
+  }
+}
+
+.gtm-nav-link {
+  color: var(--gtm-ink);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: var(--font-semibold);
+  line-height: 1;
+  transition: opacity 0.2s ease;
+}
+
+.gtm-nav-link:hover {
+  opacity: 0.7;
+}
+
+/* ---------- Hero ---------- */
+
+.gtm-hero {
+  position: relative;
+  padding-block: clamp(64px, 9vw, 128px) clamp(56px, 7vw, 96px);
+}
+
+.gtm-hero-copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 28px;
+}
+
+.gtm-hero-sub {
+  font-size: clamp(1.125rem, 1.8vw, 1.375rem);
+  line-height: 1.5;
+  font-weight: var(--font-normal);
+  letter-spacing: 0;
+  font-family: var(--font-body);
+  color: var(--gtm-ink);
+  opacity: 0.82;
+  max-width: 54ch;
+  margin: 0;
+}
+
+.gtm-hero-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+}
+
+.gtm-hero-note {
+  font-size: 0.875rem;
+  color: var(--gtm-muted);
+  margin: 0;
+}
+
+/* Paper-cut pancake shapes bleeding on the right — Pancake's flat SVGs
+   play the MindMarket "illustration on cream" role. */
+.gtm-hero-art {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.gtm-hero-art img {
+  position: absolute;
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .gtm-hero-art img {
+    display: block;
+  }
+
+  .gtm-hero-art .gtm-art-1 {
+    width: 220px;
+    right: 4%;
+    top: 10%;
+    transform: rotate(-8deg);
+  }
+
+  .gtm-hero-art .gtm-art-2 {
+    width: 150px;
+    right: 20%;
+    top: 46%;
+    transform: rotate(10deg);
+  }
+
+  .gtm-hero-art .gtm-art-3 {
+    width: 110px;
+    right: 7%;
+    bottom: 6%;
+    transform: rotate(-14deg);
+  }
+}
+
+/* ---------- Partner logo strip ---------- */
+
+.gtm-logos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px 40px;
+  padding-block: 8px var(--gtm-section-gap);
+}
+
+.gtm-logos-label {
+  font-size: var(--font-size-eyebrow, 0.8125rem);
+  font-weight: var(--font-semibold);
+  letter-spacing: 0.453px;
+  text-transform: uppercase;
+  color: var(--gtm-muted);
+  margin: 0;
+}
+
+.gtm-logo-mask {
+  display: inline-block;
+  height: 22px;
+  width: 104px;
+  background: currentColor;
+  color: var(--gtm-muted);
+  mask-repeat: no-repeat;
+  mask-position: left center;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: left center;
+  -webkit-mask-size: contain;
+}
+
+/* ---------- Sections ---------- */
+
+.gtm-section {
+  padding-block: 0 var(--gtm-section-gap);
+}
+
+.gtm-section-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: clamp(36px, 5vw, 56px);
+}
+
+/* ---------- How it works ---------- */
+
+.gtm-steps {
+  display: grid;
+  gap: 16px;
+  grid-auto-rows: 1fr;
+}
+
+@media (min-width: 900px) {
+  .gtm-steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.gtm-step {
+  background: var(--gtm-surface);
+  border-radius: var(--gtm-radius-card);
+  padding: 30px 30px 34px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.gtm-step-index {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--font-size-eyebrow, 0.8125rem);
+  font-weight: var(--font-semibold);
+  letter-spacing: 0.453px;
+  color: var(--gtm-muted);
+}
+
+.gtm-step-title {
+  font-size: 1.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.gtm-step p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--gtm-ink);
+  opacity: 0.78;
+}
+
+/* ---------- Closing sunshine band ---------- */
+
+.gtm-band {
+  background: var(--gtm-sunshine);
+  padding-block: clamp(72px, 9vw, 120px);
+}
+
+.gtm-band-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 30px;
+}
+
+.gtm-band-title {
+  font-size: clamp(2.4rem, 6vw, 4.75rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  max-width: 16ch;
+}
+
+/* ---------- Footer ---------- */
+
+.gtm-footer {
+  border-top: 1px solid var(--gtm-hairline);
+  padding-block: 40px 48px;
+}
+
+.gtm-footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px 32px;
+}
+
+.gtm-footer-inner img {
+  display: block;
+  height: 28px;
+  width: auto;
+}
+
+.gtm-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+}
+
+.gtm-footer-links a {
+  color: var(--gtm-ink);
+  opacity: 0.75;
+  text-decoration: none;
+  font-size: 0.9375rem;
+}
+
+.gtm-footer-links a:hover {
+  opacity: 1;
+}
+
+.gtm-footer-legal {
+  font-size: 0.875rem;
+  color: var(--gtm-muted);
+  margin: 0;
+}
+
+/* =====================================================================
+ * Expandable agent gallery (adapted from the provided framer-motion
+ * ExpandableGallery — panels instead of images, no hover dim overlay).
+ * ===================================================================== */
+
+.gtm-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+@media (min-width: 900px) {
+  .gtm-gallery {
+    flex-direction: row;
+    height: 540px;
+  }
+}
+
+.gtm-panel {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--gtm-radius-panel);
+  background: var(--gtm-panel-bg, var(--gtm-surface));
+  border: 1px solid var(--gtm-panel-stroke, var(--gtm-hairline));
+  min-height: 116px;
+}
+
+@media (min-width: 900px) {
+  .gtm-panel {
+    min-height: 0;
+    height: 100%;
+  }
+}
+
+.gtm-panel-hit {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: none;
+  border: 0;
+  border-radius: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+.gtm-panel-hit:focus-visible {
+  outline: 2px solid var(--gtm-ink);
+  outline-offset: 3px;
+}
+
+/* Collapsed label — vertical on desktop, horizontal row on mobile. */
+.gtm-panel-collapsed {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 26px;
+}
+
+@media (min-width: 900px) {
+  .gtm-panel-collapsed {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 26px;
+  }
+}
+
+.gtm-panel-collapsed .gtm-panel-name {
+  font-size: clamp(1.375rem, 2.2vw, 1.75rem);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+@media (min-width: 900px) {
+  .gtm-panel-collapsed .gtm-panel-name {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+}
+
+/* Expanded panel content (desktop hover/focus reveal) */
+.gtm-panel-content {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 28px;
+  background: var(--gtm-panel-bg, var(--gtm-surface));
+  border-radius: inherit;
+}
+
+@media (min-width: 900px) {
+  .gtm-panel-content {
+    display: flex;
+  }
+}
+
+.gtm-panel-content-top {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 380px;
+}
+
+.gtm-panel-content .gtm-panel-name {
+  font-size: clamp(1.75rem, 2.6vw, 2.375rem);
+  letter-spacing: -0.025em;
+}
+
+.gtm-panel-tagline {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  max-width: 40ch;
+  opacity: 0.82;
+}
+
+.gtm-panel-infra {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--gtm-muted);
+  max-width: 44ch;
+}
+
+.gtm-panel-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: flex-start;
+  min-width: 380px;
+}
+
+.gtm-panel-open-hint {
+  font-size: 0.9375rem;
+  font-weight: var(--font-semibold);
+  color: var(--gtm-ink);
+}
+
+/* Expert mini-card inside panels + modal */
+.gtm-expert {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: var(--gtm-surface);
+  border: 1px solid var(--gtm-hairline);
+  border-radius: 24px;
+  padding: 16px 18px;
+  max-width: 440px;
+  text-align: left;
+}
+
+.gtm-expert-avatar {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gtm-expert-accent, var(--gtm-grass));
+  color: var(--gtm-ink);
+  font-weight: var(--font-heavy);
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+}
+
+.gtm-expert-quote {
+  margin: 0 0 6px;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--gtm-ink);
+}
+
+.gtm-expert-byline {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--gtm-muted);
+}
+
+/* Decorative pancake in panel corner */
+.gtm-panel-pancake {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  width: 56px;
+  height: auto;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 899px) {
+  .gtm-panel-pancake {
+    width: 40px;
+    right: 22px;
+    bottom: auto;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+/* ---------- Modal (expanded view from the original component) ---------- */
+
+.gtm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(12px, 3vw, 32px);
+  background: color-mix(in srgb, var(--gtm-ink) 42%, transparent);
+}
+
+.gtm-modal {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--gtm-panel-bg, var(--gtm-surface));
+  border-radius: var(--gtm-radius-card);
+  padding: clamp(26px, 4vw, 44px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 22px;
+}
+
+.gtm-modal-name {
+  font-size: clamp(2.1rem, 5vw, 3rem);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.gtm-modal-desc {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  opacity: 0.85;
+  max-width: 58ch;
+}
+
+.gtm-modal-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gtm-modal-list li {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.gtm-modal-list .gtm-dot {
+  transform: translateY(-1px);
+}
+
+.gtm-modal-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.gtm-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--gtm-hairline);
+  background: var(--gtm-surface);
+  color: var(--gtm-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.gtm-modal-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--gtm-hairline);
+  background: var(--gtm-surface);
+  color: var(--gtm-ink);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 81;
+}
+
+@media (min-width: 900px) {
+  .gtm-modal-nav {
+    display: flex;
+  }
+}
+
+.gtm-modal-nav--prev {
+  left: clamp(8px, 2vw, 24px);
+}
+
+.gtm-modal-nav--next {
+  right: clamp(8px, 2vw, 24px);
+}
+
+.gtm-modal-counter {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.875rem;
+  color: var(--gtm-surface);
+  background: color-mix(in srgb, var(--gtm-ink) 72%, transparent);
+  border-radius: var(--gtm-radius-pill);
+  padding: 6px 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gtm-btn,
+  .gtm-nav-link {
+    transition: none;
+  }
+}
