@@ -101,14 +101,28 @@ function ExpertCard({ agent }: { agent: GalleryAgent }) {
 export function ExpandableAgentGallery({ agents }: { agents: GalleryAgent[] }) {
   const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
   const [selectedIndex, setSelectedIndex] = React.useState<number | null>(null);
+  // The hover/focus reveal layer only exists at >=900px (see gtm.css), so
+  // the expansion state must be gated on the same breakpoint — otherwise
+  // hover/tap below it fades the collapsed label with nothing to reveal.
+  const [canExpand, setCanExpand] = React.useState(false);
   const reducedMotion = useReducedMotion();
   const closeButtonRef = React.useRef<HTMLButtonElement>(null);
+  const overlayRef = React.useRef<HTMLDivElement>(null);
+  const triggerRef = React.useRef<HTMLElement | null>(null);
+
+  React.useEffect(() => {
+    const mq = window.matchMedia("(min-width: 900px)");
+    const update = () => setCanExpand(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   const flexTransition = { duration: reducedMotion ? 0 : 0.5, ease: "easeInOut" as const };
   const fadeTransition = { duration: reducedMotion ? 0 : 0.3 };
 
   const getFlexGrow = (index: number) => {
-    if (hoveredIndex === null) return 1;
+    if (!canExpand || hoveredIndex === null) return 1;
     return hoveredIndex === index ? 2.6 : 0.75;
   };
 
@@ -126,14 +140,36 @@ export function ExpandableAgentGallery({ agents }: { agents: GalleryAgent[] }) {
     );
   };
 
-  // Escape closes the modal + body scroll lock while it is open (same
-  // pattern as the HomeNav mobile drawer).
+  // Escape closes the modal, Tab is trapped inside it, and body scroll is
+  // locked while it is open (Escape/scroll-lock pattern from HomeNav).
   React.useEffect(() => {
     if (selectedIndex === null) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeModal();
+      if (e.key === "Escape") {
+        closeModal();
+        return;
+      }
+      if (e.key === "Tab") {
+        const root = overlayRef.current;
+        if (!root) return;
+        const focusables = root.querySelectorAll<HTMLElement>("button, [href]");
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        const active = document.activeElement;
+        if (!root.contains(active)) {
+          e.preventDefault();
+          first.focus();
+        } else if (e.shiftKey && active === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && active === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     window.addEventListener("keydown", onKey);
     closeButtonRef.current?.focus();
@@ -143,13 +179,27 @@ export function ExpandableAgentGallery({ agents }: { agents: GalleryAgent[] }) {
     };
   }, [selectedIndex, closeModal]);
 
+  // Return focus to the panel button that opened the modal once it closes.
+  const wasOpenRef = React.useRef(false);
+  React.useEffect(() => {
+    if (selectedIndex !== null) {
+      wasOpenRef.current = true;
+      return;
+    }
+    if (wasOpenRef.current) {
+      wasOpenRef.current = false;
+      triggerRef.current?.focus();
+      triggerRef.current = null;
+    }
+  }, [selectedIndex]);
+
   const selected = selectedIndex === null ? null : agents[selectedIndex];
 
   return (
     <div>
       <div className="gtm-gallery">
         {agents.map((agent, index) => {
-          const expanded = hoveredIndex === index;
+          const expanded = canExpand && hoveredIndex === index;
           return (
             <motion.div
               key={agent.id}
@@ -202,7 +252,10 @@ export function ExpandableAgentGallery({ agents }: { agents: GalleryAgent[] }) {
                 type="button"
                 className="gtm-panel-hit"
                 aria-label={`Open ${agent.name} details`}
-                onClick={() => setSelectedIndex(index)}
+                onClick={(e) => {
+                  triggerRef.current = e.currentTarget;
+                  setSelectedIndex(index);
+                }}
                 onFocus={() => setHoveredIndex(index)}
                 onBlur={() => setHoveredIndex((current) => (current === index ? null : current))}
               />
@@ -216,6 +269,7 @@ export function ExpandableAgentGallery({ agents }: { agents: GalleryAgent[] }) {
       <AnimatePresence>
         {selected !== null && selectedIndex !== null && (
           <motion.div
+            ref={overlayRef}
             className="gtm-modal-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

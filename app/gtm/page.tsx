@@ -31,11 +31,15 @@ export const metadata: Metadata = {
     description: PAGE_DESCRIPTION,
     type: "website",
     url: "https://www.getpancake.ai/gtm",
+    // Page-level openGraph fully replaces the root layout's — re-declare
+    // the og-image or shares render with no preview.
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake" }],
   },
   twitter: {
     card: "summary_large_image",
     title: PAGE_TITLE,
     description: PAGE_DESCRIPTION,
+    images: ["/og-image.png"],
   },
 };
 
@@ -146,7 +150,7 @@ const STEPS = [
     index: "02",
     dot: "",
     title: "They run on your runtime",
-    body: "Under the hood, Pancake operates Claude Code or Codex. You see every step it takes — nothing is a black box.",
+    body: "Under the hood, Pancake runs Claude Code or Codex on top of its open-source OpenClaw runtime. You see every step it takes — nothing is a black box.",
   },
   {
     index: "03",
@@ -184,7 +188,7 @@ const itemListJsonLd = {
 
 export default function GtmLandingPage() {
   return (
-    <main className="gtm-page">
+    <main id="main-content" className="gtm-page">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}

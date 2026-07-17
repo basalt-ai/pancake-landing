@@ -321,6 +321,8 @@
 
 .gtm-section {
   padding-block: 0 var(--gtm-section-gap);
+  /* Anchor jumps must clear the sticky pill nav. */
+  scroll-margin-top: 110px;
 }
 
 .gtm-section-head {
@@ -720,10 +722,15 @@
   gap: 8px;
 }
 
+/* Sticky (not absolute) so it stays reachable when the modal scrolls
+   on short viewports; the negative bottom margin keeps the content flow
+   identical to the old absolute placement. */
 .gtm-modal-close {
-  position: absolute;
-  top: 20px;
-  right: 20px;
+  position: sticky;
+  top: 12px;
+  align-self: flex-end;
+  margin: -6px -6px -40px 0;
+  z-index: 2;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -767,7 +774,10 @@
   right: clamp(8px, 2vw, 24px);
 }
 
+/* Counter only appears alongside the prev/next arrows, and only when
+   the viewport is tall enough that it cannot overlap the modal body. */
 .gtm-modal-counter {
+  display: none;
   position: absolute;
   bottom: 18px;
   left: 50%;
@@ -777,6 +787,12 @@
   background: color-mix(in srgb, var(--gtm-ink) 72%, transparent);
   border-radius: var(--gtm-radius-pill);
   padding: 6px 14px;
+}
+
+@media (min-width: 900px) and (min-height: 820px) {
+  .gtm-modal-counter {
+    display: block;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
