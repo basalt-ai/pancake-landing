@@ -9,8 +9,10 @@
  * → slim footer.
  */
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
+import { PancakeParallax, Reveal, RevealLine } from "@/components/sections/gtm/gtm-motion";
 import {
   ExpandableAgentGallery,
   type GalleryAgent,
@@ -160,6 +162,48 @@ const STEPS = [
   },
 ];
 
+/* Real X posts from the homepage's June 2026 testimonial wave (quotes
+   verbatim, same preview cut X shows; avatars are local copies) — the
+   three most GTM-shaped ones. */
+const TESTIMONIALS = [
+  {
+    id: "somitra",
+    name: "SomitraSR",
+    handle: "@TheSomitraSR · Jun 9",
+    avatar: "/testimonials/thesomitrasr.jpg",
+    url: "https://x.com/TheSomitraSR/status/2064404783604343269",
+    quote:
+      "As a founder, I used to spend hours jumping between CRM, spreadsheets, email, and analytics just to figure out what needed attention.\n\nThen I’d still miss follow-ups.\n\nLast week I just asked @getpancake_ai:\n\n“Monitor new leads, prioritize the hot ones, and draft follow-ups.”…",
+  },
+  {
+    id: "andrew",
+    name: "Andrew Carr 🤸",
+    handle: "@andrew_n_carr · Jun 9",
+    avatar: "/testimonials/andrew_n_carr.jpg",
+    url: "https://x.com/andrew_n_carr/status/2064403828791968173",
+    quote:
+      "Usually, I would have like 10 gemini or chatgpt tabs open brainstorming cold emails or hooks for some animated outreach.\n\nit's kinda sweet to just \"ask pancake\" to go off and run autonomously. The little fella is pretty darn smart.\n\nAnyway, I've had substantially better…",
+  },
+  {
+    id: "leonardo",
+    name: "Leonardo",
+    handle: "@MrOnsase · Jun 9",
+    avatar: "/testimonials/mronsase.jpg",
+    url: "https://x.com/MrOnsase/status/2064406486336315409",
+    quote:
+      "I wanted to turn every new feature I ship into content without spending 2 hours rewriting it.\n\nNormally I’d stare at the changelog, open a blank tweet, rewrite it 6 different ways, overthink the hook, get stuck, and end up posting nothing.\n\nSo I just asked Pancake: “turn my last…",
+  },
+];
+
+const MARQUEE_AGENTS = [
+  { name: "LeadFinder", dot: "gtm-dot--sky" },
+  { name: "AISEO", dot: "" },
+  { name: "Reddit", dot: "gtm-dot--coral" },
+  { name: "Outbound", dot: "gtm-dot--sky" },
+  { name: "X", dot: "" },
+  { name: "Newsletter", dot: "gtm-dot--coral" },
+];
+
 const webPageJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
@@ -295,6 +339,42 @@ export default function GtmLandingPage() {
         </div>
       </section>
 
+      {/* Statement panel — MindMarket illustration-led interstitial: giant
+          editorial lines revealing on scroll, parallax pancake field, and
+          the white "No more chaos" content card. */}
+      <section className="gtm-section gtm-statement">
+        <PancakeParallax className="gtm-statement-field" aria-hidden>
+          {/* eslint-disable-next-line @next/next/no-img-element -- decorative vectors */}
+          <img src="/pancake-svgs/top-3.svg" alt="" className="gtm-field-1" data-speed="0.35" />
+          {/* eslint-disable-next-line @next/next/no-img-element -- decorative vectors */}
+          <img src="/pancake-svgs/angled-4.svg" alt="" className="gtm-field-2" data-speed="0.18" />
+          {/* eslint-disable-next-line @next/next/no-img-element -- decorative vectors */}
+          <img src="/pancake-svgs/flat-1.svg" alt="" className="gtm-field-3" data-speed="0.5" />
+          {/* eslint-disable-next-line @next/next/no-img-element -- decorative vectors */}
+          <img src="/pancake-svgs/top-bordered-2.svg" alt="" className="gtm-field-4" data-speed="0.26" />
+        </PancakeParallax>
+        <div className="gtm-container">
+          <h2 className="gtm-statement-title">
+            <RevealLine>GTM used to be</RevealLine>
+            <RevealLine delay={110}>four hires and</RevealLine>
+            <RevealLine delay={220}>six tools.</RevealLine>
+          </h2>
+          <Reveal delay={280}>
+            <div className="gtm-chaos-card">
+              <h3>No more chaos</h3>
+              <p>
+                One squad of specialized agents replaces the sourcing spreadsheet, the SEO
+                backlog, and the Reddit tab you never close. You set the direction once — the
+                squad runs every day.
+              </p>
+              <a href={APP_URL} className="gtm-inline-link">
+                Start with one agent →
+              </a>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* How it works */}
       <section className="gtm-section">
         <div className="gtm-container">
@@ -319,6 +399,99 @@ export default function GtmLandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Testimonials — real X posts, three parallel equal-height cards */}
+      <section className="gtm-section">
+        <div className="gtm-container">
+          <div className="gtm-section-head">
+            <span className="badge">
+              <span className="gtm-dot" aria-hidden />
+              Seen on X
+            </span>
+            <h2 className="gtm-heading">Take it from them</h2>
+          </div>
+          <div className="gtm-testimonials">
+            {TESTIMONIALS.map((t, i) => (
+              <Reveal key={t.id} delay={i * 90}>
+                <a
+                  className="gtm-testimonial"
+                  href={t.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className="gtm-testimonial-head">
+                    <Image src={t.avatar} alt="" width={44} height={44} />
+                    <span className="gtm-testimonial-id">
+                      <span className="gtm-testimonial-name">{t.name}</span>
+                      <span className="gtm-testimonial-handle">{t.handle}</span>
+                    </span>
+                    <svg
+                      className="gtm-testimonial-x"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden
+                    >
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                    </svg>
+                  </span>
+                  <span className="gtm-testimonial-quote">{t.quote}</span>
+                </a>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing — MindMarket service card: the page's single coral action */}
+      <section className="gtm-section">
+        <div className="gtm-container">
+          <div className="gtm-section-head">
+            <span className="badge">
+              <span className="gtm-dot gtm-dot--coral" aria-hidden />
+              Pricing
+            </span>
+          </div>
+          <Reveal>
+            <div className="gtm-price-card">
+              <h3>One price. The whole squad.</h3>
+              <p>
+                $49/month flat for your always-on agent cloud, plus token packs at the labs&rsquo;
+                public price — no per-agent fees, no markup.
+              </p>
+              <Link href="/pricing" className="gtm-btn gtm-btn--coral">
+                <span className="gtm-dot" aria-hidden />
+                See pricing
+              </Link>
+              <span className="gtm-price-stack" aria-hidden>
+                {/* eslint-disable-next-line @next/next/no-img-element -- decorative vector */}
+                <img src="/pancake-svgs/angled-3.svg" alt="" />
+              </span>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Giant agent-name marquee divider */}
+      <div className="gtm-marquee" aria-hidden>
+        <div className="gtm-marquee-track">
+          {[0, 1].map((copy) => (
+            <div className="gtm-marquee-group" key={copy}>
+              {MARQUEE_AGENTS.map((agent) => (
+                <span className="gtm-marquee-item" key={`${copy}-${agent.name}`}>
+                  <span
+                    className={`gtm-dot ${agent.dot}`.trim()}
+                    aria-hidden
+                    style={{ display: "inline-block", marginRight: "0.35em" }}
+                  />
+                  {agent.name}
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Closing sunshine band */}
       <section className="gtm-band">

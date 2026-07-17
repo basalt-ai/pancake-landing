@@ -380,6 +380,339 @@
   opacity: 0.78;
 }
 
+/* ---------- Scroll-entrance motion (gated on html.gtm-anim, set by JS) ---------- */
+
+html.gtm-anim .gtm-page [data-reveal] {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+html.gtm-anim .gtm-page [data-reveal].gtm-inview {
+  opacity: 1;
+  transform: none;
+}
+
+.gtm-line {
+  display: block;
+  overflow: hidden;
+}
+
+.gtm-line-inner {
+  display: block;
+}
+
+html.gtm-anim .gtm-page [data-reveal-line] .gtm-line-inner {
+  transform: translateY(112%);
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+html.gtm-anim .gtm-page [data-reveal-line].gtm-inview .gtm-line-inner {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.gtm-anim .gtm-page [data-reveal],
+  html.gtm-anim .gtm-page [data-reveal-line] .gtm-line-inner {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ---------- Statement panel (illustration + "No more chaos" card) ---------- */
+
+.gtm-statement {
+  position: relative;
+}
+
+.gtm-statement-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.6rem, 7.5vw, 6rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  color: var(--gtm-ink);
+  margin: 0 0 clamp(36px, 5vw, 56px);
+  max-width: 14ch;
+  position: relative;
+  z-index: 1;
+}
+
+.gtm-statement-field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.gtm-statement-field img {
+  position: absolute;
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .gtm-statement-field img {
+    display: block;
+  }
+
+  .gtm-statement-field .gtm-field-1 {
+    width: 240px;
+    right: 6%;
+    top: -4%;
+    transform: rotate(9deg);
+  }
+
+  .gtm-statement-field .gtm-field-2 {
+    width: 130px;
+    right: 26%;
+    top: 34%;
+    transform: rotate(-12deg);
+  }
+
+  .gtm-statement-field .gtm-field-3 {
+    width: 170px;
+    right: 12%;
+    bottom: 4%;
+    transform: rotate(5deg);
+  }
+
+  .gtm-statement-field .gtm-field-4 {
+    width: 90px;
+    right: 38%;
+    bottom: -6%;
+    transform: rotate(-20deg);
+  }
+}
+
+.gtm-chaos-card {
+  position: relative;
+  z-index: 1;
+  background: var(--gtm-surface);
+  border-radius: var(--gtm-radius-panel);
+  padding: clamp(28px, 4vw, 40px);
+  max-width: 660px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.gtm-chaos-card h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.gtm-chaos-card p {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  opacity: 0.82;
+}
+
+/* MindMarket inline text link: hairline underline, no color change. */
+.gtm-inline-link {
+  color: var(--gtm-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--gtm-muted);
+  padding-bottom: 2px;
+  font-weight: var(--font-semibold);
+  font-size: 1rem;
+}
+
+/* ---------- Testimonials ---------- */
+
+.gtm-testimonials {
+  display: grid;
+  gap: 16px;
+  grid-auto-rows: 1fr;
+}
+
+@media (min-width: 900px) {
+  .gtm-testimonials {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.gtm-testimonial {
+  height: 100%;
+  background: var(--gtm-surface);
+  border: 1px solid var(--gtm-hairline);
+  border-radius: var(--gtm-radius-card);
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-decoration: none;
+  color: var(--gtm-ink);
+}
+
+.gtm-testimonial-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gtm-testimonial-head img {
+  border-radius: 50%;
+  display: block;
+}
+
+.gtm-testimonial-id {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gtm-testimonial-name {
+  display: block;
+  font-weight: var(--font-heavy);
+  font-size: 0.9375rem;
+  line-height: 1.3;
+}
+
+.gtm-testimonial-handle {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--gtm-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gtm-testimonial-x {
+  flex: none;
+  color: var(--gtm-ink);
+  opacity: 0.8;
+}
+
+.gtm-testimonial-quote {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  white-space: pre-line;
+  opacity: 0.88;
+}
+
+/* ---------- Pricing service card (the page's single coral action) ---------- */
+
+.gtm-price-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--gtm-surface);
+  border-radius: var(--gtm-radius-panel);
+  padding: clamp(30px, 4.5vw, 48px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.gtm-price-card h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.9rem, 3.4vw, 2.75rem);
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  margin: 0;
+  max-width: 16ch;
+}
+
+.gtm-price-card p {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  opacity: 0.82;
+  max-width: 46ch;
+}
+
+.gtm-btn--coral {
+  background: var(--gtm-coral);
+  border-color: var(--gtm-coral);
+  color: var(--gtm-surface);
+}
+
+.gtm-btn--coral .gtm-dot {
+  background: var(--gtm-surface);
+}
+
+.gtm-price-stack {
+  position: absolute;
+  right: clamp(28px, 5vw, 72px);
+  bottom: -34px;
+  width: clamp(130px, 15vw, 200px);
+  transform: rotate(-9deg);
+  pointer-events: none;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .gtm-price-stack {
+    display: block;
+  }
+}
+
+.gtm-price-stack img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---------- Giant agent-name marquee divider ---------- */
+
+.gtm-marquee {
+  overflow: clip;
+  border-top: 1px solid var(--gtm-hairline);
+  padding-block: clamp(28px, 4vw, 44px);
+}
+
+.gtm-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: gtm-marquee-scroll 36s linear infinite;
+}
+
+.gtm-marquee-group {
+  display: flex;
+  align-items: center;
+  gap: clamp(28px, 3.5vw, 52px);
+  padding-right: clamp(28px, 3.5vw, 52px);
+}
+
+.gtm-marquee-item {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.6rem, 6vw, 5rem);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--gtm-ink);
+  white-space: nowrap;
+}
+
+.gtm-marquee .gtm-dot {
+  width: clamp(12px, 1.4vw, 18px);
+  height: clamp(12px, 1.4vw, 18px);
+}
+
+@keyframes gtm-marquee-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gtm-marquee-track {
+    animation: none;
+  }
+}
+
 /* ---------- Closing sunshine band ---------- */
 
 .gtm-band {
