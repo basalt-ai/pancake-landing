@@ -179,11 +179,13 @@
   // ── palette (brand canon cap/side pairs) ──
   const PLUM = '#2C002A';
   const HEAD = { cap: '#FFBD7A', side: '#FFDBB5' };
+  // order matters: head + purple + pink = the live-site mascot, verbatim.
+  // growth continues the stack from there.
   const BODY = [
     { cap: '#BA8BFF', side: '#DEC3F5' },
+    { cap: '#FF7AA0', side: '#FFBBC7' },
     { cap: '#68CEA7', side: '#A8E5C9' },
     { cap: '#FFA45F', side: '#FFDDBE' },
-    { cap: '#FF7AA0', side: '#FFBBC7' },
   ];
   const ACCENTS = ['#FF7AA0', '#BA8BFF', '#FFBD7A', '#68CEA7', '#FFA45F'];
 
@@ -207,13 +209,8 @@
   const POSE_NUMS = {};
   for (const k in POSES) POSE_NUMS[k] = POSES[k].map(parseNums);
   const TEMPLATES = POSES.middle.map((d) => d.replace(NUM_RE, '\x00'));
-  // path meta: pink rim/cap, shadow, purple rim/cap, shadow, golden rim/cap, eyeL, eyeR
-  const MMETA = [
-    { fill: '#FFBBC7' }, { fill: '#FF7AA0' }, { fill: '#2C002A', alpha: 0.16 },
-    { fill: '#DEC3F5' }, { fill: '#BA8BFF' }, { fill: '#2C002A', alpha: 0.16 },
-    { fill: '#FFDBB5' }, { fill: '#FFBD7A' }, { fill: '#2C002A' }, { fill: '#2C002A' },
-  ];
-  const MONSTER = { cx: 497, cy: 512, w: 340 }; // content anchor in the 997 art space
+  // pose paths: 0-5 lower layers (unused — the body pancakes play that role),
+  // 6-7 golden rim/cap, 8-9 eyes
   function monsterWeights(dx, dy, dist) {
     if (!Number.isFinite(dist)) return { middle: 1, top: 0, bottom: 0, left: 0, right: 0 };
     const centerWeight = Math.max(0, 1 - dist / 80);
@@ -275,7 +272,7 @@
   const S = {
     x: 300, y: 200, heading: 0,
     boost: 0,
-    segs: 4, maxSegs: 56, // head + 3 pancakes to start
+    segs: 3, maxSegs: 56, // golden face + purple + pink = the mascot, day one
     trail: [],
     w: { middle: 1, top: 0, bottom: 0, left: 0, right: 0 }, // live-site morph weights
     open: 0,
@@ -326,7 +323,7 @@
   // poke him (the site's fork-click, sans fork)
   cv.addEventListener('pointerdown', (e) => {
     const p = zonePoint(e);
-    if (Math.hypot(p.x - S.x, p.y - S.y) < R * 2.4 && t > (S.upsetUntil || 0)) S.upsetUntil = t + 2;
+    if (Math.hypot(p.x - S.x, p.y - S.y) < R * 1.5 && t > (S.upsetUntil || 0)) S.upsetUntil = t + 2;
   });
   // tilt steering (Android immediately; iOS grants on first touch)
   let tilt = null, tiltBase = null;
@@ -361,7 +358,7 @@
   }
   function biteTail(i) {
     // classic snake: everything past the bite is gone
-    S.segs = Math.max(4, i);
+    S.segs = Math.max(3, i);
     S.bites = (S.bites || 0) + 1;
     S.biteSafe = t + 3;
   }
@@ -490,29 +487,28 @@
     ctx.restore();
   }
 
-  // the monster's head = the FULL live-site monster, morphing toward its target
-  function face(x, y, r, open, bob) {
-    const s = (2.6 * r) / MONSTER.w;
+  // the head is NOT a separate monster: it is the stack's golden face-pancake,
+  // the same size as every other pancake in the body. Short snake = the mascot.
+  function face(x, y, r, open) {
+    const s = (2 * r) / 307.5; // golden layer width → same footprint as the body
     const upset = t < (S.upsetUntil || 0);
     const w = upset ? { middle: 1, top: 0, bottom: 0, left: 0, right: 0 } : S.w;
-    const lift = open * 62;
+    const lift = open * 55;
     ctx.save();
-    ctx.translate(x, y + bob);
+    ctx.translate(x, y);
     ctx.scale(s, s);
-    ctx.translate(-MONSTER.cx, -MONSTER.cy);
-    for (let p = 0; p < 8; p++) {
-      if (p === 6 && open > 0.02) {
-        // the mouth: a plum gap opens between the purple layer and the golden face
-        ctx.fillStyle = PLUM;
-        ctx.beginPath(); ctx.ellipse(505, 508, 116, 52 * open, 0, 0, 7); ctx.fill();
-      }
-      if (p === 6) ctx.translate(0, -lift);
-      const meta = MMETA[p];
-      ctx.globalAlpha = meta.alpha || 1;
-      ctx.fillStyle = p === 7 && upset ? '#FFA878' : meta.fill;
-      ctx.fill(new Path2D(morphPath(p, w)));
-      ctx.globalAlpha = 1;
+    ctx.translate(-496.7, -492);
+    // golden rim (paths 6-9 of the live morph rig = the face layer)
+    ctx.fillStyle = '#FFDBB5';
+    ctx.fill(new Path2D(morphPath(6, w)));
+    if (open > 0.02) {
+      // the mouth: the cap lifts off the rim, plum gap between
+      ctx.fillStyle = PLUM;
+      ctx.beginPath(); ctx.ellipse(497, 500, 110, 46 * open, 0, 0, 7); ctx.fill();
     }
+    ctx.translate(0, -lift);
+    ctx.fillStyle = upset ? '#FFA878' : '#FFBD7A';
+    ctx.fill(new Path2D(morphPath(7, w)));
     if (upset) {
       ctx.fillStyle = PLUM;
       for (const e of UPSET.eyes) ctx.fill(e);
@@ -545,8 +541,8 @@
       pancake(p.x, p.y, R, c.cap, c.side, { variant: i });
     }
 
-    // head: the real mascot, morphing toward its target
-    face(S.x, S.y, R, S.open, 0);
+    // head: the stack's golden face-pancake, morphing toward its target
+    face(S.x, S.y, R, S.open);
 
   }
 
