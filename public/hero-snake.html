@@ -267,7 +267,7 @@
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     R = Math.max(16, Math.min(26, H * 0.062)); // ONE pancake size for everything
     // a snake longer than its arena can hold spends its life biting itself
-    S.maxSegs = Math.round(Math.min(56, Math.max(12, W / 25)));
+    S.maxSegs = Math.round(Math.min(56, Math.max(12, W / 20)));
     if (S.segs > S.maxSegs) S.segs = S.maxSegs;
   }
 
@@ -275,21 +275,19 @@
   const S = {
     x: 300, y: 200, heading: 0,
     boost: 0,
-    segs: 9, maxSegs: 56,
+    segs: 4, maxSegs: 56, // head + 3 pancakes to start
     trail: [],
     w: { middle: 1, top: 0, bottom: 0, left: 0, right: 0 }, // live-site morph weights
     open: 0,
     blink: 1, blinkAt: 2,
     upsetUntil: 0,
-    pulses: [],
     player: false, playerUntil: 0,
     target: null,
-    bubble: null,
   };
   const foods = [];
-  const parts = [];
   let t = 0, excite = 0, lastScroll = scrollY;
-  const GAP = () => R * 1.15;
+  // tight overlap: the body IS the monster's stack, stretched along the trail
+  const GAP = () => R * 0.6;
 
   function spawnFood(n) {
     for (let k = 0; k < n; k++) {
@@ -301,7 +299,7 @@
         y = my + Math.random() * (H - 2 * my);
         tries++;
       } while (tries < 20 && Math.hypot(x - S.x, y - S.y) < 150);
-      foods.push({ x, y, c: BODY[(Math.random() * 4) | 0], v: (Math.random() * 4) | 0, phase: Math.random() * 7 });
+      foods.push({ x, y, c: BODY[(Math.random() * 4) | 0], v: (Math.random() * 4) | 0 });
     }
   }
 
@@ -328,10 +326,7 @@
   // poke him (the site's fork-click, sans fork)
   cv.addEventListener('pointerdown', (e) => {
     const p = zonePoint(e);
-    if (Math.hypot(p.x - S.x, p.y - S.y) < R * 2.4 && t > (S.upsetUntil || 0)) {
-      S.upsetUntil = t + 2;
-      S.bubble = { text: 'hey.', t: 0 };
-    }
+    if (Math.hypot(p.x - S.x, p.y - S.y) < R * 2.4 && t > (S.upsetUntil || 0)) S.upsetUntil = t + 2;
   });
   // tilt steering (Android immediately; iOS grants on first touch)
   let tilt = null, tiltBase = null;
@@ -357,33 +352,18 @@
     zone.style.transform = `translateY(${Math.min(46, scrollY * 0.10)}px)`;
   }, { passive: true });
 
-  // ── juice ──
-  const NOMS = ['nom', 'nom nom', 'gulp', 'tasty'];
-  function crumbs(x, y, base, n) {
-    for (let i = 0; i < n; i++) {
-      const a = Math.random() * 7, v = 50 + Math.random() * 170;
-      parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 70, r: 2 + Math.random() * 3.5, c: Math.random() < 0.5 ? base : ACCENTS[(Math.random() * 5) | 0], life: 0.45 + Math.random() * 0.3 });
-    }
-  }
+  // ── eat & bite: silent, clean — the growth IS the feedback ──
   function eat(fi) {
-    const f = foods.splice(fi, 1)[0];
-    crumbs(f.x, f.y, f.c.cap, reduced ? 3 : 9);
-    S.pulses.push(0);
-    S.boost = 1;
+    foods.splice(fi, 1);
+    S.boost = 0.5;
     if (S.segs < S.maxSegs) S.segs++;
-    if (Math.random() < 0.3) S.bubble = { text: NOMS[(Math.random() * NOMS.length) | 0], t: 0 };
     spawnFood(1);
   }
   function biteTail(i) {
-    // classic snake: everything past the bite pops away
-    for (let k = i; k < S.segs; k++) {
-      const p = segPos(k);
-      crumbs(p.x, p.y, BODY[(k - 1) % BODY.length].cap, reduced ? 2 : 5);
-    }
-    S.segs = Math.max(7, i);
+    // classic snake: everything past the bite is gone
+    S.segs = Math.max(4, i);
     S.bites = (S.bites || 0) + 1;
-    S.biteSafe = t + 3; // let the crumbs settle before he can nip himself again
-    S.bubble = { text: 'oops.', t: 0 };
+    S.biteSafe = t + 3;
   }
 
   // ── sim ──
@@ -423,19 +403,6 @@
     if (S.x > W - M - wr) tvx -= (1 - (W - M - S.x) / wr) * push;
     if (S.y < M + wr) tvy += (1 - (S.y - M) / wr) * push;
     if (S.y > H - M - wr) tvy -= (1 - (H - M - S.y) / wr) * push;
-    // autopilot never plows through its own body (the player may, on purpose)
-    if (!S.player) {
-      const px = S.x + Math.cos(S.heading) * 70, py = S.y + Math.sin(S.heading) * 70;
-      for (let i = 4; i < S.segs; i += 2) {
-        const q = segPos(i);
-        const d = Math.hypot(q.x - px, q.y - py);
-        if (d < 70) {
-          const w2 = (1 - d / 70) * 320;
-          tvx += ((px - q.x) / Math.max(1, d)) * w2;
-          tvy += ((py - q.y) / Math.max(1, d)) * w2;
-        }
-      }
-    }
     const want = Math.atan2(tvy, tvx);
     let diff = ((want - S.heading + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
     const lenPenalty = Math.max(0.6, 1 - S.segs / 140); // a long snake turns lazily
@@ -476,7 +443,6 @@
     // eat
     for (let i = foods.length - 1; i >= 0; i--) {
       const f = foods[i];
-      f.phase += dt;
       if (Math.hypot(f.x - S.x, f.y - S.y) < R * 1.5) eat(i);
     }
 
@@ -492,20 +458,6 @@
       }
     }
 
-    // swallow pulses travel down the body
-    for (let i = S.pulses.length - 1; i >= 0; i--) {
-      S.pulses[i] += dt * 13;
-      if (S.pulses[i] > S.segs + 4) S.pulses.splice(i, 1);
-    }
-
-    // crumbs
-    for (let i = parts.length - 1; i >= 0; i--) {
-      const p = parts[i];
-      p.life -= dt;
-      if (p.life <= 0) { parts.splice(i, 1); continue; }
-      p.vy += 460 * dt; p.x += p.vx * dt; p.y += p.vy * dt;
-    }
-    if (S.bubble && (S.bubble.t += dt) > 1.1) S.bubble = null;
   }
 
   // ── draw ──
@@ -522,11 +474,6 @@
       acc += d;
     }
     return S.trail[S.trail.length - 1] || { x: S.x, y: S.y };
-  }
-  function pulseScale(i) {
-    let s = 1;
-    for (const p of S.pulses) s += (reduced ? 0.1 : 0.22) * Math.exp(-((i - p) * (i - p)) / 3.5);
-    return s;
   }
   // one brand pancake, drawn from the real SVG paths (organic, wonky, pillowy)
   function pancake(x, y, r, cap, side, opts = {}) {
@@ -587,59 +534,20 @@
   function draw() {
     ctx.clearRect(0, 0, W, H);
 
-    // food (bob + soft plum ground shadow, cream world)
-    for (const f of foods) {
-      const bob = Math.sin(f.phase * 2) * 2.5;
-      ctx.fillStyle = 'rgba(44,0,42,0.10)';
-      ctx.beginPath(); ctx.ellipse(f.x, f.y + R * 0.72, R * 0.8, R * 0.24, 0, 0, 7); ctx.fill();
-      pancake(f.x, f.y, R, f.c.cap, f.c.side, { bob, variant: f.v });
-    }
+    // food: still brand pancakes, nothing more
+    for (const f of foods) pancake(f.x, f.y, R, f.c.cap, f.c.side, { variant: f.v });
 
-    // snake shadow pass
-    ctx.fillStyle = 'rgba(44,0,42,0.10)';
-    for (let i = S.segs - 1; i >= 0; i--) {
-      const p = i === 0 ? { x: S.x, y: S.y } : segPos(i);
-      const r = R * pulseScale(i);
-      ctx.beginPath(); ctx.ellipse(p.x, p.y + r * 0.55, r * 0.9, r * 0.26, 0, 0, 7); ctx.fill();
-    }
-
-    // body: tail → head, canonical stack colors, pillowy undulation
+    // body: tail → head — each pancake tucked under the one before,
+    // exactly how the monster's own layers stack
     for (let i = S.segs - 1; i >= 1; i--) {
       const p = segPos(i);
       const c = BODY[(i - 1) % BODY.length];
-      pancake(p.x, p.y, R, c.cap, c.side, {
-        scale: pulseScale(i),
-        bob: reduced ? 0 : Math.sin(t * 1.8 + i * 0.55) * 2,
-        rot: reduced ? 0 : Math.sin(t * 0.9 + i) * 0.07,
-        squish: 1 + (reduced ? 0 : Math.sin(t * 2.2 + i * 0.7) * 0.035),
-        variant: i,
-      });
+      pancake(p.x, p.y, R, c.cap, c.side, { variant: i });
     }
 
-    // head: the real mascot face
-    face(S.x, S.y, R, S.open, reduced ? 0 : Math.sin(t * 1.8) * 2);
+    // head: the real mascot, morphing toward its target
+    face(S.x, S.y, R, S.open, 0);
 
-    // crumbs
-    for (const p of parts) {
-      ctx.globalAlpha = Math.min(1, p.life * 3);
-      ctx.fillStyle = p.c;
-      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 7); ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-
-    // bubble
-    if (S.bubble) {
-      const u = S.bubble.t, a = u < 0.15 ? u / 0.15 : u > 0.8 ? (1.1 - u) / 0.3 : 1;
-      ctx.globalAlpha = Math.max(0, Math.min(1, a));
-      ctx.font = "700 15px 'Aeonik Fono', sans-serif";
-      const tw = ctx.measureText(S.bubble.text).width;
-      const bx = S.x + R * 0.9, by = S.y - R * 1.6 - u * 10;
-      ctx.fillStyle = '#FFDBB5';
-      ctx.beginPath(); ctx.roundRect(bx - 12, by - 20, tw + 24, 30, [14, 14, 14, 4]); ctx.fill();
-      ctx.fillStyle = PLUM;
-      ctx.fillText(S.bubble.text, bx, by + 1);
-      ctx.globalAlpha = 1;
-    }
   }
 
   // ── drivers (never trust rAF timestamps in embedded panes) ──
