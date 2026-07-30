@@ -351,6 +351,7 @@
     for (let i = 0; i + 1 < nums.length; i += 2) { sx += nums[i]; sy += nums[i + 1]; c++; }
     return { cx: sx / c, cy: sy / c };
   };
+  const EYE_MID = [centroid(POSE_NUMS.middle[8]), centroid(POSE_NUMS.middle[9])];
   // upset overlay, verbatim from PancakeMonster.tsx
   const UPSET = {
     eyes: [
@@ -398,7 +399,6 @@
     segs: 3, maxSegs: 56, // golden face + purple + pink = the mascot, day one
     trail: [],
     w: { middle: 1, top: 0, bottom: 0, left: 0, right: 0 }, // live-site morph weights
-    open: 0,
     blink: 1, blinkAt: 2,
     upsetUntil: 0,
     player: false, playerUntil: 0,
@@ -555,11 +555,7 @@
     if (!lastP || Math.hypot(S.x - lastP.x, S.y - lastP.y) > 2) S.trail.unshift({ x: S.x, y: S.y });
     if (S.trail.length > 1200) S.trail.length = 1200;
 
-    // mouth + orientation morph + blink
-    let nf = null, nd = 1e9;
-    for (const f of foods) { const d = Math.hypot(f.x - S.x, f.y - S.y); if (d < nd) { nd = d; nf = f; } }
-    const openT = nf && nd < 130 ? Math.min(1, (130 - nd) / 95) : 0;
-    S.open += (openT - S.open) * Math.min(1, dt * 10);
+    // orientation morph + blink
     // the whole monster reorients toward what he's chasing (the site's cursor morph)
     const wt = monsterWeights(target.x - S.x, target.y - S.y, targetD * 0.6);
     for (const k in S.w) S.w[k] += (wt[k] - S.w[k]) * Math.min(1, dt * 7);
@@ -585,8 +581,10 @@
     // tail bite: head touching its own body cuts it, snake-style.
     // you can't bite what you can't out-turn: skip segments inside the
     // current turning circle, so tight food loops never self-lap.
+    // player steering may cut the tail on a deliberate crossing (0.75);
+    // autopilot keeps the strict can't-outturn guard (1.1) so he rarely trips
     const loopLen = 2 * Math.PI * sp / omega;
-    const minBite = Math.max(6, Math.ceil((1.15 * loopLen) / GAP()));
+    const minBite = Math.max(6, Math.ceil(((S.player ? 0.75 : 1.1) * loopLen) / GAP()));
     if (t > (S.biteSafe || 0)) {
       for (let i = minBite; i < S.segs; i++) {
         const p = segPos(i);
@@ -627,44 +625,43 @@
     ctx.restore();
   }
 
-  // the head is NOT a separate monster: it is the stack's golden face-pancake,
-  // the same size as every other pancake in the body. Short snake = the mascot.
-  function face(x, y, r, open) {
-    const s = (2 * r) / 307.5; // golden layer width → same footprint as the body
+  // the head IS a body pancake: same flat shape, same size, same spacing.
+  // Only the mascot's morphing eyes distinguish it. No mouth.
+  function face(x, y, r) {
     const upset = t < (S.upsetUntil || 0);
     const w = upset ? { middle: 1, top: 0, bottom: 0, left: 0, right: 0 } : S.w;
-    const lift = open * 55;
+    const g = S.gulp ? Math.min(1, (t - S.gulp) / 0.35) : 1;
+    const squish = 1 - 0.15 * Math.sin(g * Math.PI); // gulp: quick squash-settle
+    pancake(x, y, r, upset ? '#FFA878' : HEAD.cap, HEAD.side, { variant: 0, squish });
+    // the mascot's eyes, mapped from the 997 art space onto the cap
+    const k = (2 * r) / 307.5;
     ctx.save();
     ctx.translate(x, y);
-    const g = S.gulp ? Math.min(1, (t - S.gulp) / 0.35) : 1;
-    ctx.scale(s, s * (1 - 0.15 * Math.sin(g * Math.PI))); // gulp: quick squash-settle
-    ctx.translate(-496.7, -492);
-    // golden rim (paths 6-9 of the live morph rig = the face layer)
-    ctx.fillStyle = '#FFDBB5';
-    ctx.fill(new Path2D(morphPath(6, w)));
-    if (open > 0.02) {
-      // the mouth: the cap lifts off the rim, plum gap between
-      ctx.fillStyle = PLUM;
-      ctx.beginPath(); ctx.ellipse(497, 500, 110, 46 * open, 0, 0, 7); ctx.fill();
-    }
-    ctx.translate(0, -lift);
-    ctx.fillStyle = upset ? '#FFA878' : '#FFBD7A';
-    ctx.fill(new Path2D(morphPath(7, w)));
+    ctx.scale(k, k * squish);
+    ctx.translate(-497, -486);
     if (upset) {
       ctx.fillStyle = PLUM;
       for (const e of UPSET.eyes) ctx.fill(e);
       ctx.strokeStyle = '#E5002E'; ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
       for (const sc of UPSET.scribbles) ctx.stroke(sc);
-    } else if (S.blink < 0.5) {
-      // the site's blink: flat lids at the eye centroids
-      ctx.fillStyle = PLUM;
-      const [el, er] = [centroid(morphNums(8, w)), centroid(morphNums(9, w))];
-      ctx.beginPath(); ctx.ellipse(el.cx, el.cy, 18, 3, 0, 0, 7); ctx.fill();
-      ctx.beginPath(); ctx.ellipse(er.cx, er.cy, 24, 3, 0, 0, 7); ctx.fill();
     } else {
+      // the pose rig was drawn for the 3-layer monster: damp the eye travel
+      // so the gaze stays on this single pancake
+      const DAMP = 0.35;
       ctx.fillStyle = PLUM;
-      ctx.fill(new Path2D(morphPath(8, w)));
-      ctx.fill(new Path2D(morphPath(9, w)));
+      for (const p of [8, 9]) {
+        const cm = EYE_MID[p - 8];
+        const c = centroid(morphNums(p, w));
+        const ox = (c.cx - cm.cx) * (1 - DAMP), oy = (c.cy - cm.cy) * (1 - DAMP);
+        ctx.save();
+        ctx.translate(-ox, -oy);
+        if (S.blink < 0.5) {
+          ctx.beginPath(); ctx.ellipse(c.cx, c.cy, p === 8 ? 18 : 24, 3, 0, 0, 7); ctx.fill();
+        } else {
+          ctx.fill(new Path2D(morphPath(p, w)));
+        }
+        ctx.restore();
+      }
     }
     ctx.restore();
   }
@@ -709,7 +706,7 @@
     const ha = reduced ? 1 : bornEase((t - 0.45 - S.segs * 0.08) / 0.5);
     if (ha > 0) {
       ctx.save(); ctx.translate(S.x, S.y); ctx.scale(ha, ha); ctx.translate(-S.x, -S.y);
-      face(S.x, S.y, R, S.open);
+      face(S.x, S.y, R);
       ctx.restore();
     }
 
@@ -732,7 +729,7 @@
   io.observe(document.querySelector('.prefooter'));
 
   // ── QA hooks ──
-  window.__state = () => ({ segs: S.segs, bites: S.bites || 0, x: Math.round(S.x), y: Math.round(S.y), foods: foods.length, player: S.player, open: +S.open.toFixed(2) });
+  window.__state = () => ({ segs: S.segs, bites: S.bites || 0, x: Math.round(S.x), y: Math.round(S.y), foods: foods.length, player: S.player });
   window.__step = (n = 1) => { for (let i = 0; i < n; i++) step(1 / 60); draw(); return window.__state(); };
   window.__bite = () => { if (S.segs > 12) biteTail(Math.floor(S.segs * 0.5)); return window.__state(); };
 })();
