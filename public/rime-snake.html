@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Start the conversation — snake prefooter study</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400&family=Saira+Extra+Condensed:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F0E9DD;
+    --ink: #24211D;
+    --grey: #DDD6C9;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: var(--cream); }
+  body {
+    font-family: "Archivo", Arial, sans-serif;
+    font-variation-settings: "wdth" 88;
+    color: var(--ink);
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 2.5rem;
+  }
+  @media (max-width: 767px) { body { padding: 0 1.25rem; } }
+
+  .prefooter {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    min-height: 80vh;
+    max-height: 50rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    touch-action: pan-y pinch-zoom;
+  }
+  @media (max-width: 991px) { .prefooter { min-height: 70vh; } }
+
+  .prefooter canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .prefooter-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 90%;
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(8px);
+  }
+  .prefooter-content.is-in {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+    transition: opacity .9s ease, transform .9s cubic-bezier(.22,1,.36,1), filter .9s ease;
+  }
+  @media (max-width: 479px) { .prefooter-content { gap: 1rem; } }
+
+  h1 {
+    position: relative;
+    font-family: "Saira Extra Condensed", "Archivo", "Arial Narrow", sans-serif;
+    font-weight: 600;
+    font-size: 6rem;
+    line-height: 1;
+    letter-spacing: -0.023em;
+    margin-top: -0.4rem;
+    margin-bottom: -1.2rem;
+    padding-bottom: 0.6rem;
+    transform: translateY(5px);
+  }
+  /* the original's fluid type is breakpoint-stepped, not one linear ramp */
+  @media (max-width: 767px) { h1 { font-size: 4rem; } }
+  @media (max-width: 479px) { h1 { font-size: clamp(3rem, 2.6428rem + 1.7863vw, 5.858rem); } }
+  /* duplicate headline revealed where the snake passes */
+  .h1-snake {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: block;
+    color: var(--cream);
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    padding-bottom: 0.6rem;
+    clip-path: path("M 0 0 Z");
+  }
+
+  .button-group {
+    display: flex;
+    flex-flow: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .button {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    display: inline-block;
+    background: var(--ink);
+    color: var(--cream);
+    text-decoration: none;
+    text-align: center;
+    border-radius: 100vw;
+    padding: 1rem 1.5rem;
+    font-size: 1.125rem;
+    font-weight: 400;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .button.is-secondary { background: var(--grey); color: var(--ink); }
+  .button:not(.is-secondary) { padding-inline: calc(1.5rem + 3px); }
+  @media (max-width: 479px) { .button { padding-top: .75rem; padding-bottom: .75rem; } }
+
+  .btn-fx {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .btn-fx .c {
+    position: absolute;
+    border-radius: 50%;
+    transform: translate(-50%,-50%) scale(0);
+    transition: transform .55s cubic-bezier(.22,.61,.36,1);
+    will-change: transform;
+  }
+  .btn-label {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    overflow: hidden;
+    padding: .16em 0;
+    margin: -.16em 0;
+  }
+  .btn-label .l1, .btn-label .l2 { display: block; transition: translate .45s cubic-bezier(.22,1,.36,1); }
+  .btn-label .l2 { position: absolute; inset: .16em 0; translate: 0 165%; user-select: none; -webkit-user-select: none; }
+  .button:hover .btn-label .l1 { translate: 0 -165%; }
+  .button:hover .btn-label .l2 { translate: 0 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .prefooter-content { opacity: 1; transform: none; filter: none; transition: none; }
+    .btn-fx { display: none; }
+    .btn-label .l1, .btn-label .l2 { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="prefooter" id="stage">
+  <canvas id="snake-canvas" aria-hidden="true"></canvas>
+  <div class="prefooter-content" id="content">
+    <h1 id="headline">Start the conversation<span class="h1-snake" id="h1snake" aria-hidden="true">Start the conversation</span></h1>
+    <div class="button-group">
+      <a href="#" class="button" data-fx>
+        <span class="btn-fx"></span>
+        <span class="btn-label"><span class="l1">Try for free</span><span class="l2" aria-hidden="true">Try for free</span></span>
+      </a>
+      <a href="#" class="button is-secondary" data-fx>
+        <span class="btn-fx"></span>
+        <span class="btn-label"><span class="l1">Book a call</span><span class="l2" aria-hidden="true">Book a call</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+(() => {
+  'use strict';
+
+  // ---------- constants (measured from the reference) ----------
+  const R = 88.5;                 // circle radius, all breakpoints
+  const L = R * 0.8;              // 70.8 — arc-length between segment centers
+  const N = 13;                   // segments
+  const CREAM = '#F0E9DD';
+  const FILLS = ['#FFD46F', '#FFA0FF', '#2CC3E9'];  // yellow, pink, cyan — multiply does the rest
+  const CRUISE = 48;              // idle head speed, px/s
+  const CHASE_LAMBDA = 3.4;       // pursuit: pos += (target-pos) * (1 - e^(-λ·dt))
+  const RAMP_LAMBDA = 2.5;        // wander speed ramp toward cruise
+  const TURN_FAST = 0.6;          // rad/s amplitude, ~1.8s-period steering noise
+  const TURN_SLOW = 0.3;          // rad/s amplitude, ~8s-period drift bias
+
+  const stage = document.getElementById('stage');
+  const canvas = document.getElementById('snake-canvas');
+  const ctx = canvas.getContext('2d', { alpha: false });
+  const h1snake = document.getElementById('h1snake');
+  const headline = document.getElementById('headline');
+  const motionMq = matchMedia('(prefers-reduced-motion: reduce)');
+
+  // ---------- seeded noise (deterministic when ?seed= given) ----------
+  const seedParam = new URLSearchParams(location.search).get('seed');
+  let seedState = seedParam ? (parseInt(seedParam, 10) >>> 0) : (Math.floor(Math.random() * 2 ** 31) >>> 0);
+  const rand = () => {
+    seedState |= 0; seedState = (seedState + 0x6D2B79F5) | 0;
+    let t = Math.imul(seedState ^ (seedState >>> 15), 1 | seedState);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+  // 1D value noise: smooth curve through random values at integer lattice
+  const makeNoise = () => {
+    const g = Array.from({ length: 256 }, () => rand() * 2 - 1);
+    return (x) => {
+      const i = Math.floor(x), f = x - i;
+      const u = f * f * (3 - 2 * f);
+      return g[i & 255] * (1 - u) + g[(i + 1) & 255] * u;
+    };
+  };
+  const turnNoise = makeNoise();
+  const turnNoise2 = makeNoise();
+
+  // ---------- state ----------
+  let W = 0, H = 0, DPR = 2;
+  let head = { x: 0, y: 0 };
+  let heading = Math.PI;          // radians
+  let speed = 0;                  // current wander speed
+  let pointer = null;             // {x,y} component-local, or null
+  let noiseT = rand() * 100;
+  let segs = new Array(N);
+
+  // trail: polyline the head has traveled; segments sit i*L back along it.
+  // stored head-first: trail[0] is the current head position.
+  let trail = [];                 // [{x, y, d}] trail[i].d = distance from trail[i-1] to trail[i]
+
+  const clampX = (x) => Math.min(Math.max(x, R), W - R);
+  const clampY = (y) => Math.min(Math.max(y, R), H - R);
+
+  function pushTrail(x, y) {
+    const prev = trail[0];
+    if (prev) {
+      const d = Math.hypot(x - prev.x, y - prev.y);
+      if (d < 0.05) {
+        prev.x = x; prev.y = y;
+        if (trail[1]) trail[1].d = Math.hypot(prev.x - trail[1].x, prev.y - trail[1].y);
+        return;
+      }
+      trail.unshift({ x, y, d: 0 });
+      trail[1].d = d; // distance from new head to old head, stored on the older point's predecessor link
+      trail[0].d = 0;
+    } else {
+      trail.unshift({ x, y, d: 0 });
+    }
+    // trim: keep just over N*L of arc
+    let acc = 0;
+    for (let i = 1; i < trail.length; i++) {
+      acc += trail[i].d;
+      if (acc > N * L + 40) { trail.length = i + 1; break; }
+    }
+  }
+
+  function placeSegments() {
+    // walk back along the trail, dropping a segment every L of arc length
+    let si = 0, acc = 0;
+    segs[si++] = { x: trail[0].x, y: trail[0].y };
+    for (let i = 1; i < trail.length && si < N; i++) {
+      const p = trail[i - 1], q = trail[i], d = q.d;
+      while (si < N && acc + d >= si * L) {
+        const t = (si * L - acc) / d;
+        segs[si] = { x: p.x + (q.x - p.x) * t, y: p.y + (q.y - p.y) * t };
+        si++;
+      }
+      acc += d;
+    }
+    // trail shorter than needed (early frames): stack remaining on the last point
+    for (; si < N; si++) segs[si] = { ...segs[si - 1] };
+  }
+
+  // ---------- initial pose: open J-curve — flat run lower left, rising to the head upper right ----------
+  function seedTrail() {
+    trail = [];
+    // control polyline from head to tail, in stage fractions
+    const ctrl = [
+      [0.745, 0.375], [0.745, 0.470], [0.720, 0.585], [0.665, 0.700],
+      [0.585, 0.790], [0.480, 0.845], [0.365, 0.860], [0.250, 0.860]
+    ].map(([fx, fy]) => ({ x: clampX(fx * W), y: clampY(fy * H) }));
+    // resample with Catmull-Rom for a smooth path
+    const pts = [];
+    for (let i = 0; i < ctrl.length - 1; i++) {
+      const p0 = ctrl[Math.max(i - 1, 0)], p1 = ctrl[i], p2 = ctrl[i + 1], p3 = ctrl[Math.min(i + 2, ctrl.length - 1)];
+      for (let k = 0; k < 30; k++) {
+        const t = k / 30, t2 = t * t, t3 = t2 * t;
+        pts.push({
+          x: 0.5 * ((2 * p1.x) + (-p0.x + p2.x) * t + (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 + (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3),
+          y: 0.5 * ((2 * p1.y) + (-p0.y + p2.y) * t + (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 + (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3)
+        });
+      }
+    }
+    // feed oldest→newest so trail[0] ends up the head
+    for (let i = pts.length - 1; i >= 0; i--) pushTrail(clampX(pts[i].x), clampY(pts[i].y));
+    head = { x: trail[0].x, y: trail[0].y };
+    if (trail.length > 2) heading = Math.atan2(trail[0].y - trail[2].y, trail[0].x - trail[2].x);
+    placeSegments();
+  }
+
+  // ---------- sizing ----------
+  function resize() {
+    const r = stage.getBoundingClientRect();
+    if (r.width < 2 * R || r.height < 2 * R) return; // hidden/degenerate container: wait for a real rect
+    W = r.width; H = r.height;
+    DPR = Math.max(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    if (!trail.length) { seedTrail(); return; }
+    // pull the existing trail into the new bounds so the body can't linger offstage
+    for (const p of trail) { p.x = clampX(p.x); p.y = clampY(p.y); }
+    for (let i = 1; i < trail.length; i++) {
+      trail[i].d = Math.hypot(trail[i].x - trail[i - 1].x, trail[i].y - trail[i - 1].y);
+    }
+    head.x = clampX(head.x); head.y = clampY(head.y);
+    placeSegments();
+  }
+
+  // ---------- simulation ----------
+  function step(dt) {
+    if (pointer) {
+      const tx = clampX(pointer.x), ty = clampY(pointer.y);
+      const k = 1 - Math.exp(-CHASE_LAMBDA * dt);
+      head.x += (tx - head.x) * k;
+      head.y += (ty - head.y) * k;
+      speed = 0; // ramp restarts when the pointer leaves
+    } else {
+      noiseT += dt;
+      const turn = turnNoise(noiseT * 0.55) * TURN_FAST + turnNoise2(noiseT * 0.12) * TURN_SLOW;
+      heading += turn * dt;
+      while (heading > Math.PI) heading -= 2 * Math.PI;
+      while (heading < -Math.PI) heading += 2 * Math.PI;
+      speed += (CRUISE - speed) * (1 - Math.exp(-RAMP_LAMBDA * dt));
+      const px0 = head.x, py0 = head.y;
+      head.x = clampX(px0 + Math.cos(heading) * speed * dt);
+      head.y = clampY(py0 + Math.sin(heading) * speed * dt);
+      // wall-stall escape: the more the clamp eats the motion, the harder we steer inward.
+      // shallow wall rides (low blocked ratio) are barely affected and persist, as observed.
+      const intended = speed * dt;
+      if (intended > 1e-4) {
+        const blocked = 1 - Math.hypot(head.x - px0, head.y - py0) / intended;
+        if (blocked > 0.15) {
+          let dh = Math.atan2(H / 2 - head.y, W / 2 - head.x) - heading;
+          while (dh > Math.PI) dh -= 2 * Math.PI;
+          while (dh < -Math.PI) dh += 2 * Math.PI;
+          heading += Math.sign(dh) * Math.min(Math.abs(dh), blocked * blocked * 0.9 * dt);
+        }
+      }
+    }
+    pushTrail(head.x, head.y);
+    placeSegments();
+  }
+
+  // ---------- render ----------
+  function draw() {
+    if (!trail.length) return; // container not measurable yet
+    ctx.fillStyle = CREAM;
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'multiply';
+    for (let i = 0; i < N; i++) {
+      const s = segs[i];
+      ctx.fillStyle = FILLS[i % 3];
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, R, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // clip-path for the headline overlay, in the span's local coords
+    const sr = h1snake.getBoundingClientRect();
+    const cr = canvas.getBoundingClientRect();
+    const ox = cr.left - sr.left, oy = cr.top - sr.top;
+    let path = '';
+    for (let i = 0; i < N; i++) {
+      const cx = segs[i].x + ox, cy = (segs[i].y + oy).toFixed(1);
+      const xr = (cx + R).toFixed(1), xl = (cx - R).toFixed(1);
+      path += `M ${xr} ${cy} A ${R} ${R} 0 1 0 ${xl} ${cy} A ${R} ${R} 0 1 0 ${xr} ${cy} Z `;
+    }
+    h1snake.style.clipPath = `path("${path.trim()}")`;
+  }
+
+  // ---------- pointer ----------
+  function onMove(e) {
+    const r = stage.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    if (x >= 0 && y >= 0 && x <= r.width && y <= r.height) {
+      pointer = { x, y };
+    } else if (pointer) {
+      releasePointer();
+    }
+  }
+  function releasePointer() {
+    if (!pointer) return;
+    pointer = null;
+    if (trail.length > 2) heading = Math.atan2(trail[0].y - trail[2].y, trail[0].x - trail[2].x);
+    speed = 0;
+  }
+  window.addEventListener('pointermove', (e) => { if (!motionMq.matches) onMove(e); }, { passive: true });
+  window.addEventListener('pointerdown', (e) => { if (!motionMq.matches) onMove(e); }, { passive: true });
+  // a mouse lifting its button is still hovering — only a finger/pen lift means the pointer left
+  window.addEventListener('pointerup', (e) => { if (e.pointerType !== 'mouse') releasePointer(); }, { passive: true });
+  window.addEventListener('pointercancel', releasePointer, { passive: true });
+  document.addEventListener('mouseleave', releasePointer);
+  window.addEventListener('blur', releasePointer);
+
+  // ---------- main loop ----------
+  // never trust rAF cadence: throttled/headless panes starve it or fire it slow.
+  // consume REAL elapsed time in <=33ms sub-steps so sim time never falls behind wall time.
+  let lastNow = performance.now();
+  let running = !motionMq.matches;
+  motionMq.addEventListener('change', () => {
+    const wasRunning = running;
+    running = !motionMq.matches;
+    if (!running) releasePointer();
+    if (running && !wasRunning) { lastNow = performance.now(); requestAnimationFrame(frame); }
+    draw();
+  });
+  // DPR can change without a resize event (monitor hop, browser zoom)
+  const watchDPR = () => matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`).addEventListener('change', () => { resize(); draw(); watchDPR(); }, { once: true });
+  watchDPR();
+  function advance(now) {
+    let elapsed = Math.min((now - lastNow) / 1000, 0.4);
+    lastNow = now;
+    if (!trail.length) { resize(); if (!trail.length) return; } // heal once the container gets real bounds
+    if (window.__snakePaused || elapsed <= 0) return;
+    while (elapsed > 0) { const h = Math.min(elapsed, 1 / 30); step(h); elapsed -= h; }
+    draw();
+  }
+  function frame() {
+    advance(performance.now());
+    if (running) requestAnimationFrame(frame);
+  }
+  // watchdog: keep stepping if rAF stops entirely (hidden tab)
+  setInterval(() => {
+    if (!running || window.__snakePaused) return;
+    if (performance.now() - lastNow > 80) advance(performance.now());
+  }, 100);
+
+  resize();
+  window.addEventListener('resize', () => { resize(); draw(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw());
+  draw();
+  if (running) requestAnimationFrame(frame);
+
+  // entrance reveal
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.getElementById('content').classList.add('is-in');
+  }));
+
+  // ---------- deterministic QA hooks ----------
+  window.__snake = {
+    step: (n = 1, dtMs = 16.667) => { for (let i = 0; i < n; i++) step(dtMs / 1000); draw(); },
+    state: () => ({ head: { ...head }, heading, speed, pointer: pointer && { ...pointer }, segs: segs.map(s => [+s.x.toFixed(1), +s.y.toFixed(1)]), W, H, seed: seedState }),
+    setPointer: (x, y) => { if (x == null) releasePointer(); else pointer = { x, y }; },
+    pause: (v) => { window.__snakePaused = !!v; }
+  };
+
+  // ---------- button hover FX ----------
+  document.querySelectorAll('[data-fx]').forEach((btn, bi) => {
+    const fx = btn.querySelector('.btn-fx');
+    const c = document.createElement('span');
+    c.className = 'c';
+    fx.appendChild(c);
+    let hoverCount = bi; // stagger the two buttons' starting colors
+    const place = (e) => {
+      const r = btn.getBoundingClientRect();
+      const d = Math.max(r.width, r.height) * 2.35;
+      c.style.width = c.style.height = d + 'px';
+      c.style.left = (e.clientX - r.left) + 'px';
+      c.style.top = (e.clientY - r.top) + 'px';
+    };
+    btn.addEventListener('pointerenter', (e) => {
+      c.style.transition = 'none';
+      place(e);
+      c.style.background = FILLS[hoverCount++ % 3];
+      void c.offsetWidth;
+      c.style.transition = '';
+      c.style.transform = 'translate(-50%,-50%) scale(1)';
+    });
+    btn.addEventListener('pointerleave', (e) => {
+      place(e);
+      c.style.transform = 'translate(-50%,-50%) scale(0)';
+    });
+  });
+})();
+</script>
+</body>
+</html>
