@@ -313,18 +313,14 @@
   'use strict';
 
   // ---------- geometry & motion constants (measured on the reference) ----------
-  // radius scales with the stage so the snake keeps the same visual weight on a
-  // phone as on a desktop (88.5 on a 1184px stage = 7.5% of the width).
-  const R_MAX = 88.5, R_MIN = 26, R_RATIO = 0.075;
-  let R = R_MAX;
-  let L = R * 0.8;                // arc-length between segment centers
+  const R = 88.5;                 // circle radius — identical at every breakpoint
+  const L = R * 0.8;              // arc-length between segment centers
   const N = 13;                   // segments
   // ---------- pancake skin (design-system tokens) ----------
   const CREAM = '#FFF7EC';        // chrome-20
   const FILLS = ['#FFBD7A', '#BA8BFF', '#68CEA7'];  // golden, purple, mint — multiply does the rest
-  const CRUISE_AT_MAX = 48;       // idle head speed, px/s at full radius
-  // speed scales with radius so a small snake crosses its small stage in the same time
-  const cruise = () => CRUISE_AT_MAX * (R / R_MAX);
+  const CRUISE = 48;              // head speed, px/s
+  const LOOP_LAMBDA = 6;          // how tightly the head tracks its orbit target
   const CHASE_LAMBDA = 3.4;       // pursuit: pos += (target-pos) * (1 - e^(-λ·dt))
   const RAMP_LAMBDA = 2.5;        // wander speed ramp toward cruise
   const TURN_FAST = 0.6;          // rad/s amplitude, ~1.8s-period steering noise
@@ -373,6 +369,51 @@
   const clampX = (x) => Math.min(Math.max(x, R), W - R);
   const clampY = (y) => Math.min(Math.max(y, R), H - R);
 
+  // ---------- orbit mode (phones/tablets): the snake circles the screen ----------
+  // Narrow stages leave no room to wander at full radius, so instead of roaming it
+  // runs a closed rounded-rect lap hugging the edges. Desktop keeps the free wander.
+  let loopMode = false;
+  let loopDist = 0;
+  const isLoopStage = () => matchMedia('(pointer: coarse)').matches || window.innerWidth <= 1079;
+
+  // the lap: rounded rectangle inset by R so the circles stay fully on stage
+  function loopBox() {
+    const x0 = R, y0 = R, w = Math.max(1, W - 2 * R), h = Math.max(1, H - 2 * R);
+    const cr = Math.min(w, h) / 2;                 // fully rounded on the narrow axis
+    return { x0, y0, w, h, cr, sw: w - 2 * cr, sh: h - 2 * cr, qa: (Math.PI / 2) * cr };
+  }
+  function loopLength() { const b = loopBox(); return 2 * b.sw + 2 * b.sh + 4 * b.qa; }
+  // point at arc-length `d` along the lap, walking top → right → bottom → left
+  function loopPoint(d) {
+    const b = loopBox();
+    const per = 2 * b.sw + 2 * b.sh + 4 * b.qa;
+    d = ((d % per) + per) % per;
+    const L1 = b.sw, L2 = L1 + b.qa, L3 = L2 + b.sh, L4 = L3 + b.qa;
+    const L5 = L4 + b.sw, L6 = L5 + b.qa, L7 = L6 + b.sh;
+    const cx0 = b.x0 + b.cr, cx1 = b.x0 + b.w - b.cr;
+    const cy0 = b.y0 + b.cr, cy1 = b.y0 + b.h - b.cr;
+    const onArc = (cx, cy, a0, t) => ({ x: cx + b.cr * Math.cos(a0 + t), y: cy + b.cr * Math.sin(a0 + t) });
+    if (d < L1) return { x: cx0 + d, y: b.y0 };                                   // top edge →
+    if (d < L2) return onArc(cx1, cy0, -Math.PI / 2, (d - L1) / b.cr);            // top-right
+    if (d < L3) return { x: b.x0 + b.w, y: cy0 + (d - L2) };                      // right edge ↓
+    if (d < L4) return onArc(cx1, cy1, 0, (d - L3) / b.cr);                       // bottom-right
+    if (d < L5) return { x: cx1 - (d - L4), y: b.y0 + b.h };                      // bottom edge ←
+    if (d < L6) return onArc(cx0, cy1, Math.PI / 2, (d - L5) / b.cr);             // bottom-left
+    if (d < L7) return { x: b.x0, y: cy1 - (d - L6) };                            // left edge ↑
+    return onArc(cx0, cy0, Math.PI, (d - L7) / b.cr);                             // top-left
+  }
+  // where on the lap is this point? (used to rejoin smoothly after a drag)
+  function nearestLoopDist(x, y) {
+    const per = loopLength();
+    let best = 0, bestD = Infinity;
+    for (let i = 0; i < 240; i++) {
+      const d = (i / 240) * per, p = loopPoint(d);
+      const dd = (p.x - x) ** 2 + (p.y - y) ** 2;
+      if (dd < bestD) { bestD = dd; best = d; }
+    }
+    return best;
+  }
+
   function pushTrail(x, y) {
     const prev = trail[0];
     if (prev) {
@@ -414,6 +455,19 @@
   // ---------- initial pose: open J-curve — flat run lower left, rising to the head upper right ----------
   function seedTrail() {
     trail = [];
+    if (loopMode) {
+      // lay the body out along the lap, head at loopDist, tail trailing behind it
+      const need = N * L + R * 0.68;
+      const stepLen = Math.max(2, L / 12);
+      for (let d = need; d >= 0; d -= stepLen) {
+        const p = loopPoint(loopDist - d);
+        pushTrail(clampX(p.x), clampY(p.y));
+      }
+      head = { x: trail[0].x, y: trail[0].y };
+      if (trail.length > 2) heading = Math.atan2(trail[0].y - trail[2].y, trail[0].x - trail[2].x);
+      placeSegments();
+      return;
+    }
     // shape lives in its own 1.6 x 1.0 box, so the pose reads identically on a
     // wide desktop stage and a tall phone stage (stage fractions would stretch it)
     const SHAPE = [
@@ -475,17 +529,16 @@
   function resize() {
     const r = stage.getBoundingClientRect();
     if (r.width < 2 * R || r.height < 2 * R) return; // hidden/degenerate container: wait for a real rect
-    const oldW = W, oldH = H, oldR = R;
+    const oldW = W, oldH = H, wasLoop = loopMode;
     W = r.width; H = r.height;
-    R = Math.max(R_MIN, Math.min(R_MAX, W * R_RATIO));
-    L = R * 0.8;
+    loopMode = isLoopStage();
     DPR = Math.max(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(W * DPR);
     canvas.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     if (!trail.length) { seedTrail(); return; }
     const rx = W / oldW, ry = H / oldH;
-    if (Math.abs(rx - 1) > 0.15 || Math.abs(ry - 1) > 0.15 || Math.abs(R / oldR - 1) > 0.05) {
+    if (loopMode !== wasLoop || Math.abs(rx - 1) > 0.15 || Math.abs(ry - 1) > 0.15) {
       // breakpoint-scale jump: a squeezed trail would pile the beads into one dark blob — re-pose instead
       seedTrail();
       return;
@@ -507,6 +560,18 @@
       head.x += (tx - head.x) * k;
       head.y += (ty - head.y) * k;
       speed = 0;
+    } else if (loopMode) {
+      // the target runs the lap at cruise speed; the head chases it, so a released
+      // drag curves back onto the orbit instead of snapping to it
+      loopDist += CRUISE * dt;
+      const t = loopPoint(loopDist);
+      const k = 1 - Math.exp(-LOOP_LAMBDA * dt);
+      const px0 = head.x, py0 = head.y;
+      head.x += (t.x - head.x) * k;
+      head.y += (t.y - head.y) * k;
+      const mx = head.x - px0, my = head.y - py0;
+      if (Math.hypot(mx, my) > 0.01) heading = Math.atan2(my, mx);
+      speed = CRUISE;
     } else {
       noiseT += dt;
       const tiltMag = tilt.has ? Math.min(1, Math.hypot(tilt.x, tilt.y)) : 0;
@@ -592,12 +657,8 @@
   }
 
   // ---------- pointer ----------
-  // On phones the accelerometer is the controller, so finger-pursuit stays off
-  // unless the sensor is unavailable or denied (then touch takes over as fallback).
-  const coarse = matchMedia('(pointer: coarse)').matches;
-  let touchSteer = !coarse;
+  // Drag steers on every device; releasing hands control back to the orbit/wander.
   function onMove(e) {
-    if (e.pointerType && e.pointerType !== 'mouse' && !touchSteer) return;
     const r = stage.getBoundingClientRect();
     const x = e.clientX - r.left, y = e.clientY - r.top;
     if (x >= 0 && y >= 0 && x <= r.width && y <= r.height) {
@@ -611,63 +672,12 @@
     pointer = null;
     if (trail.length > 2) heading = Math.atan2(trail[0].y - trail[2].y, trail[0].x - trail[2].x);
     speed = 0;
+    // rejoin the lap from wherever the drag left the head
+    if (loopMode) loopDist = nearestLoopDist(head.x, head.y);
   }
   window.addEventListener('pointermove', (e) => { if (!motionMq.matches) onMove(e); }, { passive: true });
   window.addEventListener('pointerdown', (e) => { if (!motionMq.matches) onMove(e); }, { passive: true });
 
-  // ---------- tilt steering (touch devices): the snake flows downhill ----------
-  // neutral = however the phone is held at load; deflection from there steers the wander.
-  const tilt = { x: 0, y: 0, has: false };
-  let tiltNeutral = null;
-  const tiltSamples = [];
-  function onOrient(e) {
-    if (e.beta == null || e.gamma == null) return;
-    const ang = (screen.orientation && screen.orientation.angle) || 0;
-    let gx, gy; // screen-right / screen-down tilt, degrees
-    if (ang === 90) { gx = e.beta; gy = -e.gamma; }
-    else if (ang === 270 || ang === -90) { gx = -e.beta; gy = e.gamma; }
-    else if (ang === 180) { gx = -e.gamma; gy = -e.beta; }
-    else { gx = e.gamma; gy = e.beta; }
-    if (!tiltNeutral) {
-      tiltSamples.push([gx, gy]);
-      if (tiltSamples.length >= 12) {
-        const s = tiltSamples.reduce((a, b) => [a[0] + b[0], a[1] + b[1]], [0, 0]);
-        tiltNeutral = [s[0] / tiltSamples.length, s[1] / tiltSamples.length];
-      }
-      return;
-    }
-    const LIM = 22; // degrees of tilt for full deflection
-    tilt.x = Math.max(-1, Math.min(1, (gx - tiltNeutral[0]) / LIM));
-    tilt.y = Math.max(-1, Math.min(1, (gy - tiltNeutral[1]) / LIM));
-    tilt.has = true;
-  }
-  function armTilt() {
-    window.addEventListener('deviceorientation', onOrient, { passive: true });
-    // no sensor data within 2.5s (desktop touchscreen, blocked sensor) → let fingers steer
-    setTimeout(() => { if (!tilt.has) touchSteer = true; }, 2500);
-  }
-  if (coarse && !motionMq.matches) {
-    const DOE = window.DeviceOrientationEvent;
-    if (DOE && typeof DOE.requestPermission === 'function') {
-      // iOS: the sensor needs a user-gesture grant — first tap anywhere asks once
-      const ask = () => {
-        window.removeEventListener('pointerdown', ask);
-        window.removeEventListener('touchend', ask);
-        window.removeEventListener('click', ask);
-        DOE.requestPermission()
-          .then((s) => { if (s === 'granted') armTilt(); else touchSteer = true; })
-          .catch(() => { touchSteer = true; });
-      };
-      // iOS is picky about which gesture counts — listen on all three, whichever lands first
-      window.addEventListener('pointerdown', ask);
-      window.addEventListener('touchend', ask);
-      window.addEventListener('click', ask);
-    } else if (DOE) {
-      armTilt();
-    } else {
-      touchSteer = true; // no orientation sensor at all
-    }
-  }
   // a mouse lifting its button is still hovering — only a finger/pen lift means the pointer left
   window.addEventListener('pointerup', (e) => { if (e.pointerType !== 'mouse') releasePointer(); }, { passive: true });
   window.addEventListener('pointercancel', releasePointer, { passive: true });
@@ -721,9 +731,9 @@
   // ---------- deterministic QA hooks ----------
   window.__snake = {
     step: (n = 1, dtMs = 16.667) => { for (let i = 0; i < n; i++) step(dtMs / 1000); draw(); },
-    state: () => ({ head: { ...head }, heading, speed, pointer: pointer && { ...pointer }, segs: segs.map(s => [+s.x.toFixed(1), +s.y.toFixed(1)]), W, H, R, tilt: { ...tilt }, touchSteer, seed: seedState }),
+    state: () => ({ head: { ...head }, heading, speed, pointer: pointer && { ...pointer }, segs: segs.map(s => [+s.x.toFixed(1), +s.y.toFixed(1)]), W, H, R, loopMode, loopDist, loopLen: loopMode ? loopLength() : 0, seed: seedState }),
     setPointer: (x, y) => { if (x == null) releasePointer(); else pointer = { x, y }; },
-    setTilt: (x, y) => { if (x == null) { tilt.has = false; tilt.x = tilt.y = 0; } else { tilt.x = x; tilt.y = y; tilt.has = true; } },
+    setLoopDist: (d) => { loopDist = d; },
     pause: (v) => { window.__snakePaused = !!v; }
   };
 
