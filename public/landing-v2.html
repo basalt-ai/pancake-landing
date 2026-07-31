@@ -202,6 +202,7 @@
   }
   .button {
     position: relative;
+    font-family: inherit;
     overflow: hidden;
     isolation: isolate;
     display: inline-block;
@@ -256,6 +257,119 @@
     .btn-fx { display: none; }
     .btn-label .l1, .btn-label .l2 { transition: none; }
   }
+
+  /* ---------- modals: waitlist form + booking calendar ---------- */
+  .scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: none;
+    padding: 1.25rem;
+    background: rgba(44, 0, 42, 0.42);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    overflow-y: auto;
+  }
+  .scrim.is-open { display: grid; place-items: center; }
+  .sheet {
+    position: relative;
+    width: 100%;
+    max-width: 30rem;
+    background: var(--cream);
+    border-radius: 28px;
+    padding: 2.25rem 2rem 2rem;
+    box-shadow: 0 24px 60px rgba(44, 0, 42, 0.22);
+    animation: sheet-in .32s cubic-bezier(.22,1,.36,1) both;
+  }
+  .sheet.is-wide { max-width: 46rem; padding: 2rem 1.25rem 1.25rem; }
+  @keyframes sheet-in { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .sheet { animation: none; } }
+  @media (max-width: 479px) { .sheet { padding: 1.75rem 1.25rem 1.5rem; border-radius: 22px; } }
+
+  .sheet-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(44, 0, 42, 0.06);
+    color: var(--ink);
+    font: inherit;
+    font-size: 17px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background .2s ease;
+  }
+  .sheet-close:hover { background: rgba(44, 0, 42, 0.12); }
+
+  .sheet h3 {
+    font-family: "Aeonik Fono", Arial, sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: .5rem;
+  }
+  .sheet-sub { font-size: .9375rem; line-height: 1.5; color: #85687C; margin-bottom: 1.5rem; }
+
+  .field { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1.1rem; }
+  .field label { font-size: .875rem; font-weight: 500; }
+  .field input, .field textarea {
+    font: inherit;
+    font-size: 1rem;
+    color: var(--ink);
+    background: #FFFFFF;
+    border: 0;
+    box-shadow: inset 0 0 0 1px rgba(44, 0, 42, 0.12);
+    border-radius: 14px;
+    padding: 12px 14px;
+    width: 100%;
+    transition: box-shadow .18s ease;
+  }
+  .field textarea { resize: vertical; min-height: 74px; line-height: 1.45; }
+  .field input::placeholder, .field textarea::placeholder { color: #BBA8AE; }
+  .field input:focus, .field textarea:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--pink);
+  }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .chip {
+    font: inherit;
+    font-size: .875rem;
+    font-weight: 500;
+    color: var(--ink);
+    background: #FFFFFF;
+    border: 0;
+    box-shadow: inset 0 0 0 1px rgba(44, 0, 42, 0.12);
+    border-radius: 100vw;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: background .18s ease, box-shadow .18s ease;
+  }
+  .chip:hover { box-shadow: inset 0 0 0 1px rgba(44, 0, 42, 0.3); }
+  .chip[aria-pressed="true"] { background: var(--pink); box-shadow: inset 0 0 0 1px var(--pink); }
+
+  .sheet .button { width: 100%; margin-top: .5rem; }
+  .form-error { font-size: .875rem; color: #E5002E; margin-top: .6rem; min-height: 1.2em; }
+  .sheet-done { text-align: center; padding: 1rem 0 .5rem; }
+  .sheet-done h3 { margin-bottom: .5rem; }
+
+  .zcal-frame {
+    width: 100%;
+    height: min(70vh, 640px);
+    border: 0;
+    border-radius: 18px;
+    background: #FFFFFF;
+    display: block;
+  }
+  .sheet-note { font-size: .8125rem; color: #85687C; text-align: center; margin-top: .75rem; }
+  body.modal-open { overflow: hidden; }
 </style>
 </head>
 <body>
@@ -265,10 +379,10 @@
     <a href="https://getpancake.ai/" class="nav-wordmark" aria-label="Pancake">
       <img src="pancake-wordmark.png" alt="Pancake">
     </a>
-    <a href="https://getpancake.ai/" class="button" data-fx>
+    <button type="button" class="button" data-fx data-open="waitlist">
       <span class="btn-fx"></span>
       <span class="btn-label"><span class="l1">Join waitlist</span><span class="l2" aria-hidden="true">Join waitlist</span></span>
-    </a>
+    </button>
   </div>
 </header>
 
@@ -279,14 +393,14 @@
     <div class="hero-right">
       <h2 id="subhead">Pancake is a team of AI agents that understand your company and handle high quality GTM tasks autonomously<span class="h2-snake" id="h2snake" aria-hidden="true">Pancake is a team of AI agents that understand your company and handle high quality GTM tasks autonomously</span></h2>
       <div class="button-group">
-        <a href="https://getpancake.ai/" class="button is-secondary" data-fx>
+        <button type="button" class="button is-secondary" data-fx data-open="call">
           <span class="btn-fx"></span>
           <span class="btn-label"><span class="l1">Book a call</span><span class="l2" aria-hidden="true">Book a call</span></span>
-        </a>
-        <a href="https://getpancake.ai/" class="button" data-fx>
+        </button>
+        <button type="button" class="button" data-fx data-open="waitlist">
           <span class="btn-fx"></span>
           <span class="btn-label"><span class="l1">Join waitlist</span><span class="l2" aria-hidden="true">Join waitlist</span></span>
-        </a>
+        </button>
       </div>
     </div>
   </div>
@@ -766,5 +880,163 @@
   });
 })();
 </script>
+
+<!-- ---------- waitlist ---------- -->
+<div class="scrim" id="scrim-waitlist" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="wl-title">
+    <button type="button" class="sheet-close" data-close aria-label="Close">&#10005;</button>
+    <div id="wl-form-wrap">
+      <h3 id="wl-title">Join the waitlist</h3>
+      <p class="sheet-sub">We onboard a handful of teams at a time. Tell us what you are building and we will come back to you when it is your turn.</p>
+      <form id="wl-form" novalidate>
+        <div class="field">
+          <label for="wl-email">Email address</label>
+          <input id="wl-email" name="email" type="email" autocomplete="email" required placeholder="you@company.com">
+        </div>
+        <div class="field">
+          <label for="wl-url">What is your company&rsquo;s URL?</label>
+          <input id="wl-url" name="companyUrl" type="text" autocomplete="url" placeholder="company.com">
+        </div>
+        <div class="field">
+          <label for="wl-about">What does your company do?</label>
+          <textarea id="wl-about" name="about" rows="2" placeholder="What you sell, and who buys it."></textarea>
+        </div>
+        <div class="field">
+          <label id="wl-handoff-label">What would you hand off first?</label>
+          <div class="chips" role="group" aria-labelledby="wl-handoff-label">
+            <button type="button" class="chip" aria-pressed="false">Outbound</button>
+            <button type="button" class="chip" aria-pressed="false">Content &amp; social</button>
+            <button type="button" class="chip" aria-pressed="false">SEO &amp; landing pages</button>
+            <button type="button" class="chip" aria-pressed="false">Ads</button>
+            <button type="button" class="chip" aria-pressed="false">Lead research</button>
+            <button type="button" class="chip" aria-pressed="false">CRM hygiene</button>
+          </div>
+        </div>
+        <div class="hp" aria-hidden="true">
+          <label for="wl-website">Leave this empty</label>
+          <input id="wl-website" name="website" type="text" tabindex="-1" autocomplete="off">
+        </div>
+        <button type="submit" class="button" id="wl-submit">Join waitlist</button>
+        <p class="form-error" id="wl-error" role="alert"></p>
+      </form>
+    </div>
+    <div class="sheet-done" id="wl-done" hidden>
+      <h3>You are on the list.</h3>
+      <p class="sheet-sub">We will email you when it is your turn. No spam in between.</p>
+      <button type="button" class="button is-secondary" data-close>Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- book a call ---------- -->
+<div class="scrim" id="scrim-call" hidden>
+  <div class="sheet is-wide" role="dialog" aria-modal="true" aria-labelledby="call-title">
+    <button type="button" class="sheet-close" data-close aria-label="Close">&#10005;</button>
+    <h3 id="call-title" style="padding: 0 .75rem .9rem;">Book a call</h3>
+    <iframe class="zcal-frame" id="zcal-frame" title="Pick a time with Pancake" loading="lazy" data-src="https://zcal.co/i/ZEHl48rv?embed=1&embedType=iframe"></iframe>
+    <p class="sheet-note">Pick any slot that works. You will get a calendar invite straight away.</p>
+  </div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const scrims = { waitlist: document.getElementById('scrim-waitlist'), call: document.getElementById('scrim-call') };
+  const frame = document.getElementById('zcal-frame');
+  let openName = null;
+  let lastFocus = null;
+
+  const focusables = (root) => [...root.querySelectorAll('button, input, textarea, a[href], iframe, [tabindex]:not([tabindex="-1"])')]
+    .filter((el) => !el.hasAttribute('hidden') && el.offsetParent !== null);
+
+  function open(name) {
+    const scrim = scrims[name];
+    if (!scrim || openName) return;
+    lastFocus = document.activeElement;
+    openName = name;
+    scrim.hidden = false;
+    scrim.classList.add('is-open');
+    document.body.classList.add('modal-open');
+    // the calendar only loads once the user actually asks for it
+    if (name === 'call' && frame && !frame.src) frame.src = frame.dataset.src;
+    const first = name === 'waitlist' ? document.getElementById('wl-email') : scrim.querySelector('[data-close]');
+    requestAnimationFrame(() => { if (first) first.focus(); });
+  }
+  function close() {
+    if (!openName) return;
+    const scrim = scrims[openName];
+    scrim.classList.remove('is-open');
+    scrim.hidden = true;
+    document.body.classList.remove('modal-open');
+    openName = null;
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  document.querySelectorAll('[data-open]').forEach((b) => b.addEventListener('click', () => open(b.dataset.open)));
+  document.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', close));
+  Object.values(scrims).forEach((scrim) => {
+    scrim.addEventListener('mousedown', (e) => { if (e.target === scrim) close(); });
+  });
+  document.addEventListener('keydown', (e) => {
+    if (!openName) return;
+    if (e.key === 'Escape') { close(); return; }
+    if (e.key !== 'Tab') return;
+    const items = focusables(scrims[openName]);
+    if (!items.length) return;
+    const first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  // chips
+  document.querySelectorAll('.chip').forEach((chip) => {
+    chip.addEventListener('click', () => chip.setAttribute('aria-pressed', chip.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'));
+  });
+
+  // submit
+  const form = document.getElementById('wl-form');
+  const errorEl = document.getElementById('wl-error');
+  const submitBtn = document.getElementById('wl-submit');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('wl-email').value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      errorEl.textContent = 'Enter a valid email address.';
+      document.getElementById('wl-email').focus();
+      return;
+    }
+    errorEl.textContent = '';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+    const payload = {
+      email,
+      companyUrl: document.getElementById('wl-url').value.trim(),
+      about: document.getElementById('wl-about').value.trim(),
+      handoff: [...document.querySelectorAll('.chip[aria-pressed="true"]')].map((c) => c.textContent.trim()),
+      website: document.getElementById('wl-website').value,
+      source: 'landing-v2'
+    };
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Something went wrong.');
+      }
+      document.getElementById('wl-form-wrap').hidden = true;
+      document.getElementById('wl-done').hidden = false;
+    } catch (err) {
+      errorEl.textContent = err.message || 'Something went wrong. Try again.';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Join waitlist';
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
