@@ -313,13 +313,18 @@
   'use strict';
 
   // ---------- geometry & motion constants (measured on the reference) ----------
-  const R = 88.5;                 // circle radius, all breakpoints
-  const L = R * 0.8;              // 70.8 — arc-length between segment centers
+  // radius scales with the stage so the snake keeps the same visual weight on a
+  // phone as on a desktop (88.5 on a 1184px stage = 7.5% of the width).
+  const R_MAX = 88.5, R_MIN = 26, R_RATIO = 0.075;
+  let R = R_MAX;
+  let L = R * 0.8;                // arc-length between segment centers
   const N = 13;                   // segments
   // ---------- pancake skin (design-system tokens) ----------
   const CREAM = '#FFF7EC';        // chrome-20
   const FILLS = ['#FFBD7A', '#BA8BFF', '#68CEA7'];  // golden, purple, mint — multiply does the rest
-  const CRUISE = 48;              // idle head speed, px/s
+  const CRUISE_AT_MAX = 48;       // idle head speed, px/s at full radius
+  // speed scales with radius so a small snake crosses its small stage in the same time
+  const cruise = () => CRUISE_AT_MAX * (R / R_MAX);
   const CHASE_LAMBDA = 3.4;       // pursuit: pos += (target-pos) * (1 - e^(-λ·dt))
   const RAMP_LAMBDA = 2.5;        // wander speed ramp toward cruise
   const TURN_FAST = 0.6;          // rad/s amplitude, ~1.8s-period steering noise
@@ -387,7 +392,7 @@
     let acc = 0;
     for (let i = 1; i < trail.length; i++) {
       acc += trail[i].d;
-      if (acc > N * L + 40) { trail.length = i + 1; break; }
+      if (acc > N * L + R * 0.45) { trail.length = i + 1; break; }
     }
   }
 
@@ -409,34 +414,49 @@
   // ---------- initial pose: open J-curve — flat run lower left, rising to the head upper right ----------
   function seedTrail() {
     trail = [];
-    const ctrl = [
-      [0.745, 0.375], [0.745, 0.470], [0.720, 0.585], [0.665, 0.700],
-      [0.585, 0.790], [0.480, 0.845], [0.365, 0.860], [0.250, 0.860]
-    ].map(([fx, fy]) => ({ x: clampX(fx * W), y: clampY(fy * H) }));
-    const pts = [];
-    for (let i = 0; i < ctrl.length - 1; i++) {
-      const p0 = ctrl[Math.max(i - 1, 0)], p1 = ctrl[i], p2 = ctrl[i + 1], p3 = ctrl[Math.min(i + 2, ctrl.length - 1)];
-      for (let k = 0; k < 30; k++) {
-        const t = k / 30, t2 = t * t, t3 = t2 * t;
-        pts.push({
-          x: 0.5 * ((2 * p1.x) + (-p0.x + p2.x) * t + (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 + (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3),
-          y: 0.5 * ((2 * p1.y) + (-p0.y + p2.y) * t + (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 + (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3)
-        });
+    // shape lives in its own 1.6 x 1.0 box, so the pose reads identically on a
+    // wide desktop stage and a tall phone stage (stage fractions would stretch it)
+    const SHAPE = [
+      [1.600, 0.000], [1.600, 0.196], [1.518, 0.433], [1.341, 0.670],
+      [1.083, 0.856], [0.744, 0.969], [0.371, 1.000], [0.000, 1.000]
+    ];
+    const spline = (cs) => {
+      const out = [];
+      for (let i = 0; i < cs.length - 1; i++) {
+        const p0 = cs[Math.max(i - 1, 0)], p1 = cs[i], p2 = cs[i + 1], p3 = cs[Math.min(i + 2, cs.length - 1)];
+        for (let k = 0; k < 30; k++) {
+          const t = k / 30, t2 = t * t, t3 = t2 * t;
+          out.push({
+            x: 0.5 * ((2 * p1.x) + (-p0.x + p2.x) * t + (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 + (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3),
+            y: 0.5 * ((2 * p1.y) + (-p0.y + p2.y) * t + (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 + (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3)
+          });
+        }
       }
-    }
+      return out;
+    };
+    const arcOf = (ps) => { let a = 0; for (let i = 1; i < ps.length; i++) a += Math.hypot(ps[i].x - ps[i - 1].x, ps[i].y - ps[i - 1].y); return a; };
+    const want = N * L + R * 0.68;
+    // size the shape so its arc equals the body length, then fit it inside the stage
+    const unit = spline(SHAPE.map(([u, v]) => ({ x: u, y: v })));
+    let s = want / arcOf(unit);
+    s = Math.min(s, (W - 2 * R - 8) / 1.6, (H - 2 * R - 8) / 1.0);
+    // park the body in the upper stage; the copy band owns the lower third
+    const ox = (W - 1.6 * s) * 0.62 + R * 0.1;
+    const oy = Math.min(H * 0.30, Math.max(R + 4, (H - s) * 0.42));
+    let pts = spline(SHAPE.map(([u, v]) => ({ x: ox + u * s, y: oy + v * s })))
+      .map((p) => ({ x: clampX(p.x), y: clampY(p.y) }));
     // narrow stages: the J-curve alone can't carry N*L of arc — extend the tail as a coil
     // (deep overlap, never concentric) instead of letting surplus segments stack on one point.
-    let arc = 0;
-    for (let i = 1; i < pts.length; i++) arc += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
-    const need = N * L + 60;
+    let arc = arcOf(pts);
+    const need = want;
     if (arc < need && pts.length > 1) {
       let p = pts[pts.length - 1];
       const q = pts[pts.length - 2];
       let dir = Math.atan2(p.y - q.y, p.x - q.x);
-      const stepLen = 6;
+      const stepLen = Math.max(2.5, R * 0.068);
       let guard = 0;
       while (arc < need && guard++ < 2000) {
-        dir += 0.055; // ~110px-radius coil; walls fold it into a serpentine on narrow stages
+        dir += stepLen / (R * 1.25); // coil of ~1.25R; walls fold it into a serpentine
         const nx = clampX(p.x + Math.cos(dir) * stepLen), ny = clampY(p.y + Math.sin(dir) * stepLen);
         const moved = Math.hypot(nx - p.x, ny - p.y);
         if (moved < 0.5) { dir += 0.3; continue; } // pinned against a wall: rotate free
@@ -455,15 +475,17 @@
   function resize() {
     const r = stage.getBoundingClientRect();
     if (r.width < 2 * R || r.height < 2 * R) return; // hidden/degenerate container: wait for a real rect
-    const oldW = W, oldH = H;
+    const oldW = W, oldH = H, oldR = R;
     W = r.width; H = r.height;
+    R = Math.max(R_MIN, Math.min(R_MAX, W * R_RATIO));
+    L = R * 0.8;
     DPR = Math.max(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(W * DPR);
     canvas.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     if (!trail.length) { seedTrail(); return; }
     const rx = W / oldW, ry = H / oldH;
-    if (Math.abs(rx - 1) > 0.15 || Math.abs(ry - 1) > 0.15) {
+    if (Math.abs(rx - 1) > 0.15 || Math.abs(ry - 1) > 0.15 || Math.abs(R / oldR - 1) > 0.05) {
       // breakpoint-scale jump: a squeezed trail would pile the beads into one dark blob — re-pose instead
       seedTrail();
       return;
@@ -488,18 +510,20 @@
     } else {
       noiseT += dt;
       const tiltMag = tilt.has ? Math.min(1, Math.hypot(tilt.x, tilt.y)) : 0;
-      const turn = (turnNoise(noiseT * 0.55) * TURN_FAST + turnNoise2(noiseT * 0.12) * TURN_SLOW) * (1 - tiltMag * 0.8);
+      const turn = (turnNoise(noiseT * 0.55) * TURN_FAST + turnNoise2(noiseT * 0.12) * TURN_SLOW) * (1 - tiltMag);
       heading += turn * dt;
-      if (tiltMag > 0.08) {
-        // steer toward the downhill direction, harder with more tilt
+      if (tiltMag > 0.04) {
+        // the phone IS the controller: heading commits to the downhill direction
         let dh = Math.atan2(tilt.y, tilt.x) - heading;
         while (dh > Math.PI) dh -= 2 * Math.PI;
         while (dh < -Math.PI) dh += 2 * Math.PI;
-        heading += dh * Math.min(1, 2.5 * tiltMag * dt);
+        heading += dh * (1 - Math.exp(-(2 + 7 * tiltMag) * dt));
       }
       while (heading > Math.PI) heading -= 2 * Math.PI;
       while (heading < -Math.PI) heading += 2 * Math.PI;
-      speed += (CRUISE - speed) * (1 - Math.exp(-RAMP_LAMBDA * dt));
+      // tilt harder, travel faster — flat phone idles at a slow drift
+      const target = tilt.has ? cruise() * (0.28 + 1.5 * tiltMag) : cruise();
+      speed += (target - speed) * (1 - Math.exp(-RAMP_LAMBDA * dt));
       const px0 = head.x, py0 = head.y;
       head.x = clampX(px0 + Math.cos(heading) * speed * dt);
       head.y = clampY(py0 + Math.sin(heading) * speed * dt);
@@ -568,7 +592,12 @@
   }
 
   // ---------- pointer ----------
+  // On phones the accelerometer is the controller, so finger-pursuit stays off
+  // unless the sensor is unavailable or denied (then touch takes over as fallback).
+  const coarse = matchMedia('(pointer: coarse)').matches;
+  let touchSteer = !coarse;
   function onMove(e) {
+    if (e.pointerType && e.pointerType !== 'mouse' && !touchSteer) return;
     const r = stage.getBoundingClientRect();
     const x = e.clientX - r.left, y = e.clientY - r.top;
     if (x >= 0 && y >= 0 && x <= r.width && y <= r.height) {
@@ -614,18 +643,29 @@
   }
   function armTilt() {
     window.addEventListener('deviceorientation', onOrient, { passive: true });
+    // no sensor data within 2.5s (desktop touchscreen, blocked sensor) → let fingers steer
+    setTimeout(() => { if (!tilt.has) touchSteer = true; }, 2500);
   }
-  if (matchMedia('(pointer: coarse)').matches && !motionMq.matches) {
+  if (coarse && !motionMq.matches) {
     const DOE = window.DeviceOrientationEvent;
     if (DOE && typeof DOE.requestPermission === 'function') {
       // iOS: the sensor needs a user-gesture grant — first tap anywhere asks once
       const ask = () => {
         window.removeEventListener('pointerdown', ask);
-        DOE.requestPermission().then((s) => { if (s === 'granted') armTilt(); }).catch(() => {});
+        window.removeEventListener('touchend', ask);
+        window.removeEventListener('click', ask);
+        DOE.requestPermission()
+          .then((s) => { if (s === 'granted') armTilt(); else touchSteer = true; })
+          .catch(() => { touchSteer = true; });
       };
+      // iOS is picky about which gesture counts — listen on all three, whichever lands first
       window.addEventListener('pointerdown', ask);
+      window.addEventListener('touchend', ask);
+      window.addEventListener('click', ask);
     } else if (DOE) {
       armTilt();
+    } else {
+      touchSteer = true; // no orientation sensor at all
     }
   }
   // a mouse lifting its button is still hovering — only a finger/pen lift means the pointer left
@@ -681,7 +721,7 @@
   // ---------- deterministic QA hooks ----------
   window.__snake = {
     step: (n = 1, dtMs = 16.667) => { for (let i = 0; i < n; i++) step(dtMs / 1000); draw(); },
-    state: () => ({ head: { ...head }, heading, speed, pointer: pointer && { ...pointer }, segs: segs.map(s => [+s.x.toFixed(1), +s.y.toFixed(1)]), W, H, seed: seedState }),
+    state: () => ({ head: { ...head }, heading, speed, pointer: pointer && { ...pointer }, segs: segs.map(s => [+s.x.toFixed(1), +s.y.toFixed(1)]), W, H, R, tilt: { ...tilt }, touchSteer, seed: seedState }),
     setPointer: (x, y) => { if (x == null) releasePointer(); else pointer = { x, y }; },
     setTilt: (x, y) => { if (x == null) { tilt.has = false; tilt.x = tilt.y = 0; } else { tilt.x = x; tilt.y = y; tilt.has = true; } },
     pause: (v) => { window.__snakePaused = !!v; }
