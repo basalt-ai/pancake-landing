@@ -55,7 +55,7 @@
   .nav, .footer { flex: none; }
   .nav-inner, .footer-inner {
     width: 100%;
-    max-width: 80rem;
+    max-width: 74rem;
     margin-inline: auto;
     display: flex;
     justify-content: space-between;
@@ -85,7 +85,7 @@
     position: relative;
     overflow: hidden;
     width: 100%;
-    max-width: 80rem;
+    max-width: 74rem;
     margin-inline: auto;
     flex: 1;
     min-height: 480px;
@@ -130,7 +130,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 2.25rem;
-    max-width: clamp(280px, 38vw, 545px);
+    max-width: clamp(280px, 36vw, 505px);
     padding-top: 0.4rem;
     flex: none;
   }
@@ -138,8 +138,8 @@
     position: relative;
     font-family: "Aeonik", "Aeonik Fono", Arial, sans-serif;
     font-weight: 500;
-    font-size: 1.1875rem;
-    line-height: 1.42;
+    font-size: 1.125rem;
+    line-height: 1.45;
     letter-spacing: 0;
     text-wrap: pretty;
   }
@@ -165,8 +165,9 @@
     font-family: "Aeonik Fono", Arial, sans-serif;
     font-weight: 700;
     /* Sized so the long line ("You run your startup." = 10.66em) always fits the
-       column: font <= available / 11.2 (metric + 5% safety). Two lines, always. */
-    font-size: clamp(2.5rem, calc(5.2vw - 7.5px), 3.7rem);
+       column: font <= available / 11.2 (metric + 5% safety). Two lines, always.
+       Desktop available = stage(<=74rem) - right column - gap. */
+    font-size: clamp(2.5rem, calc(5.36vw - 7.14px), 3.4rem);
     line-height: 1.0;
     letter-spacing: -0.02em;
     margin-top: -0.4rem;
