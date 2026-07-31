@@ -164,14 +164,20 @@
     position: relative;
     font-family: "Aeonik Fono", Arial, sans-serif;
     font-weight: 700;
-    font-size: clamp(3.5rem, calc(9.1vw - 2.84rem), 4.15rem);
+    /* Sized so the long line ("You run your startup." = 10.66em) always fits the
+       column: font <= available / 11.2 (metric + 5% safety). Two lines, always. */
+    font-size: clamp(2.5rem, calc(5.2vw - 7.5px), 3.7rem);
     line-height: 1.0;
     letter-spacing: -0.02em;
     margin-top: -0.4rem;
     margin-bottom: -1.2rem;
     padding-bottom: 0.6rem;
   }
-  @media (max-width: 1079px) { h1 { font-size: clamp(2.25rem, 9.5vw, 3.5rem); } }
+  /* stacked: full stage width, gutter 2.5rem down to 767px then 1.25rem */
+  @media (max-width: 1079px) { h1 { font-size: min(3.4rem, calc(8.93vw - 7.15px)); } }
+  @media (max-width: 767px)  { h1 { font-size: min(3.4rem, calc(8.93vw - 3.57px)); } }
+  /* each sentence is one line — never allowed to wrap internally */
+  h1 .ln { white-space: nowrap; }
   /* duplicate headline revealed where the snake passes */
   .h1-snake {
     position: absolute;
@@ -268,7 +274,7 @@
 <section class="prefooter" id="stage">
   <canvas id="snake-canvas" aria-hidden="true"></canvas>
   <div class="prefooter-content" id="content">
-    <h1 id="headline">You run your startup.<br>We run your GTM.<span class="h1-snake" id="h1snake" aria-hidden="true">You run your startup.<br>We run your GTM.</span></h1>
+    <h1 id="headline"><span class="ln">You run your startup.</span><br><span class="ln">We run your GTM.</span><span class="h1-snake" id="h1snake" aria-hidden="true"><span class="ln">You run your startup.</span><br><span class="ln">We run your GTM.</span></span></h1>
     <div class="hero-right">
       <h2 id="subhead">Pancake is a team of AI agents that understand your company and handle high quality GTM tasks autonomously<span class="h2-snake" id="h2snake" aria-hidden="true">Pancake is a team of AI agents that understand your company and handle high quality GTM tasks autonomously</span></h2>
       <div class="button-group">
