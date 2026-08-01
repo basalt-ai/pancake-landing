@@ -285,7 +285,7 @@
     box-shadow: 0 24px 60px rgba(44, 0, 42, 0.22);
     animation: sheet-in .32s cubic-bezier(.22,1,.36,1) both;
   }
-  .sheet.is-wide { max-width: 46rem; padding: 2rem 1.25rem 1.25rem; }
+  .sheet.is-wide { max-width: 66rem; padding: 1.75rem 1rem 1rem; }
   @keyframes sheet-in { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) { .sheet { animation: none; } }
   @media (max-width: 479px) { .sheet { padding: 1.75rem 1.25rem 1.5rem; border-radius: 22px; } }
@@ -364,14 +364,22 @@
   .sheet-done { text-align: center; padding: 1rem 0 .5rem; }
   .sheet-done h3 { margin-bottom: .5rem; }
 
-  .zcal-frame {
-    width: 100%;
-    height: min(78vh, 760px);
-    border: 0;
+  .zcal-wrap {
+    overflow: hidden;              /* crops the band the iframe renders above its content */
     border-radius: 18px;
     background: #FFFFFF;
+    height: min(78vh, 640px);
+  }
+  #zcal-slot { display: contents; }   /* the iframe sizes against .zcal-wrap */
+  .zcal-frame {
+    width: 100%;
+    height: calc(100% + 80px);     /* +80 then pulled up: the blank header never shows */
+    margin-top: -80px;
+    border: 0;
     display: block;
   }
+  /* below zcal's 1000px breakpoint it lays out tall, so give it more room */
+  @media (max-width: 1100px) { .zcal-wrap { height: min(74vh, 820px); } }
   .sheet-note { font-size: .8125rem; color: #85687C; text-align: center; margin-top: .75rem; }
   .sheet-note a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
   .sheet-note.is-loud { color: var(--ink); font-weight: 500; }
@@ -932,7 +940,7 @@
   <div class="sheet is-wide" role="dialog" aria-modal="true" aria-labelledby="call-title">
     <button type="button" class="sheet-close" data-close aria-label="Close">&#10005;</button>
     <h3 id="call-title" style="padding: 0 .75rem .9rem;">Book a call</h3>
-    <div id="zcal-slot"></div>
+    <div class="zcal-wrap"><div id="zcal-slot"></div></div>
     <p class="sheet-note" id="zcal-note">Pick any slot that works, you will get the invite straight away. Calendar not loading?
       <a href="https://zcal.co/i/ZEHl48rv" target="_blank" rel="noopener">Open it in a new tab</a>.</p>
   </div>
