@@ -692,21 +692,11 @@
       speed = CRUISE;
     } else {
       noiseT += dt;
-      const tiltMag = tilt.has ? Math.min(1, Math.hypot(tilt.x, tilt.y)) : 0;
-      const turn = (turnNoise(noiseT * 0.55) * TURN_FAST + turnNoise2(noiseT * 0.12) * TURN_SLOW) * (1 - tiltMag);
+      const turn = turnNoise(noiseT * 0.55) * TURN_FAST + turnNoise2(noiseT * 0.12) * TURN_SLOW;
       heading += turn * dt;
-      if (tiltMag > 0.04) {
-        // the phone IS the controller: heading commits to the downhill direction
-        let dh = Math.atan2(tilt.y, tilt.x) - heading;
-        while (dh > Math.PI) dh -= 2 * Math.PI;
-        while (dh < -Math.PI) dh += 2 * Math.PI;
-        heading += dh * (1 - Math.exp(-(2 + 7 * tiltMag) * dt));
-      }
       while (heading > Math.PI) heading -= 2 * Math.PI;
       while (heading < -Math.PI) heading += 2 * Math.PI;
-      // tilt harder, travel faster — flat phone idles at a slow drift
-      const target = tilt.has ? cruise() * (0.28 + 1.5 * tiltMag) : cruise();
-      speed += (target - speed) * (1 - Math.exp(-RAMP_LAMBDA * dt));
+      speed += (CRUISE - speed) * (1 - Math.exp(-RAMP_LAMBDA * dt));
       const px0 = head.x, py0 = head.y;
       head.x = clampX(px0 + Math.cos(heading) * speed * dt);
       head.y = clampY(py0 + Math.sin(heading) * speed * dt);
@@ -777,6 +767,7 @@
   // ---------- pointer ----------
   // Drag steers on every device; releasing hands control back to the orbit/wander.
   function onMove(e) {
+    if (pointerSuspended) return;
     const r = stage.getBoundingClientRect();
     const x = e.clientX - r.left, y = e.clientY - r.top;
     if (x >= 0 && y >= 0 && x <= r.width && y <= r.height) {
@@ -785,6 +776,7 @@
       releasePointer();
     }
   }
+  let pointerSuspended = false;
   function releasePointer() {
     if (!pointer) return;
     pointer = null;
@@ -826,8 +818,8 @@
     draw();
   }
   function frame() {
+    if (running) requestAnimationFrame(frame);   // schedule first: a throw must never end the loop
     advance(performance.now());
-    if (running) requestAnimationFrame(frame);
   }
   // watchdog: keep stepping if rAF stops entirely (hidden tab)
   setInterval(() => {
@@ -851,6 +843,7 @@
     step: (n = 1, dtMs = 16.667) => { for (let i = 0; i < n; i++) step(dtMs / 1000); draw(); },
     state: () => ({ head: { ...head }, heading, speed, pointer: pointer && { ...pointer }, segs: segs.map(s => [+s.x.toFixed(1), +s.y.toFixed(1)]), W, H, R, loopMode, loopDist, loopLen: loopMode ? loopLength() : 0, seed: seedState }),
     setPointer: (x, y) => { if (x == null) releasePointer(); else pointer = { x, y }; },
+    suspendPointer: (v) => { pointerSuspended = !!v; if (v) releasePointer(); },
     setLoopDist: (d) => { loopDist = d; },
     pause: (v) => { window.__snakePaused = !!v; }
   };
@@ -962,6 +955,7 @@
     scrim.hidden = false;
     scrim.classList.add('is-open');
     document.body.classList.add('modal-open');
+    if (window.__snake) window.__snake.suspendPointer(true);
     // the calendar iframe exists only while the dialog is open
     if (name === 'call' && zcalSlot && !zcalSlot.firstChild) {
       const f = document.createElement('iframe');
@@ -979,6 +973,7 @@
     scrim.classList.remove('is-open');
     scrim.hidden = true;
     document.body.classList.remove('modal-open');
+    if (window.__snake) window.__snake.suspendPointer(false);
     openName = null;
     if (zcalSlot) zcalSlot.replaceChildren();
     if (lastFocus && lastFocus.focus) lastFocus.focus();
