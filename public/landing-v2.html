@@ -273,6 +273,7 @@
     padding: 1.25rem;
     background: rgba(44, 0, 42, 0.55);
     overflow-y: auto;
+    overscroll-behavior: contain;
   }
   .scrim.is-open { display: grid; place-items: center; }
   .sheet {
@@ -385,8 +386,10 @@
     display: block;
   }
   @media (min-width: 1080px) {
-    .zcal-wrap { width: 950px; height: 610px; }
+    .zcal-wrap { width: 950px; height: 610px; overscroll-behavior: contain; }
     .zcal-frame { width: 1024px; height: 690px; margin-left: -37px; }
+    /* the whole dialog fits, so it must not move at all */
+    #scrim-call { overflow: hidden; }
   }
   .sheet-note { font-size: .8125rem; color: #85687C; text-align: center; margin-top: .75rem; }
   .sheet-note a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
@@ -982,6 +985,9 @@
       f.title = 'Pick a time with Pancake';
       f.setAttribute('allow', 'clipboard-write; camera; microphone');
       f.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+      // exact-fit breakpoint: nothing may scroll, or the crop slides off.
+      // Narrow screens get zcal's tall layout and still need to scroll.
+      if (window.matchMedia('(min-width: 1080px)').matches) f.setAttribute('scrolling', 'no');
       f.src = ZCAL_URL;
       zcalSlot.appendChild(f);
       // if the frame is blocked (third-party storage, extension, strict privacy
