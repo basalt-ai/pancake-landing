@@ -165,9 +165,9 @@
     font-family: "Aeonik Fono", Arial, sans-serif;
     font-weight: 700;
     /* Sized so the long line ("You run your company." = 11.143em, measured)
-       always fits its column: font <= available / 11.7 (metric + 5% safety).
+       always fits its column: font <= available / 11.35 (metric + 2%).
        Two lines, always. Desktop available = stage(<=74rem) - right column - gap. */
-    font-size: clamp(2.5rem, calc(5.128vw - 6.84px), 3.3rem);
+    font-size: clamp(2.5rem, calc(5.286vw - 7.05px), 3.4rem);
     line-height: 1.0;
     letter-spacing: -0.02em;
     margin-top: -0.4rem;
@@ -175,8 +175,8 @@
     padding-bottom: 0.6rem;
   }
   /* stacked: full stage width, gutter 2.5rem down to 767px then 1.25rem */
-  @media (max-width: 1079px) { h1 { font-size: min(3.3rem, calc(8.547vw - 6.84px)); } }
-  @media (max-width: 767px)  { h1 { font-size: min(3.3rem, calc(8.547vw - 3.42px)); } }
+  @media (max-width: 1079px) { h1 { font-size: min(3.4rem, calc(8.811vw - 7.05px)); } }
+  @media (max-width: 767px)  { h1 { font-size: min(3.4rem, calc(8.811vw - 3.52px)); } }
   /* each sentence is one line — never allowed to wrap internally */
   h1 .ln { white-space: nowrap; }
   /* duplicate headline revealed where the snake passes */
@@ -373,24 +373,28 @@
     overflow: hidden;
     border-radius: 18px;
     background: #FFFFFF;
-    width: 100%;
-    height: min(74vh, 820px);
     margin-inline: auto;
+    overscroll-behavior: contain;
   }
   #zcal-slot { display: contents; }   /* the iframe sizes against .zcal-wrap */
-  .zcal-frame {
-    width: 100%;
-    height: calc(100% + 80px);
-    margin-top: -80px;
-    border: 0;
-    display: block;
+  .zcal-frame { border: 0; display: block; }
+
+  /* FIT MODE — the frame is held at 1024px so zcal keeps its compact 950x610
+     card, and the whole thing is scaled to whatever room the window has. The
+     translate drops the card's own 37/80 offset, so it fills the box exactly.
+     Resizing rescales it: the calendar always shows whole, nothing to scroll. */
+  .zcal-wrap.is-fit { width: calc(950px * var(--zs, 1)); height: calc(610px * var(--zs, 1)); }
+  .zcal-wrap.is-fit .zcal-frame {
+    width: 1024px;
+    height: 690px;
+    transform-origin: top left;
+    transform: scale(var(--zs, 1)) translate(-37px, -80px);
   }
-  @media (min-width: 1080px) {
-    .zcal-wrap { width: 950px; height: 610px; overscroll-behavior: contain; }
-    .zcal-frame { width: 1024px; height: 690px; margin-left: -37px; }
-    /* the whole dialog fits, so it must not move at all */
-    #scrim-call { overflow: hidden; }
-  }
+
+  /* NATIVE MODE — below the readable floor, hand back to zcal's own tall
+     layout and let it scroll, which is what it is designed for on a phone. */
+  .zcal-wrap.is-native { width: 100%; height: min(74vh, 820px); }
+  .zcal-wrap.is-native .zcal-frame { width: 100%; height: calc(100% + 80px); margin-top: -80px; }
   .sheet-note { font-size: .8125rem; color: #85687C; text-align: center; margin-top: .75rem; }
   .sheet-note a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
   .sheet-note.is-loud { color: var(--ink); font-weight: 500; }
@@ -985,11 +989,9 @@
       f.title = 'Pick a time with Pancake';
       f.setAttribute('allow', 'clipboard-write; camera; microphone');
       f.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
-      // exact-fit breakpoint: nothing may scroll, or the crop slides off.
-      // Narrow screens get zcal's tall layout and still need to scroll.
-      if (window.matchMedia('(min-width: 1080px)').matches) f.setAttribute('scrolling', 'no');
       f.src = ZCAL_URL;
       zcalSlot.appendChild(f);
+      fitZcal();
       // if the frame is blocked (third-party storage, extension, strict privacy
       // mode) the fallback link is the way through — surface it after a beat
       const note = document.getElementById('zcal-note');
@@ -1031,6 +1033,33 @@
     const first = items[0], last = items[items.length - 1];
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  // Pick the calendar's presentation for the room available: scale the compact
+  // card while it stays readable, otherwise fall back to zcal's scrollable layout.
+  const MIN_SCALE = 0.62;
+  function fitZcal() {
+    const wrap = document.querySelector('.zcal-wrap');
+    if (!wrap || !wrap.firstElementChild) return;
+    const sheet = wrap.closest('.sheet');
+    const availW = sheet.clientWidth - 32;                        // sheet side padding
+    const availH = window.innerHeight - 40 - (sheet.clientHeight - wrap.clientHeight);
+    const s = Math.min(availW / 950, availH / 610, 1);
+    if (s >= MIN_SCALE) {
+      wrap.style.setProperty('--zs', s.toFixed(4));
+      wrap.classList.add('is-fit');
+      wrap.classList.remove('is-native');
+    } else {
+      wrap.style.removeProperty('--zs');
+      wrap.classList.add('is-native');
+      wrap.classList.remove('is-fit');
+    }
+  }
+  let fitPending = false;
+  window.addEventListener('resize', () => {
+    if (openName !== 'call' || fitPending) return;
+    fitPending = true;
+    requestAnimationFrame(() => { fitPending = false; fitZcal(); });
   });
 
   // chips
