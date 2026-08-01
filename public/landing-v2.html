@@ -396,8 +396,10 @@
 
   /* NATIVE MODE — below the readable floor, hand back to zcal's own tall
      layout and let it scroll, which is what it is designed for on a phone. */
+  /* zcal only renders its 80px top band above ~620px of frame width; narrow
+     frames start at 0, so cropping here would slice the logo in half. */
   .zcal-wrap.is-native { width: 100%; height: min(74vh, 820px); }
-  .zcal-wrap.is-native .zcal-frame { width: 100%; height: calc(100% + 80px); margin-top: -80px; }
+  .zcal-wrap.is-native .zcal-frame { width: 100%; height: 100%; margin-top: 0; }
   .sheet-note { font-size: .8125rem; color: #85687C; text-align: center; margin-top: .75rem; }
   .sheet-note a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
   .sheet-note.is-loud { color: var(--ink); font-weight: 500; }
