@@ -371,6 +371,9 @@
      to edge: no band, no side gutters, nothing to scroll. */
   .zcal-wrap {
     overflow: hidden;
+    /* the scaled frame keeps a 1024px layout box, so 'hidden' would leave a
+       scrollable strip behind the clip. 'clip' creates no scroll container. */
+    overflow: clip;
     border-radius: 18px;
     background: #FFFFFF;
     margin-inline: auto;
