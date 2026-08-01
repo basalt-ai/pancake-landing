@@ -366,13 +366,15 @@
 
   .zcal-frame {
     width: 100%;
-    height: min(70vh, 640px);
+    height: min(78vh, 760px);
     border: 0;
     border-radius: 18px;
     background: #FFFFFF;
     display: block;
   }
   .sheet-note { font-size: .8125rem; color: #85687C; text-align: center; margin-top: .75rem; }
+  .sheet-note a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
+  .sheet-note.is-loud { color: var(--ink); font-weight: 500; }
   body.modal-open { overflow: hidden; }
 </style>
 </head>
@@ -931,7 +933,8 @@
     <button type="button" class="sheet-close" data-close aria-label="Close">&#10005;</button>
     <h3 id="call-title" style="padding: 0 .75rem .9rem;">Book a call</h3>
     <div id="zcal-slot"></div>
-    <p class="sheet-note">Pick any slot that works. You will get a calendar invite straight away.</p>
+    <p class="sheet-note" id="zcal-note">Pick any slot that works, you will get the invite straight away. Calendar not loading?
+      <a href="https://zcal.co/i/ZEHl48rv" target="_blank" rel="noopener">Open it in a new tab</a>.</p>
   </div>
 </div>
 
@@ -961,8 +964,21 @@
       const f = document.createElement('iframe');
       f.className = 'zcal-frame';
       f.title = 'Pick a time with Pancake';
+      f.setAttribute('allow', 'clipboard-write; camera; microphone');
+      f.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
       f.src = ZCAL_URL;
       zcalSlot.appendChild(f);
+      // if the frame is blocked (third-party storage, extension, strict privacy
+      // mode) the fallback link is the way through — surface it after a beat
+      const note = document.getElementById('zcal-note');
+      if (note) {
+        note.classList.remove('is-loud');
+        clearTimeout(window.__zcalT);
+        window.__zcalT = setTimeout(() => {
+          try { if (!f.contentWindow || f.clientHeight < 80) note.classList.add('is-loud'); }
+          catch (e) { note.classList.add('is-loud'); }
+        }, 3500);
+      }
     }
     const first = name === 'waitlist' ? document.getElementById('wl-email') : scrim.querySelector('[data-close]');
     requestAnimationFrame(() => { if (first) first.focus(); });
