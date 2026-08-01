@@ -285,7 +285,7 @@
     box-shadow: 0 24px 60px rgba(44, 0, 42, 0.22);
     animation: sheet-in .32s cubic-bezier(.22,1,.36,1) both;
   }
-  .sheet.is-wide { max-width: 66rem; padding: 1.75rem 1rem 1rem; }
+  .sheet.is-wide { max-width: 61.5rem; padding: 1.75rem 1rem 1rem; }
   @keyframes sheet-in { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) { .sheet { animation: none; } }
   @media (max-width: 479px) { .sheet { padding: 1.75rem 1.25rem 1.5rem; border-radius: 22px; } }
@@ -364,22 +364,30 @@
   .sheet-done { text-align: center; padding: 1rem 0 .5rem; }
   .sheet-done h3 { margin-bottom: .5rem; }
 
+  /* zcal renders its widget card at a fixed 950x610 inside the frame, offset
+     37px from the left and 80px from the top. The wrapper is sized to the card
+     and the frame is pulled by exactly those offsets, so the card fills it edge
+     to edge: no band, no side gutters, nothing to scroll. */
   .zcal-wrap {
-    overflow: hidden;              /* crops the band the iframe renders above its content */
+    overflow: hidden;
     border-radius: 18px;
     background: #FFFFFF;
-    height: min(78vh, 640px);
+    width: 100%;
+    height: min(74vh, 820px);
+    margin-inline: auto;
   }
   #zcal-slot { display: contents; }   /* the iframe sizes against .zcal-wrap */
   .zcal-frame {
     width: 100%;
-    height: calc(100% + 80px);     /* +80 then pulled up: the blank header never shows */
+    height: calc(100% + 80px);
     margin-top: -80px;
     border: 0;
     display: block;
   }
-  /* below zcal's 1000px breakpoint it lays out tall, so give it more room */
-  @media (max-width: 1100px) { .zcal-wrap { height: min(74vh, 820px); } }
+  @media (min-width: 1080px) {
+    .zcal-wrap { width: 950px; height: 610px; }
+    .zcal-frame { width: 1024px; height: 690px; margin-left: -37px; }
+  }
   .sheet-note { font-size: .8125rem; color: #85687C; text-align: center; margin-top: .75rem; }
   .sheet-note a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
   .sheet-note.is-loud { color: var(--ink); font-weight: 500; }
