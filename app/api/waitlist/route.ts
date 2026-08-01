@@ -54,6 +54,10 @@ async function notifySlack(fields: Record<string, unknown>) {
     .join("\n");
 
   const payload = {
+    // App Incoming Webhooks post to the channel they were created for (create
+    // it against #signups). `channel` is honoured by legacy/bot-token webhooks
+    // and harmlessly ignored by app webhooks — it documents the intended target.
+    channel: "#signups",
     text: `New GTM waitlist signup: ${fields["Email"]}`,
     blocks: [
       { type: "header", text: { type: "plain_text", text: "🥞 New GTM waitlist signup", emoji: true } },
