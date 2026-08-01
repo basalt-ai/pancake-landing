@@ -203,6 +203,9 @@
   .button {
     position: relative;
     font-family: inherit;
+    border: 0;
+    appearance: none;
+    -webkit-appearance: none;
     overflow: hidden;
     isolation: isolate;
     display: inline-block;
@@ -221,6 +224,9 @@
     background: #FFFFFF;
     box-shadow: inset 0 0 0 1px rgba(44, 0, 42, 0.10);
   }
+  .button:focus { outline: none; }
+  .button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .chip:focus-visible, .sheet-close:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
   @media (max-width: 479px) { .button { padding-top: 16px; padding-bottom: 16px; } }
 
   .btn-fx {
@@ -266,11 +272,16 @@
     display: none;
     padding: 1.25rem;
     background: rgba(44, 0, 42, 0.42);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
     overflow-y: auto;
   }
-  .scrim.is-open { display: grid; place-items: center; }
+  /* blur only while open: a hidden backdrop-filter can keep a compositing
+     layer alive on Safari and tax every frame of the canvas animation */
+  .scrim.is-open {
+    display: grid;
+    place-items: center;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
   .sheet {
     position: relative;
     width: 100%;
@@ -646,7 +657,8 @@
     const oldW = W, oldH = H, wasLoop = loopMode;
     W = r.width; H = r.height;
     loopMode = isLoopStage();
-    DPR = Math.max(window.devicePixelRatio || 1, 2);
+    DPR = 2; // fixed 2x supersample — matches the reference, and a 3x phone was
+            // paying 2.25x the multiply-blend fill cost for no visible gain
     canvas.width = Math.round(W * DPR);
     canvas.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
@@ -739,11 +751,26 @@
     // clip-paths for the text overlays, each in its span's local coords.
     // H1: full circles (the classic reveal). H2: intersection lenses only —
     // small text goes cream only where >=2 circles multiply (contrast holds there).
-    const cr = canvas.getBoundingClientRect();
+    // Rects are cached (see refreshMetrics) instead of measured every frame, and an
+    // overlay the snake isn't touching keeps its empty path instead of rebuilding one.
+    if (!metrics || entranceSettling) refreshMetrics();
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (let i = 0; i < N; i++) {
+      if (segs[i].x < minX) minX = segs[i].x;
+      if (segs[i].x > maxX) maxX = segs[i].x;
+      if (segs[i].y < minY) minY = segs[i].y;
+      if (segs[i].y > maxY) maxY = segs[i].y;
+    }
     for (let oi = 0; oi < overlays.length; oi++) {
       const span = overlays[oi];
-      const sr = span.getBoundingClientRect();
-      const ox = cr.left - sr.left, oy = cr.top - sr.top;
+      const m = metrics.spans[oi];
+      if (!m) continue;
+      // stage-space box of this text, grown by R: no overlap, nothing to reveal
+      if (maxX + R < m.left || minX - R > m.right || maxY + R < m.top || minY - R > m.bottom) {
+        if (lastPaths[oi] !== '') { span.style.clipPath = 'path("M 0 0 Z")'; lastPaths[oi] = ''; }
+        continue;
+      }
+      const ox = -m.left, oy = -m.top;
       let path = '';
       if (oi === 0) {
         for (let i = 0; i < N; i++) {
@@ -766,8 +793,24 @@
         }
         if (!path) path = 'M 0 0 Z ';
       }
-      span.style.clipPath = `path("${path.trim()}")`;
+      const next = path.trim();
+      if (next !== lastPaths[oi]) { span.style.clipPath = `path("${next}")`; lastPaths[oi] = next; }
     }
+  }
+
+  // Overlay geometry in stage coordinates. Stable except during the entrance
+  // transform, a resize, a scroll, or a font swap — so we recompute on those.
+  let metrics = null;
+  let entranceSettling = true;   // the reveal band is still animating in
+  const lastPaths = overlays.map(() => null);
+  function refreshMetrics() {
+    const cr = canvas.getBoundingClientRect();
+    metrics = {
+      spans: overlays.map((span) => {
+        const sr = span.getBoundingClientRect();
+        return { left: sr.left - cr.left, top: sr.top - cr.top, right: sr.right - cr.left, bottom: sr.bottom - cr.top };
+      })
+    };
   }
 
   // ---------- pointer ----------
@@ -832,8 +875,14 @@
   }, 100);
 
   resize();
-  window.addEventListener('resize', () => { resize(); draw(); });
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw());
+  window.addEventListener('resize', () => { resize(); refreshMetrics(); draw(); });
+  window.addEventListener('scroll', () => { refreshMetrics(); }, { passive: true });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { refreshMetrics(); draw(); });
+  const content = document.getElementById('content');
+  content.addEventListener('transitionend', (e) => {
+    if (e.propertyName === 'transform' || e.propertyName === 'opacity') entranceSettling = false;
+  });
+  setTimeout(() => { entranceSettling = false; }, 2000); // fallback if the transition never fires
   draw();
   if (running) requestAnimationFrame(frame);
 
