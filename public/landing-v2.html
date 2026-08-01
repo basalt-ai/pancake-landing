@@ -396,9 +396,12 @@
 
   /* NATIVE MODE — below the readable floor, hand back to zcal's own tall
      layout and let it scroll, which is what it is designed for on a phone. */
-  /* zcal only renders its 80px top band above ~620px of frame width; narrow
-     frames start at 0, so cropping here would slice the logo in half. */
-  .zcal-wrap.is-native { width: 100%; height: min(74vh, 820px); }
+  /* NATIVE MODE (narrow frames): zcal's content is ~769px tall and starts at
+     y=0 (no 80px band below ~620px width). We give the iframe that full height
+     so it never scrolls internally — the whole dialog scrolls as one block,
+     logo and calendar together, instead of the calendar sliding inside a fixed
+     white box. */
+  .zcal-wrap.is-native { width: 100%; height: 780px; }
   .zcal-wrap.is-native .zcal-frame { width: 100%; height: 100%; margin-top: 0; }
   .sheet-note { font-size: .8125rem; color: #85687C; text-align: center; margin-top: .75rem; }
   .sheet-note a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
