@@ -30,6 +30,59 @@ function normalizeUrl(raw: string): string | null {
 }
 
 /**
+ * Fire a Slack notification for a new signup. Best-effort: gated on an env var,
+ * time-boxed, and fully swallowed on failure so it can never break a signup that
+ * already succeeded in Airtable. No-op when SLACK_WAITLIST_WEBHOOK_URL is unset.
+ */
+async function notifySlack(fields: Record<string, unknown>) {
+  const url = process.env.SLACK_WAITLIST_WEBHOOK_URL;
+  if (!url) return;
+
+  const line = (label: string, value: unknown) =>
+    value ? `*${label}:* ${String(value)}` : null;
+  const handoff = Array.isArray(fields["GTM to hand off"])
+    ? (fields["GTM to hand off"] as string[]).join(", ")
+    : "";
+  const text = [
+    line("Email", fields["Email"]),
+    line("Company", fields["Company URL"]),
+    line("What they do", fields["What they do"]),
+    line("Wants to hand off", handoff),
+    line("Source", fields["Source"]),
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  const payload = {
+    // App Incoming Webhooks post to the channel they were created for (create
+    // it against #signups). `channel` is honoured by legacy/bot-token webhooks
+    // and harmlessly ignored by app webhooks — it documents the intended target.
+    channel: "#signups",
+    text: `New GTM waitlist signup: ${fields["Email"]}`,
+    blocks: [
+      { type: "header", text: { type: "plain_text", text: "🥞 New GTM waitlist signup", emoji: true } },
+      { type: "section", text: { type: "mrkdwn", text } },
+    ],
+  };
+
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 2500);
+  try {
+    await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      signal: ctrl.signal,
+      cache: "no-store",
+    });
+  } catch (err) {
+    console.error("Slack waitlist notify failed:", err);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
  * Landing-page waitlist signup. Open to anyone, guarded the same way as the
  * roadmap board:
  *   1. a honeypot field (`website`) — bots fill it, humans never see it
@@ -101,6 +154,10 @@ export async function POST(request: Request) {
     console.error("Waitlist write failed:", res.status, await res.text());
     return NextResponse.json({ error: "We couldn't save that. Try again in a moment." }, { status: 502 });
   }
+
+  // Notify Slack (best-effort — the row is already saved, so a Slack hiccup
+  // must not turn a good signup into an error).
+  await notifySlack(fields);
 
   return NextResponse.json({ ok: true }, { status: 201 });
 }
