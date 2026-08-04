@@ -104,7 +104,9 @@ function PromptLine({ row, unlocked }: { row: PromptRow; unlocked: boolean }) {
   return (
     <li data-state={row.status} data-cited={row.cited}>
       <span className="rpt-flip rpt-prompt-mark" aria-hidden>
-        {row.status !== "checking" && <MarkIcon ok={row.cited === true} />}
+        {row.status !== "checking" && row.cited !== undefined && (
+          <MarkIcon ok={row.cited === true} />
+        )}
       </span>
       <div>
         <p className="rpt-prompt-text">{row.prompt}</p>
@@ -186,7 +188,10 @@ export function GoogleCard({ state }: { state: ReportState }) {
             ))}
           </ul>
         ) : (
-          <Locked lines={Math.min(lockedCount, 3)} note={`${lockedCount} more searches, with positions`} />
+          <Locked
+            lines={Math.min(lockedCount, 3)}
+            note={`${lockedCount} more searches with positions — unlock below`}
+          />
         ))}
       {google.estimated && <p className="rpt-estimated">estimated from your site content</p>}
     </Card>
@@ -220,7 +225,7 @@ export function OpportunitiesCard({ state }: { state: ReportState }) {
             ))}
           </div>
         ) : (
-          <Locked lines={rest.length} note={`${rest.length} more, ICP-checked`} />
+          <Locked lines={rest.length} note={`${rest.length} more opportunities — unlock below`} />
         ))}
     </Card>
   );

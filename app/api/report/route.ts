@@ -10,7 +10,7 @@ import type { Analysis, GoogleRow, RankedKeywords, ScanEvent } from "@/lib/scan/
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 90;
+export const maxDuration = 120;
 
 /**
  * The free AI GTM report scan. One POST, one SSE stream: deterministic site
@@ -159,12 +159,22 @@ export async function POST(request: Request) {
         // Google card: real rankings when they arrived, Claude's read otherwise.
         const keywords = keywordsEarly ?? (await keywordsPromise);
         if (keywords) {
-          const rows: GoogleRow[] = keywords.page2.map((k) => ({
-            term: k.keyword,
-            position: k.position,
-            volume: k.volume,
-            detail: `position ${k.position} · ${k.volume.toLocaleString()} searches/mo`,
-          }));
+          // A marketplace ranks for its sellers' brand names — Claude selects
+          // which real page-2 keywords are money searches for THIS company.
+          const selected = new Set(
+            analysis.relevant_page2_keywords.map((k) => k.toLowerCase().trim()),
+          );
+          const relevant = selected.size
+            ? keywords.page2.filter((k) => selected.has(k.keyword.toLowerCase().trim()))
+            : keywords.page2;
+          const rows: GoogleRow[] = (relevant.length ? relevant : keywords.page2)
+            .slice(0, 8)
+            .map((k) => ({
+              term: k.keyword,
+              position: k.position,
+              volume: k.volume,
+              detail: `position ${k.position} · ${k.volume.toLocaleString()} searches/mo`,
+            }));
           send({
             type: "google",
             rows,

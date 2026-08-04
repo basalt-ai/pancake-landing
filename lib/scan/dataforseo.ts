@@ -82,7 +82,7 @@ export async function rankedKeywords(host: string): Promise<RankedKeywords | nul
       target: host,
       language_name: geo.language_name,
       location_code: geo.location_code,
-      limit: 50,
+      limit: 100,
       order_by: ["keyword_data.keyword_info.search_volume,desc"],
     },
     9000,
@@ -106,7 +106,7 @@ export async function rankedKeywords(host: string): Promise<RankedKeywords | nul
   return {
     totalKeywords: result.total_count ?? rows.length,
     top10: rows.filter((r) => r.position <= 10).length,
-    page2: rows.filter((r) => r.position >= 11 && r.position <= 20).slice(0, 12),
+    page2: rows.filter((r) => r.position >= 11 && r.position <= 20).slice(0, 25),
   };
 }
 

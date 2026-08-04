@@ -116,7 +116,19 @@ function reducer(state: ReportState, action: Action): ReportState {
         case "score":
           return bump({ ...state, score: ev.value });
         case "done":
-          return { ...state, phase: "report", progress: PROGRESS_STEPS, statusLine: "" };
+          return {
+            ...state,
+            phase: "report",
+            progress: PROGRESS_STEPS,
+            statusLine: "",
+            // A cut stream can leave checks unresolved — close them out as
+            // neutral so nothing spins forever.
+            prompts: state.prompts.map((p) =>
+              p.status === "checking"
+                ? { ...p, status: "done" as const, detail: "This check didn't finish." }
+                : p,
+            ),
+          };
         case "error":
           return { ...state, phase: "error", error: { code: ev.code, message: ev.message } };
         default:
@@ -142,6 +154,7 @@ export function useReport() {
   const queueRef = useRef<ScanEvent[]>([]);
   const pumpingRef = useRef(false);
   const doneRef = useRef(false);
+  const scoreSeenRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const reducedRef = useRef(false);
@@ -181,6 +194,7 @@ export function useReport() {
   const enqueue = useCallback(
     (ev: ScanEvent) => {
       if (ev.type === "done" || ev.type === "error") doneRef.current = true;
+      if (ev.type === "score") scoreSeenRef.current = true;
       queueRef.current.push(ev);
       pump();
     },
@@ -194,6 +208,7 @@ export function useReport() {
       abortRef.current?.abort();
       queueRef.current = [];
       doneRef.current = false;
+      scoreSeenRef.current = false;
       dispatch({ type: "start", domain, demo: !!opts?.demo });
 
       if (opts?.demo) {
@@ -236,6 +251,19 @@ export function useReport() {
             } catch {
               /* skip malformed frame */
             }
+          }
+        }
+        // Stream closed without a terminal event (server hit its time limit,
+        // proxy dropped the connection): finish gracefully instead of spinning.
+        if (!doneRef.current) {
+          if (scoreSeenRef.current) {
+            enqueue({ type: "done", domain, mode: "estimated" });
+          } else {
+            enqueue({
+              type: "error",
+              code: "failed",
+              message: "The scan got cut off mid-run. Run it again — it usually completes.",
+            });
           }
         }
       } catch {

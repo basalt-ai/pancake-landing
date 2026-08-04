@@ -64,6 +64,8 @@ export type Analysis = {
   company: { name: string; one_liner: string; icp: string };
   buyer_prompts: { prompt: string; likely_cited: boolean; reason: string }[];
   money_keywords: { keyword: string; why_it_matters: string }[];
+  /** Exact keyword strings selected from the real page-2 table (empty when no table given). */
+  relevant_page2_keywords: string[];
   google_commentary: string;
   opportunities: OpportunityItem[];
   content_readiness: number;

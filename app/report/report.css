@@ -424,6 +424,11 @@ li[data-state="checking"] .rpt-prompt-mark {
   background: var(--palette-chrome-30);
 }
 
+/* A check that never resolved (cut stream): neutral, not pass/fail. */
+li[data-state="done"]:not([data-cited]) .rpt-prompt-mark {
+  background: var(--palette-chrome-30);
+}
+
 .rpt-anim li[data-state="checking"] .rpt-prompt-mark {
   animation: rpt-pulse 1.2s ease-in-out infinite;
 }

@@ -9,7 +9,7 @@ import type { Analysis, RankedKeywords, SiteSnapshot } from "./types";
  */
 
 const API_URL = "https://api.anthropic.com/v1/messages";
-const TIMEOUT_MS = 50_000;
+const TIMEOUT_MS = 60_000;
 
 // Structured-outputs schema: no minItems/maxItems/maxLength (unsupported
 // constraints there) — item counts live in the descriptions instead.
@@ -20,6 +20,7 @@ const REPORT_SCHEMA = {
     "company",
     "buyer_prompts",
     "money_keywords",
+    "relevant_page2_keywords",
     "google_commentary",
     "opportunities",
     "content_readiness",
@@ -71,6 +72,12 @@ const REPORT_SCHEMA = {
         },
       },
     },
+    relevant_page2_keywords: {
+      type: "array",
+      description:
+        "From the real page-2 keyword table you were given (if any): the EXACT keyword strings that are genuine buying-intent searches for THIS company's own offer. Exclude third-party brand names, product names the company doesn't own, people, and unrelated topics — a marketplace ranking for its sellers' brand names must not list those. Empty array when no table was provided or nothing qualifies.",
+      items: { type: "string" },
+    },
     google_commentary: {
       type: "string",
       description:
@@ -117,7 +124,7 @@ export async function analyzeSite(
 
   const keywordBlock = keywords
     ? `\n\nReal Google data (DataForSEO): ranks for ${keywords.totalKeywords} keywords, ${keywords.top10} in the top 10. Page-2 keywords within reach: ${keywords.page2
-        .slice(0, 15)
+        .slice(0, 25)
         .map((k) => `"${k.keyword}" (pos ${k.position}, ${k.volume}/mo)`)
         .join(", ")}`
     : "\n\nNo Google ranking data available — estimate from the site content alone.";
@@ -174,6 +181,7 @@ ${site.textExtract}${keywordBlock}`;
     analysis.buyer_prompts = analysis.buyer_prompts.slice(0, 10);
     analysis.money_keywords = analysis.money_keywords.slice(0, 5);
     analysis.opportunities = analysis.opportunities.slice(0, 4);
+    analysis.relevant_page2_keywords = (analysis.relevant_page2_keywords ?? []).slice(0, 12);
     return analysis;
   } finally {
     clearTimeout(timer);

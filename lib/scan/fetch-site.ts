@@ -40,6 +40,19 @@ async function fetchCapped(url: string): Promise<{ status: number; body: string 
   }
 }
 
+/** Sites ship titles like "Europe&#039;s..." — decode before anyone reads them. */
+function decodeEntities(s: string): string {
+  return s
+    .replace(/&#(\d+);/g, (_, n: string) => String.fromCodePoint(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, n: string) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&apos;/gi, "'")
+    .replace(/&nbsp;/gi, " ");
+}
+
 function metaContent(html: string, key: string): string {
   // Matches <meta property="og:image" content="..."> and name= variants, any attribute order.
   const re = new RegExp(
@@ -47,7 +60,7 @@ function metaContent(html: string, key: string): string {
     "i",
   );
   const m = html.match(re);
-  return (m?.[1] ?? m?.[2] ?? "").trim();
+  return decodeEntities((m?.[1] ?? m?.[2] ?? "").trim());
 }
 
 function extractSchemaTypes(html: string): string[] {
@@ -97,11 +110,13 @@ function crawlerAccess(robotsTxt: string | null): Record<string, boolean> {
 }
 
 function stripToText(html: string): string {
-  return html
-    .replace(/<script[\s\S]*?<\/script>/gi, " ")
-    .replace(/<style[\s\S]*?<\/style>/gi, " ")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&[a-z#0-9]+;/gi, " ")
+  return decodeEntities(
+    html
+      .replace(/<script[\s\S]*?<\/script>/gi, " ")
+      .replace(/<style[\s\S]*?<\/style>/gi, " ")
+      .replace(/<[^>]+>/g, " "),
+  )
+    .replace(/&[a-z]+;/gi, " ")
     .replace(/\s+/g, " ")
     .trim()
     .slice(0, TEXT_EXTRACT_CAP);
@@ -127,7 +142,7 @@ export async function fetchSite(url: string, host: string): Promise<SiteSnapshot
   return {
     url,
     host,
-    title: (html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1] ?? "").trim().slice(0, 200),
+    title: decodeEntities((html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1] ?? "").trim()).slice(0, 200),
     metaDescription: metaContent(html, "description").slice(0, 300),
     ogImage: /^https?:\/\//.test(ogImage) ? ogImage : "",
     favicon: `https://www.google.com/s2/favicons?domain=${host}&sz=64`,
