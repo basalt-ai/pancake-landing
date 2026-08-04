@@ -34,20 +34,46 @@ function sseHeaders() {
   };
 }
 
-function computeScore(
+function computeScores(
   checks: { pass: boolean }[],
   citedCount: number,
   citationTotal: number,
   keywords: RankedKeywords | null,
   analysis: Analysis,
-): number {
+  realRankedRows: number,
+): { score: number; potential: number } {
   const checkScore = (checks.filter((c) => c.pass).length / checks.length) * 100;
   const citationScore = citationTotal > 0 ? (citedCount / citationTotal) * 100 : analysis.content_readiness;
   const googleScore = keywords
     ? Math.min(100, keywords.top10 * 9 + (keywords.totalKeywords > 0 ? 15 : 0))
     : analysis.content_readiness;
   const blended = 0.25 * checkScore + 0.4 * citationScore + 0.35 * googleScore;
-  return Math.min(97, Math.max(3, Math.round(blended)));
+  const score = Math.min(97, Math.max(3, Math.round(blended)));
+  // Same formula under the "gaps closed" scenario the report lays out: every
+  // check fixed, cited in at least half the buyer questions, the shown
+  // within-reach searches won. An estimate, never a promise — copy says so.
+  const potentialGoogle = keywords
+    ? Math.min(100, (keywords.top10 + realRankedRows) * 9 + 15)
+    : Math.max(googleScore, 60);
+  const potentialBlended = 0.25 * 100 + 0.4 * Math.max(citationScore, 50) + 0.35 * potentialGoogle;
+  const potential = Math.min(97, Math.max(Math.round(potentialBlended), score + 5));
+  return { score, potential };
+}
+
+/**
+ * "mini perfumes wholesale" vs "miniature perfumes wholesale" is one search,
+ * not two. Tokens match on equality or a shared 4+ char prefix; two terms are
+ * duplicates when most tokens of the longer one match.
+ */
+function nearDup(a: string, b: string): boolean {
+  const tok = (s: string) => s.toLowerCase().split(/[^a-z0-9à-öø-ÿ]+/).filter(Boolean);
+  const ta = tok(a);
+  const tb = tok(b);
+  if (!ta.length || !tb.length) return false;
+  const match = (x: string, y: string) =>
+    x === y || (x.length >= 4 && y.startsWith(x)) || (y.length >= 4 && x.startsWith(y));
+  const hits = ta.filter((x) => tb.some((y) => match(x, y))).length;
+  return hits / Math.max(ta.length, tb.length) >= 0.75;
 }
 
 export async function POST(request: Request) {
@@ -165,6 +191,7 @@ export async function POST(request: Request) {
 
         // Google card: real rankings when they arrived, Claude's read otherwise.
         const keywords = keywordsEarly ?? (await keywordsPromise);
+        let realRankedRows = 0;
         if (keywords) {
           // A marketplace ranks for its sellers' brand names — Claude selects
           // which real within-reach keywords are money searches for THIS company.
@@ -172,22 +199,25 @@ export async function POST(request: Request) {
           const relevant = selected.size
             ? keywords.withinReach.filter((k) => selected.has(k.keyword.toLowerCase().trim()))
             : keywords.withinReach;
-          const rows: GoogleRow[] = relevant.slice(0, 6).map((k) => ({
-            term: k.keyword,
-            position: k.position,
-            volume: k.volume,
-            detail: `position ${k.position} · ${k.volume.toLocaleString()} searches/mo`,
-          }));
+          const rows: GoogleRow[] = [];
+          for (const k of relevant) {
+            if (rows.length >= 6) break;
+            if (rows.some((r) => nearDup(r.term, k.keyword))) continue;
+            rows.push({
+              term: k.keyword,
+              position: k.position,
+              volume: k.volume,
+              detail: `position ${k.position} · ${k.volume.toLocaleString()} searches/mo`,
+            });
+          }
+          realRankedRows = rows.length;
           // Thin real table (a marketplace's rankings are mostly other brands):
           // pad with the money searches this company *should* own, clearly
           // marked, so the card never shrinks to one odd row.
           if (rows.length < 5) {
-            const seen = rows.map((r) => r.term.toLowerCase());
             for (const k of analysis.money_keywords) {
               if (rows.length >= 6) break;
-              const term = k.keyword.toLowerCase();
-              if (seen.some((s) => s.includes(term) || term.includes(s))) continue;
-              seen.push(term);
+              if (rows.some((r) => nearDup(r.term, k.keyword))) continue;
               rows.push({
                 term: k.keyword,
                 position: null,
@@ -268,10 +298,15 @@ export async function POST(request: Request) {
           count: analysis.opportunities.length,
           items: analysis.opportunities,
         });
-        send({
-          type: "score",
-          value: computeScore(checks, citedCount, prompts.length, keywords, analysis),
-        });
+        const scores = computeScores(
+          checks,
+          citedCount,
+          prompts.length,
+          keywords,
+          analysis,
+          realRankedRows,
+        );
+        send({ type: "score", value: scores.score, potential: scores.potential });
         send({
           type: "done",
           domain: target.host,

@@ -62,20 +62,6 @@ function LockIcon() {
   );
 }
 
-function Locked({ lines, note }: { lines: number; note: string }) {
-  return (
-    <div className="rpt-locked" aria-label={`Locked: ${note}`}>
-      {Array.from({ length: lines }, (_, i) => (
-        <span className="rpt-skeleton" key={i} style={{ width: `${88 - i * 14}%` }} />
-      ))}
-      <span className="rpt-locked-note">
-        <LockIcon />
-        {note}
-      </span>
-    </div>
-  );
-}
-
 export function ChecklistCard({ state }: { state: ReportState }) {
   if (state.checks.length === 0) return null;
   return (
@@ -160,13 +146,9 @@ export function PromptsCard({ state }: { state: ReportState }) {
   );
 }
 
-const FREE_GOOGLE_ROWS = 3;
-
 export function GoogleCard({ state }: { state: ReportState }) {
   const google = state.google;
   if (!google) return null;
-  const free = google.rows.slice(0, FREE_GOOGLE_ROWS);
-  const lockedCount = Math.max(0, google.rows.length - FREE_GOOGLE_ROWS);
   return (
     <Card className="rpt-card">
       <header className="rpt-card-head">
@@ -175,29 +157,13 @@ export function GoogleCard({ state }: { state: ReportState }) {
       </header>
       {google.commentary && <p className="rpt-icp-line">{google.commentary}</p>}
       <ul className="rpt-google">
-        {free.map((row) => (
+        {google.rows.map((row) => (
           <li key={row.term}>
             <strong>{row.term}</strong>
             <span>{row.detail}</span>
           </li>
         ))}
       </ul>
-      {lockedCount > 0 &&
-        (state.unlocked ? (
-          <ul className="rpt-google rpt-unlock-cascade">
-            {google.rows.slice(FREE_GOOGLE_ROWS).map((row) => (
-              <li key={row.term}>
-                <strong>{row.term}</strong>
-                <span>{row.detail}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <Locked
-            lines={Math.min(lockedCount, 3)}
-            note={`${lockedCount} more searches with positions — unlock below`}
-          />
-        ))}
       {google.estimated && <p className="rpt-estimated">estimated from your site content</p>}
     </Card>
   );
@@ -230,8 +196,35 @@ export function OpportunitiesCard({ state }: { state: ReportState }) {
             ))}
           </div>
         ) : (
-          <Locked lines={rest.length} note={`${rest.length} more opportunities — unlock below`} />
+          // Owner-style tease: the real titles sell the report — only the
+          // how-to behind each stays locked.
+          <>
+            <ul className="rpt-opp-teasers">
+              {rest.map((item) => (
+                <li key={item.title}>
+                  <LockIcon />
+                  <strong>{item.title}</strong>
+                </li>
+              ))}
+            </ul>
+            <p className="rpt-locked-note">the playbook behind each one — unlock below</p>
+          </>
         ))}
+      {state.score !== null && state.potentialScore !== null && (
+        <div className="rpt-potential">
+          <div className="rpt-potential-bar" aria-hidden>
+            <span
+              className="rpt-potential-fill-after"
+              style={{ width: `${state.potentialScore}%` }}
+            />
+            <span className="rpt-potential-fill-now" style={{ width: `${state.score}%` }} />
+          </div>
+          <p>
+            Today <strong>{state.score}/100</strong> · with these applied, our estimate puts{" "}
+            {state.domain} at <strong>{state.potentialScore}/100</strong>
+          </p>
+        </div>
+      )}
     </Card>
   );
 }

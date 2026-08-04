@@ -506,40 +506,10 @@ li[data-state="done"]:not([data-cited]) .rpt-prompt-mark {
   line-height: 1.5;
 }
 
-/* Locked layer */
+/* Locked layer — always static text and locks, never shimmer: an animated
+   placeholder reads as "still loading", and this content is done, just gated. */
 
-.rpt-locked {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  padding-top: var(--spacing-sm);
-}
-
-/* Pill-shaped shimmer bars — one chrome step warmer than before so the
-   tease is visible on the white card without shouting. */
-.rpt-skeleton {
-  display: block;
-  height: var(--spacing-lg);
-  border-radius: 100vw;
-  background: linear-gradient(
-    90deg,
-    var(--palette-chrome-30) 25%,
-    var(--palette-chrome-50) 50%,
-    var(--palette-chrome-30) 75%
-  );
-  background-size: 200% 100%;
-}
-
-.rpt-anim .rpt-skeleton {
-  animation: rpt-shimmer 1.6s linear infinite;
-}
-
-.rpt-skeleton-inline {
-  width: 60%;
-  margin-top: var(--spacing-sm);
-}
-
-/* Inline locked caption on a not-cited prompt row — deliberately static. */
+/* Inline locked caption on a not-cited prompt row. */
 .rpt-locked-inline {
   display: inline-flex;
   align-items: center;
@@ -567,6 +537,74 @@ li[data-state="done"]:not([data-cited]) .rpt-prompt-mark {
 .rpt-locked-note svg {
   display: block;
   flex-shrink: 0;
+}
+
+/* Owner-style opportunity teasers: real titles visible, lock on each. */
+.rpt-opp-teasers {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.rpt-opp-teasers li {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) 0;
+  border-top: 1px solid color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
+}
+
+.rpt-opp-teasers li svg {
+  flex-shrink: 0;
+  color: var(--subtle-text);
+  opacity: 0.6;
+}
+
+.rpt-opp-teasers li strong {
+  font-weight: 500;
+}
+
+/* "Score if applied" strip — the up-and-to-the-right tease. */
+.rpt-potential {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.rpt-potential-bar {
+  position: relative;
+  height: 10px;
+  border-radius: 100vw;
+  background: var(--palette-chrome-30);
+  overflow: hidden;
+}
+
+.rpt-potential-bar span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 100vw;
+}
+
+.rpt-potential-fill-after {
+  background: var(--palette-green-20);
+}
+
+.rpt-potential-fill-now {
+  background: var(--strong-branded-surface);
+}
+
+.rpt-potential p {
+  color: var(--subtle-text);
+  font-size: var(--font-size-body-small);
+}
+
+.rpt-potential p strong {
+  color: var(--default-text);
 }
 
 .rpt-unlock-cascade > * {
@@ -726,15 +764,6 @@ li[data-state="done"]:not([data-cited]) .rpt-prompt-mark {
   }
 }
 
-@keyframes rpt-shimmer {
-  from {
-    background-position: 200% 0;
-  }
-  to {
-    background-position: -200% 0;
-  }
-}
-
 /* ── Mobile ────────────────────────────────────────────────── */
 
 @media (max-width: 560px) {
@@ -799,7 +828,6 @@ li[data-state="done"]:not([data-cited]) .rpt-prompt-mark {
   .rpt-anim .rpt-prompt-text,
   .rpt-anim .rpt-flip,
   .rpt-anim .rpt-chip-og,
-  .rpt-anim .rpt-skeleton,
   .rpt-anim .rpt-status::before,
   .rpt-anim .rpt-snake span[data-active="true"],
   .rpt-unlock-cascade > * {

@@ -81,7 +81,7 @@ const REPORT_SCHEMA = {
     relevant_keywords: {
       type: "array",
       description:
-        "From the real within-reach keyword table you were given (if any): up to 8 EXACT keyword strings, most valuable first, that a real buyer of THIS company's own offer would type. Prefer searches that describe the company's category or service. Exclude third-party brand names, product names the company doesn't own, people, and unrelated topics — a marketplace ranking for its sellers' brand names must not list those. Empty array when no table was provided or nothing qualifies.",
+        "From the real within-reach keyword table you were given (if any): up to 8 EXACT keyword strings, most valuable first, that a real buyer of THIS company's own offer would type. Prefer searches that describe the company's category or service. Never include two variants of the same search (singular/plural, near-identical wording) — keep only the strongest one. Exclude third-party brand names, product names the company doesn't own, people, and unrelated topics — a marketplace ranking for its sellers' brand names must not list those. Empty array when no table was provided or nothing qualifies.",
       items: { type: "string" },
     },
     google_commentary: {

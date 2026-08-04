@@ -36,7 +36,8 @@ export type ScanEvent =
       commentary?: string;
     }
   | { type: "opportunities"; count: number; items: OpportunityItem[] }
-  | { type: "score"; value: number }
+  /** potential = the recomputed score if the surfaced gaps were closed. */
+  | { type: "score"; value: number; potential?: number }
   | { type: "done"; domain: string; cached?: boolean; mode: "live" | "estimated" }
   | {
       type: "error";

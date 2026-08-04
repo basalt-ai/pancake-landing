@@ -61,9 +61,9 @@ export function EmailGate({
         <h2>The full report is written.</h2>
       </header>
       <p>
-        You watched the scan run. Still locked: who gets cited instead of you, and every
-        remaining search with its position and volume. Drop your email and it unlocks right
-        here, on this screen.
+        You watched the scan run. Still locked: what ChatGPT answers when you don{"’"}t come
+        up, and the playbook behind every opportunity above. Drop your email and it unlocks
+        right here, on this screen.
       </p>
       <form className="rpt-gate-form" onSubmit={submit}>
         <Input

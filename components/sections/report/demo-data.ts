@@ -79,6 +79,6 @@ export const DEMO_EVENTS: ScanEvent[] = [
       },
     ],
   },
-  { type: "score", value: 62 },
+  { type: "score", value: 62, potential: 84 },
   { type: "done", domain: DEMO_DOMAIN, mode: "live" },
 ];

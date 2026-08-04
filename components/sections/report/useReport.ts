@@ -32,6 +32,8 @@ export type ReportState = {
   google: { rows: GoogleRow[]; toWin: number; estimated?: boolean; commentary?: string } | null;
   opportunities: { count: number; items: OpportunityItem[] } | null;
   score: number | null;
+  /** Score recomputed as if the surfaced gaps were closed — the teaser. */
+  potentialScore: number | null;
   unlocked: boolean;
   /** 0..13 — lights the snake progress circles. */
   progress: number;
@@ -50,6 +52,7 @@ const INITIAL: ReportState = {
   google: null,
   opportunities: null,
   score: null,
+  potentialScore: null,
   unlocked: false,
   progress: 0,
   error: null,
@@ -114,7 +117,7 @@ function reducer(state: ReportState, action: Action): ReportState {
         case "opportunities":
           return bump({ ...state, opportunities: { count: ev.count, items: ev.items } });
         case "score":
-          return bump({ ...state, score: ev.value });
+          return bump({ ...state, score: ev.value, potentialScore: ev.potential ?? null });
         case "done":
           return {
             ...state,
