@@ -161,5 +161,7 @@ export async function checkPromptOnChatGPT(
 
   const brandRe = new RegExp(brand.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
   const cited = domains.includes(host) || brandRe.test(text);
-  return { cited, citedDomains: domains.filter((d) => d !== host).slice(0, 3) };
+  // Search engines and generic platforms aren't competitors — noise in "cited instead".
+  const NOISE = new Set(["google.com", "bing.com", "youtube.com", "wikipedia.org", "reddit.com"]);
+  return { cited, citedDomains: domains.filter((d) => d !== host && !NOISE.has(d)).slice(0, 3) };
 }
