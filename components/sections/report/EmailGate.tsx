@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 
-import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
+
+import { FxButton } from "./FxButton";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -34,9 +35,9 @@ export function EmailGate({
           llms.txt first, then the content behind every search you{"’"}re missing. You set
           the spend cap, they do the work.
         </p>
-        <Button size="lg" onClick={() => window.open("https://app.getpancake.ai", "_blank")}>
+        <FxButton size="lg" onClick={() => window.open("https://app.getpancake.ai", "_blank")}>
           Put the agents to work
-        </Button>
+        </FxButton>
         <p className="rpt-gate-foot">We onboard a handful of teams at a time.</p>
       </Card>
     );
@@ -75,9 +76,9 @@ export function EmailGate({
           onChange={(e) => setEmail(e.target.value)}
           aria-label="Your work email"
         />
-        <Button type="submit" size="lg" disabled={busy}>
+        <FxButton type="submit" size="lg" disabled={busy}>
           {busy ? "Unlocking…" : "Unlock my report"}
-        </Button>
+        </FxButton>
       </form>
       {error && <p className="rpt-gate-error">{error}</p>}
       <p className="rpt-gate-foot">Free. No spam, one report.</p>

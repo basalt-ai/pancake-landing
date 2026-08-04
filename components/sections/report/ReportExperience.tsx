@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 
 import { ChecklistCard, GoogleCard, OpportunitiesCard, PromptsCard } from "./cards";
 import { EmailGate } from "./EmailGate";
+import { FxButton } from "./FxButton";
 import { useReport } from "./useReport";
 
 /** Count-up used by the score block: 0 → target over ~1.2s, ease-out. */
@@ -137,12 +137,11 @@ export function ReportExperience() {
 
       {state.phase === "idle" && (
         <section className="rpt-hero">
-          <p className="rpt-eyebrow">Free AI GTM report</p>
           <h1>Would ChatGPT recommend&nbsp;you?</h1>
           <p className="rpt-sub">
-            Drop your domain. We{"’"}ll build a mini Brain for your company, ask ChatGPT
-            the questions your buyers ask, and check the Google searches with real buying
-            intent. Takes under a minute.
+            Pancake is a team of AI agents that run your GTM. Point them at your domain:
+            they{"’"}ll read your company the way ChatGPT and Google do, and report what
+            they{"’"}d fix first. Free, under a minute.
           </p>
           <form className="rpt-pill" onSubmit={submit}>
             <Input
@@ -153,9 +152,9 @@ export function ReportExperience() {
               aria-label="Your company's domain"
               autoFocus
             />
-            <Button type="submit" size="lg">
+            <FxButton type="submit" size="lg">
               Get my AI GTM report
-            </Button>
+            </FxButton>
           </form>
           <button type="button" className="rpt-demo-link" onClick={startDemo}>
             No site handy? Watch the doctolib.fr demo
@@ -218,9 +217,9 @@ export function ReportExperience() {
               onChange={(e) => setUrl(e.target.value)}
               aria-label="Your company's domain"
             />
-            <Button type="submit" size="lg">
+            <FxButton type="submit" size="lg">
               Try again
-            </Button>
+            </FxButton>
           </form>
           <button type="button" className="rpt-demo-link" onClick={startDemo}>
             Scan doctolib.fr instead

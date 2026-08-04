@@ -7,15 +7,69 @@
 
 .rpt {
   min-height: 100dvh;
+  /* Flat cream, exactly like the landing — no decorative grid. */
   background-color: var(--elevated-surface);
-  background-image: radial-gradient(
-    color-mix(in srgb, var(--palette-chrome-100) 5%, transparent) 1.6px,
-    transparent 1.6px
-  );
-  background-size: 46px 46px;
   color: var(--text);
   font-family: var(--font-body);
   padding: var(--spacing-xl) var(--spacing-xl) calc(6 * var(--spacing-xl));
+}
+
+/* ── Buttons at par with landing-v2: same geometry, same label-slide hover ── */
+
+.rpt .button {
+  --button-radius: 24px;
+  height: auto;
+  padding: 20px 24px;
+  border: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+  /* Landing buttons are always one line — the label never wraps. */
+  white-space: nowrap;
+}
+
+/* The landing's pink button doesn't darken — its feedback is the label FX. */
+.rpt .button:hover {
+  --button-background-color: var(--strong-branded-surface);
+  --button-border-color: var(--strong-branded-surface);
+}
+
+@media (max-width: 479px) {
+  .rpt .button {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+}
+
+.rpt-btn-label {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  overflow: hidden;
+  padding: 0.16em 0;
+  margin: -0.16em 0;
+}
+
+.rpt-btn-label .l1,
+.rpt-btn-label .l2 {
+  display: block;
+  transition: translate 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rpt-btn-label .l2 {
+  position: absolute;
+  inset: 0.16em 0;
+  translate: 0 165%;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.rpt .button:hover .rpt-btn-label .l1 {
+  translate: 0 -165%;
+}
+
+.rpt .button:hover .rpt-btn-label .l2 {
+  translate: 0 0;
 }
 
 .rpt-nav {
@@ -62,19 +116,23 @@
   color: var(--subtle-text);
 }
 
+/* Landing-v2 h1: Aeonik Fono bold, line-height 1.0, -0.02em. */
 .rpt-hero h1 {
   font-family: var(--font-display);
   font-weight: var(--font-bold);
-  font-size: clamp(2.4rem, 6vw, 3.6rem);
-  line-height: 1.05;
+  font-size: clamp(2.5rem, 6vw, 3.4rem);
+  line-height: 1;
   letter-spacing: -0.02em;
 }
 
+/* Landing-v2 subhead: ink, humanist face, 1.125rem / 1.45, medium. */
 .rpt-sub {
-  color: var(--subtle-text);
-  font-size: var(--font-size-body-regular);
-  line-height: 1.55;
-  max-width: 54ch;
+  color: var(--text);
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.45;
+  max-width: 46ch;
+  text-wrap: pretty;
 }
 
 .rpt-pill {
@@ -215,7 +273,7 @@
   transform: scale(0.6);
   transition:
     opacity 0.35s ease,
-    transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .rpt-snake span:first-child {
@@ -373,7 +431,7 @@
 }
 
 .rpt-anim .rpt-flip {
-  animation: rpt-flip-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: rpt-flip-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 [data-pass="false"] .rpt-flip,
@@ -493,17 +551,55 @@ li[data-state="done"]:not([data-cited]) .rpt-prompt-mark {
   font-style: italic;
 }
 
-/* Opportunities */
+/* Opportunities — one flat list, locked and unlocked on the same plane:
+   identical rows, identical title weight; only the playbook line differs. */
 
-.rpt-opp strong {
-  font-weight: var(--font-heavy);
-  display: block;
+.rpt-opps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-.rpt-opp p {
+.rpt-opps li {
+  padding-block: var(--spacing-md);
+}
+
+.rpt-opps li:first-child {
+  padding-top: 0;
+}
+
+.rpt-opps li + li {
+  border-top: 1px solid color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
+}
+
+.rpt-opp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.rpt-opp-row strong {
+  font-weight: var(--font-heavy);
+}
+
+.rpt-opp-row svg {
+  flex-shrink: 0;
+  color: var(--subtle-text);
+  opacity: 0.6;
+}
+
+.rpt-opps li p {
+  margin-top: var(--spacing-xs);
   color: var(--subtle-text);
   font-size: var(--font-size-body-small);
   line-height: 1.5;
+}
+
+.rpt-opps .rpt-opp-locked-line {
+  font-style: italic;
 }
 
 /* Locked layer — always static text and locks, never shimmer: an animated
@@ -537,33 +633,6 @@ li[data-state="done"]:not([data-cited]) .rpt-prompt-mark {
 .rpt-locked-note svg {
   display: block;
   flex-shrink: 0;
-}
-
-/* Owner-style opportunity teasers: real titles visible, lock on each. */
-.rpt-opp-teasers {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.rpt-opp-teasers li {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm) 0;
-  border-top: 1px solid color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
-}
-
-.rpt-opp-teasers li svg {
-  flex-shrink: 0;
-  color: var(--subtle-text);
-  opacity: 0.6;
-}
-
-.rpt-opp-teasers li strong {
-  font-weight: 500;
 }
 
 /* "Score if applied" strip — the up-and-to-the-right tease. */
@@ -832,6 +901,11 @@ li[data-state="done"]:not([data-cited]) .rpt-prompt-mark {
   .rpt-anim .rpt-snake span[data-active="true"],
   .rpt-unlock-cascade > * {
     animation: none;
+  }
+
+  .rpt-btn-label .l1,
+  .rpt-btn-label .l2 {
+    transition: none;
   }
 
   .rpt-snake span {

@@ -7,7 +7,7 @@ import "./report.css";
 export const metadata: Metadata = {
   title: "Free AI GTM report — would ChatGPT recommend you? | Pancake",
   description:
-    "Drop your domain and watch the scan run: how you show up in ChatGPT answers, where you rank on Google's money searches, and what to fix first.",
+    "Pancake's GTM agents read your company the way ChatGPT and Google do: your buyers' questions, the searches that matter, and what they'd fix first. Free, one minute.",
   alternates: { canonical: "https://getpancake.ai/report" },
   openGraph: {
     type: "website",

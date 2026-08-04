@@ -222,7 +222,7 @@ export async function POST(request: Request) {
                 term: k.keyword,
                 position: null,
                 volume: null,
-                detail: `not ranking yet — ${k.why_it_matters}`,
+                detail: "not ranking yet",
               });
             }
           }

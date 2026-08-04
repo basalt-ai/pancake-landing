@@ -172,44 +172,33 @@ export function GoogleCard({ state }: { state: ReportState }) {
 export function OpportunitiesCard({ state }: { state: ReportState }) {
   const opps = state.opportunities;
   if (!opps) return null;
-  const [first, ...rest] = opps.items;
   return (
     <Card className="rpt-card">
       <header className="rpt-card-head">
         <h2>Opportunities</h2>
         <Badge variant="brand-alt-1">+{opps.count}</Badge>
       </header>
-      {first && (
-        <div className="rpt-opp">
-          <strong>{first.title}</strong>
-          <p>{first.detail}</p>
-        </div>
-      )}
-      {rest.length > 0 &&
-        (state.unlocked ? (
-          <div className="rpt-unlock-cascade">
-            {rest.map((item) => (
-              <div className="rpt-opp" key={item.title}>
+      {/* One list, one visual plane: every opportunity is the same row. The
+          first shows its playbook; the rest carry a lock where the playbook
+          will appear. */}
+      <ul className={state.unlocked ? "rpt-opps rpt-unlock-cascade" : "rpt-opps"}>
+        {opps.items.map((item, i) => {
+          const open = state.unlocked || i === 0;
+          return (
+            <li key={item.title}>
+              <div className="rpt-opp-row">
                 <strong>{item.title}</strong>
-                <p>{item.detail}</p>
+                {!open && <LockIcon />}
               </div>
-            ))}
-          </div>
-        ) : (
-          // Owner-style tease: the real titles sell the report — only the
-          // how-to behind each stays locked.
-          <>
-            <ul className="rpt-opp-teasers">
-              {rest.map((item) => (
-                <li key={item.title}>
-                  <LockIcon />
-                  <strong>{item.title}</strong>
-                </li>
-              ))}
-            </ul>
-            <p className="rpt-locked-note">the playbook behind each one — unlock below</p>
-          </>
-        ))}
+              {open ? (
+                <p>{item.detail}</p>
+              ) : (
+                <p className="rpt-opp-locked-line">playbook locked — unlock below</p>
+              )}
+            </li>
+          );
+        })}
+      </ul>
       {state.score !== null && state.potentialScore !== null && (
         <div className="rpt-potential">
           <div className="rpt-potential-bar" aria-hidden>
