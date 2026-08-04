@@ -117,7 +117,12 @@ function PromptLine({ row, unlocked }: { row: PromptRow; unlocked: boolean }) {
               {row.estimated ? " (estimated)" : ""}
             </p>
           ) : row.cited === false ? (
-            <span className="rpt-skeleton rpt-skeleton-inline" aria-label="Locked detail" />
+            // Static on purpose: an animated shimmer here reads as "still
+            // loading", not "locked".
+            <span className="rpt-locked-inline">
+              <LockIcon />
+              what ChatGPT answered instead — unlock below
+            </span>
           ) : null)}
       </div>
     </li>

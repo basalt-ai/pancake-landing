@@ -159,37 +159,53 @@ export function useReport() {
   const abortRef = useRef<AbortController | null>(null);
   const reducedRef = useRef(false);
 
+  /** Dispatch everything queued, now. Used when pacing has no audience. */
+  const flushAll = useCallback(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    let next: ScanEvent | undefined;
+    while ((next = queueRef.current.shift())) {
+      dispatch({ type: "event", event: next });
+    }
+    pumpingRef.current = false;
+  }, []);
+
   useEffect(() => {
     reducedRef.current =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Hidden tabs throttle setTimeout chains to as little as once a minute —
+    // the drip would strand the report half-rendered. Nobody sees the theater
+    // in a background tab anyway, so just flush.
+    const onVisibility = () => {
+      if (document.hidden) flushAll();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
     return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
       abortRef.current?.abort();
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, []);
+  }, [flushAll]);
 
   const pump = useCallback(() => {
     if (pumpingRef.current) return;
     pumpingRef.current = true;
     const step = () => {
+      if (reducedRef.current || document.hidden) {
+        flushAll();
+        return;
+      }
       const next = queueRef.current.shift();
       if (!next) {
         pumpingRef.current = false;
         return;
       }
       dispatch({ type: "event", event: next });
-      const gap = reducedRef.current
-        ? 0
-        : doneRef.current
-          ? 120
-          : next.type === "citation"
-            ? 480
-            : 380;
+      const gap = doneRef.current ? 120 : next.type === "citation" ? 480 : 380;
       timerRef.current = setTimeout(step, gap);
     };
     step();
-  }, []);
+  }, [flushAll]);
 
   const enqueue = useCallback(
     (ev: ScanEvent) => {
@@ -218,6 +234,29 @@ export function useReport() {
 
       const ctrl = new AbortController();
       abortRef.current = ctrl;
+      // The server pings every 8s during long ops. If nothing at all arrives
+      // for this long, the function is dead — stop waiting and resolve the UI.
+      const STALL_MS = 25_000;
+      let stallTimer: ReturnType<typeof setTimeout> | null = null;
+      const settle = () => {
+        if (doneRef.current) return;
+        if (scoreSeenRef.current) {
+          enqueue({ type: "done", domain, mode: "estimated" });
+        } else {
+          enqueue({
+            type: "error",
+            code: "failed",
+            message: "The scan got cut off mid-run. Run it again — it usually completes.",
+          });
+        }
+      };
+      const armStall = () => {
+        if (stallTimer) clearTimeout(stallTimer);
+        stallTimer = setTimeout(() => {
+          ctrl.abort();
+          settle();
+        }, STALL_MS);
+      };
       try {
         const res = await fetch("/api/report", {
           method: "POST",
@@ -234,12 +273,14 @@ export function useReport() {
           });
           return;
         }
+        armStall();
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
         let buffer = "";
         for (;;) {
           const { done, value } = await reader.read();
           if (done) break;
+          armStall();
           buffer += decoder.decode(value, { stream: true });
           const frames = buffer.split("\n\n");
           buffer = frames.pop() ?? "";
@@ -247,7 +288,9 @@ export function useReport() {
             const line = frame.trim();
             if (!line.startsWith("data:")) continue;
             try {
-              enqueue(JSON.parse(line.slice(5)) as ScanEvent);
+              const ev = JSON.parse(line.slice(5)) as ScanEvent;
+              if (ev.type === "ping") continue; // liveness only, never rendered
+              enqueue(ev);
             } catch {
               /* skip malformed frame */
             }
@@ -255,17 +298,7 @@ export function useReport() {
         }
         // Stream closed without a terminal event (server hit its time limit,
         // proxy dropped the connection): finish gracefully instead of spinning.
-        if (!doneRef.current) {
-          if (scoreSeenRef.current) {
-            enqueue({ type: "done", domain, mode: "estimated" });
-          } else {
-            enqueue({
-              type: "error",
-              code: "failed",
-              message: "The scan got cut off mid-run. Run it again — it usually completes.",
-            });
-          }
-        }
+        settle();
       } catch {
         if (!ctrl.signal.aborted) {
           enqueue({
@@ -274,6 +307,8 @@ export function useReport() {
             message: "The scan tripped on our side. Your site is fine. Run it again.",
           });
         }
+      } finally {
+        if (stallTimer) clearTimeout(stallTimer);
       }
     },
     [enqueue],

@@ -10,7 +10,10 @@ import type { Analysis, GoogleRow, RankedKeywords, ScanEvent } from "@/lib/scan/
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 120;
+// Worst honest path: site fetch + keyword race + Claude retry (55s + 40s) +
+// live citation checks (30s cap). 180 leaves margin so the platform never
+// kills the function mid-stream — that's what leaves spinners on screen.
+export const maxDuration = 180;
 
 /**
  * The free AI GTM report scan. One POST, one SSE stream: deterministic site
@@ -89,14 +92,18 @@ export async function POST(request: Request) {
       let closed = false;
       const send = (ev: ScanEvent) => {
         if (closed) return;
-        collected.push(ev);
+        if (ev.type !== "ping") collected.push(ev); // heartbeats never enter the cache
         try {
           controller.enqueue(encoder.encode(`data: ${JSON.stringify(ev)}\n\n`));
         } catch {
           closed = true; // client went away — stop pushing, let the scan wind down
         }
       };
+      // Heartbeat: the Claude pass and citation checks can go 30-60s without a
+      // real event. Pings let the client tell "still working" from "dead".
+      const heartbeat = setInterval(() => send({ type: "ping" }), 8000);
       const finish = () => {
+        clearInterval(heartbeat);
         if (closed) return;
         closed = true;
         try {
@@ -160,26 +167,43 @@ export async function POST(request: Request) {
         const keywords = keywordsEarly ?? (await keywordsPromise);
         if (keywords) {
           // A marketplace ranks for its sellers' brand names — Claude selects
-          // which real page-2 keywords are money searches for THIS company.
-          const selected = new Set(
-            analysis.relevant_page2_keywords.map((k) => k.toLowerCase().trim()),
-          );
+          // which real within-reach keywords are money searches for THIS company.
+          const selected = new Set(analysis.relevant_keywords.map((k) => k.toLowerCase().trim()));
           const relevant = selected.size
-            ? keywords.page2.filter((k) => selected.has(k.keyword.toLowerCase().trim()))
-            : keywords.page2;
-          const rows: GoogleRow[] = (relevant.length ? relevant : keywords.page2)
-            .slice(0, 8)
-            .map((k) => ({
-              term: k.keyword,
-              position: k.position,
-              volume: k.volume,
-              detail: `position ${k.position} · ${k.volume.toLocaleString()} searches/mo`,
-            }));
+            ? keywords.withinReach.filter((k) => selected.has(k.keyword.toLowerCase().trim()))
+            : keywords.withinReach;
+          const rows: GoogleRow[] = relevant.slice(0, 6).map((k) => ({
+            term: k.keyword,
+            position: k.position,
+            volume: k.volume,
+            detail: `position ${k.position} · ${k.volume.toLocaleString()} searches/mo`,
+          }));
+          // Thin real table (a marketplace's rankings are mostly other brands):
+          // pad with the money searches this company *should* own, clearly
+          // marked, so the card never shrinks to one odd row.
+          if (rows.length < 5) {
+            const seen = rows.map((r) => r.term.toLowerCase());
+            for (const k of analysis.money_keywords) {
+              if (rows.length >= 6) break;
+              const term = k.keyword.toLowerCase();
+              if (seen.some((s) => s.includes(term) || term.includes(s))) continue;
+              seen.push(term);
+              rows.push({
+                term: k.keyword,
+                position: null,
+                volume: null,
+                detail: `not ranking yet — ${k.why_it_matters}`,
+              });
+            }
+          }
+          const stats = `Ranks for ${keywords.totalKeywords.toLocaleString()} keywords, ${keywords.top10} in the top 10.`;
           send({
             type: "google",
             rows,
             toWin: rows.length,
-            commentary: `Ranks for ${keywords.totalKeywords.toLocaleString()} keywords, ${keywords.top10} in the top 10.`,
+            commentary: analysis.google_commentary
+              ? `${stats} ${analysis.google_commentary}`
+              : stats,
           });
         } else {
           send({

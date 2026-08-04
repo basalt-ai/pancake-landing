@@ -16,6 +16,8 @@ export type OpportunityItem = { title: string; detail: string };
 
 export type ScanEvent =
   | { type: "status"; label: string }
+  /** Heartbeat during long server ops — clients use it for liveness, never render it. */
+  | { type: "ping" }
   | { type: "meta"; title?: string; ogImage?: string; favicon?: string }
   | { type: "check"; id: CheckId; pass: boolean; detail: string }
   | { type: "brain"; company: string; icp: string; prompts: string[] }
@@ -64,8 +66,8 @@ export type Analysis = {
   company: { name: string; one_liner: string; icp: string };
   buyer_prompts: { prompt: string; likely_cited: boolean; reason: string }[];
   money_keywords: { keyword: string; why_it_matters: string }[];
-  /** Exact keyword strings selected from the real page-2 table (empty when no table given). */
-  relevant_page2_keywords: string[];
+  /** Exact keyword strings selected from the real within-reach table (empty when no table given). */
+  relevant_keywords: string[];
   google_commentary: string;
   opportunities: OpportunityItem[];
   content_readiness: number;
@@ -74,5 +76,6 @@ export type Analysis = {
 export type RankedKeywords = {
   totalKeywords: number;
   top10: number;
-  page2: { keyword: string; position: number; volume: number }[];
+  /** Real rankings in positions 11-30, by volume — the "within reach" table. */
+  withinReach: { keyword: string; position: number; volume: number }[];
 };

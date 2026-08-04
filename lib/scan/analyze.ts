@@ -9,7 +9,13 @@ import type { Analysis, RankedKeywords, SiteSnapshot } from "./types";
  */
 
 const API_URL = "https://api.anthropic.com/v1/messages";
-const TIMEOUT_MS = 60_000;
+// First attempt gets high effort; a cold serverless instance compiles the
+// output schema on top of generation and can blow past one budget, so a
+// second, faster attempt backs it up instead of failing the whole scan.
+const ATTEMPTS: { effort: "high" | "medium"; timeoutMs: number }[] = [
+  { effort: "high", timeoutMs: 55_000 },
+  { effort: "medium", timeoutMs: 40_000 },
+];
 
 // Structured-outputs schema: no minItems/maxItems/maxLength (unsupported
 // constraints there) — item counts live in the descriptions instead.
@@ -20,7 +26,7 @@ const REPORT_SCHEMA = {
     "company",
     "buyer_prompts",
     "money_keywords",
-    "relevant_page2_keywords",
+    "relevant_keywords",
     "google_commentary",
     "opportunities",
     "content_readiness",
@@ -72,16 +78,16 @@ const REPORT_SCHEMA = {
         },
       },
     },
-    relevant_page2_keywords: {
+    relevant_keywords: {
       type: "array",
       description:
-        "From the real page-2 keyword table you were given (if any): the EXACT keyword strings that are genuine buying-intent searches for THIS company's own offer. Exclude third-party brand names, product names the company doesn't own, people, and unrelated topics — a marketplace ranking for its sellers' brand names must not list those. Empty array when no table was provided or nothing qualifies.",
+        "From the real within-reach keyword table you were given (if any): up to 8 EXACT keyword strings, most valuable first, that a real buyer of THIS company's own offer would type. Prefer searches that describe the company's category or service. Exclude third-party brand names, product names the company doesn't own, people, and unrelated topics — a marketplace ranking for its sellers' brand names must not list those. Empty array when no table was provided or nothing qualifies.",
       items: { type: "string" },
     },
     google_commentary: {
       type: "string",
       description:
-        "One or two sentences on their likely Google position, grounded in the evidence. Under 250 characters.",
+        "One short sentence interpreting the Google picture for this company, grounded in the evidence — e.g. when most rankings are its sellers' or users' brand names, say so and name the real prize. Under 200 characters. In English.",
     },
     opportunities: {
       type: "array",
@@ -123,8 +129,8 @@ export async function analyzeSite(
   if (!apiKey) throw new Error("ANTHROPIC_API_KEY is not configured");
 
   const keywordBlock = keywords
-    ? `\n\nReal Google data (DataForSEO): ranks for ${keywords.totalKeywords} keywords, ${keywords.top10} in the top 10. Page-2 keywords within reach: ${keywords.page2
-        .slice(0, 25)
+    ? `\n\nReal Google data (DataForSEO): ranks for ${keywords.totalKeywords} keywords, ${keywords.top10} in the top 10. Within-reach keywords (positions 11-30, by volume): ${keywords.withinReach
+        .slice(0, 40)
         .map((k) => `"${k.keyword}" (pos ${k.position}, ${k.volume}/mo)`)
         .join(", ")}`
     : "\n\nNo Google ranking data available — estimate from the site content alone.";
@@ -141,49 +147,55 @@ llms.txt: ${site.hasLlmsTxt ? "present" : "missing"} · sitemap.xml: ${site.hasS
 Homepage text extract:
 ${site.textExtract}${keywordBlock}`;
 
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        model: process.env.ANTHROPIC_MODEL || "claude-sonnet-5",
-        max_tokens: 16000,
-        system: SYSTEM,
-        messages: [{ role: "user", content: user }],
-        output_config: {
-          effort: "high",
-          format: { type: "json_schema", schema: REPORT_SCHEMA },
+  let lastError: unknown;
+  for (const attempt of ATTEMPTS) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), attempt.timeoutMs);
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "x-api-key": apiKey,
+          "anthropic-version": "2023-06-01",
+          "content-type": "application/json",
         },
-      }),
-      signal: ctrl.signal,
-      cache: "no-store",
-    });
-    if (!res.ok) {
-      throw new Error(`Anthropic API ${res.status}: ${(await res.text()).slice(0, 300)}`);
+        body: JSON.stringify({
+          model: process.env.ANTHROPIC_MODEL || "claude-sonnet-5",
+          max_tokens: 16000,
+          system: SYSTEM,
+          messages: [{ role: "user", content: user }],
+          output_config: {
+            effort: attempt.effort,
+            format: { type: "json_schema", schema: REPORT_SCHEMA },
+          },
+        }),
+        signal: ctrl.signal,
+        cache: "no-store",
+      });
+      if (!res.ok) {
+        throw new Error(`Anthropic API ${res.status}: ${(await res.text()).slice(0, 300)}`);
+      }
+      const data = (await res.json()) as {
+        content: { type: string; text?: string }[];
+        stop_reason?: string;
+      };
+      if (data.stop_reason === "refusal") {
+        throw new Error("Anthropic response was a refusal");
+      }
+      const block = data.content.find((b) => b.type === "text" && b.text);
+      if (!block?.text) throw new Error("Anthropic response had no text block");
+      const analysis = JSON.parse(block.text) as Analysis;
+      // Structured outputs guarantee shape, not counts — enforce the budget here.
+      analysis.buyer_prompts = analysis.buyer_prompts.slice(0, 10);
+      analysis.money_keywords = analysis.money_keywords.slice(0, 5);
+      analysis.opportunities = analysis.opportunities.slice(0, 4);
+      analysis.relevant_keywords = (analysis.relevant_keywords ?? []).slice(0, 8);
+      return analysis;
+    } catch (err) {
+      lastError = err;
+    } finally {
+      clearTimeout(timer);
     }
-    const data = (await res.json()) as {
-      content: { type: string; text?: string }[];
-      stop_reason?: string;
-    };
-    if (data.stop_reason === "refusal") {
-      throw new Error("Anthropic response was a refusal");
-    }
-    const block = data.content.find((b) => b.type === "text" && b.text);
-    if (!block?.text) throw new Error("Anthropic response had no text block");
-    const analysis = JSON.parse(block.text) as Analysis;
-    // Structured outputs guarantee shape, not counts — enforce the budget here.
-    analysis.buyer_prompts = analysis.buyer_prompts.slice(0, 10);
-    analysis.money_keywords = analysis.money_keywords.slice(0, 5);
-    analysis.opportunities = analysis.opportunities.slice(0, 4);
-    analysis.relevant_page2_keywords = (analysis.relevant_page2_keywords ?? []).slice(0, 12);
-    return analysis;
-  } finally {
-    clearTimeout(timer);
   }
+  throw lastError;
 }

@@ -106,7 +106,10 @@ export async function rankedKeywords(host: string): Promise<RankedKeywords | nul
   return {
     totalKeywords: result.total_count ?? rows.length,
     top10: rows.filter((r) => r.position <= 10).length,
-    page2: rows.filter((r) => r.position >= 11 && r.position <= 20).slice(0, 25),
+    // Positions 11-30: off page 1 but within realistic reach. Claude picks the
+    // relevant ones from this table — wide beats strict, or a marketplace ends
+    // up with a single odd row.
+    withinReach: rows.filter((r) => r.position >= 11 && r.position <= 30).slice(0, 40),
   };
 }
 

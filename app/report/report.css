@@ -252,6 +252,13 @@
   animation: rpt-pulse 1s ease-in-out infinite;
 }
 
+/* Completed state: steady green dot, no pulse — the scan is over. */
+.rpt-status-done::before,
+.rpt-anim .rpt-status-done::before {
+  animation: none;
+  background: var(--palette-green-20);
+}
+
 .rpt-demo-tag {
   font-size: var(--font-size-body-small);
   color: var(--subtle-text);
@@ -530,6 +537,22 @@ li[data-state="done"]:not([data-cited]) .rpt-prompt-mark {
 .rpt-skeleton-inline {
   width: 60%;
   margin-top: var(--spacing-sm);
+}
+
+/* Inline locked caption on a not-cited prompt row — deliberately static. */
+.rpt-locked-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-xs);
+  color: var(--subtle-text);
+  font-size: var(--font-size-body-small);
+}
+
+.rpt-locked-inline svg {
+  display: block;
+  flex-shrink: 0;
+  opacity: 0.6;
 }
 
 .rpt-locked-note {

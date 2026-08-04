@@ -179,6 +179,11 @@ export function ReportExperience() {
                   {state.statusLine || "Warming up…"}
                 </p>
               )}
+              {state.phase === "report" && (
+                <p className="rpt-status rpt-status-done" aria-live="polite">
+                  Scan complete — full report below.
+                </p>
+              )}
               {state.demo && <p className="rpt-demo-tag">demo scan · sample data</p>}
             </div>
           </header>
