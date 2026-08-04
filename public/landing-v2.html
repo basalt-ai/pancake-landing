@@ -775,34 +775,19 @@
       ctx.fill();
     }
     // clip-paths for the text overlays, each in its span's local coords.
-    // H1: full circles (the classic reveal). H2: intersection lenses only —
-    // small text goes cream only where >=2 circles multiply (contrast holds there).
+    // Both overlays reveal on FULL circles (founder call 2026-08-01: one
+    // consistent effect; on light single-circle zones the cream H2 reads
+    // faint/ghosty by design — the snake moves on within seconds).
     const cr = canvas.getBoundingClientRect();
     for (let oi = 0; oi < overlays.length; oi++) {
       const span = overlays[oi];
       const sr = span.getBoundingClientRect();
       const ox = cr.left - sr.left, oy = cr.top - sr.top;
       let path = '';
-      if (oi === 0) {
-        for (let i = 0; i < N; i++) {
-          const cx = segs[i].x + ox, cy = (segs[i].y + oy).toFixed(1);
-          const xr = (cx + R).toFixed(1), xl = (cx - R).toFixed(1);
-          path += `M ${xr} ${cy} A ${R} ${R} 0 1 0 ${xl} ${cy} A ${R} ${R} 0 1 0 ${xr} ${cy} Z `;
-        }
-      } else {
-        for (let i = 0; i < N - 1; i++) {
-          const a = segs[i], b = segs[i + 1];
-          const dx = b.x - a.x, dy = b.y - a.y;
-          const d = Math.hypot(dx, dy);
-          if (d >= 2 * R || d < 0.01) continue;
-          const mx = (a.x + b.x) / 2 + ox, my = (a.y + b.y) / 2 + oy;
-          const h = Math.sqrt(R * R - (d / 2) * (d / 2));
-          const nx = -dy / d, ny = dx / d;
-          const x1 = (mx + nx * h).toFixed(1), y1 = (my + ny * h).toFixed(1);
-          const x2 = (mx - nx * h).toFixed(1), y2 = (my - ny * h).toFixed(1);
-          path += `M ${x1} ${y1} A ${R} ${R} 0 0 1 ${x2} ${y2} A ${R} ${R} 0 0 1 ${x1} ${y1} Z `;
-        }
-        if (!path) path = 'M 0 0 Z ';
+      for (let i = 0; i < N; i++) {
+        const cx = segs[i].x + ox, cy = (segs[i].y + oy).toFixed(1);
+        const xr = (cx + R).toFixed(1), xl = (cx - R).toFixed(1);
+        path += `M ${xr} ${cy} A ${R} ${R} 0 1 0 ${xl} ${cy} A ${R} ${R} 0 1 0 ${xr} ${cy} Z `;
       }
       span.style.clipPath = `path("${path.trim()}")`;
     }
