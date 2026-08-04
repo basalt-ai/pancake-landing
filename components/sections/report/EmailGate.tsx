@@ -14,11 +14,9 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
  */
 export function EmailGate({
   unlocked,
-  toWin,
   onUnlock,
 }: {
   unlocked: boolean;
-  toWin: number;
   onUnlock: (email: string) => Promise<{ ok: boolean; message?: string }>;
 }) {
   const [email, setEmail] = useState("");
@@ -32,13 +30,14 @@ export function EmailGate({
           <h2>Pancake fixes this for you</h2>
         </header>
         <p>
-          Unlocked. All yours. The same agents that ran this scan can run the fixes: your
-          llms.txt, the content behind the searches you{"’"}re missing, the publications
-          your ICP actually reads. You set the spend cap, they do the work.
+          Unlocked. All yours. The same agents that ran this scan can run the fixes: the
+          llms.txt first, then the content behind every search you{"’"}re missing. You set
+          the spend cap, they do the work.
         </p>
         <Button size="lg" onClick={() => window.open("https://app.getpancake.ai", "_blank")}>
-          Open Pancake
+          Put the agents to work
         </Button>
+        <p className="rpt-gate-foot">We onboard a handful of teams at a time.</p>
       </Card>
     );
   }
@@ -59,12 +58,12 @@ export function EmailGate({
   return (
     <Card className="rpt-card rpt-gate">
       <header className="rpt-card-head">
-        <h2>The line-by-line is ready.</h2>
+        <h2>The full report is written.</h2>
       </header>
       <p>
-        You watched the scan run. The detail is written: which prompts cite you, who gets
-        picked instead, the {toWin > 0 ? toWin : ""} searches to win. Drop your email and it
-        unlocks right here, on this screen.
+        You watched the scan run. Still locked: who gets cited instead of you, and every
+        remaining search with its position and volume. Drop your email and it unlocks right
+        here, on this screen.
       </p>
       <form className="rpt-gate-form" onSubmit={submit}>
         <Input

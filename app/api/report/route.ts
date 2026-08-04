@@ -10,7 +10,7 @@ import type { Analysis, GoogleRow, RankedKeywords, ScanEvent } from "@/lib/scan/
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
+export const maxDuration = 90;
 
 /**
  * The free AI GTM report scan. One POST, one SSE stream: deterministic site
@@ -134,7 +134,7 @@ export async function POST(request: Request) {
         }
 
         send({ type: "meta", title: site.title, ogImage: site.ogImage, favicon: site.favicon });
-        send({ type: "status", label: "Checking who gets in: AI crawlers, llms.txt, schema…" });
+        send({ type: "status", label: "Checking who gets in: AI crawlers, llms.txt, structured data…" });
         const checks = deriveChecks(site);
         for (const check of checks) send({ type: "check", ...check });
 
@@ -144,6 +144,10 @@ export async function POST(request: Request) {
           new Promise<null>((r) => setTimeout(() => r(null), RACE_KEYWORDS_MS)),
         ]);
 
+        send({
+          type: "status",
+          label: `Reading ${target.host}: what you sell, who buys, how they search…`,
+        });
         const analysis = await analyzeSite(site, keywordsEarly);
         send({
           type: "brain",
@@ -187,6 +191,7 @@ export async function POST(request: Request) {
         // Citation checks: real ChatGPT answers when DataForSEO is configured,
         // Claude's per-prompt estimate otherwise. Fixed budget, fully parallel.
         let citedCount = 0;
+        let liveCitations = 0;
         const prompts = analysis.buyer_prompts;
         const liveBudget = isConfigured()
           ? Math.min(prompts.length, Number(process.env.REPORT_PROMPTS_TO_CHECK || 10))
@@ -198,6 +203,7 @@ export async function POST(request: Request) {
               const result = await checkPromptOnChatGPT(p.prompt, target.host, analysis.company.name);
               if (result) {
                 if (result.cited) citedCount += 1;
+                liveCitations += 1;
                 send({
                   type: "citation",
                   index,
@@ -235,7 +241,9 @@ export async function POST(request: Request) {
         send({
           type: "done",
           domain: target.host,
-          mode: isConfigured() ? "live" : "estimated",
+          // "live" only when live data actually landed — keys being configured
+          // isn't enough (e.g. an unverified DataForSEO account 403s every call).
+          mode: keywords || liveCitations > 0 ? "live" : "estimated",
         });
 
         await setCachedScan(target.host, collected);

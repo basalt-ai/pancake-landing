@@ -25,11 +25,20 @@
 }
 
 .rpt-wordmark {
-  font-family: var(--font-display);
-  font-weight: var(--font-bold);
-  font-size: var(--font-scale-1);
-  color: var(--text);
-  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.rpt-wordmark img {
+  height: 44px;
+  width: auto;
+  display: block;
+}
+
+@media (max-width: 479px) {
+  .rpt-wordmark img {
+    height: 32px;
+  }
 }
 
 /* ── Idle hero ─────────────────────────────────────────────── */
@@ -113,21 +122,40 @@
   gap: var(--spacing-xxl);
 }
 
+/*
+ * The board head is ONE instrument panel (owner.com-grader style): site chip
+ * on top, hairline divider, then progress snake + live status as the panel's
+ * footer row. Landing grammar: white surface, inset hairline, pillowy radius.
+ */
 .rpt-board-head {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
-  padding-top: var(--spacing-xxl);
+  margin-top: var(--spacing-xxl);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  corner-shape: squircle;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 10%, transparent);
+}
+
+.rpt-anim .rpt-board-head {
+  animation: rpt-fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.rpt-board-foot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-md) var(--spacing-xl);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  border-top: 1px solid color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
 }
 
 .rpt-chip {
   display: flex;
   align-items: center;
   gap: var(--spacing-lg);
-  background: var(--surface);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-lg) var(--spacing-xl);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 10%, transparent);
+  padding: var(--spacing-xl);
+  min-width: 0;
 }
 
 .rpt-chip > img {
@@ -174,7 +202,7 @@
 /* The landing's 13-circle snake, tamed into a progress row. */
 .rpt-snake {
   display: flex;
-  padding-inline: var(--spacing-md);
+  flex-shrink: 0;
 }
 
 .rpt-snake span {
@@ -228,6 +256,7 @@
   font-size: var(--font-size-body-small);
   color: var(--subtle-text);
   font-style: italic;
+  margin-left: auto;
 }
 
 /* ── Cards ─────────────────────────────────────────────────── */
@@ -243,6 +272,13 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
+  /* Landing chip grammar: the hairline deepens on hover — shadow only, no
+     motion (the entrance animation's fill would override a transform). */
+  transition: box-shadow 0.18s ease;
+}
+
+.rpt-card:hover {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 14%, transparent);
 }
 
 .rpt-anim .rpt-card {
@@ -260,12 +296,24 @@
   font-family: var(--font-display);
   font-weight: var(--font-heavy);
   font-size: var(--font-size-header-04);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.rpt-card-head .badge {
+  flex-shrink: 0;
 }
 
 .rpt-icp-line {
   color: var(--subtle-text);
   font-size: var(--font-size-body-small);
   line-height: 1.5;
+  max-width: 64ch;
+}
+
+.rpt-icp-label {
+  color: var(--text);
+  font-weight: var(--font-heavy);
 }
 
 /* Checklist */
@@ -298,6 +346,9 @@
   line-height: 1.5;
 }
 
+/* Pass/fail marks: SVG strokes (crisp, optically centered) inside the
+   landing's multiply-palette circles. A fail is warning orange — an
+   opportunity, never red. */
 .rpt-flip {
   display: inline-flex;
   align-items: center;
@@ -305,11 +356,13 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  font-weight: var(--font-bold);
-  font-size: var(--font-size-body-small);
   flex-shrink: 0;
   background: var(--positive-surface);
   color: var(--palette-chrome-100);
+}
+
+.rpt-flip svg {
+  display: block;
 }
 
 .rpt-anim .rpt-flip {
@@ -381,12 +434,16 @@ li[data-state="checking"] .rpt-prompt-mark {
   margin-top: var(--spacing-xs);
 }
 
+/* The tally reads as the card's summary row, not an appended line. */
 .rpt-tally {
   font-weight: var(--font-heavy);
   font-size: var(--font-size-body-small);
+  border-top: 1px solid color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
+  padding-top: var(--spacing-lg);
 }
 
-/* Google rows */
+/* Google rows — quiet table: hairline dividers give the money searches an
+   instrument-panel read. */
 
 .rpt-google {
   list-style: none;
@@ -400,6 +457,11 @@ li[data-state="checking"] .rpt-prompt-mark {
   justify-content: space-between;
   gap: var(--spacing-lg);
   align-items: baseline;
+}
+
+.rpt-google li + li {
+  border-top: 1px solid color-mix(in srgb, var(--palette-chrome-100) 6%, transparent);
+  padding-top: var(--spacing-md);
 }
 
 .rpt-google strong {
@@ -441,14 +503,16 @@ li[data-state="checking"] .rpt-prompt-mark {
   padding-top: var(--spacing-sm);
 }
 
+/* Pill-shaped shimmer bars — one chrome step warmer than before so the
+   tease is visible on the white card without shouting. */
 .rpt-skeleton {
   display: block;
-  height: 10px;
-  border-radius: var(--radius-sm);
+  height: var(--spacing-lg);
+  border-radius: 100vw;
   background: linear-gradient(
     90deg,
     var(--palette-chrome-30) 25%,
-    var(--palette-chrome-40) 50%,
+    var(--palette-chrome-50) 50%,
     var(--palette-chrome-30) 75%
   );
   background-size: 200% 100%;
@@ -464,8 +528,17 @@ li[data-state="checking"] .rpt-prompt-mark {
 }
 
 .rpt-locked-note {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
   color: var(--subtle-text);
   font-size: var(--font-size-body-small);
+  padding-top: var(--spacing-xs);
+}
+
+.rpt-locked-note svg {
+  display: block;
+  flex-shrink: 0;
 }
 
 .rpt-unlock-cascade > * {
@@ -477,11 +550,50 @@ li[data-state="checking"] .rpt-prompt-mark {
 .rpt-unlock-cascade > *:nth-child(4) { animation-delay: 0.24s; }
 .rpt-unlock-cascade > *:nth-child(5) { animation-delay: 0.32s; }
 
-/* Score */
+/* Score — the emotional peak. Purple-10 card (variant brand-alt-1) with the
+   landing's multiply-blend circle motif ghosted into the corners; generous
+   block padding so the number owns its moment. */
 
 .rpt-score {
+  position: relative;
+  overflow: hidden;
   align-items: center;
   text-align: center;
+  padding-block: calc(2 * var(--spacing-xxl));
+  gap: var(--spacing-md);
+}
+
+.rpt-score::before,
+.rpt-score::after {
+  content: "";
+  position: absolute;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.rpt-score::before {
+  width: calc(11 * var(--spacing-xl));
+  top: calc(-5 * var(--spacing-xl));
+  left: calc(-4 * var(--spacing-xl));
+  background: var(--palette-yellow-30);
+  opacity: 0.3;
+}
+
+/* Purple-30, not green — green multiplied over the lavender surface goes
+   muddy gray; purple stays tonal with the card. */
+.rpt-score::after {
+  width: calc(13 * var(--spacing-xl));
+  bottom: calc(-7 * var(--spacing-xl));
+  right: calc(-5 * var(--spacing-xl));
+  background: var(--palette-purple-30);
+  opacity: 0.22;
+}
+
+.rpt-score > * {
+  position: relative;
+  z-index: 1;
 }
 
 .rpt-score-num {
@@ -489,18 +601,31 @@ li[data-state="checking"] .rpt-prompt-mark {
   font-weight: var(--font-bold);
   font-size: var(--font-scale-6);
   line-height: 1;
+  letter-spacing: -0.02em;
 }
 
 .rpt-score-num span {
   font-size: var(--font-scale-2);
   color: var(--subtle-text);
   font-weight: var(--font-heavy);
+  letter-spacing: 0;
 }
 
-/* Gate */
+.rpt-score p {
+  max-width: 36ch;
+  line-height: 1.55;
+}
+
+/* Gate — the conversion moment: roomier vertical rhythm than the report
+   cards, copy on a readable measure, form row on the hero-pill grammar. */
+
+.rpt-gate {
+  gap: var(--spacing-xl);
+}
 
 .rpt-gate p {
   line-height: 1.55;
+  max-width: 60ch;
 }
 
 .rpt-gate-form {
@@ -521,6 +646,7 @@ li[data-state="checking"] .rpt-prompt-mark {
 .rpt-gate-foot {
   color: var(--subtle-text);
   font-size: var(--font-size-body-small);
+  padding-top: var(--spacing-xs);
 }
 
 .rpt-gate-done p {
@@ -597,10 +723,32 @@ li[data-state="checking"] .rpt-prompt-mark {
     display: none;
   }
 
+  .rpt-chip {
+    padding: var(--spacing-lg);
+  }
+
+  .rpt-board-foot {
+    padding: var(--spacing-lg);
+  }
+
   .rpt-snake span {
     width: 20px;
     height: 20px;
     margin-left: -6px;
+  }
+
+  .rpt-card {
+    padding: var(--spacing-xl);
+  }
+
+  /* Below 768 the type scale factor is 1.414 — scale-6 would blow past the
+     column, so the score steps down two notches and keeps its presence. */
+  .rpt-score-num {
+    font-size: var(--font-scale-4);
+  }
+
+  .rpt-score-num span {
+    font-size: var(--font-scale-1);
   }
 
   .rpt-google li {
@@ -616,6 +764,7 @@ li[data-state="checking"] .rpt-prompt-mark {
 /* ── Reduced motion ────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
+  .rpt-anim .rpt-board-head,
   .rpt-anim .rpt-card,
   .rpt-anim .rpt-checklist li,
   .rpt-anim .rpt-prompts li,

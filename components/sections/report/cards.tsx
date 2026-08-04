@@ -19,13 +19,59 @@ const CHECK_LABELS: Record<string, string> = {
   meta_quality: "Titles & descriptions",
 };
 
+/** Crisp stroke marks for the pass/fail circles — optically centered, unlike
+ *  text glyphs whose baselines drift inside a 24px circle. */
+function MarkIcon({ ok }: { ok: boolean }) {
+  return ok ? (
+    <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
+      <path
+        d="M2.2 6.6 4.8 9.2 9.8 2.9"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ) : (
+    <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
+      <path
+        d="M3.2 3.2l5.6 5.6M8.8 3.2 3.2 8.8"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/** Tiny padlock for locked-detail captions. */
+function LockIcon() {
+  return (
+    <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
+      <rect x="2" y="5.2" width="8" height="5.6" rx="1.6" fill="currentColor" />
+      <path
+        d="M3.8 5.2V3.9a2.2 2.2 0 0 1 4.4 0v1.3"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 function Locked({ lines, note }: { lines: number; note: string }) {
   return (
     <div className="rpt-locked" aria-label={`Locked: ${note}`}>
       {Array.from({ length: lines }, (_, i) => (
         <span className="rpt-skeleton" key={i} style={{ width: `${88 - i * 14}%` }} />
       ))}
-      <span className="rpt-locked-note">{note}</span>
+      <span className="rpt-locked-note">
+        <LockIcon />
+        {note}
+      </span>
     </div>
   );
 }
@@ -41,7 +87,7 @@ export function ChecklistCard({ state }: { state: ReportState }) {
         {state.checks.map((check) => (
           <li key={check.id} data-pass={check.pass}>
             <span className="rpt-flip" aria-hidden>
-              {check.pass ? "✓" : "✗"}
+              <MarkIcon ok={check.pass} />
             </span>
             <div>
               <strong>{CHECK_LABELS[check.id] ?? check.id}</strong>
@@ -58,7 +104,7 @@ function PromptLine({ row, unlocked }: { row: PromptRow; unlocked: boolean }) {
   return (
     <li data-state={row.status} data-cited={row.cited}>
       <span className="rpt-flip rpt-prompt-mark" aria-hidden>
-        {row.status === "checking" ? "" : row.cited ? "✓" : "✗"}
+        {row.status !== "checking" && <MarkIcon ok={row.cited === true} />}
       </span>
       <div>
         <p className="rpt-prompt-text">{row.prompt}</p>
@@ -83,14 +129,16 @@ export function PromptsCard({ state }: { state: ReportState }) {
   return (
     <Card className="rpt-card">
       <header className="rpt-card-head">
-        <h2>ChatGPT · ICP prompts</h2>
+        <h2>ChatGPT · buyer questions</h2>
         {done.length > 0 && (
           <Badge variant={cited >= done.length / 2 ? "success" : "warning"}>
             {cited}/{state.prompts.length}
           </Badge>
         )}
       </header>
-      <p className="rpt-icp-line">Your ICP, as I read it: {state.brain.icp}</p>
+      <p className="rpt-icp-line">
+        <span className="rpt-icp-label">Your ICP, as we read it:</span> {state.brain.icp}
+      </p>
       <ul className="rpt-prompts">
         {state.prompts.map((row, i) => (
           <PromptLine key={i} row={row} unlocked={state.unlocked} />
@@ -123,7 +171,7 @@ export function GoogleCard({ state }: { state: ReportState }) {
         {free.map((row) => (
           <li key={row.term}>
             <strong>{row.term}</strong>
-            <span>{google.estimated ? row.detail : row.detail}</span>
+            <span>{row.detail}</span>
           </li>
         ))}
       </ul>

@@ -47,15 +47,41 @@ async function post(path: string, task: Record<string, unknown>, timeoutMs: numb
   }
 }
 
+/**
+ * Geo by TLD: a .fr domain's money searches live in Google France in French,
+ * not Google US — querying the wrong market returns junk. Default is US.
+ */
+const GEO: Record<string, { location_code: number; language_name: string }> = {
+  fr: { location_code: 2250, language_name: "French" },
+  be: { location_code: 2056, language_name: "French" },
+  de: { location_code: 2276, language_name: "German" },
+  at: { location_code: 2040, language_name: "German" },
+  ch: { location_code: 2756, language_name: "German" },
+  es: { location_code: 2724, language_name: "Spanish" },
+  it: { location_code: 2380, language_name: "Italian" },
+  nl: { location_code: 2528, language_name: "Dutch" },
+  pt: { location_code: 2620, language_name: "Portuguese" },
+  br: { location_code: 2076, language_name: "Portuguese" },
+  uk: { location_code: 2826, language_name: "English" },
+  au: { location_code: 2036, language_name: "English" },
+  ca: { location_code: 2124, language_name: "English" },
+};
+
+export function geoForHost(host: string): { location_code: number; language_name: string } {
+  const tld = host.endsWith(".co.uk") ? "uk" : (host.split(".").pop() ?? "");
+  return GEO[tld] ?? { location_code: 2840, language_name: "English" };
+}
+
 /** Keywords the domain already ranks for, ordered by search volume. */
 export async function rankedKeywords(host: string): Promise<RankedKeywords | null> {
   if (!isConfigured()) return null;
+  const geo = geoForHost(host);
   const result = (await post(
     "/dataforseo_labs/google/ranked_keywords/live",
     {
       target: host,
-      language_name: "English",
-      location_code: 2840, // United States — v2: geo-detect from the site
+      language_name: geo.language_name,
+      location_code: geo.location_code,
       limit: 50,
       order_by: ["keyword_data.keyword_info.search_volume,desc"],
     },

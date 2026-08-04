@@ -98,6 +98,7 @@ function ScoreBlock({ score, domain }: { score: number | null; domain: string })
   const verdict = VERDICTS.find(([cap]) => score < cap)?.[1] ?? "";
   return (
     <Card variant="brand-alt-1" className="rpt-card rpt-score">
+      <p className="rpt-eyebrow">AI GTM score</p>
       <div className="rpt-score-num" aria-label={`AI GTM score for ${domain}: ${score} out of 100`}>
         {shown}
         <span>/100</span>
@@ -128,8 +129,9 @@ export function ReportExperience() {
   return (
     <main className="rpt" data-phase={state.phase}>
       <nav className="rpt-nav">
-        <Link href="/" className="rpt-wordmark">
-          Pancake
+        <Link href="/" className="rpt-wordmark" aria-label="Pancake">
+          {/* eslint-disable-next-line @next/next/no-img-element -- same asset + treatment as the live landing nav */}
+          <img src="/pancake-wordmark.png" alt="Pancake" />
         </Link>
       </nav>
 
@@ -138,9 +140,9 @@ export function ReportExperience() {
           <p className="rpt-eyebrow">Free AI GTM report</p>
           <h1>Would ChatGPT recommend&nbsp;you?</h1>
           <p className="rpt-sub">
-            Drop your domain. I{"’"}ll build a mini Brain for your company, ask ChatGPT
+            Drop your domain. We{"’"}ll build a mini Brain for your company, ask ChatGPT
             the questions your buyers ask, and check the Google searches with real buying
-            intent. Takes about 30 seconds.
+            intent. Takes under a minute.
           </p>
           <form className="rpt-pill" onSubmit={submit}>
             <Input
@@ -170,13 +172,15 @@ export function ReportExperience() {
               ogImage={state.meta?.ogImage}
               title={state.meta?.title}
             />
-            <SnakeProgress progress={state.progress} />
-            {scanning && (
-              <p className="rpt-status" aria-live="polite">
-                {state.statusLine || "Warming up…"}
-              </p>
-            )}
-            {state.demo && <p className="rpt-demo-tag">demo scan · sample data</p>}
+            <div className="rpt-board-foot">
+              <SnakeProgress progress={state.progress} />
+              {scanning && (
+                <p className="rpt-status" aria-live="polite">
+                  {state.statusLine || "Warming up…"}
+                </p>
+              )}
+              {state.demo && <p className="rpt-demo-tag">demo scan · sample data</p>}
+            </div>
           </header>
 
           <div className="rpt-cards">
@@ -186,11 +190,7 @@ export function ReportExperience() {
             <OpportunitiesCard state={state} />
             <ScoreBlock score={state.score} domain={state.domain} />
             {state.phase === "report" && (
-              <EmailGate
-                unlocked={state.unlocked}
-                toWin={state.google?.toWin ?? 0}
-                onUnlock={unlock}
-              />
+              <EmailGate unlocked={state.unlocked} onUnlock={unlock} />
             )}
           </div>
         </section>

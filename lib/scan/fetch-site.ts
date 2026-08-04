@@ -151,7 +151,7 @@ export function deriveChecks(site: SiteSnapshot): { id: CheckId; pass: boolean; 
       detail:
         blocked.length === 0
           ? "AI crawlers get in. GPTBot and ClaudeBot can read you."
-          : `${blocked.join(" and ")} blocked at the door. ChatGPT can't cite what it can't read.`,
+          : `${blocked.join(" and ")} blocked at the door. AI assistants can't cite what they can't read.`,
     },
     {
       id: "llms",
@@ -176,7 +176,7 @@ export function deriveChecks(site: SiteSnapshot): { id: CheckId; pass: boolean; 
           ? "Titles and descriptions pull their weight."
           : !titleOk
             ? "Your title tag isn't selling anything."
-            : "Your meta description is off-spec. Rewrite it for the click.",
+            : "Your meta description won't earn the click. Rewrite it.",
     },
   ];
 }
