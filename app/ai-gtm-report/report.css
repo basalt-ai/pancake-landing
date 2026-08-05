@@ -688,21 +688,200 @@
   color: var(--text);
 }
 
-.rpt-scene-thinking {
-  max-width: 430px;
+/* Accumulating deep-dive list — the follow-the-agent progression. */
+.rpt-scene-deepdive {
+  position: relative;
+  z-index: 2;
+  max-width: 400px;
   margin: 0 auto;
-  padding: var(--spacing-xxl) var(--spacing-xl);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-lg);
-  text-align: center;
+  padding: var(--spacing-xl) var(--spacing-xxl);
 }
 
-.rpt-scene-thinking p {
+.rpt-scene-deepdive ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.rpt-scene-deepdive li {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
   font-weight: 500;
-  color: var(--subtle-text);
+  color: var(--text);
   animation: rpt-fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.rpt-scene-deepdive li[data-current="true"] {
+  color: var(--subtle-text);
+}
+
+.rpt-dd-dot {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--palette-chrome-100);
+  color: var(--surface);
+}
+
+.rpt-scene-deepdive li[data-current="true"] .rpt-dd-dot {
+  background: transparent;
+  border: 2px solid var(--palette-chrome-100);
+  border-right-color: transparent;
+}
+
+.rpt-anim .rpt-scene-deepdive li[data-current="true"] .rpt-dd-dot {
+  animation: rpt-spin 0.8s linear infinite;
+}
+
+/* Evidence board — the visitor's own artifacts popping around the stage. */
+.rpt-evidence {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.rpt-evidence[data-dimmed="true"] {
+  opacity: 0.38;
+}
+
+.rpt-ev {
+  position: absolute;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  corner-shape: round;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 7%, transparent),
+    0 14px 34px color-mix(in srgb, var(--palette-chrome-100) 10%, transparent);
+  animation: rpt-ev-pop 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes rpt-ev-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.82) translateY(14px) rotate(var(--ev-rot, 0deg));
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0) rotate(var(--ev-rot, 0deg));
+  }
+}
+
+.rpt-ev-shot {
+  --ev-rot: -3.5deg;
+  left: 6%;
+  top: 8%;
+  width: 220px;
+  padding: 8px 8px 10px;
+  transform: rotate(var(--ev-rot));
+}
+
+.rpt-ev-shot img {
+  display: block;
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  object-position: top;
+  border-radius: calc(var(--radius-md) - 4px);
+}
+
+.rpt-ev-shot span {
+  display: block;
+  text-align: center;
+  font-size: 11px;
+  color: var(--subtle-text);
+  padding-top: 6px;
+}
+
+.rpt-ev-serp {
+  --ev-rot: 2deg;
+  right: 5%;
+  top: 12%;
+  width: 250px;
+  padding: var(--spacing-lg);
+  transform: rotate(var(--ev-rot));
+}
+
+.rpt-ev-serp strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.rpt-ev-serp p {
+  font-size: 11.5px;
+  color: var(--subtle-text);
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.rpt-ev-quote,
+.rpt-ev-quote2,
+.rpt-ev-quote3 {
+  width: 230px;
+  padding: var(--spacing-lg);
+}
+
+.rpt-ev-quote p,
+.rpt-ev-quote2 p,
+.rpt-ev-quote3 p {
+  font-size: 12.5px;
+  line-height: 1.45;
+  font-style: italic;
+  color: var(--text);
+}
+
+.rpt-ev-quote {
+  --ev-rot: -2deg;
+  left: 8%;
+  bottom: 30%;
+  transform: rotate(var(--ev-rot));
+}
+
+.rpt-ev-quote2 {
+  --ev-rot: 1.5deg;
+  right: 7%;
+  bottom: 26%;
+  transform: rotate(var(--ev-rot));
+}
+
+.rpt-ev-quote3 {
+  --ev-rot: 2.5deg;
+  left: 36%;
+  top: 6%;
+  transform: rotate(var(--ev-rot));
+}
+
+.rpt-ev-schema {
+  --ev-rot: -1.5deg;
+  right: 9%;
+  bottom: 28%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 240px;
+  transform: rotate(var(--ev-rot));
+}
+
+.rpt-ev-schema i {
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 100vw;
+  background: color-mix(in srgb, var(--palette-purple-30) 30%, var(--surface));
 }
 
 .rpt-scene-eyebrow {
@@ -714,6 +893,8 @@
 }
 
 .rpt-scene-icp {
+  position: relative;
+  z-index: 2;
   max-width: 520px;
   margin: 0 auto;
   padding: var(--spacing-xxl) var(--spacing-xl);
@@ -1392,6 +1573,7 @@ body:has(.rpt) .product-hunt-badge {
 /* ── Reduced motion: the page goes still, content stays ── */
 
 @media (prefers-reduced-motion: reduce) {
+  .rpt-ev,
   .rpt-anim .rpt-scene,
   .rpt-anim .rpt-scene-row,
   .rpt-anim .rpt-scene-q,

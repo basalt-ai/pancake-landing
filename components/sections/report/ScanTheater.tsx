@@ -19,7 +19,10 @@ type StepDef = {
   label: string;
   minMs: number;
   ready: (s: ReportState) => boolean;
-  /** Rotating "agent thinking" lines shown when the dwell is over but data isn't. */
+  /** Once data is in, hold the revealed result at least this long — the find
+   *  is what the visitor came to see, not the loading. */
+  revealMs?: number;
+  /** Sequential deep-dive statements — a progression, never a loop. */
   waitLines?: string[];
 };
 
@@ -43,22 +46,25 @@ function stepDefs(domain: string): StepDef[] {
       key: "icp",
       label: "Finding your ICP",
       minMs: 11000,
+      revealMs: 4500,
       ready: (s) => s.brain !== null,
       waitLines: [
-        "Reading every page the way a buyer would…",
-        "Looking for who signs off on this…",
-        "Naming your ideal customer…",
+        "Reading every page the way a buyer would",
+        "Collecting what the site promises",
+        "Looking for who signs off on this",
+        "Naming your ideal customer",
       ],
     },
     {
       key: "prompts",
       label: "What your ICP asks AI",
       minMs: 9000,
+      revealMs: 4000,
       ready: (s) => s.brain !== null,
       waitLines: [
-        "Standing in your buyer's shoes…",
-        "Writing the questions they'd ask an AI…",
-        "Keeping only the ones with buying intent…",
+        "Standing in your buyer's shoes",
+        "Writing the questions they'd ask an AI",
+        "Keeping only the ones with buying intent",
       ],
     },
     {
@@ -74,8 +80,9 @@ function stepDefs(domain: string): StepDef[] {
       key: "google",
       label: "Checking Google money searches",
       minMs: 8000,
+      revealMs: 4500,
       ready: (s) => s.google !== null,
-      waitLines: ["Pulling your real rankings…"],
+      waitLines: ["Pulling your real rankings", "Sorting by buying intent"],
     },
     {
       key: "tally",
@@ -108,6 +115,7 @@ export function useTheaterSchedule(state: ReportState): TheaterSchedule {
   const [done, setDone] = useState(false);
   const [, setTick] = useState(0);
   const stepStartRef = useRef(Date.now());
+  const readyAtRef = useRef(0);
   const activeRef = useRef(false);
 
   // Cache replays burst everything at once — play those at triple speed. The
@@ -156,12 +164,19 @@ export function useTheaterSchedule(state: ReportState): TheaterSchedule {
     }
     const def = defs[index]!;
     const elapsed = Date.now() - stepStartRef.current;
-    if (elapsed >= effMin(def) && def.ready(state)) {
+    const isReady = def.ready(state);
+    if (isReady && readyAtRef.current === 0) readyAtRef.current = Date.now();
+    const revealHeld =
+      !def.revealMs ||
+      (readyAtRef.current > 0 &&
+        Date.now() - readyAtRef.current >= def.revealMs / (allDataIn ? 3 : 1));
+    if (elapsed >= effMin(def) && isReady && revealHeld) {
       if (index === defs.length - 1) {
         setDone(true);
       } else {
         setIndex(index + 1);
         stepStartRef.current = Date.now();
+        readyAtRef.current = 0;
       }
     }
   });
@@ -188,7 +203,7 @@ function Countdown({ schedule }: { schedule: TheaterSchedule }) {
       </span>
       <p>
         {schedule.waiting || schedule.remainingSec <= 4
-          ? "a few more seconds…"
+          ? "A few more seconds…"
           : `${schedule.remainingSec} seconds left`}
       </p>
     </div>
@@ -197,17 +212,28 @@ function Countdown({ schedule }: { schedule: TheaterSchedule }) {
 
 /* ── Stage scenes — every one renders the real data of its step ── */
 
-/** Rotating agent-observation card — the anti-dead-air device. */
-function SceneThinking({ lines, elapsedMs }: { lines: string[]; elapsedMs: number }) {
-  const line = lines[Math.floor(elapsedMs / 2600) % lines.length]!;
+/**
+ * Accumulating deep-dive: statements appear one after another and stay,
+ * earlier ones check off — a progression you can follow, never a loop.
+ */
+function SceneDeepDive({ lines, elapsedMs }: { lines: string[]; elapsedMs: number }) {
+  const visible = Math.min(lines.length, Math.floor(elapsedMs / 2400) + 1);
   return (
-    <div className="rpt-scene-card rpt-scene-thinking">
-      <span className="rpt-scene-dots" aria-hidden>
-        <i />
-        <i />
-        <i />
-      </span>
-      <p key={line}>{line}</p>
+    <div className="rpt-scene-card rpt-scene-deepdive">
+      <ol>
+        {lines.slice(0, visible).map((line, i) => {
+          const current = i === visible - 1;
+          return (
+            <li key={line} data-current={current}>
+              <span className="rpt-dd-dot" aria-hidden>
+                {!current && <MarkIcon ok size={7} />}
+              </span>
+              {line}
+              {current ? "…" : ""}
+            </li>
+          );
+        })}
+      </ol>
     </div>
   );
 }
@@ -298,30 +324,102 @@ function SceneAccess({ state }: { state: ReportState }) {
   );
 }
 
-function SceneICP({ state, schedule }: { state: ReportState; schedule: TheaterSchedule }) {
-  if (!state.brain) {
-    return (
-      <SceneThinking
-        lines={stepDefs(state.domain)[2]!.waitLines!}
-        elapsedMs={schedule.stepElapsedMs}
-      />
-    );
+/** The visitor's own artifacts, popping in around the stage as the agents
+ *  register them — screenshot, search snippet, verbatim homepage lines. */
+function EvidenceBoard({ state, elapsedMs, dimmed }: { state: ReportState; elapsedMs: number; dimmed: boolean }) {
+  const meta = state.meta;
+  const snippets = meta?.snippets ?? [];
+  const cards: { at: number; cls: string; node: React.ReactNode }[] = [];
+  cards.push({
+    at: 900,
+    cls: "rpt-ev-shot",
+    node: (
+      <>
+        {/* eslint-disable-next-line @next/next/no-img-element -- live capture of the visitor's site */}
+        <img
+          src={`https://image.thum.io/get/width/600/crop/420/noanimate/https://${state.domain}`}
+          alt=""
+          onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
+        />
+        <span>{state.domain}</span>
+      </>
+    ),
+  });
+  if (meta?.title || meta?.description) {
+    cards.push({
+      at: 2600,
+      cls: "rpt-ev-serp",
+      node: (
+        <>
+          <strong>{meta?.title}</strong>
+          {meta?.description && <p>{meta.description}</p>}
+        </>
+      ),
+    });
+  }
+  if (snippets[0]) {
+    cards.push({ at: 4300, cls: "rpt-ev-quote", node: <p>“{snippets[0]}”</p> });
+  }
+  if (meta?.schemaTypes?.length) {
+    cards.push({
+      at: 6000,
+      cls: "rpt-ev-schema",
+      node: (
+        <>
+          {meta.schemaTypes.slice(0, 4).map((t) => (
+            <i key={t}>{t}</i>
+          ))}
+        </>
+      ),
+    });
+  } else if (snippets[1]) {
+    cards.push({ at: 6000, cls: "rpt-ev-quote2", node: <p>“{snippets[1]}”</p> });
+  }
+  if (snippets[2] ?? snippets[1]) {
+    cards.push({ at: 7700, cls: "rpt-ev-quote3", node: <p>“{snippets[2] ?? snippets[1]}”</p> });
   }
   return (
-    <div className="rpt-scene-card rpt-scene-icp">
-      <span className="rpt-scene-eyebrow">Your ICP, as the agents read it</span>
-      <p className="rpt-scene-icp-text">{state.brain.icp}</p>
-      <span className="rpt-scene-icp-co">
-        {state.brain.company} · {state.domain}
-      </span>
+    <div className="rpt-evidence" data-dimmed={dimmed} aria-hidden>
+      {cards
+        .filter((c) => elapsedMs >= c.at)
+        .map((c) => (
+          <div className={`rpt-ev ${c.cls}`} key={c.cls}>
+            {c.node}
+          </div>
+        ))}
     </div>
+  );
+}
+
+function SceneICP({ state, schedule }: { state: ReportState; schedule: TheaterSchedule }) {
+  // Even when the analysis is already in (demo, cache), play the dive first:
+  // evidence popping crisp + statements accumulating IS the magic beat.
+  const revealed = state.brain !== null && schedule.stepElapsedMs >= 6500;
+  return (
+    <>
+      <EvidenceBoard state={state} elapsedMs={schedule.stepElapsedMs} dimmed={revealed} />
+      {revealed ? (
+        <div className="rpt-scene-card rpt-scene-icp">
+          <span className="rpt-scene-eyebrow">Your ICP, as the agents read it</span>
+          <p className="rpt-scene-icp-text">{state.brain!.icp}</p>
+          <span className="rpt-scene-icp-co">
+            {state.brain!.company} · {state.domain}
+          </span>
+        </div>
+      ) : (
+        <SceneDeepDive
+          lines={stepDefs(state.domain)[2]!.waitLines!}
+          elapsedMs={schedule.stepElapsedMs}
+        />
+      )}
+    </>
   );
 }
 
 function ScenePrompts({ state, schedule }: { state: ReportState; schedule: TheaterSchedule }) {
   if (!state.brain) {
     return (
-      <SceneThinking
+      <SceneDeepDive
         lines={stepDefs(state.domain)[3]!.waitLines!}
         elapsedMs={schedule.stepElapsedMs}
       />
@@ -362,10 +460,10 @@ function SceneChatGPT({ state }: { state: ReportState }) {
                     <i className="rpt-mini-mark" data-ok={p.cited}>
                       <MarkIcon ok={p.cited === true} size={8} />
                     </i>
-                    {p.cited ? "recommended" : "not you"}
+                    {p.cited ? "Recommended" : "Not mentioned"}
                   </>
                 ) : (
-                  "asking…"
+                  "Asking…"
                 )}
               </span>
             </div>
@@ -380,7 +478,7 @@ function SceneGoogle({ state, schedule }: { state: ReportState; schedule: Theate
   const rows = state.google?.rows ?? [];
   if (!rows.length) {
     return (
-      <SceneThinking
+      <SceneDeepDive
         lines={stepDefs(state.domain)[5]!.waitLines!}
         elapsedMs={schedule.stepElapsedMs}
       />

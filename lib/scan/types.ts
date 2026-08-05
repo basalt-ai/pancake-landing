@@ -18,7 +18,16 @@ export type ScanEvent =
   | { type: "status"; label: string }
   /** Heartbeat during long server ops — clients use it for liveness, never render it. */
   | { type: "ping" }
-  | { type: "meta"; title?: string; ogImage?: string; favicon?: string }
+  | {
+      type: "meta";
+      title?: string;
+      ogImage?: string;
+      favicon?: string;
+      description?: string;
+      schemaTypes?: string[];
+      /** Verbatim fragments of the visitor's homepage — the evidence board's props. */
+      snippets?: string[];
+    }
   | { type: "check"; id: CheckId; pass: boolean; detail: string }
   | { type: "brain"; company: string; icp: string; prompts: string[] }
   | {

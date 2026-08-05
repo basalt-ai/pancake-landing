@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getClientIp, rateLimit } from "@/lib/rate-limit";
 import { getCachedScan, setCachedScan } from "@/lib/scan/cache";
 import { checkPromptOnChatGPT, isConfigured, rankedKeywords } from "@/lib/scan/dataforseo";
-import { deriveChecks, fetchSite } from "@/lib/scan/fetch-site";
+import { deriveChecks, extractSnippets, fetchSite } from "@/lib/scan/fetch-site";
 import { analyzeSite } from "@/lib/scan/analyze";
 import { validateScanTarget } from "@/lib/scan/validate";
 import type { Analysis, GoogleRow, RankedKeywords, ScanEvent } from "@/lib/scan/types";
@@ -180,7 +180,15 @@ export async function POST(request: Request) {
           return;
         }
 
-        send({ type: "meta", title: site.title, ogImage: site.ogImage, favicon: site.favicon });
+        send({
+          type: "meta",
+          title: site.title,
+          ogImage: site.ogImage,
+          favicon: site.favicon,
+          description: site.metaDescription,
+          schemaTypes: site.schemaTypes,
+          snippets: extractSnippets(site.textExtract),
+        });
         send({ type: "status", label: "Checking who gets in: AI crawlers, llms.txt, structured data…" });
         const checks = deriveChecks(site);
         for (const check of checks) send({ type: "check", ...check });

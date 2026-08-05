@@ -32,7 +32,14 @@ export type ReportState = {
   domain: string;
   demo: boolean;
   statusLine: string;
-  meta: { title?: string; ogImage?: string; favicon?: string } | null;
+  meta: {
+    title?: string;
+    ogImage?: string;
+    favicon?: string;
+    description?: string;
+    schemaTypes?: string[];
+    snippets?: string[];
+  } | null;
   checks: { id: string; pass: boolean; detail: string }[];
   brain: { company: string; icp: string } | null;
   prompts: PromptRow[];
@@ -93,7 +100,17 @@ function reducer(state: ReportState, action: Action): ReportState {
         case "status":
           return { ...state, statusLine: ev.label };
         case "meta":
-          return bump({ ...state, meta: { title: ev.title, ogImage: ev.ogImage, favicon: ev.favicon } });
+          return bump({
+            ...state,
+            meta: {
+              title: ev.title,
+              ogImage: ev.ogImage,
+              favicon: ev.favicon,
+              description: ev.description,
+              schemaTypes: ev.schemaTypes,
+              snippets: ev.snippets,
+            },
+          });
         case "check":
           return bump({
             ...state,

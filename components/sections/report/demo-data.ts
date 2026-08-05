@@ -13,6 +13,15 @@ export const DEMO_EVENTS: ScanEvent[] = [
     type: "meta",
     title: "Doctolib — Book your medical appointments online",
     favicon: `https://www.${DEMO_DOMAIN}/favicon.ico`,
+    description:
+      "Book medical appointments online with practitioners near you. Trusted by 900,000 health professionals across Europe.",
+    schemaTypes: ["Organization", "WebSite", "FAQPage"],
+    snippets: [
+      "Book your next appointment online in a few clicks.",
+      "900,000 practitioners trust Doctolib every day.",
+      "Video consultations, reminders, and your health history in one place.",
+      "Find a GP, dentist or physio near you.",
+    ],
   },
   { type: "status", label: "Checking who gets in: AI crawlers, llms.txt, schema…" },
   { type: "check", id: "crawlers", pass: true, detail: "GPTBot and ClaudeBot can read you. The door is open." },

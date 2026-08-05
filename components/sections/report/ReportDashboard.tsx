@@ -178,7 +178,7 @@ function CompetitorsCard({ state }: { state: ReportState }) {
             <span className="rpt-comp-rank">{i + 1}</span>
             <strong>{c.host}</strong>
             <span className="rpt-comp-count">
-              cited in {c.count} answer{c.count > 1 ? "s" : ""}
+              Cited in {c.count} answer{c.count > 1 ? "s" : ""}
             </span>
           </li>
         ))}
