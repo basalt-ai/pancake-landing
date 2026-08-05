@@ -4,6 +4,15 @@
  * Crisp stroke marks for pass/fail bubbles — SVG paths, optically centered,
  * unlike text glyphs whose baselines drift inside small circles.
  */
+/** Lightning bolt for buying-signal rows — an event firing, not a verdict. */
+export function BoltIcon({ size = 11 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 12 12" width={size} height={size} aria-hidden="true">
+      <path d="M6.8 1 2.6 6.7h2.7L5.2 11l4.2-5.7H6.7z" fill="currentColor" />
+    </svg>
+  );
+}
+
 export function MarkIcon({ ok, size = 11 }: { ok: boolean; size?: number }) {
   return ok ? (
     <svg viewBox="0 0 12 12" width={size} height={size} aria-hidden="true">

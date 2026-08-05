@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/Badge";
 import { Input } from "@/components/ui/Input";
 
 import { FxButton } from "./FxButton";
-import { MarkIcon } from "./MarkIcon";
+import { BoltIcon, MarkIcon } from "./MarkIcon";
+import { formatMembers } from "./ScanTheater";
 import type { ReportState, ScoreBreakdown } from "./useReport";
 
 /**
@@ -252,6 +253,63 @@ function SearchesCard({ state }: { state: ReportState }) {
   );
 }
 
+function SignalsCard({ state }: { state: ReportState }) {
+  const signals = state.signals?.signals ?? [];
+  if (!signals.length) return null;
+  return (
+    <div className="rpt-dcard">
+      <header>
+        <h3>Buying signals your agents would watch</h3>
+        <Badge variant="brand-alt-1">{signals.length}</Badge>
+      </header>
+      <p className="rpt-dcard-note">
+        Not a lead list — public events that mean a buyer is in market this week.
+      </p>
+      <ul className="rpt-signals">
+        {signals.map((s, i) => (
+          <li key={s.signal}>
+            <span className="rpt-signal-bolt" aria-hidden>
+              <BoltIcon size={11} />
+            </span>
+            <div>
+              <strong>{s.signal}</strong>
+              {(state.unlocked || i === 0) && (
+                <p>
+                  {s.why} <span className="rpt-signal-where">Watch: {s.where}</span>
+                </p>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function CommunitiesCard({ state }: { state: ReportState }) {
+  const communities = state.signals?.communities ?? [];
+  if (!communities.length) return null;
+  return (
+    <div className="rpt-dcard">
+      <header>
+        <h3>Where your buyers already ask</h3>
+      </header>
+      <p className="rpt-dcard-note">
+        AI answers quote these threads — showing up here is AI visibility too.
+      </p>
+      <ul className="rpt-communities">
+        {communities.map((c) => (
+          <li key={c.name}>
+            <strong>{c.name}</strong>
+            {c.members && <span className="rpt-comm-members">{formatMembers(c.members)} members</span>}
+            {state.unlocked && <p>{c.why}</p>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function OpportunitiesCard({ state }: { state: ReportState }) {
   const opps = state.opportunities;
   if (!opps) return null;
@@ -380,6 +438,8 @@ export function ReportDashboard({
           <CompetitorsCard state={state} />
           <QuestionsCard state={state} />
           <SearchesCard state={state} />
+          <SignalsCard state={state} />
+          <CommunitiesCard state={state} />
           <OpportunitiesCard state={state} />
           {state.unlocked && <PancakeCard />}
         </div>

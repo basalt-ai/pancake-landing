@@ -58,6 +58,37 @@ export const DEMO_EVENTS: ScanEvent[] = [
     toWin: 5,
     commentary: "Ranks for 18,400 keywords, 214 in the top 10.",
   },
+  { type: "status", label: "Spotting buying signals…" },
+  {
+    type: "signals",
+    signals: [
+      {
+        signal: "A practice posts a job for a medical secretary",
+        why: "Hiring admin staff means the phone is overflowing — booking software solves the same pain cheaper.",
+        where: "Indeed, HelloWork",
+      },
+      {
+        signal: "Reviews mention 'impossible to reach by phone'",
+        why: "Patients already complain about access — the practice feels it and shops for a fix.",
+        where: "Google Maps reviews",
+      },
+      {
+        signal: "A new practice or clinic opens in a covered city",
+        why: "New practices pick their booking stack in the first weeks — the window is short.",
+        where: "Local registries, press",
+      },
+      {
+        signal: "A clinic's site still lists phone-only appointments",
+        why: "No online booking in 2026 is the clearest gap this product closes.",
+        where: "Practice websites",
+      },
+    ],
+    communities: [
+      { name: "r/medicine", why: "Practitioners compare practice tools and workflows.", members: 2500000 },
+      { name: "r/HealthIT", why: "Practice managers ask about scheduling and EHR integrations.", members: 52000 },
+      { name: "r/Residency", why: "Young doctors setting up their first practice ask for stack advice.", members: 420000 },
+    ],
+  },
   { type: "status", label: "Asking ChatGPT what your buyers ask…" },
   { type: "citation", index: 0, cited: true, detail: "ChatGPT names you in this answer." },
   { type: "citation", index: 1, cited: false, detail: "Cited instead: solvhealth.com, zocdoc.com", citedDomains: ["solvhealth.com", "zocdoc.com"] },

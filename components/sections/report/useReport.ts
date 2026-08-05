@@ -2,7 +2,13 @@
 
 import { useCallback, useEffect, useReducer, useRef } from "react";
 
-import type { GoogleRow, OpportunityItem, ScanEvent } from "@/lib/scan/types";
+import type {
+  CommunityItem,
+  GoogleRow,
+  OpportunityItem,
+  ScanEvent,
+  SignalItem,
+} from "@/lib/scan/types";
 import { DEMO_DOMAIN, DEMO_EVENTS } from "./demo-data";
 
 /**
@@ -44,6 +50,7 @@ export type ReportState = {
   brain: { company: string; icp: string } | null;
   prompts: PromptRow[];
   google: { rows: GoogleRow[]; toWin: number; estimated?: boolean; commentary?: string } | null;
+  signals: { signals: SignalItem[]; communities: CommunityItem[] } | null;
   opportunities: { count: number; items: OpportunityItem[] } | null;
   score: number | null;
   /** Score recomputed as if the surfaced gaps were closed — the teaser. */
@@ -65,6 +72,7 @@ const INITIAL: ReportState = {
   brain: null,
   prompts: [],
   google: null,
+  signals: null,
   opportunities: null,
   score: null,
   potentialScore: null,
@@ -146,6 +154,8 @@ function reducer(state: ReportState, action: Action): ReportState {
             ...state,
             google: { rows: ev.rows, toWin: ev.toWin, estimated: ev.estimated, commentary: ev.commentary },
           });
+        case "signals":
+          return bump({ ...state, signals: { signals: ev.signals, communities: ev.communities } });
         case "opportunities":
           return bump({ ...state, opportunities: { count: ev.count, items: ev.items } });
         case "score":

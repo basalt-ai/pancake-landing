@@ -14,6 +14,13 @@ export type GoogleRow = {
 
 export type OpportunityItem = { title: string; detail: string };
 
+/** An observable event that predicts a purchase — never a lead list. */
+export type SignalItem = { signal: string; why: string; where: string };
+
+/** A real community where the ICP asks for advice. `members` only when
+ *  verified against Reddit's public API — never a model guess. */
+export type CommunityItem = { name: string; why: string; members?: number };
+
 export type ScanEvent =
   | { type: "status"; label: string }
   /** Heartbeat during long server ops — clients use it for liveness, never render it. */
@@ -47,6 +54,8 @@ export type ScanEvent =
       commentary?: string;
     }
   | { type: "opportunities"; count: number; items: OpportunityItem[] }
+  /** The outbound dimension: signals to monitor + communities to watch. */
+  | { type: "signals"; signals: SignalItem[]; communities: CommunityItem[] }
   /** potential = the recomputed score if the surfaced gaps were closed. */
   | {
       type: "score";
@@ -92,6 +101,9 @@ export type Analysis = {
   relevant_keywords: string[];
   google_commentary: string;
   opportunities: OpportunityItem[];
+  buying_signals: SignalItem[];
+  /** Candidate communities — subreddits get verified before they ship. */
+  communities: { name: string; why: string }[];
   content_readiness: number;
 };
 

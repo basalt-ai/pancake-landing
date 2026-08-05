@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { MarkIcon } from "./MarkIcon";
+import { BoltIcon, MarkIcon } from "./MarkIcon";
 import type { PromptRow, ReportState } from "./useReport";
 
 /**
@@ -86,6 +86,19 @@ function stepDefs(domain: string): StepDef[] {
       waitLines: ["Pulling your real rankings", "Sorting by buying intent"],
     },
     {
+      key: "signals",
+      label: "Spotting buying signals",
+      minMs: 8500,
+      revealMs: 4000,
+      // Old cached replays predate this event — fall back on the score so the
+      // rail never hangs on a scene whose data will never come.
+      ready: (s) => s.signals !== null || s.score !== null,
+      waitLines: [
+        "Listing events that mean 'ready to buy'",
+        "Finding where your buyers ask for advice",
+      ],
+    },
+    {
       key: "tally",
       label: "Scoring it",
       // Count-up (2.4s) + a real hold on the landed number — the finale.
@@ -93,6 +106,10 @@ function stepDefs(domain: string): StepDef[] {
       ready: (s) => s.score !== null,
     },
   ];
+}
+
+function waitLinesFor(domain: string, key: string): string[] {
+  return stepDefs(domain).find((d) => d.key === key)?.waitLines ?? [];
 }
 
 export type TheaterSchedule = {
@@ -472,7 +489,7 @@ function SceneICP({ state, schedule }: { state: ReportState; schedule: TheaterSc
   if (!icpRevealed(state, schedule)) {
     return (
       <SceneDeepDive
-        lines={stepDefs(state.domain)[2]!.waitLines!}
+        lines={waitLinesFor(state.domain, "icp")}
         elapsedMs={schedule.stepElapsedMs}
         speed={schedule.speed}
       />
@@ -496,7 +513,7 @@ function ScenePrompts({ state, schedule }: { state: ReportState; schedule: Theat
   if (!state.brain) {
     return (
       <SceneDeepDive
-        lines={stepDefs(state.domain)[3]!.waitLines!}
+        lines={waitLinesFor(state.domain, "prompts")}
         elapsedMs={schedule.stepElapsedMs}
         speed={schedule.speed}
       />
@@ -574,7 +591,7 @@ function SceneGoogle({ state, schedule }: { state: ReportState; schedule: Theate
   if (!rows.length) {
     return (
       <SceneDeepDive
-        lines={stepDefs(state.domain)[5]!.waitLines!}
+        lines={waitLinesFor(state.domain, "google")}
         elapsedMs={schedule.stepElapsedMs}
         speed={schedule.speed}
       />
@@ -610,6 +627,69 @@ function SceneGoogle({ state, schedule }: { state: ReportState; schedule: Theate
             </div>
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+/** 2500000 → "2.5M", 52000 → "52k" — chip-sized member counts. */
+export function formatMembers(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(n >= 10_000_000 ? 0 : 1)}M`;
+  if (n >= 1_000) return `${Math.round(n / 1_000)}k`;
+  return String(n);
+}
+
+function SceneSignals({ state, schedule }: { state: ReportState; schedule: TheaterSchedule }) {
+  const data = state.signals;
+  if (!data || !data.signals.length) {
+    return (
+      <SceneDeepDive
+        lines={waitLinesFor(state.domain, "signals")}
+        elapsedMs={schedule.stepElapsedMs}
+        speed={schedule.speed}
+      />
+    );
+  }
+  // Signals fire one by one; the communities strip lands last, then the stamp.
+  const signals = data.signals.slice(0, 4);
+  const visible = Math.max(1, Math.floor(schedule.stepElapsedMs / (950 / schedule.speed)) + 1);
+  const showComms = visible > signals.length && data.communities.length > 0;
+  const complete = visible > signals.length + (data.communities.length ? 1 : 0);
+  return (
+    <div className="rpt-reveal rpt-reveal-pop" data-found={complete}>
+      {complete && (
+        <FoundChip above>
+          {signals.length} signals to watch
+        </FoundChip>
+      )}
+      <div className="rpt-scene-brain">
+        <p className="rpt-scene-caption">Events that mean {"“"}ready to buy{"”"}.</p>
+        <div className="rpt-scene-list rpt-scene-signals">
+          {signals.slice(0, visible).map((s) => (
+            <div className="rpt-scene-row" key={s.signal}>
+              <span className="rpt-scene-bolt" aria-hidden>
+                <BoltIcon size={12} />
+              </span>
+              <div>
+                <strong>{s.signal}</strong>
+                <p>
+                  {s.why} <span className="rpt-scene-where">Watch: {s.where}</span>
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+        {showComms && (
+          <div className="rpt-scene-comms">
+            <span className="rpt-scene-comms-label">Where your buyers already ask</span>
+            {data.communities.map((c) => (
+              <span className="rpt-comm-chip" key={c.name}>
+                {c.name}
+                {c.members ? ` · ${formatMembers(c.members)}` : ""}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -679,6 +759,8 @@ function renderScene(key: string, state: ReportState, schedule: TheaterSchedule)
       return <SceneChatGPT state={state} schedule={schedule} />;
     case "google":
       return <SceneGoogle state={state} schedule={schedule} />;
+    case "signals":
+      return <SceneSignals state={state} schedule={schedule} />;
     case "tally":
       return <SceneTally state={state} speed={schedule.speed} />;
     default:

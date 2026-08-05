@@ -586,6 +586,71 @@
   align-items: stretch;
 }
 
+/* Buying-signal rows — an event firing, amber bolt instead of a verdict.
+   Compact: four rows + the communities strip must fit above the horizon. */
+.rpt-scene-signals {
+  gap: var(--spacing-sm);
+}
+
+.rpt-scene-signals .rpt-scene-row {
+  padding: 10px var(--spacing-lg);
+}
+
+.rpt-scene-signals .rpt-scene-row p {
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+.rpt-scene-bolt {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--palette-yellow-30);
+  color: var(--palette-chrome-100);
+}
+
+.rpt-scene-where {
+  display: inline-block;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--subtle-text);
+  white-space: nowrap;
+}
+
+/* Communities strip under the signals — where the buyers already ask. */
+.rpt-scene-comms {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+.rpt-anim .rpt-scene-comms {
+  animation: rpt-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.rpt-scene-comms-label {
+  width: 100%;
+  text-align: center;
+  font-size: var(--font-size-body-small);
+  font-weight: 600;
+  color: var(--subtle-text);
+}
+
+.rpt-comm-chip {
+  padding: 5px 12px;
+  border-radius: 100vw;
+  background: color-mix(in srgb, var(--palette-purple-30) 30%, var(--surface));
+  font-size: var(--font-size-body-small);
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 6%, transparent);
+}
+
 .rpt-scene-row {
   display: flex;
   gap: var(--spacing-lg);
@@ -1432,6 +1497,89 @@
   height: 14px;
   border-radius: 50%;
   background: var(--negative-stroke);
+}
+
+/* Dashboard: buying signals + communities (the outbound dimension). */
+.rpt-signals {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rpt-signals li {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: flex-start;
+  padding: var(--spacing-md) 0;
+}
+
+.rpt-signals li + li {
+  border-top: 1px solid color-mix(in srgb, var(--palette-chrome-100) 6%, transparent);
+}
+
+.rpt-signal-bolt {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--palette-yellow-30);
+  color: var(--palette-chrome-100);
+  margin-top: 1px;
+}
+
+.rpt-signals strong {
+  font-weight: 600;
+  display: block;
+  font-size: var(--font-size-body-small);
+}
+
+.rpt-signals p {
+  margin-top: 2px;
+  color: var(--subtle-text);
+  font-size: var(--font-size-body-small);
+  line-height: 1.45;
+}
+
+.rpt-signal-where {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.rpt-communities {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rpt-communities li {
+  padding: var(--spacing-md) 0;
+}
+
+.rpt-communities li + li {
+  border-top: 1px solid color-mix(in srgb, var(--palette-chrome-100) 6%, transparent);
+}
+
+.rpt-communities strong {
+  font-weight: 600;
+  font-size: var(--font-size-body-small);
+}
+
+.rpt-comm-members {
+  margin-left: var(--spacing-sm);
+  padding: 2px 9px;
+  border-radius: 100vw;
+  background: color-mix(in srgb, var(--palette-purple-30) 30%, var(--surface));
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.rpt-communities p {
+  margin-top: 2px;
+  color: var(--subtle-text);
+  font-size: var(--font-size-body-small);
+  line-height: 1.45;
 }
 
 .rpt-competitors {
