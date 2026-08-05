@@ -41,7 +41,7 @@ function stepDefs(domain: string): StepDef[] {
     },
     {
       key: "icp",
-      label: "Defining your ICP",
+      label: "Finding your ICP",
       minMs: 11000,
       ready: (s) => s.brain !== null,
       waitLines: [
@@ -52,7 +52,7 @@ function stepDefs(domain: string): StepDef[] {
     },
     {
       key: "prompts",
-      label: "Top prompts for your ICP",
+      label: "What your ICP asks AI",
       minMs: 9000,
       ready: (s) => s.brain !== null,
       waitLines: [
@@ -189,7 +189,7 @@ function Countdown({ schedule }: { schedule: TheaterSchedule }) {
       <p>
         {schedule.waiting || schedule.remainingSec <= 4
           ? "a few more seconds…"
-          : `${schedule.remainingSec} seconds remaining`}
+          : `${schedule.remainingSec} seconds left`}
       </p>
     </div>
   );
@@ -230,14 +230,33 @@ function Favicon({ domain, favicon }: { domain: string; favicon?: string }) {
 
 function SceneSite({ state }: { state: ReportState }) {
   const meta = state.meta;
+  const [shotReady, setShotReady] = useState(false);
   return (
     <div className="rpt-scene-card rpt-scene-site">
-      {meta?.ogImage ? (
-        // eslint-disable-next-line @next/next/no-img-element -- the visitor's own og:image
-        <img className="rpt-scene-og" src={meta.ogImage} alt="" />
-      ) : (
-        <div className="rpt-scene-og rpt-scene-og-empty" aria-hidden />
-      )}
+      <div className="rpt-scene-browser-bar" aria-hidden>
+        <i />
+        <i />
+        <i />
+        <span>{state.domain}</span>
+      </div>
+      <div className="rpt-scene-og-wrap">
+        {meta?.ogImage ? (
+          // eslint-disable-next-line @next/next/no-img-element -- the visitor's own og:image
+          <img className="rpt-scene-og" src={meta.ogImage} alt="" />
+        ) : (
+          <div className="rpt-scene-og rpt-scene-og-empty" aria-hidden />
+        )}
+        {state.domain && (
+          // eslint-disable-next-line @next/next/no-img-element -- live capture of the visitor's site
+          <img
+            className="rpt-scene-shot"
+            data-ready={shotReady}
+            src={`https://image.thum.io/get/width/900/crop/620/noanimate/https://${state.domain}`}
+            alt=""
+            onLoad={() => setShotReady(true)}
+          />
+        )}
+      </div>
       <div className="rpt-scene-site-id">
         <Favicon domain={state.domain} favicon={meta?.favicon} />
         <div>
@@ -325,7 +344,7 @@ function ScenePrompts({ state, schedule }: { state: ReportState; schedule: Theat
 function SceneChatGPT({ state }: { state: ReportState }) {
   return (
     <div className="rpt-scene-brain">
-      <p className="rpt-scene-caption">Would ChatGPT bring you up? Asking for real:</p>
+      <p className="rpt-scene-caption">Does ChatGPT recommend you? Asking for real.</p>
       <div className="rpt-scene-qgrid">
         {state.prompts.slice(0, 6).map((p, i) => {
           const settled = p.status === "done" && p.cited !== undefined;
@@ -343,7 +362,7 @@ function SceneChatGPT({ state }: { state: ReportState }) {
                     <i className="rpt-mini-mark" data-ok={p.cited}>
                       <MarkIcon ok={p.cited === true} size={8} />
                     </i>
-                    {p.cited ? "cited" : "not you"}
+                    {p.cited ? "recommended" : "not you"}
                   </>
                 ) : (
                   "asking…"
@@ -368,10 +387,12 @@ function SceneGoogle({ state, schedule }: { state: ReportState; schedule: Theate
     );
   }
   return (
-    <div className="rpt-scene-list rpt-scene-serp">
+    <div className="rpt-scene-brain">
+      <p className="rpt-scene-caption">Searches with money behind them.</p>
+      <div className="rpt-scene-list rpt-scene-serp">
       {rows.slice(0, 5).map((row, i) => (
         <div className="rpt-scene-row" key={row.term} style={{ animationDelay: `${i * 0.3}s` }}>
-          <span className="rpt-scene-pos" data-far={row.position === null || row.position > 20}>
+          <span className="rpt-scene-pos" data-far={row.position === null || row.position > 10}>
             {row.position ? `#${row.position}` : "—"}
           </span>
           <div>
@@ -380,18 +401,55 @@ function SceneGoogle({ state, schedule }: { state: ReportState; schedule: Theate
           </div>
         </div>
       ))}
+      </div>
     </div>
   );
 }
 
-function SceneTally() {
+const BAND_COLORS: [number, string][] = [
+  [39, "var(--negative-stroke)"],
+  [69, "var(--palette-yellow-30)"],
+  [100, "var(--palette-green-20)"],
+];
+
+/** The drum roll: the score ring draws and counts up right before the reveal. */
+function SceneTally({ state }: { state: ReportState }) {
+  const target = state.score ?? 0;
+  const [shown, setShown] = useState(0);
+  useEffect(() => {
+    const start = performance.now();
+    let raf = 0;
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / 2400);
+      setShown(Math.round(target * (1 - Math.pow(1 - t, 3))));
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target]);
+  const R = 50;
+  const C = 2 * Math.PI * R;
+  const color = (BAND_COLORS.find(([cap]) => shown <= cap) ?? BAND_COLORS[2]!)[1];
   return (
     <div className="rpt-scene-adding">
-      <span className="rpt-scene-dots" aria-hidden>
-        <i />
-        <i />
-        <i />
-      </span>
+      <div className="rpt-tally-ring">
+        <svg viewBox="0 0 120 120" width="120" height="120" aria-hidden>
+          <circle cx="60" cy="60" r={R} fill="none" stroke="var(--palette-chrome-30)" strokeWidth="9" />
+          <circle
+            cx="60"
+            cy="60"
+            r={R}
+            fill="none"
+            stroke={color}
+            strokeWidth="9"
+            strokeLinecap="round"
+            strokeDasharray={C}
+            strokeDashoffset={C * (1 - shown / 100)}
+            transform="rotate(-90 60 60)"
+          />
+        </svg>
+        <span className="rpt-tally-num">{shown}</span>
+      </div>
       <p>Scoring what the agents found…</p>
     </div>
   );
@@ -411,7 +469,7 @@ export function ScanTheater({
     <section className="rpt-theater">
       <aside className="rpt-rail">
         <div className="rpt-rail-card">
-          <h2>Scanning…</h2>
+          <h2>Scanning {state.domain}…</h2>
           <ol className="rpt-rail-steps">
             {defs.map((step, i) => (
               <li
@@ -438,7 +496,7 @@ export function ScanTheater({
           {active.key === "prompts" && <ScenePrompts state={state} schedule={schedule} />}
           {active.key === "chatgpt" && <SceneChatGPT state={state} />}
           {active.key === "google" && <SceneGoogle state={state} schedule={schedule} />}
-          {active.key === "tally" && <SceneTally />}
+          {active.key === "tally" && <SceneTally state={state} />}
         </div>
         <span className="rpt-stage-horizon" aria-hidden />
       </div>

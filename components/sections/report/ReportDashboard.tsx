@@ -20,9 +20,9 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 /** Grade bands shown under the dial so the number reads at a glance. The
  *  worst band is negative red — pink stays reserved for the brand. */
 const GRADES = [
-  { label: "Invisible", from: 0, to: 39, color: "var(--negative-surface)" },
+  { label: "Invisible", from: 0, to: 39, color: "var(--negative-stroke)" },
   { label: "In the game", from: 40, to: 69, color: "var(--palette-yellow-30)" },
-  { label: "Strong", from: 70, to: 100, color: "var(--palette-green-20)" },
+  { label: "Winning", from: 70, to: 100, color: "var(--palette-green-20)" },
 ];
 
 function bandFor(score: number) {
@@ -64,7 +64,7 @@ function Dial({ score, color }: { score: number; color: string }) {
 const SUBS: { key: keyof ScoreBreakdown; label: string }[] = [
   { key: "ai", label: "AI visibility" },
   { key: "google", label: "Google reach" },
-  { key: "readiness", label: "Machine readiness" },
+  { key: "readiness", label: "Machine readability" },
 ];
 
 function ScoreRail({ state }: { state: ReportState }) {
@@ -106,7 +106,7 @@ function ScoreRail({ state }: { state: ReportState }) {
       )}
       {state.potentialScore !== null && (
         <p className="rpt-rail-potential">
-          Fix what{"’"}s below and our estimate puts you at <strong>{state.potentialScore}</strong>.
+          Estimated after fixes: <strong>{state.potentialScore}/100</strong>
         </p>
       )}
     </aside>
@@ -238,7 +238,7 @@ function SearchesCard({ state }: { state: ReportState }) {
       <ul className="rpt-qtable rpt-stable">
         {google.rows.map((row) => (
           <li key={row.term}>
-            <span className="rpt-spos" data-far={row.position === null}>
+            <span className="rpt-spos" data-far={row.position === null || row.position > 10}>
               {row.position ? `#${row.position}` : "—"}
             </span>
             <div>
@@ -340,7 +340,7 @@ function UnlockModal({
             />
           </svg>
         </span>
-        <h2 id="rpt-unlock-title">Unlock your free report</h2>
+        <h2 id="rpt-unlock-title">Your full report is ready.</h2>
         <p>{subtitle}</p>
         <form onSubmit={submit}>
           <Input

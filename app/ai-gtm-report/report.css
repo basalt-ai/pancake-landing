@@ -344,17 +344,16 @@
   corner-shape: round;
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
   padding: var(--spacing-lg) var(--spacing-xl);
-  overflow: hidden;
-  position: relative;
 }
 
+/* Inset rounded track — never fights the pill's corners. */
 .rpt-countdown-bar {
-  position: absolute;
-  inset: 0 auto auto 0;
-  width: 100%;
-  height: 3px;
-  background: color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
   display: block;
+  height: 4px;
+  border-radius: 100vw;
+  background: color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
+  overflow: hidden;
+  margin-bottom: var(--spacing-md);
 }
 
 .rpt-countdown-bar span {
@@ -392,9 +391,11 @@
 /* The stage — one scene at a time over a soft green horizon, like the video. */
 .rpt-stage {
   position: relative;
-  display: grid;
-  place-items: center;
-  padding: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding: var(--spacing-xl) var(--spacing-xl) 16%;
   overflow: hidden;
 }
 
@@ -402,17 +403,18 @@
   position: absolute;
   left: 6%;
   right: 6%;
-  bottom: 10%;
-  height: 2px;
+  bottom: calc(16% - 22px);
+  height: 3px;
   background: linear-gradient(
     90deg,
     transparent,
-    var(--palette-green-20) 18%,
-    var(--palette-green-20) 82%,
+    var(--palette-green-20) 14%,
+    color-mix(in srgb, var(--palette-green-20) 80%, var(--palette-chrome-100)) 50%,
+    var(--palette-green-20) 86%,
     transparent
   );
-  filter: blur(0.5px);
-  box-shadow: 0 -12px 36px color-mix(in srgb, var(--palette-green-20) 30%, transparent);
+  border-radius: 100vw;
+  box-shadow: 0 -18px 48px color-mix(in srgb, var(--palette-green-20) 38%, transparent);
   pointer-events: none;
 }
 
@@ -440,8 +442,52 @@
 }
 
 .rpt-scene-site {
-  max-width: 430px;
+  max-width: 460px;
   margin: 0 auto;
+}
+
+.rpt-scene-browser-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px var(--spacing-lg);
+  border-bottom: 1px solid color-mix(in srgb, var(--palette-chrome-100) 7%, transparent);
+}
+
+.rpt-scene-browser-bar i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  mix-blend-mode: multiply;
+}
+
+.rpt-scene-browser-bar i:nth-child(1) { background: var(--strong-branded-surface); }
+.rpt-scene-browser-bar i:nth-child(2) { background: var(--palette-yellow-30); }
+.rpt-scene-browser-bar i:nth-child(3) { background: var(--palette-green-20); }
+
+.rpt-scene-browser-bar span {
+  margin-left: var(--spacing-sm);
+  font-size: 11px;
+  color: var(--subtle-text);
+}
+
+.rpt-scene-og-wrap {
+  position: relative;
+}
+
+.rpt-scene-shot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.rpt-scene-shot[data-ready="true"] {
+  opacity: 1;
 }
 
 .rpt-scene-og {
@@ -540,7 +586,7 @@
 }
 
 .rpt-scene-row[data-pass="false"] .rpt-scene-stamp {
-  background: var(--negative-surface);
+  background: var(--negative-stroke);
   color: var(--surface);
 }
 
@@ -630,7 +676,7 @@
 }
 
 .rpt-mini-mark[data-ok="false"] {
-  background: var(--negative-surface);
+  background: var(--negative-stroke);
   color: var(--surface);
 }
 
@@ -692,6 +738,23 @@
   text-align: center;
   font-weight: 600;
   margin-bottom: var(--spacing-lg);
+}
+
+.rpt-tally-ring {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.rpt-tally-num {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: var(--font-bold);
+  font-size: 2rem;
+  letter-spacing: -0.02em;
 }
 
 .rpt-scene-adding {
@@ -801,12 +864,12 @@
    band is highlighted so the number reads at a glance. */
 .rpt-grade-scale {
   list-style: none;
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--spacing-xs) var(--spacing-md);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-xs);
   font-size: 12px;
   color: var(--subtle-text);
 }
@@ -969,7 +1032,7 @@
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-bottom: 9px solid var(--negative-surface);
+  border-bottom: 9px solid var(--negative-stroke);
 }
 
 .rpt-competitors {
@@ -1061,7 +1124,7 @@
 }
 
 .rpt-qtable li[data-cited="false"] .rpt-qmark {
-  background: var(--negative-surface);
+  background: var(--negative-stroke);
   color: var(--surface);
 }
 
@@ -1150,7 +1213,13 @@
 @media (min-width: 901px) {
   .rpt-modal-wrap {
     padding-left: calc(max((100vw - 1200px) / 2, var(--spacing-xl)) + 324px);
+    padding-right: max((100vw - 1200px) / 2, var(--spacing-xl));
   }
+}
+
+/* Soft plum scrim: the locked page stops competing in luminance. */
+.rpt-modal-wrap {
+  background: color-mix(in srgb, var(--palette-chrome-100) 12%, transparent);
 }
 
 .rpt-modal {
@@ -1206,13 +1275,18 @@
 }
 
 .rpt-modal-error {
-  color: var(--negative-surface);
+  color: var(--negative-text);
   font-size: var(--font-size-body-small);
 }
 
 .rpt-modal-foot {
   font-size: var(--font-size-body-small);
   color: var(--subtle-text);
+}
+
+/* The global Product Hunt badge fights the funnel's focal points. */
+body:has(.rpt) .product-hunt-badge {
+  display: none !important;
 }
 
 /* ── Keyframes ── */

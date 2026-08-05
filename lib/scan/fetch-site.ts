@@ -185,7 +185,7 @@ export function deriveChecks(site: SiteSnapshot): { id: CheckId; pass: boolean; 
       pass: blocked.length === 0,
       detail:
         blocked.length === 0
-          ? "AI crawlers get in. GPTBot and ClaudeBot can read you."
+          ? "GPTBot and ClaudeBot can read you. The door is open."
           : `${blocked.join(" and ")} blocked at the door. AI assistants can't cite what they can't read.`,
     },
     {

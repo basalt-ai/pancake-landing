@@ -15,7 +15,7 @@ export const DEMO_EVENTS: ScanEvent[] = [
     favicon: `https://www.${DEMO_DOMAIN}/favicon.ico`,
   },
   { type: "status", label: "Checking who gets in: AI crawlers, llms.txt, schema…" },
-  { type: "check", id: "crawlers", pass: true, detail: "AI crawlers get in. GPTBot and ClaudeBot can read you." },
+  { type: "check", id: "crawlers", pass: true, detail: "GPTBot and ClaudeBot can read you. The door is open." },
   { type: "check", id: "llms", pass: false, detail: "No llms.txt. Easy win, 20 minutes of work." },
   { type: "check", id: "schema", pass: true, detail: "schema.org markup in place (Organization, WebSite, FAQPage)." },
   { type: "check", id: "meta_quality", pass: true, detail: "Titles and descriptions pull their weight." },
