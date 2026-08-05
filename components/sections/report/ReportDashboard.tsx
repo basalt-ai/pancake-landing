@@ -16,10 +16,15 @@ import type { ReportState, ScoreBreakdown } from "./useReport";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
+/** Grade bands shown under the dial so the number reads at a glance. */
+const GRADES = [
+  { label: "Invisible", from: 0, to: 39, color: "var(--strong-branded-surface)" },
+  { label: "In the game", from: 40, to: 69, color: "var(--palette-yellow-30)" },
+  { label: "Strong", from: 70, to: 100, color: "var(--palette-green-20)" },
+];
+
 function gradeFor(score: number): string {
-  if (score < 40) return "Invisible";
-  if (score < 70) return "In the game";
-  return "Strong";
+  return GRADES.find((g) => score <= g.to)?.label ?? GRADES[GRADES.length - 1]!.label;
 }
 
 /* ── Score rail ── */
@@ -70,6 +75,17 @@ function ScoreRail({ state }: { state: ReportState }) {
       <p className="rpt-rail-eyebrow">AI GTM score</p>
       <Dial score={score} />
       <p className="rpt-rail-grade">{gradeFor(score)}</p>
+      <ul className="rpt-grade-scale">
+        {GRADES.map((g) => (
+          <li key={g.label} data-active={score >= g.from && score <= g.to}>
+            <i style={{ background: g.color }} aria-hidden />
+            {g.label}
+            <span>
+              {g.from}–{g.to}
+            </span>
+          </li>
+        ))}
+      </ul>
       {state.breakdown && (
         <ul className="rpt-subscores">
           {SUBS.map((sub) => {
