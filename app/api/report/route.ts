@@ -3,10 +3,16 @@ import { NextResponse } from "next/server";
 import { getClientIp, rateLimit } from "@/lib/rate-limit";
 import { getCachedScan, setCachedScan } from "@/lib/scan/cache";
 import { checkPromptOnChatGPT, isConfigured, rankedKeywords } from "@/lib/scan/dataforseo";
-import { deriveChecks, fetchSite } from "@/lib/scan/fetch-site";
+import { deriveChecks, extractSnippets, fetchSite } from "@/lib/scan/fetch-site";
 import { analyzeSite } from "@/lib/scan/analyze";
 import { validateScanTarget } from "@/lib/scan/validate";
-import type { Analysis, GoogleRow, RankedKeywords, ScanEvent } from "@/lib/scan/types";
+import type {
+  Analysis,
+  CommunityItem,
+  GoogleRow,
+  RankedKeywords,
+  ScanEvent,
+} from "@/lib/scan/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -41,7 +47,15 @@ function computeScores(
   keywords: RankedKeywords | null,
   analysis: Analysis,
   realRankedRows: number,
-): { score: number; potential: number } {
+): {
+  score: number;
+  potential: number;
+  breakdown: {
+    ai: { score: number; max: number };
+    google: { score: number; max: number };
+    readiness: { score: number; max: number };
+  };
+} {
   const checkScore = (checks.filter((c) => c.pass).length / checks.length) * 100;
   const citationScore = citationTotal > 0 ? (citedCount / citationTotal) * 100 : analysis.content_readiness;
   const googleScore = keywords
@@ -49,6 +63,12 @@ function computeScores(
     : analysis.content_readiness;
   const blended = 0.25 * checkScore + 0.4 * citationScore + 0.35 * googleScore;
   const score = Math.min(97, Math.max(3, Math.round(blended)));
+  // The same weights, surfaced as the dashboard's three sub-scores.
+  const breakdown = {
+    ai: { score: Math.round(0.4 * citationScore), max: 40 },
+    google: { score: Math.round(0.35 * googleScore), max: 35 },
+    readiness: { score: Math.round(0.25 * checkScore), max: 25 },
+  };
   // Same formula under the "gaps closed" scenario the report lays out: every
   // check fixed, cited in at least half the buyer questions, the shown
   // within-reach searches won. An estimate, never a promise — copy says so.
@@ -57,7 +77,7 @@ function computeScores(
     : Math.max(googleScore, 60);
   const potentialBlended = 0.25 * 100 + 0.4 * Math.max(citationScore, 50) + 0.35 * potentialGoogle;
   const potential = Math.min(97, Math.max(Math.round(potentialBlended), score + 5));
-  return { score, potential };
+  return { score, potential, breakdown };
 }
 
 /**
@@ -74,6 +94,44 @@ function nearDup(a: string, b: string): boolean {
     x === y || (x.length >= 4 && y.startsWith(x)) || (y.length >= 4 && x.startsWith(y));
   const hits = ta.filter((x) => tb.some((y) => match(x, y))).length;
   return hits / Math.max(ta.length, tb.length) >= 0.75;
+}
+
+/**
+ * Hallucination guard for the communities card: subreddits are checked
+ * against Reddit's public about.json. A hard 404 drops the item; a block or
+ * timeout keeps it without a member count; a real count ships as real data.
+ * Non-Reddit communities pass through untouched.
+ */
+async function verifyCommunities(
+  items: { name: string; why: string }[],
+): Promise<CommunityItem[]> {
+  const results = await Promise.all(
+    items.map(async (c): Promise<CommunityItem | null> => {
+      const m = c.name.trim().match(/^r\/([A-Za-z0-9_]{2,30})$/);
+      if (!m) return { name: c.name, why: c.why };
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 2500);
+      try {
+        const res = await fetch(`https://www.reddit.com/r/${m[1]}/about.json`, {
+          headers: { "User-Agent": "pancake-gtm-report/1.0 (getpancake.ai)" },
+          signal: ctrl.signal,
+          cache: "no-store",
+        });
+        if (res.status === 404) return null; // does not exist — never ship it
+        if (!res.ok) return { name: c.name, why: c.why };
+        const data = (await res.json()) as { data?: { subscribers?: number } };
+        const members = data.data?.subscribers;
+        return typeof members === "number" && members > 0
+          ? { name: c.name, why: c.why, members }
+          : { name: c.name, why: c.why };
+      } catch {
+        return { name: c.name, why: c.why };
+      } finally {
+        clearTimeout(timer);
+      }
+    }),
+  );
+  return results.filter((c): c is CommunityItem => c !== null);
 }
 
 export async function POST(request: Request) {
@@ -166,7 +224,15 @@ export async function POST(request: Request) {
           return;
         }
 
-        send({ type: "meta", title: site.title, ogImage: site.ogImage, favicon: site.favicon });
+        send({
+          type: "meta",
+          title: site.title,
+          ogImage: site.ogImage,
+          favicon: site.favicon,
+          description: site.metaDescription,
+          schemaTypes: site.schemaTypes,
+          snippets: extractSnippets(site.textExtract),
+        });
         send({ type: "status", label: "Checking who gets in: AI crawlers, llms.txt, structured data…" });
         const checks = deriveChecks(site);
         for (const check of checks) send({ type: "check", ...check });
@@ -250,6 +316,11 @@ export async function POST(request: Request) {
           });
         }
 
+        // Outbound dimension: signals to monitor + verified communities.
+        send({ type: "status", label: "Spotting buying signals…" });
+        const communities = await verifyCommunities(analysis.communities);
+        send({ type: "signals", signals: analysis.buying_signals, communities });
+
         send({ type: "status", label: "Asking ChatGPT what your buyers ask…" });
 
         // Citation checks: real ChatGPT answers when DataForSEO is configured,
@@ -277,6 +348,7 @@ export async function POST(request: Request) {
                     : result.citedDomains.length
                       ? `Cited instead: ${result.citedDomains.join(", ")}`
                       : "You don't come up in this answer.",
+                  citedDomains: result.citedDomains,
                 });
                 return;
               }
@@ -306,7 +378,12 @@ export async function POST(request: Request) {
           analysis,
           realRankedRows,
         );
-        send({ type: "score", value: scores.score, potential: scores.potential });
+        send({
+          type: "score",
+          value: scores.score,
+          potential: scores.potential,
+          breakdown: scores.breakdown,
+        });
         send({
           type: "done",
           domain: target.host,

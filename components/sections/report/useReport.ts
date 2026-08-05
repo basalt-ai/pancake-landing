@@ -2,7 +2,13 @@
 
 import { useCallback, useEffect, useReducer, useRef } from "react";
 
-import type { GoogleRow, OpportunityItem, ScanEvent } from "@/lib/scan/types";
+import type {
+  CommunityItem,
+  GoogleRow,
+  OpportunityItem,
+  ScanEvent,
+  SignalItem,
+} from "@/lib/scan/types";
 import { DEMO_DOMAIN, DEMO_EVENTS } from "./demo-data";
 
 /**
@@ -18,6 +24,13 @@ export type PromptRow = {
   cited?: boolean;
   detail?: string;
   estimated?: boolean;
+  citedDomains?: string[];
+};
+
+export type ScoreBreakdown = {
+  ai: { score: number; max: number };
+  google: { score: number; max: number };
+  readiness: { score: number; max: number };
 };
 
 export type ReportState = {
@@ -25,15 +38,24 @@ export type ReportState = {
   domain: string;
   demo: boolean;
   statusLine: string;
-  meta: { title?: string; ogImage?: string; favicon?: string } | null;
+  meta: {
+    title?: string;
+    ogImage?: string;
+    favicon?: string;
+    description?: string;
+    schemaTypes?: string[];
+    snippets?: string[];
+  } | null;
   checks: { id: string; pass: boolean; detail: string }[];
   brain: { company: string; icp: string } | null;
   prompts: PromptRow[];
   google: { rows: GoogleRow[]; toWin: number; estimated?: boolean; commentary?: string } | null;
+  signals: { signals: SignalItem[]; communities: CommunityItem[] } | null;
   opportunities: { count: number; items: OpportunityItem[] } | null;
   score: number | null;
   /** Score recomputed as if the surfaced gaps were closed — the teaser. */
   potentialScore: number | null;
+  breakdown: ScoreBreakdown | null;
   unlocked: boolean;
   /** 0..13 — lights the snake progress circles. */
   progress: number;
@@ -50,9 +72,11 @@ const INITIAL: ReportState = {
   brain: null,
   prompts: [],
   google: null,
+  signals: null,
   opportunities: null,
   score: null,
   potentialScore: null,
+  breakdown: null,
   unlocked: false,
   progress: 0,
   error: null,
@@ -65,6 +89,11 @@ type Action =
   | { type: "reset" };
 
 const PROGRESS_STEPS = 13;
+
+/** The model writes ICPs mid-sentence; on screen they open a card. */
+function sentenceCase(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
 
 function reducer(state: ReportState, action: Action): ReportState {
   switch (action.type) {
@@ -84,7 +113,17 @@ function reducer(state: ReportState, action: Action): ReportState {
         case "status":
           return { ...state, statusLine: ev.label };
         case "meta":
-          return bump({ ...state, meta: { title: ev.title, ogImage: ev.ogImage, favicon: ev.favicon } });
+          return bump({
+            ...state,
+            meta: {
+              title: ev.title,
+              ogImage: ev.ogImage,
+              favicon: ev.favicon,
+              description: ev.description,
+              schemaTypes: ev.schemaTypes,
+              snippets: ev.snippets,
+            },
+          });
         case "check":
           return bump({
             ...state,
@@ -93,7 +132,7 @@ function reducer(state: ReportState, action: Action): ReportState {
         case "brain":
           return bump({
             ...state,
-            brain: { company: ev.company, icp: ev.icp },
+            brain: { company: ev.company, icp: sentenceCase(ev.icp) },
             prompts: ev.prompts.map((prompt) => ({ prompt, status: "checking" as const })),
           });
         case "citation": {
@@ -105,6 +144,7 @@ function reducer(state: ReportState, action: Action): ReportState {
               cited: ev.cited,
               detail: ev.detail,
               estimated: ev.estimated,
+              citedDomains: ev.citedDomains,
             };
           }
           return bump({ ...state, prompts });
@@ -114,10 +154,17 @@ function reducer(state: ReportState, action: Action): ReportState {
             ...state,
             google: { rows: ev.rows, toWin: ev.toWin, estimated: ev.estimated, commentary: ev.commentary },
           });
+        case "signals":
+          return bump({ ...state, signals: { signals: ev.signals, communities: ev.communities } });
         case "opportunities":
           return bump({ ...state, opportunities: { count: ev.count, items: ev.items } });
         case "score":
-          return bump({ ...state, score: ev.value, potentialScore: ev.potential ?? null });
+          return bump({
+            ...state,
+            score: ev.value,
+            potentialScore: ev.potential ?? null,
+            breakdown: ev.breakdown ?? null,
+          });
         case "done":
           return {
             ...state,
@@ -204,7 +251,10 @@ export function useReport() {
         return;
       }
       dispatch({ type: "event", event: next });
-      const gap = doneRef.current ? 120 : next.type === "citation" ? 480 : 380;
+      // status events are narration state only (the theater narrates itself) —
+      // they must not consume a full drip slot.
+      const gap =
+        next.type === "status" ? 40 : doneRef.current ? 120 : next.type === "citation" ? 480 : 380;
       timerRef.current = setTimeout(step, gap);
     };
     step();

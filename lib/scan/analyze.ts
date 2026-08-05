@@ -29,6 +29,8 @@ const REPORT_SCHEMA = {
     "relevant_keywords",
     "google_commentary",
     "opportunities",
+    "buying_signals",
+    "communities",
     "content_readiness",
   ],
   properties: {
@@ -106,6 +108,50 @@ const REPORT_SCHEMA = {
         },
       },
     },
+    buying_signals: {
+      type: "array",
+      description:
+        "Exactly 4 observable events that mean a specific company or person is about to need THIS product — buying signals to monitor, never a list of leads. Strong-signal bar: each must be a dated, public EVENT (posted a job, raised a round, opened a location, got a review naming the pain, switched tools), never a static attribute (industry, company size). Most predictive first.",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["signal", "why", "where"],
+        properties: {
+          signal: {
+            type: "string",
+            description:
+              "The event, under 75 characters, concrete and monitorable. Starts with a capital. e.g. 'A clinic posts a job for a medical secretary'.",
+          },
+          why: {
+            type: "string",
+            description:
+              "Why this event predicts a purchase of this company's product, under 130 characters.",
+          },
+          where: {
+            type: "string",
+            description:
+              "The public place to watch it, under 55 characters. e.g. 'LinkedIn Jobs', 'Crunchbase funding feed', 'Google Maps reviews'.",
+          },
+        },
+      },
+    },
+    communities: {
+      type: "array",
+      description:
+        "3 to 4 REAL online communities where this company's ICP asks for advice, in the ICP's language and geography. Prefer subreddits by exact name ('r/...'); at most one non-Reddit community (a major forum, Slack or Discord) when it clearly dominates the niche. ONLY communities you are confident actually exist and are active — never invent or guess names. These get teased as 'where your buyers already ask' — AI answers quote these threads, so they are also an AI-visibility surface.",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["name", "why"],
+        properties: {
+          name: { type: "string", description: "Exact community name, e.g. 'r/msp'." },
+          why: {
+            type: "string",
+            description: "What buyers ask there, under 110 characters. Starts with a capital.",
+          },
+        },
+      },
+    },
     content_readiness: {
       type: "integer",
       description: "0-100: how well the site's content serves AI and search visibility today.",
@@ -119,7 +165,9 @@ Write for a founder with no marketing team. Warm, specific, confident, zero hype
 
 Buyer prompts must read like real ChatGPT questions from someone who has never heard of this company — the way its actual buyers phrase things, in the language those buyers use (infer it from the site; a French site's buyers ask in French). Mix question types: best-tool-for-X, how-do-I-solve-Y, comparisons, and task-specific asks. money_keywords also go in the buyers' language. Every other field is written in English.
 
-Opportunities must be specific to this company — name the actual gap you saw in the evidence (a missing llms.txt, page-2 keywords within reach, a buyer question no content answers), never generic advice.`;
+Opportunities must be specific to this company — name the actual gap you saw in the evidence (a missing llms.txt, page-2 keywords within reach, a buyer question no content answers), never generic advice.
+
+Buying signals are the outbound dimension of the report: observable public events someone could genuinely monitor this week, tied to THIS company's offer. Think like a GTM engineer: what happens in the world right before someone needs this product? Communities must be real and specific to the ICP — a niche subreddit the buyers actually read beats a giant generic one.`;
 
 export async function analyzeSite(
   site: SiteSnapshot,
@@ -190,6 +238,8 @@ ${site.textExtract}${keywordBlock}`;
       analysis.money_keywords = analysis.money_keywords.slice(0, 5);
       analysis.opportunities = analysis.opportunities.slice(0, 4);
       analysis.relevant_keywords = (analysis.relevant_keywords ?? []).slice(0, 8);
+      analysis.buying_signals = (analysis.buying_signals ?? []).slice(0, 4);
+      analysis.communities = (analysis.communities ?? []).slice(0, 4);
       return analysis;
     } catch (err) {
       lastError = err;

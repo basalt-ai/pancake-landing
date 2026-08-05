@@ -129,6 +129,25 @@ function extractFavicon(html: string, pageUrl: string): string {
   return `${new URL(pageUrl).origin}/favicon.ico`;
 }
 
+/**
+ * Verbatim homepage fragments for the scan's evidence board — recognition of
+ * one's own words is the wow. Sentence-ish spans, spread across the page.
+ */
+export function extractSnippets(text: string, count = 4): string[] {
+  const candidates = text
+    .split(/(?<=[.!?])\s+|\s{2,}/)
+    .map((s) => s.trim())
+    .filter((s) => s.length >= 40 && s.length <= 140 && /[a-zà-ÿ]/.test(s) && /\s/.test(s));
+  if (candidates.length <= count) return candidates;
+  const picked: string[] = [];
+  for (let i = 0; i < count; i++) {
+    const idx = Math.floor((i * (candidates.length - 1)) / (count - 1));
+    const c = candidates[idx]!;
+    if (!picked.includes(c)) picked.push(c);
+  }
+  return picked;
+}
+
 function stripToText(html: string): string {
   return decodeEntities(
     html
@@ -185,7 +204,7 @@ export function deriveChecks(site: SiteSnapshot): { id: CheckId; pass: boolean; 
       pass: blocked.length === 0,
       detail:
         blocked.length === 0
-          ? "AI crawlers get in. GPTBot and ClaudeBot can read you."
+          ? "GPTBot and ClaudeBot can read you. The door is open."
           : `${blocked.join(" and ")} blocked at the door. AI assistants can't cite what they can't read.`,
     },
     {
