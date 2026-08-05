@@ -137,7 +137,11 @@ export function ReportExperience() {
 
       {state.phase === "idle" && (
         <section className="rpt-hero">
-          <h1>Would ChatGPT recommend&nbsp;you?</h1>
+          <h1>
+            Your buyers ask AI&nbsp;first.
+            <br />
+            Do you come&nbsp;up?
+          </h1>
           <p className="rpt-sub">
             Pancake is a team of AI agents that run your GTM. Point them at your domain:
             they{"’"}ll read your company the way ChatGPT and Google do, and report what
@@ -156,9 +160,6 @@ export function ReportExperience() {
               Get my AI GTM report
             </FxButton>
           </form>
-          <button type="button" className="rpt-demo-link" onClick={startDemo}>
-            No site handy? Watch the doctolib.fr demo
-          </button>
         </section>
       )}
 

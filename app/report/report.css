@@ -26,6 +26,28 @@
   line-height: 1;
   /* Landing buttons are always one line — the label never wraps. */
   white-space: nowrap;
+  /* Stacking context for the circle-fill FX, like landing-v2's .button. */
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* The pointer-fill circle layer — straight port of landing-v2's .btn-fx. */
+.rpt-btn-fx {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.rpt-btn-fx .c {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform;
 }
 
 /* The landing's pink button doesn't darken — its feedback is the label FX. */
@@ -43,6 +65,7 @@
 
 .rpt-btn-label {
   position: relative;
+  z-index: 1;
   display: inline-block;
   vertical-align: top;
   overflow: hidden;
@@ -840,6 +863,11 @@ li[data-state="done"]:not([data-cited]) .rpt-prompt-mark {
     padding-inline: var(--spacing-lg);
   }
 
+  /* Narrow screens: drop the forced two-line split, let the hook wrap. */
+  .rpt-hero h1 br {
+    display: none;
+  }
+
   .rpt-pill,
   .rpt-gate-form {
     flex-direction: column;
@@ -906,6 +934,10 @@ li[data-state="done"]:not([data-cited]) .rpt-prompt-mark {
   .rpt-btn-label .l1,
   .rpt-btn-label .l2 {
     transition: none;
+  }
+
+  .rpt-btn-fx {
+    display: none;
   }
 
   .rpt-snake span {
