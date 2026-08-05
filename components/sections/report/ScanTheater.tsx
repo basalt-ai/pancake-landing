@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { MarkIcon } from "./MarkIcon";
-import type { ReportState } from "./useReport";
+import type { PromptRow, ReportState } from "./useReport";
 
 /**
  * Owner.com-style scan cinematic. The rail narrates, the stage plays one
@@ -88,7 +88,8 @@ function stepDefs(domain: string): StepDef[] {
     {
       key: "tally",
       label: "Scoring it",
-      minMs: 3500,
+      // Count-up (2.4s) + a real hold on the landed number — the finale.
+      minMs: 6000,
       ready: (s) => s.score !== null,
     },
   ];
@@ -102,6 +103,9 @@ export type TheaterSchedule = {
   waiting: boolean;
   stepElapsedMs: number;
   progress: number;
+  /** 1 = full cinematic, 3 = cache-replay fast-forward. Scene-level gates
+   *  (like the ICP dive beat) must divide by this too. */
+  speed: number;
 };
 
 /**
@@ -118,11 +122,19 @@ export function useTheaterSchedule(state: ReportState): TheaterSchedule {
   const stepStartRef = useRef(Date.now());
   const readyAtRef = useRef(0);
   const activeRef = useRef(false);
+  const scoreAtIndexRef = useRef<number | null>(null);
 
-  // Cache replays burst everything at once — play those at triple speed. The
-  // demo is a showpiece: it keeps the full cinematic even though its data is
-  // instant.
-  const allDataIn = state.score !== null && !state.demo;
+  // Cache replays burst everything within the first scenes — only THOSE play
+  // at triple speed. A live scan's score lands near the end; accelerating
+  // there would speedrun the last steps, so it keeps the full cinematic.
+  // The demo is a showpiece: full cinematic even though its data is instant.
+  useEffect(() => {
+    if (state.score !== null && scoreAtIndexRef.current === null) {
+      scoreAtIndexRef.current = index;
+    }
+  }, [state.score, index]);
+  const allDataIn =
+    scoreAtIndexRef.current !== null && scoreAtIndexRef.current <= 1 && !state.demo;
   const running = (state.phase === "scanning" || state.phase === "report") && !done;
 
   // New scan → restart the schedule; leaving the funnel → reset.
@@ -132,22 +144,26 @@ export function useTheaterSchedule(state: ReportState): TheaterSchedule {
       setIndex(0);
       setDone(false);
       stepStartRef.current = Date.now();
+      scoreAtIndexRef.current = null;
     }
     if (state.phase === "idle" || state.phase === "error") {
       activeRef.current = false;
       setIndex(0);
       setDone(false);
+      scoreAtIndexRef.current = null;
     }
   }, [state.phase]);
 
   // Nobody watches a hidden tab's cinematic — hand the report over directly.
+  // ONLY once the report is deliverable: hiding mid-scan must not kill the
+  // schedule, or returning users find a frozen theater that never finishes.
   useEffect(() => {
     const skipIfHidden = () => {
-      if (document.hidden && activeRef.current) setDone(true);
+      if (document.hidden && activeRef.current && state.phase === "report") setDone(true);
     };
     document.addEventListener("visibilitychange", skipIfHidden);
     return () => document.removeEventListener("visibilitychange", skipIfHidden);
-  }, []);
+  }, [state.phase]);
 
   useEffect(() => {
     if (!running) return;
@@ -193,20 +209,32 @@ export function useTheaterSchedule(state: ReportState): TheaterSchedule {
     waiting: stepElapsedMs >= effMin(defs[index]!) && !defs[index]!.ready(state),
     stepElapsedMs,
     progress: Math.min(0.97, 1 - remainingMs / totalMs),
+    speed: allDataIn ? 3 : 1,
   };
 }
 
 function Countdown({ schedule }: { schedule: TheaterSchedule }) {
+  // A timer the visitor can trust: the number never climbs back up, never
+  // freezes (while the scan waits on slow data it keeps easing down toward a
+  // floor), and once the closing line shows it sticks until the end.
+  const shownRef = useRef(Number.POSITIVE_INFINITY);
+  const lastDropRef = useRef(0);
+  const closingRef = useRef(false);
+  const now = Date.now();
+  if (schedule.remainingSec < shownRef.current) {
+    shownRef.current = schedule.remainingSec;
+    lastDropRef.current = now;
+  } else if (shownRef.current > 6 && now - lastDropRef.current > 3500) {
+    shownRef.current -= 1;
+    lastDropRef.current = now;
+  }
+  if (shownRef.current <= 4) closingRef.current = true;
   return (
     <div className="rpt-countdown">
       <span className="rpt-countdown-bar" aria-hidden>
         <span style={{ transform: `scaleX(${schedule.progress})` }} />
       </span>
-      <p>
-        {schedule.waiting || schedule.remainingSec <= 4
-          ? "A few more seconds…"
-          : `${schedule.remainingSec} seconds left`}
-      </p>
+      <p>{closingRef.current ? "A few more seconds…" : `${shownRef.current} seconds left`}</p>
     </div>
   );
 }
@@ -217,8 +245,16 @@ function Countdown({ schedule }: { schedule: TheaterSchedule }) {
  * Accumulating deep-dive: statements appear one after another and stay,
  * earlier ones check off — a progression you can follow, never a loop.
  */
-function SceneDeepDive({ lines, elapsedMs }: { lines: string[]; elapsedMs: number }) {
-  const visible = Math.min(lines.length, Math.floor(elapsedMs / 2000) + 1);
+function SceneDeepDive({
+  lines,
+  elapsedMs,
+  speed = 1,
+}: {
+  lines: string[];
+  elapsedMs: number;
+  speed?: number;
+}) {
+  const visible = Math.min(lines.length, Math.floor(elapsedMs / (2000 / speed)) + 1);
   return (
     <div className="rpt-scene-card rpt-scene-deepdive">
       <ol>
@@ -302,16 +338,13 @@ const CHECK_LABELS: Record<string, string> = {
   meta_quality: "Titles & descriptions",
 };
 
-function SceneAccess({ state }: { state: ReportState }) {
+function SceneAccess({ state, schedule }: { state: ReportState; schedule: TheaterSchedule }) {
+  // Verdicts land one at a time through the step — never a pre-resolved wall.
+  const visible = Math.max(1, Math.floor(schedule.stepElapsedMs / (1200 / schedule.speed)) + 1);
   return (
-    <div className="rpt-scene-list">
-      {state.checks.map((check, i) => (
-        <div
-          className="rpt-scene-row"
-          data-pass={check.pass}
-          key={check.id}
-          style={{ animationDelay: `${i * 0.35}s` }}
-        >
+    <div className="rpt-scene-list rpt-scene-access">
+      {state.checks.slice(0, visible).map((check) => (
+        <div className="rpt-scene-row" data-pass={check.pass} key={check.id}>
           <span className="rpt-scene-stamp" aria-hidden>
             <MarkIcon ok={check.pass} />
           </span>
@@ -333,11 +366,13 @@ function EvidenceBoard({
   elapsedMs,
   dimmed,
   leaving,
+  speed = 1,
 }: {
   state: ReportState;
   elapsedMs: number;
   dimmed: boolean;
   leaving: boolean;
+  speed?: number;
 }) {
   const meta = state.meta;
   const snippets = meta?.snippets ?? [];
@@ -393,7 +428,7 @@ function EvidenceBoard({
   return (
     <div className="rpt-evidence" data-dimmed={dimmed} data-leaving={leaving} aria-hidden>
       {cards
-        .filter((c) => elapsedMs >= c.at)
+        .filter((c) => elapsedMs >= c.at / speed)
         .map((c) => (
           <div className={`rpt-ev ${c.cls}`} key={c.cls}>
             {c.node}
@@ -404,29 +439,42 @@ function EvidenceBoard({
 }
 
 /** "Result found" stamp — the eye-catcher that lands on every reveal.
- *  `above` floats it clear of scenes that have their own caption line. */
-function FoundChip({ children, above }: { children: React.ReactNode; above?: boolean }) {
+ *  `above` floats it clear of scenes that have their own caption line.
+ *  `tone="warn"` is for finds that are gaps, not wins — amber, no check. */
+function FoundChip({
+  children,
+  above,
+  tone = "ok",
+}: {
+  children: React.ReactNode;
+  above?: boolean;
+  tone?: "ok" | "warn";
+}) {
   return (
-    <span className={`rpt-found-chip${above ? " rpt-found-chip-above" : ""}`}>
-      <MarkIcon ok size={8} />
+    <span
+      className={`rpt-found-chip${above ? " rpt-found-chip-above" : ""}`}
+      data-tone={tone}
+    >
+      {tone === "ok" && <MarkIcon ok size={8} />}
       {children}
     </span>
   );
 }
 
 /** True once the ICP result should own the stage for this step. */
-function icpRevealed(state: ReportState, stepElapsedMs: number): boolean {
+function icpRevealed(state: ReportState, schedule: TheaterSchedule): boolean {
   // Even when the analysis is already in (demo, cache), play the dive first:
   // evidence popping crisp + statements accumulating IS the magic beat.
-  return state.brain !== null && stepElapsedMs >= 6500;
+  return state.brain !== null && schedule.stepElapsedMs >= 6500 / schedule.speed;
 }
 
 function SceneICP({ state, schedule }: { state: ReportState; schedule: TheaterSchedule }) {
-  if (!icpRevealed(state, schedule.stepElapsedMs)) {
+  if (!icpRevealed(state, schedule)) {
     return (
       <SceneDeepDive
         lines={stepDefs(state.domain)[2]!.waitLines!}
         elapsedMs={schedule.stepElapsedMs}
+        speed={schedule.speed}
       />
     );
   }
@@ -450,16 +498,19 @@ function ScenePrompts({ state, schedule }: { state: ReportState; schedule: Theat
       <SceneDeepDive
         lines={stepDefs(state.domain)[3]!.waitLines!}
         elapsedMs={schedule.stepElapsedMs}
+        speed={schedule.speed}
       />
     );
   }
+  // One question lands at a time — motion carries the whole step.
+  const visible = Math.max(1, Math.floor(schedule.stepElapsedMs / (1100 / schedule.speed)) + 1);
   return (
     <div className="rpt-reveal" data-found="true">
       <div className="rpt-scene-brain">
         <p className="rpt-scene-caption">The questions your ICP asks AI</p>
         <div className="rpt-scene-qgrid">
-          {state.prompts.slice(0, 6).map((p, i) => (
-            <div className="rpt-scene-card rpt-scene-q" key={i} style={{ animationDelay: `${i * 0.28}s` }}>
+          {state.prompts.slice(0, Math.min(6, visible)).map((p, i) => (
+            <div className="rpt-scene-card rpt-scene-q" key={i}>
               <p>{p.prompt}</p>
             </div>
           ))}
@@ -469,14 +520,18 @@ function ScenePrompts({ state, schedule }: { state: ReportState; schedule: Theat
   );
 }
 
-function SceneChatGPT({ state }: { state: ReportState }) {
+function SceneChatGPT({ state, schedule }: { state: ReportState; schedule: TheaterSchedule }) {
   const shown = state.prompts.slice(0, 6);
-  const allSettled =
-    shown.length > 0 && shown.every((p) => p.status === "done" && p.cited !== undefined);
+  // Answers resolve one at a time even when the data is already in — the
+  // "asking live" feel is sequential verdicts, not a pre-resolved wall.
+  const settleCount = Math.floor(schedule.stepElapsedMs / (850 / schedule.speed));
+  const isShown = (p: PromptRow, i: number) =>
+    p.status === "done" && p.cited !== undefined && i < settleCount;
+  const allShown = shown.length > 0 && shown.every(isShown);
   const cited = state.prompts.filter((p) => p.cited).length;
   return (
-    <div className="rpt-reveal" data-found={allSettled}>
-      {allSettled && (
+    <div className="rpt-reveal" data-found={allShown}>
+      {allShown && (
         <FoundChip above>
           Cited in {cited} of {state.prompts.length} answers
         </FoundChip>
@@ -485,16 +540,15 @@ function SceneChatGPT({ state }: { state: ReportState }) {
         <p className="rpt-scene-caption">Does ChatGPT recommend you? Asking for real.</p>
         <div className="rpt-scene-qgrid">
           {shown.map((p, i) => {
-            const settled = p.status === "done" && p.cited !== undefined;
+            const settled = isShown(p, i);
             return (
               <div
                 className="rpt-scene-card rpt-scene-q"
                 data-cited={settled ? p.cited : undefined}
                 key={i}
-                style={{ animationDelay: `${i * 0.12}s` }}
               >
                 <p>{p.prompt}</p>
-                <span className="rpt-scene-q-mark" data-state={p.status}>
+                <span className="rpt-scene-q-mark" data-state={settled ? "done" : "checking"}>
                   {settled ? (
                     <>
                       <i className="rpt-mini-mark" data-ok={p.cited}>
@@ -522,17 +576,30 @@ function SceneGoogle({ state, schedule }: { state: ReportState; schedule: Theate
       <SceneDeepDive
         lines={stepDefs(state.domain)[5]!.waitLines!}
         elapsedMs={schedule.stepElapsedMs}
+        speed={schedule.speed}
       />
     );
   }
+  // Rankings land row by row; the stamp only once the board is complete.
+  const shown = rows.slice(0, 5);
+  const visible = Math.max(1, Math.floor(schedule.stepElapsedMs / (900 / schedule.speed)) + 1);
+  const complete = visible >= shown.length + 1;
+  const ranking = shown.some((r) => r.position !== null && r.position <= 10);
   return (
-    <div className="rpt-reveal rpt-reveal-pop" data-found="true">
-      <FoundChip above>Your real rankings</FoundChip>
+    <div className="rpt-reveal rpt-reveal-pop" data-found={complete}>
+      {complete &&
+        (ranking ? (
+          <FoundChip above>Your real rankings</FoundChip>
+        ) : (
+          <FoundChip above tone="warn">
+            Your Google gap
+          </FoundChip>
+        ))}
       <div className="rpt-scene-brain">
         <p className="rpt-scene-caption">Searches with money behind them.</p>
         <div className="rpt-scene-list rpt-scene-serp">
-          {rows.slice(0, 5).map((row, i) => (
-            <div className="rpt-scene-row" key={row.term} style={{ animationDelay: `${i * 0.3}s` }}>
+          {shown.slice(0, visible).map((row) => (
+            <div className="rpt-scene-row" key={row.term}>
               <span className="rpt-scene-pos" data-far={row.position === null || row.position > 10}>
                 {row.position ? `#${row.position}` : "—"}
               </span>
@@ -555,20 +622,21 @@ const BAND_COLORS: [number, string][] = [
 ];
 
 /** The drum roll: the score ring draws and counts up right before the reveal. */
-function SceneTally({ state }: { state: ReportState }) {
+function SceneTally({ state, speed = 1 }: { state: ReportState; speed?: number }) {
   const target = state.score ?? 0;
   const [shown, setShown] = useState(0);
   useEffect(() => {
     const start = performance.now();
+    const duration = 2400 / speed;
     let raf = 0;
     const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / 2400);
+      const t = Math.min(1, (now - start) / duration);
       setShown(Math.round(target * (1 - Math.pow(1 - t, 3))));
       if (t < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [target]);
+  }, [target, speed]);
   const R = 50;
   const C = 2 * Math.PI * R;
   const color = (BAND_COLORS.find(([cap]) => shown <= cap) ?? BAND_COLORS[2]!)[1];
@@ -602,17 +670,17 @@ function renderScene(key: string, state: ReportState, schedule: TheaterSchedule)
     case "site":
       return <SceneSite state={state} />;
     case "access":
-      return <SceneAccess state={state} />;
+      return <SceneAccess state={state} schedule={schedule} />;
     case "icp":
       return <SceneICP state={state} schedule={schedule} />;
     case "prompts":
       return <ScenePrompts state={state} schedule={schedule} />;
     case "chatgpt":
-      return <SceneChatGPT state={state} />;
+      return <SceneChatGPT state={state} schedule={schedule} />;
     case "google":
       return <SceneGoogle state={state} schedule={schedule} />;
     case "tally":
-      return <SceneTally state={state} />;
+      return <SceneTally state={state} speed={schedule.speed} />;
     default:
       return null;
   }
@@ -637,7 +705,9 @@ export function ScanTheater({
     const old = prevKeyRef.current;
     prevKeyRef.current = active.key;
     setLeaving(old);
-    const t = setTimeout(() => setLeaving(null), 480);
+    // Longer than every exit transition (scene 0.42s, evidence fade 0.7s) so
+    // nothing pops out mid-fade when the leaving copy unmounts.
+    const t = setTimeout(() => setLeaving(null), 720);
     return () => clearTimeout(t);
   }, [active.key]);
 
@@ -674,8 +744,9 @@ export function ScanTheater({
           <EvidenceBoard
             state={state}
             elapsedMs={active.key === "icp" ? schedule.stepElapsedMs : 1e9}
-            dimmed={active.key === "icp" && icpRevealed(state, schedule.stepElapsedMs)}
+            dimmed={active.key === "icp" && icpRevealed(state, schedule)}
             leaving={active.key !== "icp"}
+            speed={schedule.speed}
           />
         )}
         {leaving && leaving !== active.key && (

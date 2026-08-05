@@ -14,14 +14,27 @@ export function ReportExperience() {
   const { state, start, startDemo, unlock } = useReport();
   const [url, setUrl] = useState("");
   const scanStartRef = useRef(0);
+  const dashRef = useRef<HTMLDivElement>(null);
   // The cinematic outlives the stream: the dashboard waits for the last scene.
   const schedule = useTheaterSchedule(state);
+  const showDash = state.phase === "report" && schedule.done;
 
   // Entrance styles are gated on this class so nothing hides without JS.
   useEffect(() => {
     document.documentElement.classList.add("rpt-anim");
     return () => document.documentElement.classList.remove("rpt-anim");
   }, []);
+
+  // Hand-off must land ON the report — wherever the page was scrolled during
+  // the theater, the score and locked cards start in view.
+  useEffect(() => {
+    if (!showDash) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const raf = requestAnimationFrame(() => {
+      dashRef.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [showDash]);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,8 +89,10 @@ export function ReportExperience() {
         <ScanTheater state={state} schedule={schedule} />
       )}
 
-      {state.phase === "report" && schedule.done && (
-        <ReportDashboard state={state} onUnlock={unlock} />
+      {showDash && (
+        <div ref={dashRef} className="rpt-dash-anchor">
+          <ReportDashboard state={state} onUnlock={unlock} />
+        </div>
       )}
 
       {state.phase === "error" && (

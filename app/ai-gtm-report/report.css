@@ -58,13 +58,15 @@
   transition: box-shadow 0.18s ease;
 }
 
+/* Focus ring in ink, not brand pink — a pink ring on an empty email field
+   reads as an error state. Errors use the real negative red. */
 .rpt .input:focus {
   outline: none;
-  box-shadow: inset 0 0 0 2px var(--strong-branded-surface);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--palette-chrome-100) 45%, transparent);
 }
 
 .rpt .input[data-err] {
-  box-shadow: inset 0 0 0 2px var(--negative-surface);
+  box-shadow: inset 0 0 0 2px var(--negative-stroke);
 }
 
 /* The pointer-fill circle layer — straight port of landing-v2's .btn-fx. */
@@ -446,6 +448,14 @@
   animation: rpt-scene-out 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* The leaving copy is a fresh mount — freeze every child entrance animation
+   or the settled result would replay from opacity 0 while exiting. */
+.rpt-scene-leaving *,
+.rpt-scene-leaving *::before,
+.rpt-scene-leaving *::after {
+  animation: none !important;
+}
+
 @keyframes rpt-scene-out {
   from {
     opacity: 1;
@@ -566,6 +576,14 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+}
+
+/* AI-access verdicts: a 2x2 spread that uses the stage, not a tall pile. */
+.rpt-scene-access {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+  align-items: stretch;
 }
 
 .rpt-scene-row {
@@ -738,6 +756,9 @@
   gap: var(--spacing-md);
   font-weight: 500;
   color: var(--text);
+}
+
+.rpt-anim .rpt-scene-deepdive li {
   animation: rpt-fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -778,11 +799,19 @@
     filter 0.7s ease;
 }
 
-/* Reveal on stage: evidence recedes — still there, eye goes to the result. */
+/* Reveal on stage: evidence recedes — still there, eye goes to the result.
+   Cards also part outward (--ev-px/--ev-py) so the result never decapitates
+   their text; float stops so the transform can transition cleanly. */
 .rpt-evidence[data-dimmed="true"] {
   opacity: 0.5;
   transform: scale(0.96);
   filter: saturate(0.8);
+}
+
+.rpt-evidence[data-dimmed="true"] .rpt-ev {
+  animation: none;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translate(var(--ev-px, 0px), var(--ev-py, 0px)) rotate(var(--ev-rot, 0deg));
 }
 
 .rpt-evidence[data-leaving="true"] {
@@ -830,9 +859,10 @@
 .rpt-ev-shot {
   --ev-rot: -3.5deg;
   --ev-i: 0;
-  left: 3.5%;
-  top: 8%;
-  width: 252px;
+  --ev-px: -26px;
+  left: 2.5%;
+  top: 7%;
+  width: 240px;
   padding: 8px 8px 10px;
   transform: rotate(var(--ev-rot));
 }
@@ -857,9 +887,10 @@
 .rpt-ev-serp {
   --ev-rot: 2deg;
   --ev-i: 1;
-  right: 3.5%;
-  top: 15%;
-  width: 268px;
+  --ev-px: 26px;
+  right: 2.5%;
+  top: 14%;
+  width: 250px;
   padding: var(--spacing-lg);
   transform: rotate(var(--ev-rot));
 }
@@ -884,7 +915,7 @@
 .rpt-ev-quote,
 .rpt-ev-quote2,
 .rpt-ev-quote3 {
-  width: 230px;
+  width: 200px;
   padding: var(--spacing-lg);
 }
 
@@ -900,24 +931,27 @@
 .rpt-ev-quote {
   --ev-rot: -2deg;
   --ev-i: 2;
-  left: 5%;
-  bottom: 22%;
+  --ev-px: -26px;
+  left: 2.5%;
+  bottom: 24%;
   transform: rotate(var(--ev-rot));
 }
 
 .rpt-ev-quote2 {
   --ev-rot: 1.5deg;
   --ev-i: 3;
-  right: 5%;
-  bottom: 20%;
+  --ev-px: 26px;
+  right: 2.5%;
+  bottom: 21%;
   transform: rotate(var(--ev-rot));
 }
 
 .rpt-ev-quote3 {
   --ev-rot: 2.5deg;
   --ev-i: 4;
+  --ev-py: -16px;
   left: 50%;
-  margin-left: -115px;
+  margin-left: -100px;
   top: 3%;
   transform: rotate(var(--ev-rot));
 }
@@ -925,13 +959,14 @@
 .rpt-ev-schema {
   --ev-rot: -1.5deg;
   --ev-i: 3;
-  right: 5%;
-  bottom: 24%;
+  --ev-px: 26px;
+  right: 2.5%;
+  bottom: 25%;
   padding: var(--spacing-md) var(--spacing-lg);
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  max-width: 240px;
+  max-width: 200px;
   transform: rotate(var(--ev-rot));
 }
 
@@ -1024,6 +1059,11 @@
 /* Scenes with their own caption line: the stamp floats fully above it. */
 .rpt-found-chip-above {
   top: -38px;
+}
+
+/* A gap is a find too — but it stamps amber, not success-green. */
+.rpt-found-chip[data-tone="warn"] {
+  background: var(--palette-yellow-30);
 }
 
 .rpt-anim .rpt-found-chip {
@@ -1137,9 +1177,25 @@
   align-items: start;
 }
 
-/* The report rises in after the tally — same easing as the scenes. */
+/* The report fades in after the tally. Opacity ONLY: a transform here would
+   make .rpt-dash the containing block for the fixed unlock modal and drag it
+   out of viewport-center. */
 .rpt-anim .rpt-dash {
-  animation: rpt-fade-up 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: rpt-dash-in 0.65s ease both;
+}
+
+@keyframes rpt-dash-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Hand-off scroll target — clear the nav so the score dial lands in view. */
+.rpt-dash-anchor {
+  scroll-margin-top: var(--spacing-xl);
 }
 
 .rpt-score-rail {
@@ -1366,16 +1422,16 @@
   border-top: 1px solid color-mix(in srgb, var(--palette-chrome-100) 6%, transparent);
 }
 
+/* Solid dot, not a 9px triangle — it must survive the veil blur as RED. */
 .rpt-problems li::before {
   content: "";
   position: absolute;
-  left: 2px;
-  top: calc(var(--spacing-md) + 4px);
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-bottom: 9px solid var(--negative-stroke);
+  left: 0;
+  top: calc(var(--spacing-md) + 2px);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--negative-stroke);
 }
 
 .rpt-competitors {
@@ -1699,6 +1755,18 @@ body:has(.rpt) .product-hunt-badge {
     padding: var(--spacing-lg) 0;
   }
 
+  /* No room to scatter fixed-width cards on small stages — they would pile. */
+  .rpt-evidence {
+    display: none;
+  }
+
+  /* Match the mobile stage padding so the leaving copy doesn't jump. */
+  .rpt-scene-leaving {
+    left: 0;
+    right: 0;
+    bottom: var(--spacing-lg);
+  }
+
   .rpt-score-rail {
     position: static;
   }
@@ -1723,7 +1791,8 @@ body:has(.rpt) .product-hunt-badge {
   }
 
   .rpt-scene-fan,
-  .rpt-scene-qgrid {
+  .rpt-scene-qgrid,
+  .rpt-scene-access {
     grid-template-columns: 1fr;
   }
 
@@ -1748,6 +1817,8 @@ body:has(.rpt) .product-hunt-badge {
   .rpt-anim .rpt-reveal-pop > .rpt-scene-brain,
   .rpt-anim .rpt-found-chip,
   .rpt-anim .rpt-dash,
+  .rpt-anim .rpt-scene-deepdive li,
+  .rpt-anim .rpt-scene-deepdive li[data-current="true"] .rpt-dd-dot,
   .rpt-anim .rpt-rail-steps li[data-active="true"] .rpt-rail-dot {
     animation: none;
   }

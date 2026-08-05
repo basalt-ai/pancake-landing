@@ -82,6 +82,11 @@ type Action =
 
 const PROGRESS_STEPS = 13;
 
+/** The model writes ICPs mid-sentence; on screen they open a card. */
+function sentenceCase(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 function reducer(state: ReportState, action: Action): ReportState {
   switch (action.type) {
     case "start":
@@ -119,7 +124,7 @@ function reducer(state: ReportState, action: Action): ReportState {
         case "brain":
           return bump({
             ...state,
-            brain: { company: ev.company, icp: ev.icp },
+            brain: { company: ev.company, icp: sentenceCase(ev.icp) },
             prompts: ev.prompts.map((prompt) => ({ prompt, status: "checking" as const })),
           });
         case "citation": {
