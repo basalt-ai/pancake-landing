@@ -1,5 +1,5 @@
 /**
- * Wire contract for the /report scan. The API route emits these over SSE and
+ * Wire contract for the /ai-gtm-report scan. The API route emits these over SSE and
  * the client folds them into UI state — keep both sides on this single union.
  */
 

@@ -62,9 +62,8 @@ export function EmailGate({
         <h2>The full report is written.</h2>
       </header>
       <p>
-        You watched the scan run. Still locked: what ChatGPT answers when you don{"’"}t come
-        up, and the playbook behind every opportunity above. Drop your email and it unlocks
-        right here, on this screen.
+        What ChatGPT answers instead of you, plus the playbook for every gap above. Drop
+        your email — it unlocks right here.
       </p>
       <form className="rpt-gate-form" onSubmit={submit}>
         <Input

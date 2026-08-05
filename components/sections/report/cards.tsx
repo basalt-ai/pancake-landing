@@ -139,7 +139,7 @@ export function PromptsCard({ state }: { state: ReportState }) {
       </ul>
       {done.length > 0 && (
         <p className="rpt-tally">
-          cited in {cited} of {state.prompts.length} buyer questions
+          Cited in {cited} of {state.prompts.length} buyer questions.
         </p>
       )}
     </Card>

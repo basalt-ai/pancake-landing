@@ -159,9 +159,8 @@ export function ReportExperience() {
             Do you come&nbsp;up?
           </h1>
           <p className="rpt-sub">
-            Pancake is a team of AI agents that run your GTM. Point them at your domain:
-            they{"’"}ll read your company the way ChatGPT and Google do, and report what
-            they{"’"}d fix first. Free, under a minute.
+            Pancake is a team of AI agents that run your GTM. This free scan shows how
+            ChatGPT and Google see you — and what to fix first. One minute.
           </p>
           <form className="rpt-pill" onSubmit={submit}>
             <Input

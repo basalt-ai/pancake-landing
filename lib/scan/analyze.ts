@@ -87,7 +87,7 @@ const REPORT_SCHEMA = {
     google_commentary: {
       type: "string",
       description:
-        "One short sentence interpreting the Google picture for this company, grounded in the evidence — e.g. when most rankings are its sellers' or users' brand names, say so and name the real prize. Under 200 characters. In English.",
+        "One punchy sentence, under 110 characters, plain words — what the numbers mean for this company and what's up for grabs. e.g. \"Mostly your sellers' brand names — the wholesale searches that matter are still open.\" No jargon, no position ranges. In English.",
     },
     opportunities: {
       type: "array",

@@ -174,7 +174,9 @@
 .rpt-hero h1 {
   font-family: var(--font-aeonik-fono), ui-monospace, monospace;
   font-weight: var(--font-bold);
-  font-size: clamp(2.5rem, 6vw, 3.4rem);
+  /* Capped so "Your buyers ask AI first." (the long line) always fits the
+     hero column on one line — 3.4rem wrapped it into three lines. */
+  font-size: clamp(2.5rem, 6vw, 3.1rem);
   line-height: 1;
   letter-spacing: -0.02em;
 }

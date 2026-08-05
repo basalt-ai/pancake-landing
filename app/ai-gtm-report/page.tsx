@@ -8,10 +8,10 @@ export const metadata: Metadata = {
   title: "Free AI GTM report — your buyers ask AI first | Pancake",
   description:
     "Pancake's GTM agents read your company the way ChatGPT and Google do: your buyers' questions, the searches that matter, and what they'd fix first. Free, one minute.",
-  alternates: { canonical: "https://getpancake.ai/report" },
+  alternates: { canonical: "https://getpancake.ai/ai-gtm-report" },
   openGraph: {
     type: "website",
-    url: "https://getpancake.ai/report",
+    url: "https://getpancake.ai/ai-gtm-report",
     title: "Your buyers ask AI first. Do you come up?",
     description:
       "A one-minute scan: ChatGPT visibility on your buyers' questions, Google money searches, and what to fix first.",
