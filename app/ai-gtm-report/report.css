@@ -428,7 +428,33 @@
 }
 
 .rpt-anim .rpt-scene {
-  animation: rpt-fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: rpt-fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+}
+
+/* Outgoing scene: lingers in place and floats out while the next one rises. */
+.rpt-scene-leaving {
+  position: absolute;
+  left: var(--spacing-xl);
+  right: var(--spacing-xl);
+  bottom: 16%;
+  width: auto;
+  margin: 0 auto;
+  pointer-events: none;
+}
+
+.rpt-anim .rpt-scene-leaving {
+  animation: rpt-scene-out 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes rpt-scene-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.97);
+  }
 }
 
 .rpt-scene-card {
@@ -740,16 +766,27 @@
   animation: rpt-spin 0.8s linear infinite;
 }
 
-/* Evidence board — the visitor's own artifacts popping around the stage. */
+/* Evidence board — the visitor's own artifacts popping around the stage.
+   Anchored to the stage itself, so the cards spread across the full width. */
 .rpt-evidence {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  transition: opacity 0.5s ease;
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.7s ease;
 }
 
+/* Reveal on stage: evidence recedes — still there, eye goes to the result. */
 .rpt-evidence[data-dimmed="true"] {
-  opacity: 0.38;
+  opacity: 0.5;
+  transform: scale(0.96);
+  filter: saturate(0.8);
+}
+
+.rpt-evidence[data-leaving="true"] {
+  opacity: 0;
 }
 
 .rpt-ev {
@@ -761,6 +798,22 @@
     inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 7%, transparent),
     0 14px 34px color-mix(in srgb, var(--palette-chrome-100) 10%, transparent);
   animation: rpt-ev-pop 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Once popped, each card drifts gently so the long analysis stays alive. */
+.rpt-anim .rpt-ev {
+  animation:
+    rpt-ev-pop 0.55s cubic-bezier(0.22, 1, 0.36, 1) both,
+    rpt-ev-float 5.5s ease-in-out calc(1s + var(--ev-i, 0) * 0.9s) infinite alternate;
+}
+
+@keyframes rpt-ev-float {
+  from {
+    transform: translateY(0) rotate(var(--ev-rot, 0deg));
+  }
+  to {
+    transform: translateY(-7px) rotate(var(--ev-rot, 0deg));
+  }
 }
 
 @keyframes rpt-ev-pop {
@@ -776,9 +829,10 @@
 
 .rpt-ev-shot {
   --ev-rot: -3.5deg;
-  left: 6%;
+  --ev-i: 0;
+  left: 3.5%;
   top: 8%;
-  width: 220px;
+  width: 252px;
   padding: 8px 8px 10px;
   transform: rotate(var(--ev-rot));
 }
@@ -786,7 +840,7 @@
 .rpt-ev-shot img {
   display: block;
   width: 100%;
-  height: 140px;
+  height: 160px;
   object-fit: cover;
   object-position: top;
   border-radius: calc(var(--radius-md) - 4px);
@@ -802,9 +856,10 @@
 
 .rpt-ev-serp {
   --ev-rot: 2deg;
-  right: 5%;
-  top: 12%;
-  width: 250px;
+  --ev-i: 1;
+  right: 3.5%;
+  top: 15%;
+  width: 268px;
   padding: var(--spacing-lg);
   transform: rotate(var(--ev-rot));
 }
@@ -844,29 +899,34 @@
 
 .rpt-ev-quote {
   --ev-rot: -2deg;
-  left: 8%;
-  bottom: 30%;
+  --ev-i: 2;
+  left: 5%;
+  bottom: 22%;
   transform: rotate(var(--ev-rot));
 }
 
 .rpt-ev-quote2 {
   --ev-rot: 1.5deg;
-  right: 7%;
-  bottom: 26%;
+  --ev-i: 3;
+  right: 5%;
+  bottom: 20%;
   transform: rotate(var(--ev-rot));
 }
 
 .rpt-ev-quote3 {
   --ev-rot: 2.5deg;
-  left: 36%;
-  top: 6%;
+  --ev-i: 4;
+  left: 50%;
+  margin-left: -115px;
+  top: 3%;
   transform: rotate(var(--ev-rot));
 }
 
 .rpt-ev-schema {
   --ev-rot: -1.5deg;
-  right: 9%;
-  bottom: 28%;
+  --ev-i: 3;
+  right: 5%;
+  bottom: 24%;
   padding: var(--spacing-md) var(--spacing-lg);
   display: flex;
   flex-wrap: wrap;
@@ -882,6 +942,103 @@
   padding: 3px 9px;
   border-radius: 100vw;
   background: color-mix(in srgb, var(--palette-purple-30) 30%, var(--surface));
+}
+
+/* ── The result beat: spotlight + spring + stamp, so every find lands ── */
+
+.rpt-reveal {
+  position: relative;
+}
+
+/* Warm spotlight blooming behind the result the moment it exists. */
+.rpt-reveal::before {
+  content: "";
+  position: absolute;
+  inset: -18% -24%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--palette-yellow-30) 40%, transparent),
+    transparent 76%
+  );
+  opacity: 0;
+  pointer-events: none;
+}
+
+.rpt-reveal[data-found="true"]::before {
+  animation: rpt-glow-in 0.9s ease-out 0.1s forwards;
+}
+
+@keyframes rpt-glow-in {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.rpt-reveal > .rpt-scene-card,
+.rpt-reveal > .rpt-scene-brain {
+  position: relative;
+  z-index: 1;
+}
+
+.rpt-anim .rpt-reveal-pop > .rpt-scene-card,
+.rpt-anim .rpt-reveal-pop > .rpt-scene-brain {
+  animation: rpt-reveal-pop 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes rpt-reveal-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Stamp that lands on the result — green check pill, top center. */
+.rpt-found-chip {
+  position: absolute;
+  z-index: 2;
+  top: -13px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 13px;
+  border-radius: 100vw;
+  background: var(--palette-green-20);
+  color: var(--palette-chrome-100);
+  font-size: var(--font-size-body-small);
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--palette-chrome-100) 12%, transparent);
+}
+
+/* Scenes with their own caption line: the stamp floats fully above it. */
+.rpt-found-chip-above {
+  top: -38px;
+}
+
+.rpt-anim .rpt-found-chip {
+  animation: rpt-chip-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
+}
+
+@keyframes rpt-chip-pop {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
 }
 
 .rpt-scene-eyebrow {
@@ -978,6 +1135,11 @@
   grid-template-columns: 300px 1fr;
   gap: var(--spacing-xl);
   align-items: start;
+}
+
+/* The report rises in after the tally — same easing as the scenes. */
+.rpt-anim .rpt-dash {
+  animation: rpt-fade-up 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .rpt-score-rail {
@@ -1574,6 +1736,7 @@ body:has(.rpt) .product-hunt-badge {
 
 @media (prefers-reduced-motion: reduce) {
   .rpt-ev,
+  .rpt-anim .rpt-ev,
   .rpt-anim .rpt-scene,
   .rpt-anim .rpt-scene-row,
   .rpt-anim .rpt-scene-q,
@@ -1581,8 +1744,26 @@ body:has(.rpt) .product-hunt-badge {
   .rpt-anim .rpt-dial-arc,
   .rpt-anim .rpt-scene-dots i,
   .rpt-anim .rpt-countdown p::before,
+  .rpt-anim .rpt-reveal-pop > .rpt-scene-card,
+  .rpt-anim .rpt-reveal-pop > .rpt-scene-brain,
+  .rpt-anim .rpt-found-chip,
+  .rpt-anim .rpt-dash,
   .rpt-anim .rpt-rail-steps li[data-active="true"] .rpt-rail-dot {
     animation: none;
+  }
+
+  /* No crossfade in reduced motion — the old scene just goes. */
+  .rpt-scene-leaving {
+    display: none;
+  }
+
+  .rpt-reveal[data-found="true"]::before {
+    animation: none;
+    opacity: 1;
+  }
+
+  .rpt-evidence {
+    transition: none;
   }
 
   .rpt-btn-label .l1,

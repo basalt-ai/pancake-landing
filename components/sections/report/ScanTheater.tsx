@@ -71,6 +71,7 @@ function stepDefs(domain: string): StepDef[] {
       key: "chatgpt",
       label: "Asking ChatGPT, live",
       minMs: 10000,
+      revealMs: 2500,
       ready: (s) =>
         s.prompts.length > 0 &&
         (s.prompts.every((p) => p.status === "done") || s.score !== null),
@@ -217,7 +218,7 @@ function Countdown({ schedule }: { schedule: TheaterSchedule }) {
  * earlier ones check off — a progression you can follow, never a loop.
  */
 function SceneDeepDive({ lines, elapsedMs }: { lines: string[]; elapsedMs: number }) {
-  const visible = Math.min(lines.length, Math.floor(elapsedMs / 2400) + 1);
+  const visible = Math.min(lines.length, Math.floor(elapsedMs / 2000) + 1);
   return (
     <div className="rpt-scene-card rpt-scene-deepdive">
       <ol>
@@ -325,8 +326,19 @@ function SceneAccess({ state }: { state: ReportState }) {
 }
 
 /** The visitor's own artifacts, popping in around the stage as the agents
- *  register them — screenshot, search snippet, verbatim homepage lines. */
-function EvidenceBoard({ state, elapsedMs, dimmed }: { state: ReportState; elapsedMs: number; dimmed: boolean }) {
+ *  register them — screenshot, search snippet, verbatim homepage lines.
+ *  Anchored to the STAGE, not the scene card, so they spread wide. */
+function EvidenceBoard({
+  state,
+  elapsedMs,
+  dimmed,
+  leaving,
+}: {
+  state: ReportState;
+  elapsedMs: number;
+  dimmed: boolean;
+  leaving: boolean;
+}) {
   const meta = state.meta;
   const snippets = meta?.snippets ?? [];
   const cards: { at: number; cls: string; node: React.ReactNode }[] = [];
@@ -379,7 +391,7 @@ function EvidenceBoard({ state, elapsedMs, dimmed }: { state: ReportState; elaps
     cards.push({ at: 7700, cls: "rpt-ev-quote3", node: <p>“{snippets[2] ?? snippets[1]}”</p> });
   }
   return (
-    <div className="rpt-evidence" data-dimmed={dimmed} aria-hidden>
+    <div className="rpt-evidence" data-dimmed={dimmed} data-leaving={leaving} aria-hidden>
       {cards
         .filter((c) => elapsedMs >= c.at)
         .map((c) => (
@@ -391,28 +403,44 @@ function EvidenceBoard({ state, elapsedMs, dimmed }: { state: ReportState; elaps
   );
 }
 
-function SceneICP({ state, schedule }: { state: ReportState; schedule: TheaterSchedule }) {
+/** "Result found" stamp — the eye-catcher that lands on every reveal.
+ *  `above` floats it clear of scenes that have their own caption line. */
+function FoundChip({ children, above }: { children: React.ReactNode; above?: boolean }) {
+  return (
+    <span className={`rpt-found-chip${above ? " rpt-found-chip-above" : ""}`}>
+      <MarkIcon ok size={8} />
+      {children}
+    </span>
+  );
+}
+
+/** True once the ICP result should own the stage for this step. */
+function icpRevealed(state: ReportState, stepElapsedMs: number): boolean {
   // Even when the analysis is already in (demo, cache), play the dive first:
   // evidence popping crisp + statements accumulating IS the magic beat.
-  const revealed = state.brain !== null && schedule.stepElapsedMs >= 6500;
+  return state.brain !== null && stepElapsedMs >= 6500;
+}
+
+function SceneICP({ state, schedule }: { state: ReportState; schedule: TheaterSchedule }) {
+  if (!icpRevealed(state, schedule.stepElapsedMs)) {
+    return (
+      <SceneDeepDive
+        lines={stepDefs(state.domain)[2]!.waitLines!}
+        elapsedMs={schedule.stepElapsedMs}
+      />
+    );
+  }
   return (
-    <>
-      <EvidenceBoard state={state} elapsedMs={schedule.stepElapsedMs} dimmed={revealed} />
-      {revealed ? (
-        <div className="rpt-scene-card rpt-scene-icp">
-          <span className="rpt-scene-eyebrow">Your ICP, as the agents read it</span>
-          <p className="rpt-scene-icp-text">{state.brain!.icp}</p>
-          <span className="rpt-scene-icp-co">
-            {state.brain!.company} · {state.domain}
-          </span>
-        </div>
-      ) : (
-        <SceneDeepDive
-          lines={stepDefs(state.domain)[2]!.waitLines!}
-          elapsedMs={schedule.stepElapsedMs}
-        />
-      )}
-    </>
+    <div className="rpt-reveal rpt-reveal-pop" data-found="true">
+      <FoundChip>ICP found</FoundChip>
+      <div className="rpt-scene-card rpt-scene-icp">
+        <span className="rpt-scene-eyebrow">Your ICP, as the agents read it</span>
+        <p className="rpt-scene-icp-text">{state.brain!.icp}</p>
+        <span className="rpt-scene-icp-co">
+          {state.brain!.company} · {state.domain}
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -426,49 +454,62 @@ function ScenePrompts({ state, schedule }: { state: ReportState; schedule: Theat
     );
   }
   return (
-    <div className="rpt-scene-brain">
-      <p className="rpt-scene-caption">The questions your ICP asks AI</p>
-      <div className="rpt-scene-qgrid">
-        {state.prompts.slice(0, 6).map((p, i) => (
-          <div className="rpt-scene-card rpt-scene-q" key={i} style={{ animationDelay: `${i * 0.28}s` }}>
-            <p>{p.prompt}</p>
-          </div>
-        ))}
+    <div className="rpt-reveal" data-found="true">
+      <div className="rpt-scene-brain">
+        <p className="rpt-scene-caption">The questions your ICP asks AI</p>
+        <div className="rpt-scene-qgrid">
+          {state.prompts.slice(0, 6).map((p, i) => (
+            <div className="rpt-scene-card rpt-scene-q" key={i} style={{ animationDelay: `${i * 0.28}s` }}>
+              <p>{p.prompt}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
 
 function SceneChatGPT({ state }: { state: ReportState }) {
+  const shown = state.prompts.slice(0, 6);
+  const allSettled =
+    shown.length > 0 && shown.every((p) => p.status === "done" && p.cited !== undefined);
+  const cited = state.prompts.filter((p) => p.cited).length;
   return (
-    <div className="rpt-scene-brain">
-      <p className="rpt-scene-caption">Does ChatGPT recommend you? Asking for real.</p>
-      <div className="rpt-scene-qgrid">
-        {state.prompts.slice(0, 6).map((p, i) => {
-          const settled = p.status === "done" && p.cited !== undefined;
-          return (
-            <div
-              className="rpt-scene-card rpt-scene-q"
-              data-cited={settled ? p.cited : undefined}
-              key={i}
-              style={{ animationDelay: `${i * 0.12}s` }}
-            >
-              <p>{p.prompt}</p>
-              <span className="rpt-scene-q-mark" data-state={p.status}>
-                {settled ? (
-                  <>
-                    <i className="rpt-mini-mark" data-ok={p.cited}>
-                      <MarkIcon ok={p.cited === true} size={8} />
-                    </i>
-                    {p.cited ? "Recommended" : "Not mentioned"}
-                  </>
-                ) : (
-                  "Asking…"
-                )}
-              </span>
-            </div>
-          );
-        })}
+    <div className="rpt-reveal" data-found={allSettled}>
+      {allSettled && (
+        <FoundChip above>
+          Cited in {cited} of {state.prompts.length} answers
+        </FoundChip>
+      )}
+      <div className="rpt-scene-brain">
+        <p className="rpt-scene-caption">Does ChatGPT recommend you? Asking for real.</p>
+        <div className="rpt-scene-qgrid">
+          {shown.map((p, i) => {
+            const settled = p.status === "done" && p.cited !== undefined;
+            return (
+              <div
+                className="rpt-scene-card rpt-scene-q"
+                data-cited={settled ? p.cited : undefined}
+                key={i}
+                style={{ animationDelay: `${i * 0.12}s` }}
+              >
+                <p>{p.prompt}</p>
+                <span className="rpt-scene-q-mark" data-state={p.status}>
+                  {settled ? (
+                    <>
+                      <i className="rpt-mini-mark" data-ok={p.cited}>
+                        <MarkIcon ok={p.cited === true} size={8} />
+                      </i>
+                      {p.cited ? "Recommended" : "Not mentioned"}
+                    </>
+                  ) : (
+                    "Asking…"
+                  )}
+                </span>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -485,20 +526,23 @@ function SceneGoogle({ state, schedule }: { state: ReportState; schedule: Theate
     );
   }
   return (
-    <div className="rpt-scene-brain">
-      <p className="rpt-scene-caption">Searches with money behind them.</p>
-      <div className="rpt-scene-list rpt-scene-serp">
-      {rows.slice(0, 5).map((row, i) => (
-        <div className="rpt-scene-row" key={row.term} style={{ animationDelay: `${i * 0.3}s` }}>
-          <span className="rpt-scene-pos" data-far={row.position === null || row.position > 10}>
-            {row.position ? `#${row.position}` : "—"}
-          </span>
-          <div>
-            <strong>{row.term}</strong>
-            <p>{row.detail}</p>
-          </div>
+    <div className="rpt-reveal rpt-reveal-pop" data-found="true">
+      <FoundChip above>Your real rankings</FoundChip>
+      <div className="rpt-scene-brain">
+        <p className="rpt-scene-caption">Searches with money behind them.</p>
+        <div className="rpt-scene-list rpt-scene-serp">
+          {rows.slice(0, 5).map((row, i) => (
+            <div className="rpt-scene-row" key={row.term} style={{ animationDelay: `${i * 0.3}s` }}>
+              <span className="rpt-scene-pos" data-far={row.position === null || row.position > 10}>
+                {row.position ? `#${row.position}` : "—"}
+              </span>
+              <div>
+                <strong>{row.term}</strong>
+                <p>{row.detail}</p>
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
       </div>
     </div>
   );
@@ -553,6 +597,27 @@ function SceneTally({ state }: { state: ReportState }) {
   );
 }
 
+function renderScene(key: string, state: ReportState, schedule: TheaterSchedule) {
+  switch (key) {
+    case "site":
+      return <SceneSite state={state} />;
+    case "access":
+      return <SceneAccess state={state} />;
+    case "icp":
+      return <SceneICP state={state} schedule={schedule} />;
+    case "prompts":
+      return <ScenePrompts state={state} schedule={schedule} />;
+    case "chatgpt":
+      return <SceneChatGPT state={state} />;
+    case "google":
+      return <SceneGoogle state={state} schedule={schedule} />;
+    case "tally":
+      return <SceneTally state={state} />;
+    default:
+      return null;
+  }
+}
+
 export function ScanTheater({
   state,
   schedule,
@@ -562,6 +627,24 @@ export function ScanTheater({
 }) {
   const defs = stepDefs(state.domain);
   const active = defs[schedule.index]!;
+
+  // Exit crossfade: when the schedule advances, the outgoing scene lingers for
+  // one beat and fades out while the next one rises — no hard cuts.
+  const [leaving, setLeaving] = useState<string | null>(null);
+  const prevKeyRef = useRef(active.key);
+  useEffect(() => {
+    if (prevKeyRef.current === active.key) return;
+    const old = prevKeyRef.current;
+    prevKeyRef.current = active.key;
+    setLeaving(old);
+    const t = setTimeout(() => setLeaving(null), 480);
+    return () => clearTimeout(t);
+  }, [active.key]);
+
+  // A leaving scene re-renders with its dwell "served" so it exits in its
+  // final (revealed) form, never snapping back to a loading state.
+  const settledSchedule: TheaterSchedule = { ...schedule, stepElapsedMs: 1e9 };
+  const evidenceOn = active.key === "icp" || leaving === "icp";
 
   return (
     <section className="rpt-theater">
@@ -587,14 +670,21 @@ export function ScanTheater({
       </aside>
 
       <div className="rpt-stage">
+        {evidenceOn && (
+          <EvidenceBoard
+            state={state}
+            elapsedMs={active.key === "icp" ? schedule.stepElapsedMs : 1e9}
+            dimmed={active.key === "icp" && icpRevealed(state, schedule.stepElapsedMs)}
+            leaving={active.key !== "icp"}
+          />
+        )}
+        {leaving && leaving !== active.key && (
+          <div className="rpt-scene rpt-scene-leaving" aria-hidden>
+            {renderScene(leaving, state, settledSchedule)}
+          </div>
+        )}
         <div className="rpt-scene" key={active.key}>
-          {active.key === "site" && <SceneSite state={state} />}
-          {active.key === "access" && <SceneAccess state={state} />}
-          {active.key === "icp" && <SceneICP state={state} schedule={schedule} />}
-          {active.key === "prompts" && <ScenePrompts state={state} schedule={schedule} />}
-          {active.key === "chatgpt" && <SceneChatGPT state={state} />}
-          {active.key === "google" && <SceneGoogle state={state} schedule={schedule} />}
-          {active.key === "tally" && <SceneTally state={state} />}
+          {renderScene(active.key, state, schedule)}
         </div>
         <span className="rpt-stage-horizon" aria-hidden />
       </div>
