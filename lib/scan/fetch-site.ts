@@ -109,6 +109,26 @@ function crawlerAccess(robotsTxt: string | null): Record<string, boolean> {
   return access;
 }
 
+/**
+ * The site's own declared icon beats any third-party favicon service — those
+ * get bot-blocked by exactly the sites this scan flags (Ankorstore serves
+ * Google's grey globe). Falls back to the /favicon.ico convention, which the
+ * client can onError past.
+ */
+function extractFavicon(html: string, pageUrl: string): string {
+  const links = html.match(/<link\s[^>]*rel=["'][^"']*icon[^"']*["'][^>]*>/gi) ?? [];
+  for (const link of links) {
+    const href = link.match(/href=["']([^"']+)["']/i)?.[1];
+    if (!href || href.startsWith("data:")) continue;
+    try {
+      return new URL(decodeEntities(href), pageUrl).toString();
+    } catch {
+      continue;
+    }
+  }
+  return `${new URL(pageUrl).origin}/favicon.ico`;
+}
+
 function stripToText(html: string): string {
   return decodeEntities(
     html
@@ -145,7 +165,7 @@ export async function fetchSite(url: string, host: string): Promise<SiteSnapshot
     title: decodeEntities((html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1] ?? "").trim()).slice(0, 200),
     metaDescription: metaContent(html, "description").slice(0, 300),
     ogImage: /^https?:\/\//.test(ogImage) ? ogImage : "",
-    favicon: `https://www.google.com/s2/favicons?domain=${host}&sz=64`,
+    favicon: extractFavicon(html, url),
     schemaTypes: extractSchemaTypes(html),
     crawlers: crawlerAccess(robots && robots.status === 200 ? robots.body : null),
     hasLlmsTxt: looksLikeText(llms),

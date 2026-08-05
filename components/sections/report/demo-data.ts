@@ -12,7 +12,7 @@ export const DEMO_EVENTS: ScanEvent[] = [
   {
     type: "meta",
     title: "Doctolib — Book your medical appointments online",
-    favicon: `https://www.google.com/s2/favicons?domain=${DEMO_DOMAIN}&sz=64`,
+    favicon: `https://www.${DEMO_DOMAIN}/favicon.ico`,
   },
   { type: "status", label: "Checking who gets in: AI crawlers, llms.txt, schema…" },
   { type: "check", id: "crawlers", pass: true, detail: "AI crawlers get in. GPTBot and ClaudeBot can read you." },

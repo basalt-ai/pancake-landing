@@ -66,11 +66,27 @@ function SiteChip({
   ogImage?: string;
   title?: string;
 }) {
+  // Favicon fallback chain: the site's own icon first, then DuckDuckGo's
+  // service (404s cleanly when unknown), then the brand dot — never a broken
+  // image, never a third-party grey globe.
+  const [iconStep, setIconStep] = useState(0);
+  useEffect(() => setIconStep(0), [domain, favicon]);
+  const icons = [
+    ...(favicon ? [favicon] : []),
+    ...(domain ? [`https://icons.duckduckgo.com/ip3/${domain}.ico`] : []),
+  ];
+  const iconSrc = icons[iconStep];
   return (
     <div className="rpt-chip">
-      {favicon ? (
+      {iconSrc ? (
         // eslint-disable-next-line @next/next/no-img-element -- external favicon, unknown host
-        <img src={favicon} alt="" width={28} height={28} />
+        <img
+          src={iconSrc}
+          alt=""
+          width={28}
+          height={28}
+          onError={() => setIconStep((s) => s + 1)}
+        />
       ) : (
         <span className="rpt-chip-dot" aria-hidden />
       )}
