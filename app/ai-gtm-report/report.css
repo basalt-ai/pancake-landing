@@ -5,6 +5,10 @@
  * still under prefers-reduced-motion.
  */
 
+.rpt ::selection {
+  background: color-mix(in srgb, var(--strong-branded-surface) 45%, transparent);
+}
+
 .rpt {
   min-height: 100dvh;
   /* Flat cream, exactly like the landing — no decorative grid. */
@@ -127,7 +131,7 @@
 }
 
 .rpt-nav {
-  max-width: 760px;
+  max-width: 1200px;
   margin: 0 auto;
   padding-block: var(--spacing-lg);
 }
@@ -268,6 +272,19 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* One continuous dotted spine behind the dots — survives wrapped labels. */
+.rpt-rail-steps::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 10px;
+  bottom: 10px;
+  border-left: 2px dotted color-mix(in srgb, var(--palette-chrome-100) 16%, transparent);
 }
 
 .rpt-rail-steps li {
@@ -283,24 +300,27 @@
   color: var(--text);
 }
 
-.rpt-rail-steps li:not(:first-child)::before {
-  content: "";
-  position: absolute;
-  left: 8px;
-  top: -14px;
-  height: 12px;
-  border-left: 2px dotted color-mix(in srgb, var(--palette-chrome-100) 18%, transparent);
-}
-
 .rpt-rail-dot {
   position: absolute;
   left: 0;
-  top: 0;
+  /* Centered on the label's first line box, token-proof. */
+  top: calc((1lh - 18px) / 2);
   width: 18px;
   height: 18px;
   border-radius: 50%;
   border: 2px solid color-mix(in srgb, var(--palette-chrome-100) 18%, transparent);
-  background: transparent;
+  /* Opaque so pending dots occlude the spine behind them. */
+  background: var(--surface);
+  display: grid;
+  place-items: center;
+}
+
+.rpt-rail-dot svg {
+  display: block;
+}
+
+.rpt-rail-steps li {
+  min-height: 18px;
 }
 
 .rpt-rail-steps li[data-active="true"] .rpt-rail-dot {
@@ -315,18 +335,7 @@
 .rpt-rail-steps li[data-done="true"] .rpt-rail-dot {
   border-color: var(--palette-chrome-100);
   background: var(--palette-chrome-100);
-}
-
-.rpt-rail-steps li[data-done="true"] .rpt-rail-dot::after {
-  content: "";
-  position: absolute;
-  left: 4px;
-  top: 3px;
-  width: 6px;
-  height: 3px;
-  border-left: 2px solid var(--surface);
-  border-bottom: 2px solid var(--surface);
-  transform: rotate(-48deg);
+  color: var(--surface);
 }
 
 .rpt-countdown {
@@ -393,7 +402,7 @@
   position: absolute;
   left: 6%;
   right: 6%;
-  bottom: 22%;
+  bottom: 10%;
   height: 2px;
   background: linear-gradient(
     90deg,
@@ -403,7 +412,7 @@
     transparent
   );
   filter: blur(0.5px);
-  box-shadow: 0 -14px 44px color-mix(in srgb, var(--palette-green-20) 42%, transparent);
+  box-shadow: 0 -12px 36px color-mix(in srgb, var(--palette-green-20) 30%, transparent);
   pointer-events: none;
 }
 
@@ -412,6 +421,8 @@
   z-index: 1;
   width: 100%;
   max-width: 620px;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .rpt-anim .rpt-scene {
@@ -520,14 +531,17 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  font-size: 12px;
-  font-weight: 700;
   background: var(--palette-green-20);
   color: var(--palette-chrome-100);
 }
 
+.rpt-scene-stamp svg {
+  display: block;
+}
+
 .rpt-scene-row[data-pass="false"] .rpt-scene-stamp {
-  background: var(--strong-branded-surface);
+  background: var(--negative-surface);
+  color: var(--surface);
 }
 
 .rpt-scene-pos {
@@ -589,17 +603,95 @@
 }
 
 .rpt-scene-q-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
   font-size: var(--font-size-body-small);
   font-weight: 600;
   color: var(--subtle-text);
 }
 
+.rpt-mini-mark {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.rpt-mini-mark svg {
+  display: block;
+}
+
+.rpt-mini-mark[data-ok="true"] {
+  background: var(--palette-green-20);
+  color: var(--palette-chrome-100);
+}
+
+.rpt-mini-mark[data-ok="false"] {
+  background: var(--negative-surface);
+  color: var(--surface);
+}
+
 .rpt-scene-q[data-cited="true"] .rpt-scene-q-mark {
-  color: color-mix(in srgb, var(--palette-green-20) 55%, var(--palette-chrome-100));
+  color: var(--text);
 }
 
 .rpt-scene-q[data-cited="false"] .rpt-scene-q-mark {
-  color: var(--strong-branded-surface);
+  color: var(--text);
+}
+
+.rpt-scene-thinking {
+  max-width: 430px;
+  margin: 0 auto;
+  padding: var(--spacing-xxl) var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+  text-align: center;
+}
+
+.rpt-scene-thinking p {
+  font-weight: 500;
+  color: var(--subtle-text);
+  animation: rpt-fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.rpt-scene-eyebrow {
+  display: block;
+  font-size: var(--font-size-body-small);
+  font-weight: 600;
+  color: var(--subtle-text);
+  margin-bottom: var(--spacing-md);
+}
+
+.rpt-scene-icp {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: var(--spacing-xxl) var(--spacing-xl);
+  text-align: center;
+}
+
+.rpt-scene-icp-text {
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+.rpt-scene-icp-co {
+  display: block;
+  margin-top: var(--spacing-lg);
+  font-size: var(--font-size-body-small);
+  color: var(--subtle-text);
+}
+
+.rpt-scene-caption {
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: var(--spacing-lg);
 }
 
 .rpt-scene-adding {
@@ -714,15 +806,16 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: var(--spacing-xs) var(--spacing-lg);
-  font-size: var(--font-size-body-small);
+  gap: var(--spacing-xs) var(--spacing-md);
+  font-size: 12px;
   color: var(--subtle-text);
 }
 
 .rpt-grade-scale li {
   display: inline-flex;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: 5px;
+  white-space: nowrap;
 }
 
 .rpt-grade-scale li[data-active="true"] {
@@ -773,7 +866,9 @@
 .rpt-subscore-bar span {
   display: block;
   height: 100%;
+  min-width: 3px;
   border-radius: inherit;
+  background: var(--palette-chrome-100);
 }
 
 .rpt-subscore-label {
@@ -953,10 +1048,12 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  font-size: 11px;
-  font-weight: 700;
   background: var(--palette-chrome-30);
   color: var(--palette-chrome-100);
+}
+
+.rpt-qmark svg {
+  display: block;
 }
 
 .rpt-qtable li[data-cited="true"] .rpt-qmark {
@@ -964,7 +1061,8 @@
 }
 
 .rpt-qtable li[data-cited="false"] .rpt-qmark {
-  background: var(--strong-branded-surface);
+  background: var(--negative-surface);
+  color: var(--surface);
 }
 
 .rpt-qdetail {
@@ -1048,6 +1146,13 @@
   pointer-events: none;
 }
 
+/* Center the modal over the column it locks, not the viewport. */
+@media (min-width: 901px) {
+  .rpt-modal-wrap {
+    padding-left: calc(max((100vw - 1200px) / 2, var(--spacing-xl)) + 324px);
+  }
+}
+
 .rpt-modal {
   pointer-events: auto;
   width: 100%;
@@ -1069,7 +1174,17 @@
 }
 
 .rpt-modal-lock {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--palette-chrome-100) 7%, transparent);
   color: var(--subtle-text);
+  display: grid;
+  place-items: center;
+  margin-inline: auto;
+}
+
+.rpt-modal-lock svg {
   display: block;
 }
 

@@ -1,52 +1,216 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { MarkIcon } from "./MarkIcon";
 import type { ReportState } from "./useReport";
 
 /**
- * Owner.com-style scan: a fixed left rail (checklist + countdown) narrates
- * while the right stage plays one visual scene per step, each built from the
- * real data streaming in — nothing is decorative-only.
+ * Owner.com-style scan cinematic. The rail narrates, the stage plays one
+ * scene per step — and a SCHEDULER, not data arrival, drives the sequence:
+ * every scene gets a minimum dwell so nothing flashes past or is skipped,
+ * and a step only completes once its data actually exists. The ~35s Claude
+ * analysis is absorbed by the ICP steps, which think out loud instead of
+ * showing dead air.
  */
 
-const EXPECTED_SECONDS = 60;
+type StepDef = {
+  key: string;
+  label: string;
+  minMs: number;
+  ready: (s: ReportState) => boolean;
+  /** Rotating "agent thinking" lines shown when the dwell is over but data isn't. */
+  waitLines?: string[];
+};
 
-type Step = { key: string; label: string; done: boolean };
-
-function deriveSteps(state: ReportState, domain: string): Step[] {
-  const promptsDone =
-    state.prompts.length > 0 && state.prompts.every((p) => p.status === "done");
+function stepDefs(domain: string): StepDef[] {
   return [
-    { key: "site", label: `${domain} & how machines read it`, done: state.meta !== null },
-    { key: "crawlers", label: "AI crawler access", done: state.checks.length >= 4 },
-    { key: "brain", label: "Building your mini Brain", done: state.brain !== null },
-    { key: "chatgpt", label: "Asking ChatGPT your buyers' questions", done: promptsDone },
-    { key: "google", label: "Google money searches", done: state.google !== null },
-    { key: "score", label: "Adding it up", done: state.score !== null },
+    {
+      key: "site",
+      label: `Reading ${domain}`,
+      minMs: 6000,
+      ready: (s) => s.meta !== null,
+    },
+    {
+      key: "access",
+      label: "Checking AI access",
+      minMs: 7500,
+      // Fallback on brain: if a scan ever emits fewer than 4 checks, the rail
+      // must not hang here while later data lands invisibly.
+      ready: (s) => s.checks.length >= 4 || s.brain !== null,
+    },
+    {
+      key: "icp",
+      label: "Defining your ICP",
+      minMs: 11000,
+      ready: (s) => s.brain !== null,
+      waitLines: [
+        "Reading every page the way a buyer would…",
+        "Looking for who signs off on this…",
+        "Naming your ideal customer…",
+      ],
+    },
+    {
+      key: "prompts",
+      label: "Top prompts for your ICP",
+      minMs: 9000,
+      ready: (s) => s.brain !== null,
+      waitLines: [
+        "Standing in your buyer's shoes…",
+        "Writing the questions they'd ask an AI…",
+        "Keeping only the ones with buying intent…",
+      ],
+    },
+    {
+      key: "chatgpt",
+      label: "Asking ChatGPT, live",
+      minMs: 10000,
+      ready: (s) =>
+        s.prompts.length > 0 &&
+        (s.prompts.every((p) => p.status === "done") || s.score !== null),
+      waitLines: ["Waiting on ChatGPT's answers…"],
+    },
+    {
+      key: "google",
+      label: "Checking Google money searches",
+      minMs: 8000,
+      ready: (s) => s.google !== null,
+      waitLines: ["Pulling your real rankings…"],
+    },
+    {
+      key: "tally",
+      label: "Scoring it",
+      minMs: 3500,
+      ready: (s) => s.score !== null,
+    },
   ];
 }
 
-function Countdown({ startedAt }: { startedAt: number }) {
-  const [now, setNow] = useState(startedAt);
+export type TheaterSchedule = {
+  index: number;
+  done: boolean;
+  remainingSec: number;
+  /** Dwell served but data still pending — the scene is thinking out loud. */
+  waiting: boolean;
+  stepElapsedMs: number;
+  progress: number;
+};
+
+/**
+ * Drives the scene sequence. Lives in ReportExperience so the dashboard can
+ * wait for the cinematic to finish even after the stream already delivered
+ * everything. When every event is in, remaining scenes play at triple speed
+ * (cache replays stay snappy); a hidden tab skips the theater entirely.
+ */
+export function useTheaterSchedule(state: ReportState): TheaterSchedule {
+  const defs = stepDefs(state.domain || "your site");
+  const [index, setIndex] = useState(0);
+  const [done, setDone] = useState(false);
+  const [, setTick] = useState(0);
+  const stepStartRef = useRef(Date.now());
+  const activeRef = useRef(false);
+
+  // Cache replays burst everything at once — play those at triple speed. The
+  // demo is a showpiece: it keeps the full cinematic even though its data is
+  // instant.
+  const allDataIn = state.score !== null && !state.demo;
+  const running = (state.phase === "scanning" || state.phase === "report") && !done;
+
+  // New scan → restart the schedule; leaving the funnel → reset.
   useEffect(() => {
-    const t = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(t);
+    if (state.phase === "scanning" && !activeRef.current) {
+      activeRef.current = true;
+      setIndex(0);
+      setDone(false);
+      stepStartRef.current = Date.now();
+    }
+    if (state.phase === "idle" || state.phase === "error") {
+      activeRef.current = false;
+      setIndex(0);
+      setDone(false);
+    }
+  }, [state.phase]);
+
+  // Nobody watches a hidden tab's cinematic — hand the report over directly.
+  useEffect(() => {
+    const skipIfHidden = () => {
+      if (document.hidden && activeRef.current) setDone(true);
+    };
+    document.addEventListener("visibilitychange", skipIfHidden);
+    return () => document.removeEventListener("visibilitychange", skipIfHidden);
   }, []);
-  const elapsed = Math.floor((now - startedAt) / 1000);
-  const remaining = EXPECTED_SECONDS - elapsed;
-  const pct = Math.min(95, (elapsed / EXPECTED_SECONDS) * 100);
+
+  useEffect(() => {
+    if (!running) return;
+    const t = setInterval(() => setTick((n) => n + 1), 250);
+    return () => clearInterval(t);
+  }, [running]);
+
+  const effMin = (d: StepDef) => (allDataIn ? d.minMs / 3 : d.minMs);
+
+  useEffect(() => {
+    if (!activeRef.current || done) return;
+    if (document.hidden && state.phase === "report") {
+      setDone(true);
+      return;
+    }
+    const def = defs[index]!;
+    const elapsed = Date.now() - stepStartRef.current;
+    if (elapsed >= effMin(def) && def.ready(state)) {
+      if (index === defs.length - 1) {
+        setDone(true);
+      } else {
+        setIndex(index + 1);
+        stepStartRef.current = Date.now();
+      }
+    }
+  });
+
+  const stepElapsedMs = Date.now() - stepStartRef.current;
+  let remainingMs = Math.max(0, effMin(defs[index]!) - stepElapsedMs);
+  for (let i = index + 1; i < defs.length; i++) remainingMs += effMin(defs[i]!);
+  const totalMs = defs.reduce((a, d) => a + d.minMs, 0);
+  return {
+    index,
+    done,
+    remainingSec: Math.max(1, Math.ceil(remainingMs / 1000)),
+    waiting: stepElapsedMs >= effMin(defs[index]!) && !defs[index]!.ready(state),
+    stepElapsedMs,
+    progress: Math.min(0.97, 1 - remainingMs / totalMs),
+  };
+}
+
+function Countdown({ schedule }: { schedule: TheaterSchedule }) {
   return (
     <div className="rpt-countdown">
       <span className="rpt-countdown-bar" aria-hidden>
-        <span style={{ transform: `scaleX(${pct / 100})` }} />
+        <span style={{ transform: `scaleX(${schedule.progress})` }} />
       </span>
-      <p>{remaining > 4 ? `${remaining} seconds remaining` : "a few more seconds…"}</p>
+      <p>
+        {schedule.waiting || schedule.remainingSec <= 4
+          ? "a few more seconds…"
+          : `${schedule.remainingSec} seconds remaining`}
+      </p>
     </div>
   );
 }
 
-/* ── Stage scenes — each renders the real data of its step ── */
+/* ── Stage scenes — every one renders the real data of its step ── */
+
+/** Rotating agent-observation card — the anti-dead-air device. */
+function SceneThinking({ lines, elapsedMs }: { lines: string[]; elapsedMs: number }) {
+  const line = lines[Math.floor(elapsedMs / 2600) % lines.length]!;
+  return (
+    <div className="rpt-scene-card rpt-scene-thinking">
+      <span className="rpt-scene-dots" aria-hidden>
+        <i />
+        <i />
+        <i />
+      </span>
+      <p key={line}>{line}</p>
+    </div>
+  );
+}
 
 /** Site icon with the fallback chain: declared icon → DuckDuckGo → nothing. */
 function Favicon({ domain, favicon }: { domain: string; favicon?: string }) {
@@ -92,7 +256,7 @@ const CHECK_LABELS: Record<string, string> = {
   meta_quality: "Titles & descriptions",
 };
 
-function SceneCrawlers({ state }: { state: ReportState }) {
+function SceneAccess({ state }: { state: ReportState }) {
   return (
     <div className="rpt-scene-list">
       {state.checks.map((check, i) => (
@@ -100,10 +264,10 @@ function SceneCrawlers({ state }: { state: ReportState }) {
           className="rpt-scene-row"
           data-pass={check.pass}
           key={check.id}
-          style={{ animationDelay: `${i * 0.12}s` }}
+          style={{ animationDelay: `${i * 0.35}s` }}
         >
           <span className="rpt-scene-stamp" aria-hidden>
-            {check.pass ? "✓" : "✕"}
+            <MarkIcon ok={check.pass} />
           </span>
           <div>
             <strong>{CHECK_LABELS[check.id] ?? check.id}</strong>
@@ -115,18 +279,41 @@ function SceneCrawlers({ state }: { state: ReportState }) {
   );
 }
 
-function SceneBrain({ state }: { state: ReportState }) {
+function SceneICP({ state, schedule }: { state: ReportState; schedule: TheaterSchedule }) {
+  if (!state.brain) {
+    return (
+      <SceneThinking
+        lines={stepDefs(state.domain)[2]!.waitLines!}
+        elapsedMs={schedule.stepElapsedMs}
+      />
+    );
+  }
+  return (
+    <div className="rpt-scene-card rpt-scene-icp">
+      <span className="rpt-scene-eyebrow">Your ICP, as the agents read it</span>
+      <p className="rpt-scene-icp-text">{state.brain.icp}</p>
+      <span className="rpt-scene-icp-co">
+        {state.brain.company} · {state.domain}
+      </span>
+    </div>
+  );
+}
+
+function ScenePrompts({ state, schedule }: { state: ReportState; schedule: TheaterSchedule }) {
+  if (!state.brain) {
+    return (
+      <SceneThinking
+        lines={stepDefs(state.domain)[3]!.waitLines!}
+        elapsedMs={schedule.stepElapsedMs}
+      />
+    );
+  }
   return (
     <div className="rpt-scene-brain">
-      {state.brain && (
-        <div className="rpt-scene-card rpt-scene-icp">
-          <span>Your ICP, as we read it</span>
-          <p>{state.brain.icp}</p>
-        </div>
-      )}
-      <div className="rpt-scene-fan">
-        {state.prompts.slice(0, 4).map((p, i) => (
-          <div className="rpt-scene-card rpt-scene-q" key={i} style={{ animationDelay: `${i * 0.15}s` }}>
+      <p className="rpt-scene-caption">The questions your ICP asks AI</p>
+      <div className="rpt-scene-qgrid">
+        {state.prompts.slice(0, 6).map((p, i) => (
+          <div className="rpt-scene-card rpt-scene-q" key={i} style={{ animationDelay: `${i * 0.28}s` }}>
             <p>{p.prompt}</p>
           </div>
         ))}
@@ -137,30 +324,53 @@ function SceneBrain({ state }: { state: ReportState }) {
 
 function SceneChatGPT({ state }: { state: ReportState }) {
   return (
-    <div className="rpt-scene-qgrid">
-      {state.prompts.slice(0, 6).map((p, i) => (
-        <div
-          className="rpt-scene-card rpt-scene-q"
-          data-cited={p.status === "done" ? p.cited : undefined}
-          key={i}
-          style={{ animationDelay: `${i * 0.1}s` }}
-        >
-          <p>{p.prompt}</p>
-          <span className="rpt-scene-q-mark" data-state={p.status}>
-            {p.status === "done" ? (p.cited ? "✓ cited" : "✕ not you") : "asking…"}
-          </span>
-        </div>
-      ))}
+    <div className="rpt-scene-brain">
+      <p className="rpt-scene-caption">Would ChatGPT bring you up? Asking for real:</p>
+      <div className="rpt-scene-qgrid">
+        {state.prompts.slice(0, 6).map((p, i) => {
+          const settled = p.status === "done" && p.cited !== undefined;
+          return (
+            <div
+              className="rpt-scene-card rpt-scene-q"
+              data-cited={settled ? p.cited : undefined}
+              key={i}
+              style={{ animationDelay: `${i * 0.12}s` }}
+            >
+              <p>{p.prompt}</p>
+              <span className="rpt-scene-q-mark" data-state={p.status}>
+                {settled ? (
+                  <>
+                    <i className="rpt-mini-mark" data-ok={p.cited}>
+                      <MarkIcon ok={p.cited === true} size={8} />
+                    </i>
+                    {p.cited ? "cited" : "not you"}
+                  </>
+                ) : (
+                  "asking…"
+                )}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
 
-function SceneGoogle({ state }: { state: ReportState }) {
+function SceneGoogle({ state, schedule }: { state: ReportState; schedule: TheaterSchedule }) {
   const rows = state.google?.rows ?? [];
+  if (!rows.length) {
+    return (
+      <SceneThinking
+        lines={stepDefs(state.domain)[5]!.waitLines!}
+        elapsedMs={schedule.stepElapsedMs}
+      />
+    );
+  }
   return (
     <div className="rpt-scene-list rpt-scene-serp">
       {rows.slice(0, 5).map((row, i) => (
-        <div className="rpt-scene-row" key={row.term} style={{ animationDelay: `${i * 0.12}s` }}>
+        <div className="rpt-scene-row" key={row.term} style={{ animationDelay: `${i * 0.3}s` }}>
           <span className="rpt-scene-pos" data-far={row.position === null || row.position > 20}>
             {row.position ? `#${row.position}` : "—"}
           </span>
@@ -174,7 +384,7 @@ function SceneGoogle({ state }: { state: ReportState }) {
   );
 }
 
-function SceneScore() {
+function SceneTally() {
   return (
     <div className="rpt-scene-adding">
       <span className="rpt-scene-dots" aria-hidden>
@@ -182,15 +392,20 @@ function SceneScore() {
         <i />
         <i />
       </span>
-      <p>Adding it up…</p>
+      <p>Scoring what the agents found…</p>
     </div>
   );
 }
 
-export function ScanTheater({ state, startedAt }: { state: ReportState; startedAt: number }) {
-  const steps = deriveSteps(state, state.domain);
-  const activeIndex = steps.findIndex((s) => !s.done);
-  const active = steps[activeIndex === -1 ? steps.length - 1 : activeIndex]!;
+export function ScanTheater({
+  state,
+  schedule,
+}: {
+  state: ReportState;
+  schedule: TheaterSchedule;
+}) {
+  const defs = stepDefs(state.domain);
+  const active = defs[schedule.index]!;
 
   return (
     <section className="rpt-theater">
@@ -198,29 +413,32 @@ export function ScanTheater({ state, startedAt }: { state: ReportState; startedA
         <div className="rpt-rail-card">
           <h2>Scanning…</h2>
           <ol className="rpt-rail-steps">
-            {steps.map((step, i) => (
+            {defs.map((step, i) => (
               <li
                 key={step.key}
-                data-done={step.done}
-                data-active={i === activeIndex}
+                data-done={i < schedule.index}
+                data-active={i === schedule.index}
               >
-                <span className="rpt-rail-dot" aria-hidden />
+                <span className="rpt-rail-dot" aria-hidden>
+                  {i < schedule.index && <MarkIcon ok size={8} />}
+                </span>
                 {step.label}
               </li>
             ))}
           </ol>
         </div>
-        <Countdown startedAt={startedAt} />
+        <Countdown schedule={schedule} />
       </aside>
 
       <div className="rpt-stage">
         <div className="rpt-scene" key={active.key}>
           {active.key === "site" && <SceneSite state={state} />}
-          {active.key === "crawlers" && <SceneCrawlers state={state} />}
-          {active.key === "brain" && <SceneBrain state={state} />}
+          {active.key === "access" && <SceneAccess state={state} />}
+          {active.key === "icp" && <SceneICP state={state} schedule={schedule} />}
+          {active.key === "prompts" && <ScenePrompts state={state} schedule={schedule} />}
           {active.key === "chatgpt" && <SceneChatGPT state={state} />}
-          {active.key === "google" && <SceneGoogle state={state} />}
-          {active.key === "score" && <SceneScore />}
+          {active.key === "google" && <SceneGoogle state={state} schedule={schedule} />}
+          {active.key === "tally" && <SceneTally />}
         </div>
         <span className="rpt-stage-horizon" aria-hidden />
       </div>

@@ -7,13 +7,15 @@ import { Input } from "@/components/ui/Input";
 
 import { FxButton } from "./FxButton";
 import { ReportDashboard } from "./ReportDashboard";
-import { ScanTheater } from "./ScanTheater";
+import { ScanTheater, useTheaterSchedule } from "./ScanTheater";
 import { useReport } from "./useReport";
 
 export function ReportExperience() {
   const { state, start, startDemo, unlock } = useReport();
   const [url, setUrl] = useState("");
   const scanStartRef = useRef(0);
+  // The cinematic outlives the stream: the dashboard waits for the last scene.
+  const schedule = useTheaterSchedule(state);
 
   // Entrance styles are gated on this class so nothing hides without JS.
   useEffect(() => {
@@ -70,11 +72,13 @@ export function ReportExperience() {
         </section>
       )}
 
-      {state.phase === "scanning" && (
-        <ScanTheater state={state} startedAt={scanStartRef.current || Date.now()} />
+      {(state.phase === "scanning" || (state.phase === "report" && !schedule.done)) && (
+        <ScanTheater state={state} schedule={schedule} />
       )}
 
-      {state.phase === "report" && <ReportDashboard state={state} onUnlock={unlock} />}
+      {state.phase === "report" && schedule.done && (
+        <ReportDashboard state={state} onUnlock={unlock} />
+      )}
 
       {state.phase === "error" && (
         <section className="rpt-hero">

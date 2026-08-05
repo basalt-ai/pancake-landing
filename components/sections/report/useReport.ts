@@ -219,7 +219,10 @@ export function useReport() {
         return;
       }
       dispatch({ type: "event", event: next });
-      const gap = doneRef.current ? 120 : next.type === "citation" ? 480 : 380;
+      // status events are narration state only (the theater narrates itself) —
+      // they must not consume a full drip slot.
+      const gap =
+        next.type === "status" ? 40 : doneRef.current ? 120 : next.type === "citation" ? 480 : 380;
       timerRef.current = setTimeout(step, gap);
     };
     step();

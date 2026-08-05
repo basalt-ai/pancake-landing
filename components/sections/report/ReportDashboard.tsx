@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Input } from "@/components/ui/Input";
 
 import { FxButton } from "./FxButton";
+import { MarkIcon } from "./MarkIcon";
 import type { ReportState, ScoreBreakdown } from "./useReport";
 
 /**
@@ -16,20 +17,21 @@ import type { ReportState, ScoreBreakdown } from "./useReport";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-/** Grade bands shown under the dial so the number reads at a glance. */
+/** Grade bands shown under the dial so the number reads at a glance. The
+ *  worst band is negative red — pink stays reserved for the brand. */
 const GRADES = [
-  { label: "Invisible", from: 0, to: 39, color: "var(--strong-branded-surface)" },
+  { label: "Invisible", from: 0, to: 39, color: "var(--negative-surface)" },
   { label: "In the game", from: 40, to: 69, color: "var(--palette-yellow-30)" },
   { label: "Strong", from: 70, to: 100, color: "var(--palette-green-20)" },
 ];
 
-function gradeFor(score: number): string {
-  return GRADES.find((g) => score <= g.to)?.label ?? GRADES[GRADES.length - 1]!.label;
+function bandFor(score: number) {
+  return GRADES.find((g) => score <= g.to) ?? GRADES[GRADES.length - 1]!;
 }
 
 /* ── Score rail ── */
 
-function Dial({ score }: { score: number }) {
+function Dial({ score, color }: { score: number; color: string }) {
   const R = 56;
   const C = 2 * Math.PI * R;
   return (
@@ -41,7 +43,7 @@ function Dial({ score }: { score: number }) {
           cy="70"
           r={R}
           fill="none"
-          stroke="var(--strong-branded-surface)"
+          stroke={color}
           strokeWidth="10"
           strokeLinecap="round"
           strokeDasharray={C}
@@ -58,26 +60,24 @@ function Dial({ score }: { score: number }) {
   );
 }
 
-const SUBS: {
-  key: keyof ScoreBreakdown;
-  label: string;
-  color: string;
-}[] = [
-  { key: "ai", label: "AI visibility", color: "var(--palette-purple-30)" },
-  { key: "google", label: "Google reach", color: "var(--palette-yellow-30)" },
-  { key: "readiness", label: "Machine readiness", color: "var(--palette-green-20)" },
+/** One neutral fill for all metric bars — band colors keep a single meaning. */
+const SUBS: { key: keyof ScoreBreakdown; label: string }[] = [
+  { key: "ai", label: "AI visibility" },
+  { key: "google", label: "Google reach" },
+  { key: "readiness", label: "Machine readiness" },
 ];
 
 function ScoreRail({ state }: { state: ReportState }) {
   const score = state.score ?? 0;
+  const band = bandFor(score);
   return (
     <aside className="rpt-score-rail">
       <p className="rpt-rail-eyebrow">AI GTM score</p>
-      <Dial score={score} />
-      <p className="rpt-rail-grade">{gradeFor(score)}</p>
+      <Dial score={score} color={band.color} />
+      <p className="rpt-rail-grade">{band.label}</p>
       <ul className="rpt-grade-scale">
         {GRADES.map((g) => (
-          <li key={g.label} data-active={score >= g.from && score <= g.to}>
+          <li key={g.label} data-active={g === band}>
             <i style={{ background: g.color }} aria-hidden />
             {g.label}
             <span>
@@ -92,12 +92,12 @@ function ScoreRail({ state }: { state: ReportState }) {
             const s = state.breakdown![sub.key];
             return (
               <li key={sub.key}>
-                <span className="rpt-subscore-bar" aria-hidden>
-                  <span style={{ width: `${(s.score / s.max) * 100}%`, background: sub.color }} />
-                </span>
                 <span className="rpt-subscore-label">{sub.label}</span>
                 <span className="rpt-subscore-val">
                   {s.score} of {s.max}
+                </span>
+                <span className="rpt-subscore-bar" aria-hidden>
+                  <span style={{ width: `${(s.score / s.max) * 100}%` }} />
                 </span>
               </li>
             );
@@ -207,7 +207,7 @@ function QuestionsCard({ state }: { state: ReportState }) {
         {state.prompts.map((p, i) => (
           <li key={i} data-cited={p.cited}>
             <span className="rpt-qmark" aria-hidden>
-              {p.cited === undefined ? "·" : p.cited ? "✓" : "✕"}
+              {p.cited !== undefined && <MarkIcon ok={p.cited} size={9} />}
             </span>
             <div>
               <p>{p.prompt}</p>
@@ -329,7 +329,7 @@ function UnlockModal({
     <div className="rpt-modal-wrap" role="dialog" aria-modal="true" aria-labelledby="rpt-unlock-title">
       <div className="rpt-modal">
         <span className="rpt-modal-lock" aria-hidden>
-          <svg viewBox="0 0 16 16" width="16" height="16">
+          <svg viewBox="0 0 16 16" width="15" height="15">
             <rect x="2.5" y="7" width="11" height="7.5" rx="2" fill="currentColor" />
             <path
               d="M5 7V5.2a3 3 0 0 1 6 0V7"
