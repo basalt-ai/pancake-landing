@@ -18,6 +18,13 @@ export type PromptRow = {
   cited?: boolean;
   detail?: string;
   estimated?: boolean;
+  citedDomains?: string[];
+};
+
+export type ScoreBreakdown = {
+  ai: { score: number; max: number };
+  google: { score: number; max: number };
+  readiness: { score: number; max: number };
 };
 
 export type ReportState = {
@@ -34,6 +41,7 @@ export type ReportState = {
   score: number | null;
   /** Score recomputed as if the surfaced gaps were closed — the teaser. */
   potentialScore: number | null;
+  breakdown: ScoreBreakdown | null;
   unlocked: boolean;
   /** 0..13 — lights the snake progress circles. */
   progress: number;
@@ -53,6 +61,7 @@ const INITIAL: ReportState = {
   opportunities: null,
   score: null,
   potentialScore: null,
+  breakdown: null,
   unlocked: false,
   progress: 0,
   error: null,
@@ -105,6 +114,7 @@ function reducer(state: ReportState, action: Action): ReportState {
               cited: ev.cited,
               detail: ev.detail,
               estimated: ev.estimated,
+              citedDomains: ev.citedDomains,
             };
           }
           return bump({ ...state, prompts });
@@ -117,7 +127,12 @@ function reducer(state: ReportState, action: Action): ReportState {
         case "opportunities":
           return bump({ ...state, opportunities: { count: ev.count, items: ev.items } });
         case "score":
-          return bump({ ...state, score: ev.value, potentialScore: ev.potential ?? null });
+          return bump({
+            ...state,
+            score: ev.value,
+            potentialScore: ev.potential ?? null,
+            breakdown: ev.breakdown ?? null,
+          });
         case "done":
           return {
             ...state,

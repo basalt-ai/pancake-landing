@@ -27,6 +27,8 @@ export type ScanEvent =
       cited: boolean;
       detail: string;
       estimated?: boolean;
+      /** Who ChatGPT actually cited for this question — feeds the competitor card. */
+      citedDomains?: string[];
     }
   | {
       type: "google";
@@ -37,7 +39,17 @@ export type ScanEvent =
     }
   | { type: "opportunities"; count: number; items: OpportunityItem[] }
   /** potential = the recomputed score if the surfaced gaps were closed. */
-  | { type: "score"; value: number; potential?: number }
+  | {
+      type: "score";
+      value: number;
+      potential?: number;
+      /** Sub-scores behind the blend — the dashboard's mini-dials. */
+      breakdown?: {
+        ai: { score: number; max: number };
+        google: { score: number; max: number };
+        readiness: { score: number; max: number };
+      };
+    }
   | { type: "done"; domain: string; cached?: boolean; mode: "live" | "estimated" }
   | {
       type: "error";

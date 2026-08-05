@@ -41,7 +41,15 @@ function computeScores(
   keywords: RankedKeywords | null,
   analysis: Analysis,
   realRankedRows: number,
-): { score: number; potential: number } {
+): {
+  score: number;
+  potential: number;
+  breakdown: {
+    ai: { score: number; max: number };
+    google: { score: number; max: number };
+    readiness: { score: number; max: number };
+  };
+} {
   const checkScore = (checks.filter((c) => c.pass).length / checks.length) * 100;
   const citationScore = citationTotal > 0 ? (citedCount / citationTotal) * 100 : analysis.content_readiness;
   const googleScore = keywords
@@ -49,6 +57,12 @@ function computeScores(
     : analysis.content_readiness;
   const blended = 0.25 * checkScore + 0.4 * citationScore + 0.35 * googleScore;
   const score = Math.min(97, Math.max(3, Math.round(blended)));
+  // The same weights, surfaced as the dashboard's three sub-scores.
+  const breakdown = {
+    ai: { score: Math.round(0.4 * citationScore), max: 40 },
+    google: { score: Math.round(0.35 * googleScore), max: 35 },
+    readiness: { score: Math.round(0.25 * checkScore), max: 25 },
+  };
   // Same formula under the "gaps closed" scenario the report lays out: every
   // check fixed, cited in at least half the buyer questions, the shown
   // within-reach searches won. An estimate, never a promise — copy says so.
@@ -57,7 +71,7 @@ function computeScores(
     : Math.max(googleScore, 60);
   const potentialBlended = 0.25 * 100 + 0.4 * Math.max(citationScore, 50) + 0.35 * potentialGoogle;
   const potential = Math.min(97, Math.max(Math.round(potentialBlended), score + 5));
-  return { score, potential };
+  return { score, potential, breakdown };
 }
 
 /**
@@ -277,6 +291,7 @@ export async function POST(request: Request) {
                     : result.citedDomains.length
                       ? `Cited instead: ${result.citedDomains.join(", ")}`
                       : "You don't come up in this answer.",
+                  citedDomains: result.citedDomains,
                 });
                 return;
               }
@@ -306,7 +321,12 @@ export async function POST(request: Request) {
           analysis,
           realRankedRows,
         );
-        send({ type: "score", value: scores.score, potential: scores.potential });
+        send({
+          type: "score",
+          value: scores.score,
+          potential: scores.potential,
+          breakdown: scores.breakdown,
+        });
         send({
           type: "done",
           domain: target.host,
