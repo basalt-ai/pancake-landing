@@ -10,8 +10,18 @@
   /* Flat cream, exactly like the landing — no decorative grid. */
   background-color: var(--elevated-surface);
   color: var(--text);
-  font-family: var(--font-body);
   padding: var(--spacing-xl) var(--spacing-xl) calc(6 * var(--spacing-xl));
+}
+
+/*
+ * Typography at par with landing-v2. The kit's global rule puts Aeonik Fono
+ * (mono) on every element; the landing speaks humanist Aeonik everywhere and
+ * reserves Fono for display type. Same mapping here — the hero H1, the error
+ * title and the score figure re-claim Fono below.
+ */
+.rpt,
+.rpt * {
+  font-family: var(--font-aeonik), system-ui, -apple-system, sans-serif;
 }
 
 /* ── Buttons at par with landing-v2: same geometry, same label-slide hover ── */
@@ -26,10 +36,31 @@
   line-height: 1;
   /* Landing buttons are always one line — the label never wraps. */
   white-space: nowrap;
+  /* Landing buttons are plain rounded rectangles, not the kit's squircle. */
+  corner-shape: round;
   /* Stacking context for the circle-fill FX, like landing-v2's .button. */
   position: relative;
   overflow: hidden;
   isolation: isolate;
+}
+
+/* Inputs: landing-v2's field treatment — white, 14px round, hairline inset. */
+.rpt .input {
+  border-radius: 14px;
+  corner-shape: round;
+  border: 0;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 12%, transparent);
+  transition: box-shadow 0.18s ease;
+}
+
+.rpt .input:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--strong-branded-surface);
+}
+
+.rpt .input[data-err] {
+  box-shadow: inset 0 0 0 2px var(--negative-surface);
 }
 
 /* The pointer-fill circle layer — straight port of landing-v2's .btn-fx. */
@@ -141,7 +172,7 @@
 
 /* Landing-v2 h1: Aeonik Fono bold, line-height 1.0, -0.02em. */
 .rpt-hero h1 {
-  font-family: var(--font-display);
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
   font-weight: var(--font-bold);
   font-size: clamp(2.5rem, 6vw, 3.4rem);
   line-height: 1;
@@ -187,7 +218,7 @@
 }
 
 .rpt-error-title {
-  font-family: var(--font-display);
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
   font-weight: var(--font-bold);
   font-size: clamp(1.6rem, 4vw, 2.4rem);
   line-height: 1.15;
@@ -754,8 +785,9 @@ li[data-state="done"]:not([data-cited]) .rpt-prompt-mark {
   z-index: 1;
 }
 
-.rpt-score-num {
-  font-family: var(--font-display);
+.rpt-score-num,
+.rpt-score-num span {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
   font-weight: var(--font-bold);
   font-size: var(--font-scale-6);
   line-height: 1;
