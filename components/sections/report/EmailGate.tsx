@@ -1,0 +1,86 @@
+"use client";
+
+import { useState } from "react";
+
+import { Card } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
+
+import { FxButton } from "./FxButton";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+/**
+ * The PLG gate: the scan ran free, the detail unlocks on this screen the
+ * moment a real email lands. After unlock it morphs into the app CTA.
+ */
+export function EmailGate({
+  unlocked,
+  onUnlock,
+}: {
+  unlocked: boolean;
+  onUnlock: (email: string) => Promise<{ ok: boolean; message?: string }>;
+}) {
+  const [email, setEmail] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  if (unlocked) {
+    return (
+      <Card variant="brand" className="rpt-card rpt-gate rpt-gate-done">
+        <header className="rpt-card-head">
+          <h2>Pancake fixes this for you</h2>
+        </header>
+        <p>
+          Unlocked. All yours. The same agents that ran this scan can run the fixes: the
+          llms.txt first, then the content behind every search you{"’"}re missing. You set
+          the spend cap, they do the work.
+        </p>
+        <FxButton size="lg" onClick={() => window.open("https://app.getpancake.ai", "_blank")}>
+          Put the agents to work
+        </FxButton>
+        <p className="rpt-gate-foot">We onboard a handful of teams at a time.</p>
+      </Card>
+    );
+  }
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!EMAIL_RE.test(email)) {
+      setError("Enter a valid email address.");
+      return;
+    }
+    setBusy(true);
+    setError("");
+    const result = await onUnlock(email);
+    setBusy(false);
+    if (!result.ok) setError(result.message ?? "That didn't save. Try again.");
+  };
+
+  return (
+    <Card className="rpt-card rpt-gate">
+      <header className="rpt-card-head">
+        <h2>The full report is written.</h2>
+      </header>
+      <p>
+        What ChatGPT answers instead of you, plus the playbook for every gap above. Drop
+        your email — it unlocks right here.
+      </p>
+      <form className="rpt-gate-form" onSubmit={submit}>
+        <Input
+          type="email"
+          size="lg"
+          placeholder="you@company.com"
+          value={email}
+          error={!!error}
+          onChange={(e) => setEmail(e.target.value)}
+          aria-label="Your work email"
+        />
+        <FxButton type="submit" size="lg" disabled={busy}>
+          {busy ? "Unlocking…" : "Unlock my report"}
+        </FxButton>
+      </form>
+      {error && <p className="rpt-gate-error">{error}</p>}
+      <p className="rpt-gate-foot">Free. No spam, one report.</p>
+    </Card>
+  );
+}
