@@ -11,7 +11,7 @@ import { LoopVideo } from "./LoopVideo";
 
 type Step = {
   num: string;
-  title: string;
+  title: React.ReactNode;
   body: React.ReactNode;
   video: string;
   /** What the loop shows — read to screen readers in place of the video. */
@@ -21,7 +21,13 @@ type Step = {
 const STEPS: Step[] = [
   {
     num: "01",
-    title: "Add your website. Pancake creates the Brain.",
+    title: (
+      <>
+        Add your website.
+        <br />
+        Pancake creates the Brain.
+      </>
+    ),
     body: (
       <>
         Pancake turns your data into a living GTM strategy.
@@ -54,11 +60,11 @@ export function HowItWorks() {
       <div className="lv2-container">
         <header className="lv2-section-header">
           <h2 id="lv2-how-title" className="lv2-section-title">
-            AI agents that handle your go-to-market
+            You build the product. Pancake sells it.
           </h2>
           <p className="lv2-section-lede">
-            Not a tool you learn, not a person you hire. A new kind of AI that does your GTM start
-            to finish using tools built specifically for the job.
+            Pancake finds buyers in live conversations, writes outreach in your voice, publishes
+            articles that Google ranks and ChatGPT cites. Every day, while you ship.
           </p>
         </header>
 
