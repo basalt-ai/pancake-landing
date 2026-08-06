@@ -884,19 +884,23 @@ body.modal-open:has(main.lv2) {
 }
 .lv2-manifesto-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 28rem);
   gap: clamp(2.5rem, 6vw, 6rem);
   align-items: center;
   margin-top: clamp(2rem, 4svh, 3.5rem);
 }
 
-/* The four beats — each sentence its own breath. GSAP dims the inactive ones
-   on desktop; everywhere else they all read at full strength. */
+/* The four beats. Default: stacked, all readable (mobile / no-JS / reduced
+   motion). In pin mode (.lv2-manifesto--pin, added by GSAP on desktop) the
+   slot overlays them and ONE sentence shows at a time, display-sized — no
+   spoiling the ones still to come (founder call 2026-08-06). */
 .lv2-manifesto-beats {
+  max-width: 34rem;
+}
+.lv2-manifesto-slot {
   display: flex;
   flex-direction: column;
   gap: clamp(1.25rem, 2.6svh, 2rem);
-  max-width: 34rem;
 }
 .lv2-manifesto-beat {
   font-size: clamp(1.125rem, 1.35vw, 1.375rem);
@@ -908,11 +912,39 @@ body.modal-open:has(main.lv2) {
   color: var(--strong-branded-surface);
   font-weight: 500;
 }
+.lv2-manifesto--pin .lv2-manifesto-slot {
+  position: relative;
+  min-height: 13rem;
+}
+.lv2-manifesto--pin .lv2-manifesto-beat {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  font-size: clamp(1.5rem, 2.1vw, 2.125rem);
+  line-height: 1.4;
+}
+/* Beat progress ticks — pin mode only; GSAP paints the active one pink. */
+.lv2-manifesto-ticks {
+  display: none;
+}
+.lv2-manifesto--pin .lv2-manifesto-ticks {
+  display: flex;
+  gap: 10px;
+  margin-top: 1.75rem;
+}
+.lv2-manifesto-tick {
+  width: 28px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 247, 236, 0.22);
+}
 
-/* The canvas: beads behind, the founder's product window, six task cards. */
+/* The canvas: beads behind, the founder's product window, six task cards.
+   GSAP also treats it as the camera (push-in scale, impact jolts). */
 .lv2-manifesto-canvas {
   position: relative;
-  height: clamp(400px, 56svh, 520px);
+  height: clamp(420px, 58svh, 540px);
 }
 .lv2-manifesto-bead {
   position: absolute;
@@ -946,6 +978,7 @@ body.modal-open:has(main.lv2) {
   top: 2%;
   left: 14%;
   width: 62%;
+  z-index: 2;
   background: var(--surface);
   border-radius: 20px;
   box-shadow: 0 26px 70px rgba(0, 0, 0, 0.35);
@@ -972,6 +1005,7 @@ body.modal-open:has(main.lv2) {
   color: rgba(44, 0, 42, 0.62);
 }
 .lv2-mwin-body {
+  position: relative;
   padding: 16px;
 }
 .lv2-mwin-line {
@@ -1022,6 +1056,7 @@ body.modal-open:has(main.lv2) {
 }
 .lv2-mtasks li {
   position: absolute;
+  z-index: 3;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1041,6 +1076,98 @@ body.modal-open:has(main.lv2) {
 .lv2-mtask-check {
   font-weight: 700;
   color: var(--palette-green-30);
+}
+
+/* Narrative-only props — cursor, "Ship it" button, backlog tally, impact
+   rings, signal dot. ALL default hidden so the resolved SSR scene is
+   unchanged; GSAP reveals them only inside the pinned desktop story. */
+.lv2-mship {
+  position: absolute;
+  left: 16px;
+  top: 84px;
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--elevated-surface);
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 600;
+  font-size: 0.71875rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+}
+.lv2-mcursor {
+  position: absolute;
+  left: 33%;
+  top: 30%;
+  z-index: 6;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.lv2-mtally {
+  position: absolute;
+  top: 4%;
+  right: 2%;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: #f7ede5;
+  color: var(--text);
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 500;
+  font-size: 0.71875rem;
+  white-space: nowrap;
+  transform-origin: 50% 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.lv2-mtally::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--palette-pink-40);
+}
+/* Two reusable aura rings (studio ping motif) — GSAP repositions them per
+   impact and fires fromTo with immediateRender:false; NO gsap.set, so the
+   hidden state lives here only. */
+.lv2-mping-a,
+.lv2-mping-b {
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    transparent 55%,
+    rgba(247, 237, 229, 0.5) 68%,
+    transparent 72%
+  );
+  transform: translate(-50%, -50%) scale(0.45);
+  opacity: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+/* Pancake's signal — travels from the mint bead to the first grid card. */
+.lv2-mdot {
+  position: absolute;
+  left: 53%;
+  top: 68%;
+  z-index: 1;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--positive-surface);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 @media (max-width: 899px) {
