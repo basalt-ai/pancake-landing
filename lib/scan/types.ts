@@ -17,9 +17,16 @@ export type OpportunityItem = { title: string; detail: string };
 /** An observable event that predicts a purchase — never a lead list. */
 export type SignalItem = { signal: string; why: string; where: string };
 
-/** A real community where the ICP asks for advice. `members` only when
- *  verified against Reddit's public API — never a model guess. */
-export type CommunityItem = { name: string; why: string; members?: number };
+/** A real community where the ICP asks for advice. `members` is exact when
+ *  verified against Reddit's public API; when Reddit blocks the check it can
+ *  carry the model's approximate figure, flagged `membersEstimated` and
+ *  always displayed with a ~ prefix. */
+export type CommunityItem = {
+  name: string;
+  why: string;
+  members?: number;
+  membersEstimated?: boolean;
+};
 
 export type ScanEvent =
   | { type: "status"; label: string }
@@ -103,7 +110,7 @@ export type Analysis = {
   opportunities: OpportunityItem[];
   buying_signals: SignalItem[];
   /** Candidate communities — subreddits get verified before they ship. */
-  communities: { name: string; why: string }[];
+  communities: { name: string; why: string; approx_members: number | null }[];
   content_readiness: number;
 };
 

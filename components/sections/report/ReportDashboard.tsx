@@ -298,13 +298,32 @@ function CommunitiesCard({ state }: { state: ReportState }) {
         AI answers quote these threads — showing up here is AI visibility too.
       </p>
       <ul className="rpt-communities">
-        {communities.map((c) => (
-          <li key={c.name}>
-            <strong>{c.name}</strong>
-            {c.members && <span className="rpt-comm-members">{formatMembers(c.members)} members</span>}
-            {state.unlocked && <p>{c.why}</p>}
-          </li>
-        ))}
+        {communities.map((c) => {
+          const isSub = /^r\/[A-Za-z0-9_]{2,30}$/.test(c.name.trim());
+          return (
+            <li key={c.name}>
+              {isSub ? (
+                <a
+                  className="rpt-comm-link"
+                  href={`https://www.reddit.com/${c.name.trim()}/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {c.name}
+                </a>
+              ) : (
+                <strong>{c.name}</strong>
+              )}
+              {c.members && (
+                <span className="rpt-comm-members">
+                  {c.membersEstimated ? "~" : ""}
+                  {formatMembers(c.members)} members
+                </span>
+              )}
+              {state.unlocked && <p>{c.why}</p>}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

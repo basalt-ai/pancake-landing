@@ -392,22 +392,19 @@
 
 /* The stage — one scene at a time over a soft green horizon, like the video. */
 .rpt-stage {
-  /* One source of truth for the floor: the scene's bottom padding, the
-     horizon beam, and the leaving copy all derive from it. It must be
-     axis-independent — a percentage would resolve against WIDTH in
-     padding but against HEIGHT in the absolutes' `bottom`, drifting the
-     beam and the outgoing copy apart by ~24px. vh resolves identically
-     everywhere, and a vertical floor should track viewport height anyway. */
-  --stage-floor: clamp(56px, 9vh, 92px);
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  /* Overflowing content aligns to the START instead of being cut off at the
-     top — a scene may sit off the beam, but it is never decapitated. */
-  justify-content: safe flex-end;
+  /* Scenes sit CENTERED in the stage — bottom-anchoring left a huge empty
+     band above every scene and read as everything being crammed down. The
+     horizon beam is scenery below, not a floor the content stands on.
+     `safe` keeps a too-tall scene aligned to the top instead of clipping. */
+  justify-content: center;
+  justify-content: safe center;
   align-items: center;
-  padding: var(--spacing-md) var(--spacing-xl) var(--stage-floor);
+  /* Symmetric so the absolutely-centered leaving copy lands on the same
+     midline as the in-flow scene. */
+  padding: 52px var(--spacing-xl);
   overflow: hidden;
 }
 
@@ -415,7 +412,7 @@
   position: absolute;
   left: 6%;
   right: 6%;
-  bottom: calc(var(--stage-floor) - 22px);
+  bottom: 26px;
   height: 3px;
   background: linear-gradient(
     90deg,
@@ -446,14 +443,13 @@
   animation: rpt-fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
 }
 
-/* Outgoing scene: lingers in place and floats out while the next one rises. */
+/* Outgoing scene: lingers in place and floats out while the next one rises.
+   inset:0 + auto margins center it on the same midline as the live scene. */
 .rpt-scene-leaving {
   position: absolute;
-  left: var(--spacing-xl);
-  right: var(--spacing-xl);
-  bottom: var(--stage-floor);
-  width: auto;
-  margin: 0 auto;
+  inset: 0;
+  height: fit-content;
+  margin: auto;
   pointer-events: none;
 }
 
@@ -1622,6 +1618,20 @@
   font-size: var(--font-size-body-small);
 }
 
+/* Real link out to the community in the unlocked report. */
+.rpt-comm-link {
+  font-weight: 600;
+  font-size: var(--font-size-body-small);
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--palette-chrome-100) 35%, transparent);
+}
+
+.rpt-comm-link:hover {
+  text-decoration-color: currentColor;
+}
+
 .rpt-comm-members {
   margin-left: var(--spacing-sm);
   padding: 2px 9px;
@@ -1954,23 +1964,18 @@ body:has(.rpt) .product-hunt-badge {
     align-self: flex-end;
   }
 
-  /* Redefine the floor rather than the padding — the horizon beam and the
-     leaving copy both derive from it, so overriding padding alone would
-     leave the beam floating away from the scenes. */
   .rpt-stage {
-    --stage-floor: 44px;
     min-height: 420px;
-    padding: var(--spacing-md) 0 var(--stage-floor);
+    padding: 32px 0;
+  }
+
+  .rpt-stage-horizon {
+    bottom: 14px;
   }
 
   /* No room to scatter fixed-width cards on small stages — they would pile. */
   .rpt-evidence {
     display: none;
-  }
-
-  .rpt-scene-leaving {
-    left: 0;
-    right: 0;
   }
 
   .rpt-score-rail {

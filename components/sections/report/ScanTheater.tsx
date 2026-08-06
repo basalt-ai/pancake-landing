@@ -615,20 +615,18 @@ function SceneGoogle({ state, schedule }: { state: ReportState; schedule: Theate
     );
   }
   // Rankings land row by row; the stamp only once the board is complete.
+  // Stamp copy is pure data — a count the visitor can verify against the rows.
   const shown = rows.slice(0, 5);
   const visible = Math.max(1, Math.floor(schedule.stepElapsedMs / (900 / schedule.speed)) + 1);
   const complete = visible >= shown.length + 1;
-  const ranking = shown.some((r) => r.position !== null && r.position <= 10);
+  const ranked = shown.filter((r) => r.position !== null).length;
   return (
     <div className="rpt-reveal rpt-reveal-pop" data-found={complete}>
-      {complete &&
-        (ranking ? (
-          <FoundChip above>Your real rankings</FoundChip>
-        ) : (
-          <FoundChip above tone="warn">
-            Your Google gap
-          </FoundChip>
-        ))}
+      {complete && (
+        <FoundChip above tone={ranked > 0 ? "ok" : "warn"}>
+          Ranking on {ranked} of {shown.length}
+        </FoundChip>
+      )}
       <div className="rpt-scene-brain">
         <p className="rpt-scene-caption">Searches with money behind them.</p>
         <div className="rpt-scene-list rpt-scene-serp">
@@ -695,7 +693,12 @@ function SceneSignals({ state, schedule }: { state: ReportState; schedule: Theat
               <li key={c.name}>
                 <span className="rpt-comm-chip">
                   {c.name}
-                  {c.members ? <i>{formatMembers(c.members)}</i> : null}
+                  {c.members ? (
+                    <i>
+                      {c.membersEstimated ? "~" : ""}
+                      {formatMembers(c.members)}
+                    </i>
+                  ) : null}
                 </span>
                 <p>{c.why}</p>
               </li>
