@@ -1,8 +1,48 @@
-import { HomeDemoVideo } from "@/components/sections/home/HomeDemoVideo";
-import { HomeHero } from "@/components/sections/home/HomeHero";
-import { HomeLandingBody } from "@/components/sections/home/HomeLandingBody";
-import { HomeNav } from "@/components/sections/home/HomeNav";
-import { Footer } from "@/components/shared/Footer";
+import type { Metadata } from "next";
+
+import { FeatureDive } from "@/components/sections/landing/FeatureDive";
+import { FinalCta } from "@/components/sections/landing/FinalCta";
+import { HowItWorks } from "@/components/sections/landing/HowItWorks";
+import { LandingFooter } from "@/components/sections/landing/LandingFooter";
+import { LandingHero } from "@/components/sections/landing/LandingHero";
+import { LandingModals } from "@/components/sections/landing/LandingModals";
+import { LandingNav } from "@/components/sections/landing/LandingNav";
+import { LandingPricing } from "@/components/sections/landing/LandingPricing";
+import { LandingTestimonials } from "@/components/sections/landing/LandingTestimonials";
+import "@/app/_styles/landing-v2.css";
+
+/**
+ * The GTM landing (v2) — React port of public/landing-v2.html plus the full
+ * page below the hero: how it works (studio motion loops), feature deep-dive,
+ * social proof (tweets + UGC reuse), pricing, closing snake CTA, footer.
+ * Narrative backbone: greptile.com x synthetic.ai (see pancake-studio
+ * briefs/cmo-app/lp-skeleton-review.md).
+ */
+
+// Page-level metadata mirrors the static landing head (GTM positioning);
+// the root layout still carries the org-wide defaults.
+export const metadata: Metadata = {
+  title: "Pancake — You run your company. We run your GTM.",
+  description:
+    "Pancake is a team of AI agents that understand your company and handle high quality GTM tasks autonomously.",
+  alternates: { canonical: "https://getpancake.ai" },
+  openGraph: {
+    type: "website",
+    url: "https://getpancake.ai",
+    title: "You run your company. We run your GTM.",
+    description:
+      "Pancake is a team of AI agents that understand your company and handle high quality GTM tasks autonomously.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake" }],
+    siteName: "Pancake",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "You run your company. We run your GTM.",
+    description:
+      "Pancake is a team of AI agents that understand your company and handle high quality GTM tasks autonomously.",
+    images: ["/og-image.png"],
+  },
+};
 
 // SoftwareApplication JSON-LD — homepage only (Organization is in root layout).
 const softwareApplicationJsonLd = {
@@ -13,7 +53,7 @@ const softwareApplicationJsonLd = {
   operatingSystem: "Web",
   url: "https://getpancake.ai",
   description:
-    "Pancake is the AI employee that does the work for you. One employee in Slack, backed by squads of agents (growth, engineering, operations) that run 24/7. Built for solo and multiplayer founding teams going from $1 to $1M without hiring.",
+    "Pancake is a team of AI agents that understand your company and handle high quality GTM tasks autonomously: a living GTM Brain, outbound on hot leads, and content recommended on Google and AI search.",
   offers: {
     "@type": "Offer",
     url: "https://getpancake.ai/pricing",
@@ -28,40 +68,25 @@ const softwareApplicationJsonLd = {
   },
 };
 
-// VideoObject JSON-LD — the "Meet Pancake" film band (HomeDemoVideo). Google
-// requires name/description/thumbnailUrl/uploadDate + contentUrl; uploadDate
-// is the film's first commit date. The on-page transcript lives inside the
-// HomeDemoVideo component as a <details> block.
-const videoObjectJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "VideoObject",
-  name: "Meet Pancake: the film",
-  description:
-    "A 51-second film introducing Pancake, the AI coworker that lives in your Slack, staffs squads of agents, and pushes your company's autonomy level toward 99%.",
-  thumbnailUrl: "https://getpancake.ai/demo-video-poster-live.jpg",
-  uploadDate: "2026-06-02",
-  duration: "PT51S",
-  contentUrl: "https://getpancake.ai/demo-video.mp4",
-};
-
 export default function Home() {
   return (
-    <main id="main-content" className="min-h-screen">
+    <main id="main-content" className="lv2">
       {/* SoftwareApplication JSON-LD — homepage only */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationJsonLd) }}
       />
-      {/* VideoObject JSON-LD — the "Meet Pancake" film band */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(videoObjectJsonLd) }}
-      />
-      <HomeNav />
-      <HomeHero />
-      <HomeDemoVideo />
-      <HomeLandingBody />
-      <Footer />
+      <div className="lv2-viewport">
+        <LandingNav />
+        <LandingHero />
+      </div>
+      <HowItWorks />
+      <FeatureDive />
+      <LandingTestimonials />
+      <LandingPricing />
+      <FinalCta />
+      <LandingFooter />
+      <LandingModals />
     </main>
   );
 }

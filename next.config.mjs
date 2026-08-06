@@ -13,16 +13,6 @@ const nextConfig = {
     });
     return config;
   },
-  /**
-   * Serve the GTM landing (public/landing-v2.html) at the site root.
-   * beforeFiles runs ahead of the App Router, so it shadows app/page.tsx on '/'
-   * while every other route is untouched. Rollback = delete this rewrites() block.
-   */
-  async rewrites() {
-    return {
-      beforeFiles: [{ source: "/", destination: "/landing-v2.html" }],
-    };
-  },
   async redirects() {
     const dead = [
       "neo-brutalism",
