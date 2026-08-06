@@ -1,11 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-
-import { Input } from "@/components/ui/Input";
+import { useEffect, useRef } from "react";
 
 import { FxPill } from "./FxPill";
+import { ReportPillForm } from "./ReportPillForm";
 import { mountSnake } from "./snake";
 
 /**
@@ -21,13 +19,12 @@ const H2_COPY =
   "Pancake is a team of AI agents that understand your company and handle high quality GTM tasks autonomously.";
 
 export function LandingHero() {
-  const router = useRouter();
   const stageRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const rightColRef = useRef<HTMLDivElement>(null);
   const h1SnakeRef = useRef<HTMLSpanElement>(null);
   const h2SnakeRef = useRef<HTMLSpanElement>(null);
-  const [url, setUrl] = useState("");
 
   useEffect(() => {
     if (!stageRef.current || !canvasRef.current) return;
@@ -37,6 +34,12 @@ export function LandingHero() {
       overlays: [h1SnakeRef.current, h2SnakeRef.current].filter(
         (el): el is HTMLSpanElement => el !== null,
       ),
+      // The H2/form/CTA column is a keep-out: the wander repels from it and
+      // the mobile orbit shrinks to the band above it (impeccable P0 — the
+      // snake parked mid-H2 at the exact "what is this" moment). The H1 is
+      // deliberately NOT covered: beads crossing it fire the reveal, the
+      // hero's signature.
+      keepOut: rightColRef.current ?? undefined,
     });
     // Entrance reveal, report-page pattern: the hidden starting state only
     // exists under html.lv2-anim, so pre-hydration paint and no-JS visitors
@@ -52,13 +55,6 @@ export function LandingHero() {
     };
   }, []);
 
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const domain = url.trim();
-    if (!domain) return;
-    router.push(`/ai-gtm-report?url=${encodeURIComponent(domain)}`);
-  };
-
   return (
     <section ref={stageRef} className="lv2-stage" aria-label="Pancake — AI agents for your GTM">
       <canvas ref={canvasRef} className="lv2-stage-canvas" aria-hidden="true" />
@@ -73,30 +69,21 @@ export function LandingHero() {
             <span className="ln">{H1_LINES[1]}</span>
           </span>
         </h1>
-        <div className="lv2-hero-right">
+        <div ref={rightColRef} className="lv2-hero-right">
           <h2 className="lv2-h2">
             {H2_COPY}
             <span ref={h2SnakeRef} className="lv2-h2-snake" aria-hidden="true">
               {H2_COPY}
             </span>
           </h2>
-          <form className="lv2-hero-pill" onSubmit={submit}>
-            <Input
-              size="lg"
-              placeholder="yourcompany.com"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              aria-label="Your company's domain"
-            />
-            <FxPill type="submit" size="lg">
-              Get my AI GTM report
-            </FxPill>
-          </form>
+          <ReportPillForm note="Free · ready in one minute." />
           <div className="lv2-button-group">
             <FxPill variant="outline" data-lv2-open="call">
               Book a call
             </FxPill>
-            <FxPill data-lv2-open="waitlist">Join waitlist</FxPill>
+            <FxPill variant="outline" data-lv2-open="waitlist">
+              Join waitlist
+            </FxPill>
           </div>
         </div>
       </div>

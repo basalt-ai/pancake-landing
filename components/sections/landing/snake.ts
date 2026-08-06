@@ -31,6 +31,9 @@ type MountOpts = {
   stage: HTMLElement;
   canvas: HTMLCanvasElement;
   overlays: HTMLElement[];
+  /** Copy/CTA block the snake must not park on: the wander steers away from
+   *  it, the mobile orbit lap shrinks to the band above it. */
+  keepOut?: HTMLElement;
 };
 
 // ---------- geometry & motion constants (measured on the reference) ----------
@@ -46,8 +49,10 @@ const CHASE_LAMBDA = 3.4; //      pursuit: pos += (target-pos) * (1 - e^(-λ·dt
 const RAMP_LAMBDA = 2.5; //       wander speed ramp toward cruise
 const TURN_FAST = 0.6; //         rad/s amplitude, ~1.8s-period steering noise
 const TURN_SLOW = 0.3; //         rad/s amplitude, ~8s-period drift bias
+const KO_PAD = 12; //             keep-out rect inflation, px
+const KO_STEER = 2.2; //          rad/s max repel away from the keep-out
 
-export function mountSnake({ stage, canvas, overlays }: MountOpts): () => void {
+export function mountSnake({ stage, canvas, overlays, keepOut }: MountOpts): () => void {
   const ctx = canvas.getContext("2d", { alpha: false });
   if (!ctx) return () => {};
   const motionMq = matchMedia("(prefers-reduced-motion: reduce)");
@@ -95,6 +100,24 @@ export function mountSnake({ stage, canvas, overlays }: MountOpts): () => void {
   const clampX = (x: number) => Math.min(Math.max(x, R), W - R);
   const clampY = (y: number) => Math.min(Math.max(y, R), H - R);
 
+  // ---------- keep-out: the copy/CTA rect the snake must respect ----------
+  // Measured from the DOM (never consumes rand() — seeded determinism holds).
+  let ko: { x0: number; y0: number; x1: number; y1: number } | null = null;
+  function measureKeepOut() {
+    if (!keepOut) {
+      ko = null;
+      return;
+    }
+    const sr = stage.getBoundingClientRect();
+    const kr = keepOut.getBoundingClientRect();
+    ko = {
+      x0: kr.left - sr.left - KO_PAD,
+      y0: kr.top - sr.top - KO_PAD,
+      x1: kr.right - sr.left + KO_PAD,
+      y1: kr.bottom - sr.top + KO_PAD,
+    };
+  }
+
   // ---------- orbit mode (phones/tablets): the snake circles the stage ----------
   // Narrow stages leave no room to wander at full radius, so instead of roaming it
   // runs a closed rounded-rect lap hugging the edges. Desktop keeps the free wander.
@@ -103,12 +126,15 @@ export function mountSnake({ stage, canvas, overlays }: MountOpts): () => void {
   const isLoopStage = () =>
     matchMedia("(pointer: coarse)").matches || window.innerWidth <= 1079;
 
-  // the lap: rounded rectangle inset by R so the circles stay fully on stage
+  // the lap: rounded rectangle inset by R so the circles stay fully on stage.
+  // With a keep-out, the lap flattens into the band ABOVE the content so the
+  // orbit never sweeps the copy/CTAs.
   function loopBox() {
+    const availH = ko ? Math.min(H, Math.max(2 * R + 10, ko.y0)) : H;
     const x0 = R,
       y0 = R,
       w = Math.max(1, W - 2 * R),
-      h = Math.max(1, H - 2 * R);
+      h = Math.max(1, availH - 2 * R);
     const cr = Math.min(w, h) / 2; // fully rounded on the narrow axis
     return { x0, y0, w, h, cr, sw: w - 2 * cr, sh: h - 2 * cr, qa: (Math.PI / 2) * cr };
   }
@@ -322,6 +348,7 @@ export function mountSnake({ stage, canvas, overlays }: MountOpts): () => void {
       wasLoop = loopMode;
     W = r.width;
     H = r.height;
+    measureKeepOut();
     loopMode = isLoopStage();
     DPR = Math.max(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(W * DPR);
@@ -380,6 +407,15 @@ export function mountSnake({ stage, canvas, overlays }: MountOpts): () => void {
       while (heading > Math.PI) heading -= 2 * Math.PI;
       while (heading < -Math.PI) heading += 2 * Math.PI;
       speed += (CRUISE - speed) * (1 - Math.exp(-RAMP_LAMBDA * dt));
+      // keep-out repel: inside the inflated rect, steer away from its center
+      // (wall-escape style) so the wander never parks on the copy.
+      if (ko && head.x > ko.x0 - R && head.x < ko.x1 + R && head.y > ko.y0 - R && head.y < ko.y1 + R) {
+        const away = Math.atan2(head.y - (ko.y0 + ko.y1) / 2, head.x - (ko.x0 + ko.x1) / 2);
+        let dh = away - heading;
+        while (dh > Math.PI) dh -= 2 * Math.PI;
+        while (dh < -Math.PI) dh += 2 * Math.PI;
+        heading += Math.sign(dh) * Math.min(Math.abs(dh), KO_STEER * dt);
+      }
       const px0 = head.x,
         py0 = head.y;
       head.x = clampX(px0 + Math.cos(heading) * speed * dt);
@@ -519,6 +555,9 @@ export function mountSnake({ stage, canvas, overlays }: MountOpts): () => void {
       if (!trail.length) return; // heal once the container gets real bounds
     }
     if (window.__snakePaused || elapsed <= 0) return;
+    // re-measure each frame: the entrance transform settles after mount and
+    // the hero column height changes with responsive wraps (DOM read only)
+    measureKeepOut();
     while (elapsed > 0) {
       const h = Math.min(elapsed, 1 / 30);
       step(h);
@@ -584,6 +623,7 @@ export function mountSnake({ stage, canvas, overlays }: MountOpts): () => void {
       loopMode,
       loopDist,
       loopLen: loopMode ? loopLength() : 0,
+      keepOut: ko && { ...ko },
       seed: seedState,
     }),
     setPointer: (x, y) => {

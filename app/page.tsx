@@ -9,6 +9,7 @@ import { LandingNav } from "@/components/sections/landing/LandingNav";
 import { LandingPricing } from "@/components/sections/landing/LandingPricing";
 import { LandingTestimonials } from "@/components/sections/landing/LandingTestimonials";
 import { LeadFindingDive } from "@/components/sections/landing/LeadFindingDive";
+import { Manifesto } from "@/components/sections/landing/Manifesto";
 import { pricing } from "@/lib/copy";
 import "@/app/_styles/landing-v2.css";
 
@@ -82,6 +83,7 @@ export default function Home() {
         <LandingHero />
       </div>
       <HowItWorks />
+      <Manifesto />
       <LeadFindingDive />
       <LandingTestimonials />
       <LandingPricing />

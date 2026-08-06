@@ -1,6 +1,3 @@
-import { Badge } from "@/components/ui/Badge";
-
-import { FxPill } from "./FxPill";
 import { LoopVideo } from "./LoopVideo";
 
 /**
@@ -39,7 +36,7 @@ const STEPS: Step[] = [
   {
     num: "03",
     title: "Give feedback. Pancake self-improves.",
-    body: "Pancake learns from every feedback and gets better every day.",
+    body: "Pancake learns from every correction and gets better every day.",
     video: "/how/feedback-loop.mp4",
     alt: "Animation: you reply 'too formal, we're playful' to a draft; the feedback flows into the Brain, the voice updates, and the next draft comes back on-tone and approved.",
   },
@@ -50,7 +47,6 @@ export function HowItWorks() {
     <section className="lv2s lv2-how" id="how-it-works" aria-labelledby="lv2-how-title">
       <div className="lv2-container">
         <header className="lv2-section-header">
-          <Badge variant="brand">How it works</Badge>
           <h2 id="lv2-how-title" className="lv2-section-title">
             AI agents that handle your go-to-market
           </h2>
@@ -58,7 +54,6 @@ export function HowItWorks() {
             Not a tool you learn, not a person you hire. A new kind of AI that does your GTM start
             to finish using tools built specifically for the job.
           </p>
-          <FxPill data-lv2-open="waitlist">Join waitlist</FxPill>
         </header>
 
         <ol className="lv2-steps">

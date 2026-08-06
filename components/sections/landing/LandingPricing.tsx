@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Badge } from "@/components/ui/Badge";
+import { PancakeStack } from "@/components/sections/pricing/PancakeStack";
 import { pricing } from "@/lib/copy";
 
 import { FxPill } from "./FxPill";
@@ -26,13 +26,13 @@ export function LandingPricing() {
     <section className="lv2s lv2-pricing" id="pricing" aria-labelledby="lv2-pricing-title">
       <div className="lv2-container">
         <header className="lv2-section-header">
-          <Badge>Pricing</Badge>
           <h2 id="lv2-pricing-title" className="lv2-section-title">
             {pricing.title}
           </h2>
         </header>
 
-        <div className="lv2-price-card">
+        <div className="lv2-price-fold">
+          <div className="lv2-price-card">
           <p className="lv2-price-figure">
             <span className="lv2-price-amount">
               {pricing.currencySymbol}
@@ -68,6 +68,11 @@ export function LandingPricing() {
             <Link href="/pricing" className="lv2-price-link">
               See full pricing
             </Link>
+          </div>
+          <p className="lv2-price-note">We onboard a handful of teams at a time.</p>
+          </div>
+          <div className="lv2-price-decor" aria-hidden="true">
+            <PancakeStack count={3} />
           </div>
         </div>
       </div>

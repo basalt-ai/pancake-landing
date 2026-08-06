@@ -28,7 +28,7 @@ const CAROUSEL_SPEED_PX_PER_S = 36;
 type Testimonial = {
   id: string;
   name: string;
-  /** Handle + short date, e.g. "@nicos_ai · Jun 9". */
+  /** Handle, e.g. "@nicos_ai" — no dates (eight identical dates read as fabricated). */
   handle: string;
   avatar: string;
   /** Full permalink to the post on X. */
@@ -56,7 +56,7 @@ const TESTIMONIALS: Testimonial[] = [
   {
     id: "wesley",
     name: "Wesley",
-    handle: "@Ambani_Wessley · Jun 9",
+    handle: "@Ambani_Wessley",
     avatar: "/testimonials/ambani_wessley.jpg",
     url: "https://x.com/Ambani_Wessley/status/2064410998925296059",
     quote:
@@ -65,26 +65,16 @@ const TESTIMONIALS: Testimonial[] = [
   {
     id: "somitra",
     name: "SomitraSR",
-    handle: "@TheSomitraSR · Jun 9",
+    handle: "@TheSomitraSR",
     avatar: "/testimonials/thesomitrasr.jpg",
     url: "https://x.com/TheSomitraSR/status/2064404783604343269",
     quote:
       "As a founder, I used to spend hours jumping between CRM, spreadsheets, email, and analytics just to figure out what needed attention.\n\nThen I’d still miss follow-ups.\n\nLast week I just asked @getpancake_ai:\n\n“Monitor new leads, prioritize the hot ones, and draft follow-ups.”…",
   },
   {
-    id: "nico",
-    name: "Nico",
-    handle: "@nicos_ai · Jun 9",
-    avatar: "/testimonials/nicos_ai.jpg",
-    url: "https://x.com/nicos_ai/status/2064423456171565490",
-    quote:
-      "NOW YOU CAN GO TO BED WITH A BUG AND WAKE UP WITHOUT IT\n\nBefore: you read the stack trace, reproduce it locally, find the line, write the fix, open the PR at 2AM\n\nNow: you tell Pancake “fix the checkout crash”, go to sleep, and the PR is already open by morning",
-    translatedFrom: "Spanish",
-  },
-  {
     id: "kaitee",
     name: "Kaitee",
-    handle: "@KaiteeShiks · Jun 9",
+    handle: "@KaiteeShiks",
     avatar: "/testimonials/kaiteeshiks.jpg",
     url: "https://x.com/KaiteeShiks/status/2064404901762068535",
     quote:
@@ -93,7 +83,7 @@ const TESTIMONIALS: Testimonial[] = [
   {
     id: "andrew",
     name: "Andrew Carr 🤸",
-    handle: "@andrew_n_carr · Jun 9",
+    handle: "@andrew_n_carr",
     avatar: "/testimonials/andrew_n_carr.jpg",
     url: "https://x.com/andrew_n_carr/status/2064403828791968173",
     quote:
@@ -102,7 +92,7 @@ const TESTIMONIALS: Testimonial[] = [
   {
     id: "gus",
     name: "gus",
-    handle: "@igus_ai · Jun 9",
+    handle: "@igus_ai",
     avatar: "/testimonials/igus_ai.jpg",
     url: "https://x.com/igus_ai/status/2064418742575022274",
     quote:
@@ -112,7 +102,7 @@ const TESTIMONIALS: Testimonial[] = [
   {
     id: "leonardo",
     name: "Leonardo",
-    handle: "@MrOnsase · Jun 9",
+    handle: "@MrOnsase",
     avatar: "/testimonials/mronsase.jpg",
     url: "https://x.com/MrOnsase/status/2064406486336315409",
     quote:
@@ -121,7 +111,7 @@ const TESTIMONIALS: Testimonial[] = [
   {
     id: "jakes",
     name: "Jakes",
-    handle: "@JakesBiko · Jun 9",
+    handle: "@JakesBiko",
     avatar: "/testimonials/jakesbiko.jpg",
     url: "https://x.com/JakesBiko/status/2064406616028639431",
     quote:
@@ -243,6 +233,9 @@ export function HomeLandingTestimonials() {
     if (!isMobile) return;
     const track = mobileTrackRef.current;
     if (!track) return;
+    // Browser scroll restoration can reopen the strip mid-card; the drift
+    // must start with card 1 whole at its inset.
+    track.scrollLeft = 0;
     return startAutoMarquee(track, {
       speed: CAROUSEL_SPEED_PX_PER_S,
       direction: 1,

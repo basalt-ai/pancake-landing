@@ -59,8 +59,8 @@ function RelevanceBar({ value }: { value: number }) {
 const STEPS: Step[] = [
   {
     num: "01",
-    title: "It watches where your buyers actually talk",
-    body: "Straight from your Brain: the phrases buyers type when they're ready to switch (“clay alternative”, not “sales tools”), your competitors' pages, the voices your market follows. Live conversations — not a database that went stale in March.",
+    title: "It watches where your buyers talk",
+    body: "Your Brain sets the watchlist: the phrases buyers type when they're ready (“clay alternative”, not “sales tools”), your competitors' pages, the voices your market follows. Live conversations, not a stale database.",
     artifact: (
       <Panel label="Watching">
         <ul className="lv2-dive-rows">
@@ -86,7 +86,7 @@ const STEPS: Step[] = [
   {
     num: "02",
     title: "It reads every post before spending a cent",
-    body: "AI scores each thread on one question: is the author — or the audience — a buyer for you? Budget flows to the warmest conversations first, so a viral post can't eat your run just for being loud.",
+    body: "AI reads each thread and asks one question: is the author, or the audience, a buyer for you? Budget flows to the warmest threads first. A loud post can't eat your run.",
     artifact: (
       <Panel label="Scoring">
         <ul className="lv2-dive-rows">
@@ -111,7 +111,7 @@ const STEPS: Step[] = [
   {
     num: "03",
     title: "It turns engagement into people",
-    body: "Every commenter and reactor on a warm thread, caught once, enriched with a full profile. Comments outrank likes — someone who took the time to write is closer to buying. And it remembers: the third time the same person engages, you'll know.",
+    body: "Every commenter and reactor, caught once, enriched with a full profile. Comments outrank likes: writing takes intent. The third time someone engages, you'll know.",
     artifact: (
       <Panel label="People">
         <ul className="lv2-dive-rows">
@@ -139,8 +139,8 @@ const STEPS: Step[] = [
   },
   {
     num: "04",
-    title: "It holds every profile against your ICP — with receipts",
-    body: "Buying role, company size, geography, language. Competitors auto-disqualified. Every lead that reaches you carries a fit score and the reason it passed; everything rejected is logged with why. Nothing you paid for vanishes quietly.",
+    title: "It judges every profile against your ICP",
+    body: "Buying role, company size, geography, language. Competitors disqualified on sight. Every pass carries a fit score and a reason. Every reject is logged with why.",
     artifact: (
       <Panel label="Judged against your ICP">
         <ul className="lv2-dive-rows">
@@ -167,9 +167,9 @@ const STEPS: Step[] = [
 ];
 
 const GUARANTEES = [
-  "A hard spend cap on every run — it can't overspend, by construction",
-  "Metered in cents, not seats",
-  "Every lead arrives with the conversation that surfaced it — your first message opens warm",
+  "A hard spend cap on every run. It can't overspend.",
+  "Metered in cents, not seats.",
+  "Every lead arrives with its conversation attached. Your first message opens warm.",
 ] as const;
 
 export function LeadFindingDive() {
@@ -182,10 +182,9 @@ export function LeadFindingDive() {
             Your next customers are already raising their hands
           </h2>
           <p className="lv2-section-lede">
-            Someone is commenting on your competitor&rsquo;s post right now. Someone else just
-            reacted to a thread about the exact pain you solve. That&rsquo;s buying intent —
-            public, timestamped, and gone in a week. Pancake reads it all day so you don&rsquo;t
-            have to.
+            Someone is commenting on your competitor&rsquo;s post right now. That&rsquo;s buying
+            intent — public, timestamped, gone in a week. Pancake reads it all day so you
+            don&rsquo;t have to.
           </p>
         </header>
 
@@ -204,13 +203,32 @@ export function LeadFindingDive() {
           ))}
         </ol>
 
-        {/* The 2026-07-28 live run, end to end — real numbers, no rounding. */}
-        <p className="lv2-dive-run">
-          <span className="lv2-dive-run-label">One live run</span>
-          240 posts read <span aria-hidden="true">→</span> 25 people showed intent{" "}
-          <span aria-hidden="true">→</span> 18 profiles held against the ICP{" "}
-          <span aria-hidden="true">→</span> only the real fits came through.
-        </p>
+        {/* The 2026-07-28 live run, end to end — real numbers, no rounding.
+            Styled as the section's climax, not a footnote (impeccable P2). */}
+        <div className="lv2-dive-run">
+          <p className="lv2-dive-run-label">One live run</p>
+          <p className="lv2-dive-run-stats">
+            <span className="lv2-dive-run-stat">
+              <b>240</b>
+              <i>posts read</i>
+            </span>
+            <span className="lv2-dive-run-arrow" aria-hidden="true">
+              →
+            </span>
+            <span className="lv2-dive-run-stat">
+              <b>25</b>
+              <i>showed intent</i>
+            </span>
+            <span className="lv2-dive-run-arrow" aria-hidden="true">
+              →
+            </span>
+            <span className="lv2-dive-run-stat">
+              <b>18</b>
+              <i>profiles judged</i>
+            </span>
+          </p>
+          <p className="lv2-dive-run-end">Every verdict logged with its reason.</p>
+        </div>
 
         <ul className="lv2-dive-proof">
           {GUARANTEES.map((g) => (
