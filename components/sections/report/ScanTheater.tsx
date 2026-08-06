@@ -54,12 +54,16 @@ function stepDefs(domain: string): StepDef[] {
       ready: (s) => s.brain !== null,
       waitLines: [
         "Reading every page the way a buyer would",
+        "Listing what the product promises",
         "Looking for who signs off on this",
         "Naming your ideal customer",
-        "Checking it against what the site promises",
+        "Checking it against the pricing and the proof",
+        "Cutting it down to one sentence",
         "Sharpening the wording",
       ],
-      waitAt: [0, 2000, 4000, 11000, 20000],
+      // Dense early, decaying gently — a slow live analysis (20s+) keeps
+      // getting new lines instead of reading as blocked.
+      waitAt: [0, 2200, 4400, 7000, 10500, 14500, 19000],
     },
     {
       key: "prompts",

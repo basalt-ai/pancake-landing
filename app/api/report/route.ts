@@ -29,7 +29,10 @@ export const maxDuration = 180;
  * fixed per-scan API budgets — nothing loops, nothing retries a paid call.
  */
 
-const RACE_KEYWORDS_MS = 8000;
+// How long the Claude pass waits for real rankings before going without
+// them. Every second here is a second the visitor stares at the ICP dive —
+// DataForSEO usually answers in 2-4s, so 3.5s catches most of the value.
+const RACE_KEYWORDS_MS = 3500;
 
 function sseHeaders() {
   return {

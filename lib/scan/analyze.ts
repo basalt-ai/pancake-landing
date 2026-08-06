@@ -51,7 +51,7 @@ const REPORT_SCHEMA = {
     buyer_prompts: {
       type: "array",
       description:
-        "Exactly 10 questions this company's ideal buyers genuinely type into ChatGPT when shopping for a solution. Category questions, not brand questions — the buyer doesn't know this company yet. Each prompt under 400 characters.",
+        "Exactly 10 questions this company's ideal buyers type into ChatGPT WHILE DECIDING WHAT TO BUY in this company's category. Purchase intent only: the natural helpful answer must name specific products, brands or providers — this company or its direct competitors. Litmus test for EVERY question: would a good answer recommend 2-3 named providers in this category? If it would instead give generic facts or how-to advice (e.g. 'which foods are toxic for dogs' for a dog-food brand — the answer is a list of foods, never a brand), the question is out — replace it. Category questions, not brand questions — the buyer doesn't know this company yet (one X-vs-Y comparison naming known competitors is fine). Never date a question with a year. Each prompt under 400 characters.",
       items: {
         type: "object",
         additionalProperties: false,
@@ -83,7 +83,7 @@ const REPORT_SCHEMA = {
     relevant_keywords: {
       type: "array",
       description:
-        "From the real within-reach keyword table you were given (if any): up to 8 EXACT keyword strings, most valuable first, that a real buyer of THIS company's own offer would type. Prefer searches that describe the company's category or service. Never include two variants of the same search (singular/plural, near-identical wording) — keep only the strongest one. Exclude third-party brand names, product names the company doesn't own, people, and unrelated topics — a marketplace ranking for its sellers' brand names must not list those. Empty array when no table was provided or nothing qualifies.",
+        "From the real within-reach keyword table you were given (if any): up to 8 EXACT keyword strings, most valuable first, that a real buyer of THIS company's own offer would type WHEN READY TO BUY. Commercial intent only — exclude informational and care questions even when the company ranks on them (e.g. 'foods toxic to dogs' for a dog-food brand is content traffic, not a money search). Prefer searches that describe the company's category or service. Never include two variants of the same search (singular/plural, near-identical wording) — keep only the strongest one. Exclude third-party brand names, product names the company doesn't own, people, and unrelated topics — a marketplace ranking for its sellers' brand names must not list those. Empty array when no table was provided or nothing qualifies.",
       items: { type: "string" },
     },
     google_commentary: {
@@ -168,7 +168,7 @@ const SYSTEM = `You are the GTM analyst inside Pancake's free "AI GTM report" sc
 
 Write for a founder with no marketing team. Warm, specific, confident, zero hype. Plain sentences. Never use the words revolutionize, unleash, supercharge, game-changer, or 10x. Never promise rankings or results. Every claim must be traceable to the evidence you were given.
 
-Buyer prompts must read like real ChatGPT questions from someone who has never heard of this company — the way its actual buyers phrase things, in the language those buyers use (infer it from the site; a French site's buyers ask in French). Mix question types: best-tool-for-X, how-do-I-solve-Y, comparisons, and task-specific asks. money_keywords also go in the buyers' language. Every other field is written in English.
+Buyer prompts must read like real ChatGPT questions from someone who has never heard of this company — the way its actual buyers phrase things, in the language those buyers use (infer it from the site; a French site's buyers ask in French). Mix buying-intent shapes: best-X-for-my-situation, X-vs-Y comparisons, is-it-worth-paying-for-X, what-do-people-recommend-for-Z. Never pure how-to or informational questions — every question must be one whose answer recommends providers. money_keywords also go in the buyers' language. Every other field is written in English.
 
 Opportunities must be specific to this company — name the actual gap you saw in the evidence (a missing llms.txt, page-2 keywords within reach, a buyer question no content answers), never generic advice.
 

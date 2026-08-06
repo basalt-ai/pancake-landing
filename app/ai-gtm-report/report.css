@@ -650,23 +650,26 @@
   padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-xxl);
 }
 
+/* Two columns: chips left, descriptions right — every description starts
+   on the SAME vertical line no matter how long the subreddit name is. */
 .rpt-scene-comms {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-lg);
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: var(--spacing-lg);
+  row-gap: var(--spacing-md);
+  align-items: center;
+  text-align: left;
 }
 
-/* Chip above, description below, one shared left edge — variable-width
-   chips next to inline text left every description starting somewhere else. */
 .rpt-scene-comms li {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 5px;
-  text-align: left;
+  display: contents;
+}
+
+.rpt-scene-comms li .rpt-comm-chip {
+  justify-self: start;
 }
 
 .rpt-scene-comms li p {
@@ -688,8 +691,10 @@
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 6%, transparent);
 }
 
-/* Whole item pops as one unit — chip and its description together. */
-.rpt-anim .rpt-scene-comms li {
+/* Chip and description pop together — same animation, same delay per item
+   (the li is display:contents, so the children carry the animation). */
+.rpt-anim .rpt-scene-comms li .rpt-comm-chip,
+.rpt-anim .rpt-scene-comms li p {
   animation: rpt-pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
@@ -704,9 +709,12 @@
   }
 }
 
-.rpt-anim .rpt-scene-comms li:nth-child(2) { animation-delay: 0.14s; }
-.rpt-anim .rpt-scene-comms li:nth-child(3) { animation-delay: 0.28s; }
-.rpt-anim .rpt-scene-comms li:nth-child(4) { animation-delay: 0.42s; }
+.rpt-anim .rpt-scene-comms li:nth-child(2) .rpt-comm-chip,
+.rpt-anim .rpt-scene-comms li:nth-child(2) p { animation-delay: 0.14s; }
+.rpt-anim .rpt-scene-comms li:nth-child(3) .rpt-comm-chip,
+.rpt-anim .rpt-scene-comms li:nth-child(3) p { animation-delay: 0.28s; }
+.rpt-anim .rpt-scene-comms li:nth-child(4) .rpt-comm-chip,
+.rpt-anim .rpt-scene-comms li:nth-child(4) p { animation-delay: 0.42s; }
 
 /* Verified member count — real data from Reddit, never a guess. */
 .rpt-comm-chip i {
@@ -2043,7 +2051,8 @@ body:has(.rpt) .product-hunt-badge {
   .rpt-anim .rpt-reveal-pop > .rpt-scene-card,
   .rpt-anim .rpt-reveal-pop > .rpt-scene-brain,
   .rpt-anim .rpt-found-chip,
-  .rpt-anim .rpt-scene-comms li,
+  .rpt-anim .rpt-scene-comms li .rpt-comm-chip,
+  .rpt-anim .rpt-scene-comms li p,
   .rpt-anim .rpt-dash,
   .rpt-anim .rpt-scene-deepdive li,
   .rpt-anim .rpt-scene-deepdive li[data-current="true"] .rpt-dd-dot,
