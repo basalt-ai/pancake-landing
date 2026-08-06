@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { FeatureDive } from "@/components/sections/landing/FeatureDive";
 import { FinalCta } from "@/components/sections/landing/FinalCta";
 import { HowItWorks } from "@/components/sections/landing/HowItWorks";
 import { LandingFooter } from "@/components/sections/landing/LandingFooter";
@@ -9,6 +8,7 @@ import { LandingModals } from "@/components/sections/landing/LandingModals";
 import { LandingNav } from "@/components/sections/landing/LandingNav";
 import { LandingPricing } from "@/components/sections/landing/LandingPricing";
 import { LandingTestimonials } from "@/components/sections/landing/LandingTestimonials";
+import { LeadFindingDive } from "@/components/sections/landing/LeadFindingDive";
 import { pricing } from "@/lib/copy";
 import "@/app/_styles/landing-v2.css";
 
@@ -82,7 +82,7 @@ export default function Home() {
         <LandingHero />
       </div>
       <HowItWorks />
-      <FeatureDive />
+      <LeadFindingDive />
       <LandingTestimonials />
       <LandingPricing />
       <FinalCta />
