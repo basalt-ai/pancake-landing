@@ -242,7 +242,7 @@
   grid-template-columns: 300px 1fr;
   gap: var(--spacing-xl);
   align-items: stretch;
-  min-height: min(72vh, 640px);
+  min-height: min(84vh, 700px);
 }
 
 .rpt-rail {
@@ -392,12 +392,22 @@
 
 /* The stage — one scene at a time over a soft green horizon, like the video. */
 .rpt-stage {
+  /* One source of truth for the floor: the scene's bottom padding, the
+     horizon beam, and the leaving copy all derive from it. It must be
+     axis-independent — a percentage would resolve against WIDTH in
+     padding but against HEIGHT in the absolutes' `bottom`, drifting the
+     beam and the outgoing copy apart by ~24px. vh resolves identically
+     everywhere, and a vertical floor should track viewport height anyway. */
+  --stage-floor: clamp(56px, 9vh, 92px);
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  /* Overflowing content aligns to the START instead of being cut off at the
+     top — a scene may sit off the beam, but it is never decapitated. */
+  justify-content: safe flex-end;
   align-items: center;
-  padding: var(--spacing-xl) var(--spacing-xl) 16%;
+  padding: var(--spacing-md) var(--spacing-xl) var(--stage-floor);
   overflow: hidden;
 }
 
@@ -405,7 +415,7 @@
   position: absolute;
   left: 6%;
   right: 6%;
-  bottom: calc(16% - 22px);
+  bottom: calc(var(--stage-floor) - 22px);
   height: 3px;
   background: linear-gradient(
     90deg,
@@ -425,6 +435,9 @@
   z-index: 1;
   width: 100%;
   max-width: 620px;
+  /* Reserves the found-chip's overhang inside the scene's own box, so the
+     stage's overflow rules protect it like any other content. */
+  padding-top: 42px;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -438,7 +451,7 @@
   position: absolute;
   left: var(--spacing-xl);
   right: var(--spacing-xl);
-  bottom: 16%;
+  bottom: var(--stage-floor);
   width: auto;
   margin: 0 auto;
   pointer-events: none;
@@ -612,43 +625,86 @@
   color: var(--palette-chrome-100);
 }
 
+/* Its own line, always — inline it landed mid-sentence on some rows and on a
+   line of its own on others, purely by accident of copy length. */
 .rpt-scene-where {
-  display: inline-block;
+  display: block;
+  margin-top: 3px;
   font-size: 11.5px;
   font-weight: 600;
   color: var(--subtle-text);
-  white-space: nowrap;
 }
 
-/* Communities strip under the signals — where the buyers already ask. */
+/* Communities beat — its own card, after the signals have had their hold. */
+.rpt-scene-comms-card {
+  max-width: 540px;
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-xxl);
+}
+
 .rpt-scene-comms {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-sm);
-  margin-top: var(--spacing-md);
+  flex-direction: column;
+  gap: var(--spacing-md);
 }
 
-.rpt-anim .rpt-scene-comms {
-  animation: rpt-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+.rpt-scene-comms li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-md);
+  text-align: left;
 }
 
-.rpt-scene-comms-label {
-  width: 100%;
-  text-align: center;
-  font-size: var(--font-size-body-small);
-  font-weight: 600;
+.rpt-scene-comms li p {
   color: var(--subtle-text);
+  font-size: var(--font-size-body-small);
+  line-height: 1.4;
 }
 
 .rpt-comm-chip {
-  padding: 5px 12px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
   border-radius: 100vw;
   background: color-mix(in srgb, var(--palette-purple-30) 30%, var(--surface));
   font-size: var(--font-size-body-small);
   font-weight: 600;
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 6%, transparent);
+}
+
+.rpt-anim .rpt-comm-chip {
+  animation: rpt-pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes rpt-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.65);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.rpt-scene-comms li:nth-child(2) .rpt-comm-chip { animation-delay: 0.14s; }
+.rpt-scene-comms li:nth-child(3) .rpt-comm-chip { animation-delay: 0.28s; }
+.rpt-scene-comms li:nth-child(4) .rpt-comm-chip { animation-delay: 0.42s; }
+
+/* Verified member count — real data from Reddit, never a guess. */
+.rpt-comm-chip i {
+  font-style: normal;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 100vw;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  color: var(--subtle-text);
 }
 
 .rpt-scene-row {
@@ -1898,9 +1954,13 @@ body:has(.rpt) .product-hunt-badge {
     align-self: flex-end;
   }
 
+  /* Redefine the floor rather than the padding — the horizon beam and the
+     leaving copy both derive from it, so overriding padding alone would
+     leave the beam floating away from the scenes. */
   .rpt-stage {
+    --stage-floor: 44px;
     min-height: 420px;
-    padding: var(--spacing-lg) 0;
+    padding: var(--spacing-md) 0 var(--stage-floor);
   }
 
   /* No room to scatter fixed-width cards on small stages — they would pile. */
@@ -1908,11 +1968,9 @@ body:has(.rpt) .product-hunt-badge {
     display: none;
   }
 
-  /* Match the mobile stage padding so the leaving copy doesn't jump. */
   .rpt-scene-leaving {
     left: 0;
     right: 0;
-    bottom: var(--spacing-lg);
   }
 
   .rpt-score-rail {
@@ -1964,6 +2022,7 @@ body:has(.rpt) .product-hunt-badge {
   .rpt-anim .rpt-reveal-pop > .rpt-scene-card,
   .rpt-anim .rpt-reveal-pop > .rpt-scene-brain,
   .rpt-anim .rpt-found-chip,
+  .rpt-anim .rpt-comm-chip,
   .rpt-anim .rpt-dash,
   .rpt-anim .rpt-scene-deepdive li,
   .rpt-anim .rpt-scene-deepdive li[data-current="true"] .rpt-dd-dot,
