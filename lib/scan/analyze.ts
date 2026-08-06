@@ -142,12 +142,17 @@ const REPORT_SCHEMA = {
       items: {
         type: "object",
         additionalProperties: false,
-        required: ["name", "why"],
+        required: ["name", "why", "approx_members"],
         properties: {
           name: { type: "string", description: "Exact community name, e.g. 'r/msp'." },
           why: {
             type: "string",
             description: "What buyers ask there, under 110 characters. Starts with a capital.",
+          },
+          approx_members: {
+            type: ["integer", "null"],
+            description:
+              "Approximate member count, only for a well-known community whose size you are genuinely confident about (a round number, e.g. 2500000). It is shown to users with a ~ prefix. null when unsure — a wrong figure is worse than none.",
           },
         },
       },

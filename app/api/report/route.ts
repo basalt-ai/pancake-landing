@@ -98,17 +98,23 @@ function nearDup(a: string, b: string): boolean {
 
 /**
  * Hallucination guard for the communities card: subreddits are checked
- * against Reddit's public about.json. A hard 404 drops the item; a block or
- * timeout keeps it without a member count; a real count ships as real data.
+ * against Reddit's public about.json. A hard 404 drops the item; a verified
+ * subscriber count ships as exact data; when Reddit blocks the check (it
+ * 403s most datacenter clients) the model's approximate figure ships
+ * instead, flagged `membersEstimated` and rendered with a ~ prefix.
  * Non-Reddit communities pass through untouched.
  */
 async function verifyCommunities(
-  items: { name: string; why: string }[],
+  items: { name: string; why: string; approx_members: number | null }[],
 ): Promise<CommunityItem[]> {
   const results = await Promise.all(
     items.map(async (c): Promise<CommunityItem | null> => {
+      const approx: CommunityItem =
+        typeof c.approx_members === "number" && c.approx_members > 0
+          ? { name: c.name, why: c.why, members: c.approx_members, membersEstimated: true }
+          : { name: c.name, why: c.why };
       const m = c.name.trim().match(/^r\/([A-Za-z0-9_]{2,30})$/);
-      if (!m) return { name: c.name, why: c.why };
+      if (!m) return approx;
       const ctrl = new AbortController();
       const timer = setTimeout(() => ctrl.abort(), 2500);
       try {
@@ -118,14 +124,14 @@ async function verifyCommunities(
           cache: "no-store",
         });
         if (res.status === 404) return null; // does not exist — never ship it
-        if (!res.ok) return { name: c.name, why: c.why };
+        if (!res.ok) return approx;
         const data = (await res.json()) as { data?: { subscribers?: number } };
         const members = data.data?.subscribers;
         return typeof members === "number" && members > 0
           ? { name: c.name, why: c.why, members }
-          : { name: c.name, why: c.why };
+          : approx;
       } catch {
-        return { name: c.name, why: c.why };
+        return approx;
       } finally {
         clearTimeout(timer);
       }
