@@ -371,11 +371,12 @@ const CHECK_LABELS: Record<string, string> = {
 
 function SceneAccess({ state, schedule }: { state: ReportState; schedule: TheaterSchedule }) {
   // Verdicts land one at a time through the step — never a pre-resolved wall.
+  // All slots render up front (final height), each reveals in place.
   const visible = Math.max(1, Math.floor(schedule.stepElapsedMs / (1200 / schedule.speed)) + 1);
   return (
     <div className="rpt-scene-list rpt-scene-access">
-      {state.checks.slice(0, visible).map((check) => (
-        <div className="rpt-scene-row" data-pass={check.pass} key={check.id}>
+      {state.checks.map((check, i) => (
+        <div className="rpt-scene-row" data-pass={check.pass} data-in={i < visible} key={check.id}>
           <span className="rpt-scene-stamp" aria-hidden>
             <MarkIcon ok={check.pass} />
           </span>
@@ -534,15 +535,16 @@ function ScenePrompts({ state, schedule }: { state: ReportState; schedule: Theat
       />
     );
   }
-  // One question lands at a time — motion carries the whole step.
+  // One question lands at a time, in place — the grid holds its final
+  // height so earlier cards and the caption never move.
   const visible = Math.max(1, Math.floor(schedule.stepElapsedMs / (1100 / schedule.speed)) + 1);
   return (
     <div className="rpt-reveal" data-found="true">
       <div className="rpt-scene-brain">
         <p className="rpt-scene-caption">The questions your ICP asks AI</p>
         <div className="rpt-scene-qgrid">
-          {state.prompts.slice(0, Math.min(6, visible)).map((p, i) => (
-            <div className="rpt-scene-card rpt-scene-q" key={i}>
+          {state.prompts.slice(0, 6).map((p, i) => (
+            <div className="rpt-scene-card rpt-scene-q" data-in={i < visible} key={i}>
               <p>{p.prompt}</p>
             </div>
           ))}
@@ -630,8 +632,8 @@ function SceneGoogle({ state, schedule }: { state: ReportState; schedule: Theate
       <div className="rpt-scene-brain">
         <p className="rpt-scene-caption">Searches with money behind them.</p>
         <div className="rpt-scene-list rpt-scene-serp">
-          {shown.slice(0, visible).map((row) => (
-            <div className="rpt-scene-row" key={row.term}>
+          {shown.map((row, i) => (
+            <div className="rpt-scene-row" data-in={i < visible} key={row.term}>
               <span className="rpt-scene-pos" data-far={row.position === null || row.position > 10}>
                 {row.position ? `#${row.position}` : "—"}
               </span>
@@ -715,8 +717,8 @@ function SceneSignals({ state, schedule }: { state: ReportState; schedule: Theat
       <div className="rpt-scene-brain">
         <p className="rpt-scene-caption">Events that mean {"“"}ready to buy{"”"}.</p>
         <div className="rpt-scene-list rpt-scene-signals">
-          {signals.slice(0, visible).map((s) => (
-            <div className="rpt-scene-row" key={s.signal}>
+          {signals.map((s, i) => (
+            <div className="rpt-scene-row" data-in={i < visible} key={s.signal}>
               <span className="rpt-scene-bolt" aria-hidden>
                 <BoltIcon size={12} />
               </span>
