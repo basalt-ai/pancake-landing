@@ -653,13 +653,16 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--spacing-lg);
 }
 
+/* Chip above, description below, one shared left edge — variable-width
+   chips next to inline text left every description starting somewhere else. */
 .rpt-scene-comms li {
   display: flex;
-  align-items: baseline;
-  gap: var(--spacing-md);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
   text-align: left;
 }
 
@@ -682,14 +685,15 @@
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 6%, transparent);
 }
 
-.rpt-anim .rpt-comm-chip {
+/* Whole item pops as one unit — chip and its description together. */
+.rpt-anim .rpt-scene-comms li {
   animation: rpt-pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 @keyframes rpt-pop-in {
   from {
     opacity: 0;
-    transform: scale(0.65);
+    transform: scale(0.85);
   }
   to {
     opacity: 1;
@@ -697,9 +701,9 @@
   }
 }
 
-.rpt-scene-comms li:nth-child(2) .rpt-comm-chip { animation-delay: 0.14s; }
-.rpt-scene-comms li:nth-child(3) .rpt-comm-chip { animation-delay: 0.28s; }
-.rpt-scene-comms li:nth-child(4) .rpt-comm-chip { animation-delay: 0.42s; }
+.rpt-anim .rpt-scene-comms li:nth-child(2) { animation-delay: 0.14s; }
+.rpt-anim .rpt-scene-comms li:nth-child(3) { animation-delay: 0.28s; }
+.rpt-anim .rpt-scene-comms li:nth-child(4) { animation-delay: 0.42s; }
 
 /* Verified member count — real data from Reddit, never a guess. */
 .rpt-comm-chip i {
@@ -2036,7 +2040,7 @@ body:has(.rpt) .product-hunt-badge {
   .rpt-anim .rpt-reveal-pop > .rpt-scene-card,
   .rpt-anim .rpt-reveal-pop > .rpt-scene-brain,
   .rpt-anim .rpt-found-chip,
-  .rpt-anim .rpt-comm-chip,
+  .rpt-anim .rpt-scene-comms li,
   .rpt-anim .rpt-dash,
   .rpt-anim .rpt-scene-deepdive li,
   .rpt-anim .rpt-scene-deepdive li[data-current="true"] .rpt-dd-dot,
