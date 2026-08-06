@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/Badge";
 
 import { FxPill } from "./FxPill";
+import { LoopVideo } from "./LoopVideo";
 
 /**
  * How it works — three numbered steps, each pairing a studio motion loop with
@@ -43,24 +44,6 @@ const STEPS: Step[] = [
     alt: "Animation: you reply 'too formal, we're playful' to a draft; the feedback flows into the Brain, the voice updates, and the next draft comes back on-tone and approved.",
   },
 ];
-
-/**
- * React drops the `muted` attribute during SSR (facebook/react#10389), which
- * kills autoplay on first paint — same fix as HomeUGCWall: emit the video tag
- * as raw HTML so every attribute survives hydration.
- */
-function LoopVideo({ src, alt }: { src: string; alt: string }) {
-  return (
-    <div
-      className="lv2-step-media"
-      role="img"
-      aria-label={alt}
-      dangerouslySetInnerHTML={{
-        __html: `<video class="lv2-step-video" src="${src}" autoplay muted loop playsinline preload="metadata"></video>`,
-      }}
-    />
-  );
-}
 
 export function HowItWorks() {
   return (

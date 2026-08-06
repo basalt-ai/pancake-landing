@@ -38,12 +38,16 @@ export function LandingHero() {
         (el): el is HTMLSpanElement => el !== null,
       ),
     });
-    // entrance reveal
+    // Entrance reveal, report-page pattern: the hidden starting state only
+    // exists under html.lv2-anim, so pre-hydration paint and no-JS visitors
+    // always see the copy — LCP is never gated on hydration.
+    document.documentElement.classList.add("lv2-anim");
     const raf = requestAnimationFrame(() =>
       requestAnimationFrame(() => contentRef.current?.classList.add("is-in")),
     );
     return () => {
       cancelAnimationFrame(raf);
+      document.documentElement.classList.remove("lv2-anim");
       cleanup();
     };
   }, []);

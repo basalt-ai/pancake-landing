@@ -37,6 +37,13 @@ export function ReportExperience() {
     setUrl(q.trim());
     scanStartRef.current = Date.now();
     start(q.trim());
+    // Reset the guard on cleanup: Strict Mode's dev-only unmount pass aborts
+    // the in-flight fetch via useReport's cleanup, so without this the second
+    // effect pass would early-return and the scan would hang forever in dev.
+    // In prod the cleanup only runs on real unmount — no behavior change.
+    return () => {
+      autoStartedRef.current = false;
+    };
   }, [start]);
 
   // Hand-off must land ON the report — wherever the page was scrolled during

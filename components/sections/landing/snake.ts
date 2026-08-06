@@ -492,10 +492,13 @@ export function mountSnake({ stage, canvas, overlays }: MountOpts): () => void {
     draw();
   };
   motionMq.addEventListener("change", onMotionChange);
-  // DPR can change without a resize event (monitor hop, browser zoom)
-  let dprMq: MediaQueryList | null = null;
+  // DPR can change without a resize event (monitor hop, browser zoom).
+  // One shared AbortController releases whichever DPR listener is armed at
+  // dispose time — a leaked MediaQueryList retains the whole engine closure
+  // plus the multi-MB canvas backing store.
+  const dprAbort = new AbortController();
   const watchDPR = () => {
-    dprMq = matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+    const dprMq = matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
     dprMq.addEventListener(
       "change",
       () => {
@@ -504,7 +507,7 @@ export function mountSnake({ stage, canvas, overlays }: MountOpts): () => void {
         draw();
         watchDPR();
       },
-      { once: true },
+      { once: true, signal: dprAbort.signal },
     );
   };
   watchDPR();
@@ -524,15 +527,34 @@ export function mountSnake({ stage, canvas, overlays }: MountOpts): () => void {
     draw();
   }
   function frame() {
-    if (disposed) return;
+    if (disposed || !inView) return; // offscreen: loop parks, IO re-arms it
     if (running) requestAnimationFrame(frame); // schedule first: a throw must never end the loop
     advance(performance.now());
   }
   // watchdog: keep stepping if rAF stops entirely (hidden tab)
   const watchdog = setInterval(() => {
-    if (disposed || !running || window.__snakePaused) return;
+    if (disposed || !running || !inView || window.__snakePaused) return;
     if (performance.now() - lastNow > 80) advance(performance.now());
   }, 100);
+
+  // Two stages share one page; an offscreen stage must not simulate, paint,
+  // or write clip-paths at 60fps. Park the loop when the stage leaves the
+  // viewport and re-arm it (with a fresh clock) when it returns.
+  let inView = true;
+  const io = new IntersectionObserver(
+    (entries) => {
+      const nowIn = entries.some((e) => e.isIntersecting);
+      if (nowIn && !inView) {
+        inView = true;
+        lastNow = performance.now();
+        if (running && !disposed) requestAnimationFrame(frame);
+      } else if (!nowIn) {
+        inView = false;
+      }
+    },
+    { threshold: 0 },
+  );
+  io.observe(stage);
 
   const onResize = () => {
     resize();
@@ -585,6 +607,8 @@ export function mountSnake({ stage, canvas, overlays }: MountOpts): () => void {
   return () => {
     disposed = true;
     clearInterval(watchdog);
+    dprAbort.abort();
+    io.disconnect();
     window.removeEventListener("pointermove", onPointerMove);
     window.removeEventListener("pointerdown", onPointerMove);
     window.removeEventListener("pointerup", onPointerUp);

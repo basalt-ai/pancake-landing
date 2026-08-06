@@ -32,6 +32,9 @@ export function LandingModals() {
   const [sending, setSending] = useState(false);
   const [chips, setChips] = useState<Set<string>>(new Set());
   const [zcalLoud, setZcalLoud] = useState(false);
+  /** Mirror of openName for the stable open() callback — the static page's
+   *  re-entry guard (`if (openName) return`) must survive useCallback([]). */
+  const openNameRef = useRef<"waitlist" | "call" | null>(null);
   const lastFocus = useRef<Element | null>(null);
   const waitlistRef = useRef<HTMLDivElement>(null);
   const callRef = useRef<HTMLDivElement>(null);
@@ -40,6 +43,7 @@ export function LandingModals() {
   const zcalFrameRef = useRef<HTMLIFrameElement>(null);
 
   const close = useCallback(() => {
+    openNameRef.current = null;
     setOpenName(null);
     setZcalLoud(false);
     document.body.classList.remove("modal-open");
@@ -48,11 +52,23 @@ export function LandingModals() {
   }, []);
 
   const open = useCallback((name: "waitlist" | "call") => {
+    if (openNameRef.current) return; // a dialog is already up — ignore background triggers
+    openNameRef.current = name;
     lastFocus.current = document.activeElement;
     setOpenName(name);
     document.body.classList.add("modal-open");
     suspendAllSnakes(true);
   }, []);
+
+  // Unmount with a dialog open (client-side navigation) must not strand the
+  // page scroll-locked or the snakes pointer-suspended on the next route.
+  useEffect(
+    () => () => {
+      document.body.classList.remove("modal-open");
+      suspendAllSnakes(false);
+    },
+    [],
+  );
 
   // Any [data-lv2-open] element on the page is a trigger.
   useEffect(() => {
@@ -71,10 +87,11 @@ export function LandingModals() {
     if (!openName) return;
     const scrim = openName === "waitlist" ? waitlistRef.current : callRef.current;
     if (!scrim) return;
+    // After a successful signup the form (and emailRef) is gone on reopen —
+    // fall back to the close button so the trap always starts inside.
     const first =
-      openName === "waitlist"
-        ? emailRef.current
-        : scrim.querySelector<HTMLElement>("[data-lv2-close]");
+      (openName === "waitlist" ? emailRef.current : null) ??
+      scrim.querySelector<HTMLElement>("[data-lv2-close]");
     requestAnimationFrame(() => first?.focus());
 
     const focusables = () =>
@@ -105,6 +122,14 @@ export function LandingModals() {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [openName, close]);
+
+  // Success swaps the form out from under the focused submit button — move
+  // focus to the close button so keyboard users stay inside the dialog.
+  useEffect(() => {
+    if (!done || openName !== "waitlist") return;
+    const btn = waitlistRef.current?.querySelector<HTMLElement>("[data-lv2-close]");
+    requestAnimationFrame(() => btn?.focus());
+  }, [done, openName]);
 
   // zcal sizing: scale the compact card while it stays readable, otherwise
   // hand back to zcal's own tall layout. Re-fit on resize while open.
@@ -212,7 +237,12 @@ export function LandingModals() {
           if (e.target === e.currentTarget) close();
         }}
       >
-        <div className="lv2-sheet" role="dialog" aria-modal="true" aria-labelledby="lv2-wl-title">
+        <div
+          className="lv2-sheet"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={done ? "lv2-wl-done-title" : "lv2-wl-title"}
+        >
           <button
             type="button"
             className="lv2-sheet-close"
@@ -240,6 +270,8 @@ export function LandingModals() {
                     autoComplete="email"
                     required
                     placeholder="you@company.com"
+                    aria-invalid={error ? true : undefined}
+                    aria-describedby={error ? "lv2-wl-error" : undefined}
                   />
                 </div>
                 <div className="lv2-field">
@@ -292,14 +324,14 @@ export function LandingModals() {
                 <button type="submit" className="button lv2-sheet-submit" disabled={sending}>
                   {sending ? "Sending..." : "Join waitlist"}
                 </button>
-                <p className="lv2-form-error" role="alert">
+                <p id="lv2-wl-error" className="lv2-form-error" role="alert">
                   {error}
                 </p>
               </form>
             </div>
           ) : (
             <div className="lv2-sheet-done">
-              <h3>You are on the list.</h3>
+              <h3 id="lv2-wl-done-title">You are on the list.</h3>
               <p className="lv2-sheet-sub">
                 We will email you when it is your turn. No spam in between.
               </p>

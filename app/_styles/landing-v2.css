@@ -25,7 +25,9 @@ body:has(main.lv2) {
 body:has(main.lv2) .product-hunt-badge {
   display: none;
 }
-body.modal-open {
+/* Scoped to this page so a leaked class can never scroll-lock another route
+   (LandingModals also removes it on unmount — belt and braces). */
+body.modal-open:has(main.lv2) {
   overflow: hidden;
 }
 
@@ -38,7 +40,9 @@ body.modal-open {
 }
 .lv2 .home-landing-testimonials *,
 .lv2 .home-ugc * {
-  font-family: var(--font-body);
+  /* Back to whatever the kit's layered styles say — some UGC captions are
+     --font-display, the rest ride the semantic layer's --font-body. */
+  font-family: revert-layer;
 }
 
 /* ── Buttons: landing geometry — h56 pill, radius 24, label-slide hover ── */
@@ -156,8 +160,10 @@ body.modal-open {
 /* ── Viewport band: nav + hero stage fill the first screen ── */
 
 .lv2-viewport {
+  /* svh, not dvh: six sections follow this band — a dvh band grows/shrinks
+     with the iOS toolbar, shifting everything below it on every scroll. */
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   padding: 0 2.5rem;
@@ -234,11 +240,15 @@ body.modal-open {
   margin-top: auto;
   padding-bottom: clamp(3rem, 10vh, 6rem);
   text-align: left;
+}
+/* The hidden starting state exists only once JS marks the page (.lv2-anim on
+   <html>) — pre-hydration paint and no-JS visitors always see the copy. */
+.lv2-anim .lv2-stage-content {
   opacity: 0;
   transform: translateY(24px);
   filter: blur(8px);
 }
-.lv2-stage-content.is-in {
+.lv2-anim .lv2-stage-content.is-in {
   opacity: 1;
   transform: translateY(0);
   filter: blur(0);
@@ -303,8 +313,10 @@ body.modal-open {
   font-weight: 700;
   /* Sized so the long line ("You run your company." = 11.143em, measured)
      always fits its column: font <= available / 11.35 (metric + 2%).
-     Two lines, always. Desktop available = stage(<=74rem) - right column - gap. */
-  font-size: clamp(2.5rem, calc(5.286vw - 7.05px), 3.4rem);
+     Two lines, always. Desktop available = (V - 80px gutters) - 38vw right
+     column - 4vw gap = 0.58V - 80, and 0.58/11.35 = 5.11vw (the static page's
+     5.286vw assumed its narrower 36vw column). */
+  font-size: clamp(2.5rem, calc(5.11vw - 7.05px), 3.4rem);
   line-height: 1;
   letter-spacing: -0.02em;
   margin-top: -0.4rem;
@@ -365,7 +377,9 @@ body.modal-open {
 /* ── Section scaffolding below the hero ── */
 
 .lv2s {
-  padding: clamp(4.5rem, 10vh, 7rem) 2.5rem;
+  /* Same vertical rhythm token as the reused social-proof sections
+     (112px desktop / 96px below 1024) so the page breathes evenly. */
+  padding: var(--spacing-home-landing-section-y) 2.5rem;
 }
 @media (max-width: 767px) {
   .lv2s {
@@ -433,7 +447,9 @@ body.modal-open {
   font-weight: 700;
   font-size: clamp(2.25rem, 3.4vw, 3rem);
   line-height: 1;
-  color: var(--strong-branded-surface);
+  /* pink-40, not pink-30 — the surface pink is 2.3:1 on cream; the numerals
+     are decorative (the <ol> carries order) but should still read. */
+  color: var(--palette-pink-40);
 }
 .lv2-step-title {
   font-family: var(--font-aeonik-fono), ui-monospace, monospace;
@@ -672,11 +688,13 @@ body.modal-open {
   flex-direction: column;
   align-items: flex-start;
   gap: 2rem;
+}
+.lv2-anim .lv2-cta-content {
   opacity: 0;
   transform: translateY(24px);
   filter: blur(8px);
 }
-.lv2-cta-content.is-in {
+.lv2-anim .lv2-cta-content.is-in {
   opacity: 1;
   transform: translateY(0);
   filter: blur(0);
@@ -694,10 +712,19 @@ body.modal-open {
   position: relative;
   font-family: var(--font-aeonik-fono), ui-monospace, monospace;
   font-weight: 700;
-  font-size: clamp(2.5rem, calc(8.811vw - 7.05px), 3.4rem);
+  /* One line, no floor: "Try Pancake now" = 7.96em measured, so
+     font <= (V - gutters) / 7.96 — 12.56vw - 10.05px at the 2.5rem gutters,
+     12.56vw - 5.03px at the 1.25rem mobile gutters. A fixed floor would clip
+     the line on sub-360px phones (the hero formulas avoid floors too). */
+  font-size: min(3.4rem, calc(12.56vw - 10.05px));
   line-height: 1;
   letter-spacing: -0.02em;
   white-space: nowrap;
+}
+@media (max-width: 767px) {
+  .lv2-cta-title {
+    font-size: min(3.4rem, calc(12.56vw - 5.03px));
+  }
 }
 .lv2-cta-title * {
   font-family: inherit;
@@ -903,7 +930,7 @@ body.modal-open {
 }
 .lv2-field input::placeholder,
 .lv2-field textarea::placeholder {
-  color: var(--disabled-text);
+  color: var(--subtle-text);
 }
 .lv2-field input:focus,
 .lv2-field textarea:focus {
@@ -946,7 +973,9 @@ body.modal-open {
   box-shadow: inset 0 0 0 1px var(--strong-branded-surface);
 }
 
-.lv2-sheet-submit {
+/* Sheet buttons are full-width, submit and done-state Close alike (static:
+   `.sheet .button { width: 100%; margin-top: .5rem }`). */
+.lv2-sheet .button {
   width: 100%;
   margin-top: 0.5rem;
 }
@@ -962,9 +991,6 @@ body.modal-open {
 }
 .lv2-sheet-done h3 {
   margin-bottom: 0.5rem;
-}
-.lv2-sheet-done .button {
-  width: auto;
 }
 
 /* zcal renders its widget card at a fixed 950x610 inside the frame, offset
