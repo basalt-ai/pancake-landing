@@ -43,6 +43,8 @@ export type ScanEvent =
       snippets?: string[];
     }
   | { type: "check"; id: CheckId; pass: boolean; detail: string }
+  /** Fast ICP-only result — lands ~20s before the full brain on live scans. */
+  | { type: "icp"; company: string; icp: string }
   | { type: "brain"; company: string; icp: string; prompts: string[] }
   | {
       type: "citation";

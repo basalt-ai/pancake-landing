@@ -9,11 +9,11 @@ import type { Analysis, RankedKeywords, SiteSnapshot } from "./types";
  */
 
 const API_URL = "https://api.anthropic.com/v1/messages";
-// First attempt gets high effort; a cold serverless instance compiles the
-// output schema on top of generation and can blow past one budget, so a
-// second, faster attempt backs it up instead of failing the whole scan.
+// Medium effort: the schema is prescriptive enough that high effort mostly
+// buys thinking time the visitor spends staring at the ICP dive. Two
+// attempts so a cold-start schema compile can't fail the whole scan.
 const ATTEMPTS: { effort: "high" | "medium"; timeoutMs: number }[] = [
-  { effort: "high", timeoutMs: 55_000 },
+  { effort: "medium", timeoutMs: 45_000 },
   { effort: "medium", timeoutMs: 40_000 },
 ];
 
@@ -173,6 +173,70 @@ Buyer prompts must read like real ChatGPT questions from someone who has never h
 Opportunities must be specific to this company — name the actual gap you saw in the evidence (a missing llms.txt, page-2 keywords within reach, a buyer question no content answers), never generic advice.
 
 Buying signals are the outbound dimension of the report: observable public events someone could genuinely monitor this week, tied to THIS company's offer. Think like a GTM engineer: what happens in the world right before someone needs this product? Communities are subreddits only, real and specific to the ICP — a niche subreddit the buyers actually read beats a giant generic one.`;
+
+const ICP_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  required: ["name", "icp"],
+  properties: {
+    name: { type: "string", description: "The company's name." },
+    icp: {
+      type: "string",
+      description:
+        "Their ideal customer in one line, e.g. 'ops leads at 20-200 person logistics companies'. In English.",
+    },
+  },
+} as const;
+
+/**
+ * Fast ICP-only pass — a few seconds instead of the full analysis' ~30.
+ * Fired in parallel with the big call so the theater's "Finding your ICP"
+ * beat lands on schedule; the big call keeps the canonical everything-else.
+ */
+export async function analyzeIcp(
+  site: SiteSnapshot,
+): Promise<{ name: string; icp: string } | null> {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return null;
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 15_000);
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        model: process.env.ANTHROPIC_MODEL || "claude-sonnet-5",
+        max_tokens: 1500,
+        system:
+          "Name this company's ideal customer profile from its homepage. Specific and concrete, no hype.",
+        messages: [
+          {
+            role: "user",
+            content: `Domain: ${site.host}\nTitle: ${site.title}\nDescription: ${site.metaDescription}\n\n${site.textExtract.slice(0, 2600)}`,
+          },
+        ],
+        output_config: {
+          effort: "medium",
+          format: { type: "json_schema", schema: ICP_SCHEMA },
+        },
+      }),
+      signal: ctrl.signal,
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as { content: { type: string; text?: string }[] };
+    const block = data.content.find((b) => b.type === "text" && b.text);
+    return block?.text ? (JSON.parse(block.text) as { name: string; icp: string }) : null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 export async function analyzeSite(
   site: SiteSnapshot,

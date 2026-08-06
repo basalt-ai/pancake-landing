@@ -4,7 +4,7 @@ import { getClientIp, rateLimit } from "@/lib/rate-limit";
 import { getCachedScan, setCachedScan } from "@/lib/scan/cache";
 import { checkPromptOnChatGPT, isConfigured, rankedKeywords } from "@/lib/scan/dataforseo";
 import { deriveChecks, extractSnippets, fetchSite } from "@/lib/scan/fetch-site";
-import { analyzeSite } from "@/lib/scan/analyze";
+import { analyzeIcp, analyzeSite } from "@/lib/scan/analyze";
 import { validateScanTarget } from "@/lib/scan/validate";
 import type {
   Analysis,
@@ -246,6 +246,15 @@ export async function POST(request: Request) {
         send({ type: "status", label: "Checking who gets in: AI crawlers, llms.txt, structured data…" });
         const checks = deriveChecks(site);
         for (const check of checks) send({ type: "check", ...check });
+
+        // Fast ICP pass, in parallel with everything below — the theater's
+        // "Finding your ICP" beat must land on schedule, not after the ~30s
+        // full analysis. Fire-and-forget; send() is a no-op once closed.
+        const icpFast = analyzeIcp(site)
+          .then((r) => {
+            if (r?.icp) send({ type: "icp", company: r.name || target.host, icp: r.icp });
+          })
+          .catch(() => {});
 
         send({ type: "status", label: `Building a mini Brain for ${target.host}…` });
         const keywordsEarly = await Promise.race([

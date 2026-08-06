@@ -70,7 +70,9 @@ function stepDefs(domain: string): StepDef[] {
       label: "What your ICP asks AI",
       minMs: 9000,
       revealMs: 4000,
-      ready: (s) => s.brain !== null,
+      // The fast ICP pass fills `brain` without prompts — this step needs
+      // the real questions from the full analysis.
+      ready: (s) => s.prompts.length > 0,
       waitLines: [
         "Standing in your buyer's shoes",
         "Writing the questions they'd ask an AI",
@@ -530,7 +532,7 @@ function SceneICP({ state, schedule }: { state: ReportState; schedule: TheaterSc
 }
 
 function ScenePrompts({ state, schedule }: { state: ReportState; schedule: TheaterSchedule }) {
-  if (!state.brain) {
+  if (!state.brain || !state.prompts.length) {
     return (
       <SceneDeepDive
         {...waitLinesFor(state.domain, "prompts")}

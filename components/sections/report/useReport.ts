@@ -129,10 +129,19 @@ function reducer(state: ReportState, action: Action): ReportState {
             ...state,
             checks: [...state.checks, { id: ev.id, pass: ev.pass, detail: ev.detail }],
           });
-        case "brain":
+        case "icp":
+          // The fast pass loses to the full brain if it somehow arrives late.
+          if (state.brain) return state;
           return bump({
             ...state,
             brain: { company: ev.company, icp: sentenceCase(ev.icp) },
+          });
+        case "brain":
+          return bump({
+            ...state,
+            // Keep the ICP wording already on screen — the card must not
+            // rewrite itself mid-read when the full brain lands.
+            brain: { company: ev.company, icp: state.brain?.icp ?? sentenceCase(ev.icp) },
             prompts: ev.prompts.map((prompt) => ({ prompt, status: "checking" as const })),
           });
         case "citation": {
