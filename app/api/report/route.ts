@@ -97,12 +97,13 @@ function nearDup(a: string, b: string): boolean {
 }
 
 /**
- * Hallucination guard for the communities card: subreddits are checked
- * against Reddit's public about.json. A hard 404 drops the item; a verified
- * subscriber count ships as exact data; when Reddit blocks the check (it
- * 403s most datacenter clients) the model's approximate figure ships
- * instead, flagged `membersEstimated` and rendered with a ~ prefix.
- * Non-Reddit communities pass through untouched.
+ * Hallucination guard for the communities card: Reddit ONLY — anything that
+ * is not an r/name is dropped outright (no Facebook groups, no forums).
+ * Subreddits are checked against Reddit's public about.json: a hard 404
+ * drops the item; a verified subscriber count ships as exact data; when
+ * Reddit blocks the check (it 403s most datacenter clients) the model's
+ * approximate figure ships instead, flagged `membersEstimated` and rendered
+ * with a ~ prefix.
  */
 async function verifyCommunities(
   items: { name: string; why: string; approx_members: number | null }[],
@@ -114,7 +115,7 @@ async function verifyCommunities(
           ? { name: c.name, why: c.why, members: c.approx_members, membersEstimated: true }
           : { name: c.name, why: c.why };
       const m = c.name.trim().match(/^r\/([A-Za-z0-9_]{2,30})$/);
-      if (!m) return approx;
+      if (!m) return null;
       const ctrl = new AbortController();
       const timer = setTimeout(() => ctrl.abort(), 2500);
       try {

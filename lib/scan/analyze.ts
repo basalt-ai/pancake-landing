@@ -138,7 +138,7 @@ const REPORT_SCHEMA = {
     communities: {
       type: "array",
       description:
-        "3 to 4 REAL online communities where this company's ICP asks for advice, in the ICP's language and geography. Prefer subreddits by exact name ('r/...'); at most one non-Reddit community (a major forum, Slack or Discord) when it clearly dominates the niche. ONLY communities you are confident actually exist and are active — never invent or guess names. These get teased as 'where your buyers already ask' — AI answers quote these threads, so they are also an AI-visibility surface.",
+        "3 to 4 REAL subreddits where this company's ICP asks for advice — Reddit ONLY, exact names ('r/...'), never Facebook groups, forums, Slack or Discord. Pick for the ICP's language and geography when such subreddits exist; otherwise the closest active English ones. ONLY subreddits you are confident actually exist and are active — never invent or guess names. These get teased as 'where your buyers already ask' — AI answers quote Reddit threads heavily, so they are also an AI-visibility surface.",
       items: {
         type: "object",
         additionalProperties: false,
@@ -172,7 +172,7 @@ Buyer prompts must read like real ChatGPT questions from someone who has never h
 
 Opportunities must be specific to this company — name the actual gap you saw in the evidence (a missing llms.txt, page-2 keywords within reach, a buyer question no content answers), never generic advice.
 
-Buying signals are the outbound dimension of the report: observable public events someone could genuinely monitor this week, tied to THIS company's offer. Think like a GTM engineer: what happens in the world right before someone needs this product? Communities must be real and specific to the ICP — a niche subreddit the buyers actually read beats a giant generic one.`;
+Buying signals are the outbound dimension of the report: observable public events someone could genuinely monitor this week, tied to THIS company's offer. Think like a GTM engineer: what happens in the world right before someone needs this product? Communities are subreddits only, real and specific to the ICP — a niche subreddit the buyers actually read beats a giant generic one.`;
 
 export async function analyzeSite(
   site: SiteSnapshot,
