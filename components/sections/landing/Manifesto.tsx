@@ -13,7 +13,9 @@ export function Manifesto() {
           Selling didn&rsquo;t.
         </h2>
         <p className="lv2-manifesto-body">
-          Then Monday arrives. Leads. Outreach. Content. Positioning. Follow-ups. None of it got
+          With AI coding tools, a weekend hack can become a real product by Monday morning. But
+          turning it into a real business still means a mountain of GTM work. Finding leads.
+          Writing outreach. Publishing content. Getting cited by AI search. None of that got
           easier. Pancake is changing that.
         </p>
       </div>

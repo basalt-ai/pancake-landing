@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 
 import { FxPill } from "./FxPill";
-import { ReportPillForm } from "./ReportPillForm";
 import { mountSnake } from "./snake";
 
 /**
@@ -55,16 +54,11 @@ export function FinalCta() {
             Try Pancake now
           </span>
         </h2>
-        {/* "Try now" resolves to an immediate action: the report. The
-            founder pair stays below as the slower paths. */}
-        <ReportPillForm note="Free · ready in one minute." />
         <div className="lv2-button-group">
           <FxPill variant="outline" data-lv2-open="call">
             Book a call
           </FxPill>
-          <FxPill variant="outline" data-lv2-open="waitlist">
-            Join waitlist
-          </FxPill>
+          <FxPill data-lv2-open="waitlist">Join waitlist</FxPill>
         </div>
       </div>
     </section>

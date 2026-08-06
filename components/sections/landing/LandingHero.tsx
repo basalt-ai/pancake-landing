@@ -76,14 +76,12 @@ export function LandingHero() {
               {H2_COPY}
             </span>
           </h2>
-          <ReportPillForm note="Free · ready in one minute." />
+          <ReportPillForm />
           <div className="lv2-button-group">
             <FxPill variant="outline" data-lv2-open="call">
               Book a call
             </FxPill>
-            <FxPill variant="outline" data-lv2-open="waitlist">
-              Join waitlist
-            </FxPill>
+            <FxPill data-lv2-open="waitlist">Join waitlist</FxPill>
           </div>
         </div>
       </div>

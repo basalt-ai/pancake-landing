@@ -356,12 +356,6 @@ body.modal-open:has(main.lv2) {
 }
 
 /* The owner.com-style live experience: domain in, report out. */
-.lv2-hero-report {
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
-  width: 100%;
-}
 .lv2-hero-pill {
   display: flex;
   gap: var(--spacing-md);
@@ -370,13 +364,6 @@ body.modal-open:has(main.lv2) {
 .lv2-hero-pill .input {
   flex: 1;
   min-width: 0;
-}
-/* The one line that explains the offer — chrome-90, not chrome-80: small
-   text on cream needs the darker step to clear 4.5:1. */
-.lv2-hero-note {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--palette-chrome-90);
 }
 /* Invalid domain: the negative ring. The lv2 input is border-0/box-shadow,
    so the kit's layered border hook would be a no-op here. */
@@ -779,73 +766,6 @@ body.modal-open:has(main.lv2) {
   font-size: 0.8125rem;
 }
 
-/* The real-run stat band — the section's climax, numerals straight on cream
-   (the boxed-footnote styling buried it; impeccable P2). */
-.lv2-dive-run {
-  margin-top: clamp(2rem, 5vh, 3.5rem);
-}
-.lv2-dive-run-label {
-  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
-  font-weight: 700;
-  font-size: 0.71875rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--palette-pink-40);
-  margin-bottom: 1rem;
-}
-.lv2-dive-run-stats {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: clamp(0.75rem, 2vw, 1.5rem);
-}
-.lv2-dive-run-stat b {
-  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
-  font-weight: 700;
-  font-size: clamp(2.75rem, 6vw, 4.5rem);
-  line-height: 1;
-  letter-spacing: -0.02em;
-}
-.lv2-dive-run-stat i {
-  font-style: normal;
-  display: block;
-  margin-top: 0.375rem;
-  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
-  font-weight: 600;
-  font-size: 0.8125rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--palette-chrome-90);
-}
-.lv2-dive-run-arrow {
-  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
-  font-weight: 700;
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
-  color: var(--palette-pink-40);
-}
-/* Narrow screens: no arrows (they orphan at wrap points) — the three
-   numerals share the row edge-to-edge instead. */
-@media (max-width: 539px) {
-  .lv2-dive-run-arrow {
-    display: none;
-  }
-  .lv2-dive-run-stats {
-    justify-content: space-between;
-    width: 100%;
-  }
-  /* sized so all three cells share one row at 320px */
-  .lv2-dive-run-stat b {
-    font-size: 2.25rem;
-  }
-  .lv2-dive-run-stat i {
-    font-size: 0.71875rem;
-  }
-}
-.lv2-dive-run-end {
-  margin-top: 1rem;
-  font-size: 1rem;
-  font-weight: 500;
-}
 .lv2-dive-proof {
   list-style: none;
   margin: 1.5rem 0 2rem;
@@ -1005,27 +925,6 @@ body.modal-open:has(main.lv2) {
   color: var(--subtle-text);
   text-wrap: pretty;
 }
-.lv2-price-chips {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-.lv2-price-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  padding: 8px 14px;
-  border-radius: 100vw;
-  background: var(--weak-branded-surface);
-}
-.lv2-price-chip svg {
-  flex: none;
-}
 .lv2-price-link {
   font-size: 1rem;
   font-weight: 600;
@@ -1035,12 +934,31 @@ body.modal-open:has(main.lv2) {
   padding: 20px 8px;
   line-height: 1;
 }
-/* Resolves the availability contradiction (self-serve chips, waitlist
-   button) — the modal's own line, verbatim. */
-.lv2-price-note {
-  font-size: 0.875rem;
+/* Okara-style single-plan feature list — pink checks, one line each. */
+.lv2-price-features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+.lv2-price-features li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.625rem;
+  font-size: 1rem;
   font-weight: 500;
-  color: var(--palette-chrome-90);
+  line-height: 1.5;
+}
+.lv2-price-features svg {
+  flex: none;
+  align-self: center;
+  color: var(--palette-pink-40);
+}
+/* /pricing rides the same skin: the band grows so the footer stays put. */
+.lv2-viewport--page .lv2s {
+  flex: 1;
 }
 
 /* ── Closing CTA band ── */
@@ -1075,9 +993,6 @@ body.modal-open:has(main.lv2) {
     opacity 0.9s ease,
     transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
     filter 0.9s ease;
-}
-.lv2-cta-content .lv2-hero-report {
-  max-width: 34rem;
 }
 @media (max-width: 767px) {
   .lv2-cta-content {

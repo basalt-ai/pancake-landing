@@ -12,7 +12,7 @@ import { LoopVideo } from "./LoopVideo";
 type Step = {
   num: string;
   title: string;
-  body: string;
+  body: React.ReactNode;
   video: string;
   /** What the loop shows — read to screen readers in place of the video. */
   alt: string;
@@ -22,7 +22,13 @@ const STEPS: Step[] = [
   {
     num: "01",
     title: "Add your website. Pancake creates the Brain.",
-    body: "Pancake turns your data into a living GTM strategy. ICP, positioning, keywords and target accounts, always up to date.",
+    body: (
+      <>
+        Pancake turns your data into a living GTM strategy.
+        <br />
+        ICP, positioning, keywords and target accounts, always up to date.
+      </>
+    ),
     video: "/how/brain-loop.mp4",
     alt: "Animation: from a single node, Pancake's Brain researches your company and grows into a full GTM knowledge graph — market profile, ICP, keywords, personas and market references.",
   },

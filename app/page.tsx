@@ -10,7 +10,7 @@ import { LandingPricing } from "@/components/sections/landing/LandingPricing";
 import { LandingTestimonials } from "@/components/sections/landing/LandingTestimonials";
 import { LeadFindingDive } from "@/components/sections/landing/LeadFindingDive";
 import { Manifesto } from "@/components/sections/landing/Manifesto";
-import { pricing } from "@/lib/copy";
+import { pricingV2 } from "@/lib/copy";
 import "@/app/_styles/landing-v2.css";
 
 /**
@@ -59,8 +59,8 @@ const softwareApplicationJsonLd = {
   offers: {
     "@type": "Offer",
     url: "https://getpancake.ai/pricing",
-    price: String(pricing.infrastructureDollars),
-    priceCurrency: pricing.currency,
+    price: String(pricingV2.monthlyDollars),
+    priceCurrency: pricingV2.currency,
     availability: "https://schema.org/InStock",
   },
   publisher: {

@@ -1,6 +1,4 @@
-import { Badge } from "@/components/ui/Badge";
-
-import { FxPill, FxPillLink } from "./FxPill";
+import { FxPill } from "./FxPill";
 
 /**
  * Lead-finding deep dive — the Greptile move: show the mechanism, earn the
@@ -102,7 +100,7 @@ const STEPS: Step[] = [
           </li>
           <li className="lv2-dive-row is-dropped">
             <span className="lv2-dive-mono lv2-dive-grow">Generic growth-tips carousel</span>
-            <span className="lv2-dive-tag">skipped — no spend</span>
+            <span className="lv2-dive-tag">skipped · no spend</span>
           </li>
         </ul>
       </Panel>
@@ -158,7 +156,7 @@ const STEPS: Step[] = [
               <span className="lv2-dive-name">Sofia Bianchi</span>
               <span className="lv2-dive-sub">outside your geography</span>
             </span>
-            <span className="lv2-dive-tag">rejected — logged</span>
+            <span className="lv2-dive-tag">rejected · logged</span>
           </li>
         </ul>
       </Panel>
@@ -168,7 +166,6 @@ const STEPS: Step[] = [
 
 const GUARANTEES = [
   "A hard spend cap on every run. It can't overspend.",
-  "Metered in cents, not seats.",
   "Every lead arrives with its conversation attached. Your first message opens warm.",
 ] as const;
 
@@ -176,15 +173,15 @@ export function LeadFindingDive() {
   return (
     <section className="lv2s lv2-dive" id="lead-finding" aria-labelledby="lv2-dive-title">
       <div className="lv2-container">
+        {/* Greptile pattern ("How Greptile reviews every PR" + one mechanism
+            line) — no badge, no poetry. */}
         <header className="lv2-section-header">
-          <Badge variant="brand">Deep dive · Lead finding</Badge>
           <h2 id="lv2-dive-title" className="lv2-section-title">
-            Your next customers are already raising their hands
+            How Pancake finds your next customers
           </h2>
           <p className="lv2-section-lede">
-            Someone is commenting on your competitor&rsquo;s post right now. That&rsquo;s buying
-            intent — public, timestamped, gone in a week. Pancake reads it all day so you
-            don&rsquo;t have to.
+            Pancake watches live buying conversations, scores them, and turns the people in them
+            into ICP-checked leads.
           </p>
         </header>
 
@@ -202,33 +199,6 @@ export function LeadFindingDive() {
             </li>
           ))}
         </ol>
-
-        {/* The 2026-07-28 live run, end to end — real numbers, no rounding.
-            Styled as the section's climax, not a footnote (impeccable P2). */}
-        <div className="lv2-dive-run">
-          <p className="lv2-dive-run-label">One live run</p>
-          <p className="lv2-dive-run-stats">
-            <span className="lv2-dive-run-stat">
-              <b>240</b>
-              <i>posts read</i>
-            </span>
-            <span className="lv2-dive-run-arrow" aria-hidden="true">
-              →
-            </span>
-            <span className="lv2-dive-run-stat">
-              <b>25</b>
-              <i>showed intent</i>
-            </span>
-            <span className="lv2-dive-run-arrow" aria-hidden="true">
-              →
-            </span>
-            <span className="lv2-dive-run-stat">
-              <b>18</b>
-              <i>profiles judged</i>
-            </span>
-          </p>
-          <p className="lv2-dive-run-end">Every verdict logged with its reason.</p>
-        </div>
 
         <ul className="lv2-dive-proof">
           {GUARANTEES.map((g) => (
@@ -249,10 +219,7 @@ export function LeadFindingDive() {
         </ul>
 
         <div className="lv2-button-group">
-          <FxPillLink href="/ai-gtm-report">Get my AI GTM report</FxPillLink>
-          <FxPill variant="outline" data-lv2-open="waitlist">
-            Join waitlist
-          </FxPill>
+          <FxPill data-lv2-open="waitlist">Join waitlist</FxPill>
         </div>
       </div>
     </section>
