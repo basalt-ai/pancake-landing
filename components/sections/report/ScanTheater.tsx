@@ -24,6 +24,10 @@ type StepDef = {
   revealMs?: number;
   /** Sequential deep-dive statements — a progression, never a loop. */
   waitLines?: string[];
+  /** When each wait line lands (ms into the step). The tail is deliberately
+   *  stretched: a live analysis can run 35s, and the dive must keep moving
+   *  the whole time instead of finishing early and going static. */
+  waitAt?: number[];
 };
 
 function stepDefs(domain: string): StepDef[] {
@@ -31,7 +35,7 @@ function stepDefs(domain: string): StepDef[] {
     {
       key: "site",
       label: `Reading ${domain}`,
-      minMs: 6000,
+      minMs: 5000,
       ready: (s) => s.meta !== null,
     },
     {
@@ -45,15 +49,17 @@ function stepDefs(domain: string): StepDef[] {
     {
       key: "icp",
       label: "Finding your ICP",
-      minMs: 11000,
-      revealMs: 4500,
+      minMs: 8500,
+      revealMs: 3500,
       ready: (s) => s.brain !== null,
       waitLines: [
         "Reading every page the way a buyer would",
-        "Collecting what the site promises",
         "Looking for who signs off on this",
         "Naming your ideal customer",
+        "Checking it against what the site promises",
+        "Sharpening the wording",
       ],
+      waitAt: [0, 2000, 4000, 11000, 20000],
     },
     {
       key: "prompts",
@@ -70,7 +76,7 @@ function stepDefs(domain: string): StepDef[] {
     {
       key: "chatgpt",
       label: "Asking ChatGPT, live",
-      minMs: 10000,
+      minMs: 9000,
       revealMs: 2500,
       ready: (s) =>
         s.prompts.length > 0 &&
@@ -87,8 +93,10 @@ function stepDefs(domain: string): StepDef[] {
     },
     {
       key: "signals",
+      // Two beats inside one step: the signals land and hold long enough to
+      // actually be read, then the communities take the stage on their own.
       label: "Spotting buying signals",
-      minMs: 8500,
+      minMs: 18000,
       revealMs: 4000,
       // Old cached replays predate this event — fall back on the score so the
       // rail never hangs on a scene whose data will never come.
@@ -102,14 +110,15 @@ function stepDefs(domain: string): StepDef[] {
       key: "tally",
       label: "Scoring it",
       // Count-up (2.4s) + a real hold on the landed number — the finale.
-      minMs: 6000,
+      minMs: 5500,
       ready: (s) => s.score !== null,
     },
   ];
 }
 
-function waitLinesFor(domain: string, key: string): string[] {
-  return stepDefs(domain).find((d) => d.key === key)?.waitLines ?? [];
+function waitLinesFor(domain: string, key: string): { lines: string[]; at?: number[] } {
+  const def = stepDefs(domain).find((d) => d.key === key);
+  return { lines: def?.waitLines ?? [], at: def?.waitAt };
 }
 
 export type TheaterSchedule = {
@@ -264,14 +273,19 @@ function Countdown({ schedule }: { schedule: TheaterSchedule }) {
  */
 function SceneDeepDive({
   lines,
+  at,
   elapsedMs,
   speed = 1,
 }: {
   lines: string[];
+  at?: number[];
   elapsedMs: number;
   speed?: number;
 }) {
-  const visible = Math.min(lines.length, Math.floor(elapsedMs / (2000 / speed)) + 1);
+  const t = elapsedMs * speed;
+  const visible = at
+    ? Math.max(1, at.filter((ms) => t >= ms).length)
+    : Math.min(lines.length, Math.floor(t / 2000) + 1);
   return (
     <div className="rpt-scene-card rpt-scene-deepdive">
       <ol>
@@ -481,15 +495,16 @@ function FoundChip({
 /** True once the ICP result should own the stage for this step. */
 function icpRevealed(state: ReportState, schedule: TheaterSchedule): boolean {
   // Even when the analysis is already in (demo, cache), play the dive first:
-  // evidence popping crisp + statements accumulating IS the magic beat.
-  return state.brain !== null && schedule.stepElapsedMs >= 6500 / schedule.speed;
+  // evidence popping crisp + statements accumulating IS the magic beat. The
+  // gate sits just past the third dive line so none of them flashes by.
+  return state.brain !== null && schedule.stepElapsedMs >= 5200 / schedule.speed;
 }
 
 function SceneICP({ state, schedule }: { state: ReportState; schedule: TheaterSchedule }) {
   if (!icpRevealed(state, schedule)) {
     return (
       <SceneDeepDive
-        lines={waitLinesFor(state.domain, "icp")}
+        {...waitLinesFor(state.domain, "icp")}
         elapsedMs={schedule.stepElapsedMs}
         speed={schedule.speed}
       />
@@ -513,7 +528,7 @@ function ScenePrompts({ state, schedule }: { state: ReportState; schedule: Theat
   if (!state.brain) {
     return (
       <SceneDeepDive
-        lines={waitLinesFor(state.domain, "prompts")}
+        {...waitLinesFor(state.domain, "prompts")}
         elapsedMs={schedule.stepElapsedMs}
         speed={schedule.speed}
       />
@@ -545,12 +560,14 @@ function SceneChatGPT({ state, schedule }: { state: ReportState; schedule: Theat
   const isShown = (p: PromptRow, i: number) =>
     p.status === "done" && p.cited !== undefined && i < settleCount;
   const allShown = shown.length > 0 && shown.every(isShown);
-  const cited = state.prompts.filter((p) => p.cited).length;
+  // Counted over the cards actually on stage — quoting the full run's 10 while
+  // showing 6 made the badge contradict what the visitor can tally.
+  const cited = shown.filter((p) => p.cited).length;
   return (
     <div className="rpt-reveal" data-found={allShown}>
       {allShown && (
         <FoundChip above>
-          Cited in {cited} of {state.prompts.length} answers
+          Cited in {cited} of {shown.length} answers
         </FoundChip>
       )}
       <div className="rpt-scene-brain">
@@ -591,7 +608,7 @@ function SceneGoogle({ state, schedule }: { state: ReportState; schedule: Theate
   if (!rows.length) {
     return (
       <SceneDeepDive
-        lines={waitLinesFor(state.domain, "google")}
+        {...waitLinesFor(state.domain, "google")}
         elapsedMs={schedule.stepElapsedMs}
         speed={schedule.speed}
       />
@@ -644,24 +661,54 @@ function SceneSignals({ state, schedule }: { state: ReportState; schedule: Theat
   if (!data || !data.signals.length) {
     return (
       <SceneDeepDive
-        lines={waitLinesFor(state.domain, "signals")}
+        {...waitLinesFor(state.domain, "signals")}
         elapsedMs={schedule.stepElapsedMs}
         speed={schedule.speed}
       />
     );
   }
-  // Signals fire one by one; the communities strip lands last, then the stamp.
+  // Two beats, never both on stage at once: signals land one by one and hold
+  // long enough to actually be read, then the communities get their own beat.
+  // Keeping them separate is also what keeps the scene short enough to fit.
   const signals = data.signals.slice(0, 4);
-  const visible = Math.max(1, Math.floor(schedule.stepElapsedMs / (950 / schedule.speed)) + 1);
-  const showComms = visible > signals.length && data.communities.length > 0;
-  const complete = visible > signals.length + (data.communities.length ? 1 : 0);
+  const t = schedule.stepElapsedMs * schedule.speed;
+  const ROW_MS = 1500;
+  const visible = Math.max(1, Math.floor(t / ROW_MS) + 1);
+  const allIn = visible > signals.length;
+  // The rows are the densest text in the whole cinematic — once they are all
+  // up they hold far longer than the stagger took, before the stage turns over.
+  const commsAt = signals.length * ROW_MS + 7500;
+  const showComms = data.communities.length > 0 && t >= commsAt;
+
+  if (showComms) {
+    return (
+      // Distinct key: without it React reconciles the two beats positionally,
+      // reuses the same DOM, and neither the card nor the chips re-animate.
+      <div className="rpt-reveal rpt-reveal-pop" data-found="true" key="comms">
+        <FoundChip above>Where your buyers already ask</FoundChip>
+        <div className="rpt-scene-card rpt-scene-comms-card">
+          <p className="rpt-scene-caption">
+            They ask AI — and they ask each other, here.
+          </p>
+          <ul className="rpt-scene-comms">
+            {data.communities.map((c) => (
+              <li key={c.name}>
+                <span className="rpt-comm-chip">
+                  {c.name}
+                  {c.members ? <i>{formatMembers(c.members)}</i> : null}
+                </span>
+                <p>{c.why}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="rpt-reveal rpt-reveal-pop" data-found={complete}>
-      {complete && (
-        <FoundChip above>
-          {signals.length} signals to watch
-        </FoundChip>
-      )}
+    <div className="rpt-reveal rpt-reveal-pop" data-found={allIn} key="signals">
+      {allIn && <FoundChip above>{signals.length} signals to watch</FoundChip>}
       <div className="rpt-scene-brain">
         <p className="rpt-scene-caption">Events that mean {"“"}ready to buy{"”"}.</p>
         <div className="rpt-scene-list rpt-scene-signals">
@@ -679,17 +726,6 @@ function SceneSignals({ state, schedule }: { state: ReportState; schedule: Theat
             </div>
           ))}
         </div>
-        {showComms && (
-          <div className="rpt-scene-comms">
-            <span className="rpt-scene-comms-label">Where your buyers already ask</span>
-            {data.communities.map((c) => (
-              <span className="rpt-comm-chip" key={c.name}>
-                {c.name}
-                {c.members ? ` · ${formatMembers(c.members)}` : ""}
-              </span>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );
