@@ -433,10 +433,19 @@
   width: 100%;
   max-width: 620px;
   /* Reserves the found-chip's overhang inside the scene's own box, so the
-     stage's overflow rules protect it like any other content. */
-  padding-top: 42px;
+     stage's overflow rules protect it like any other content. SYMMETRIC so
+     the visible content stays on the stage's optical center. */
+  padding: 42px 0;
   user-select: none;
   -webkit-user-select: none;
+}
+
+/* Reserved slots: a scene's list takes its FINAL height from the first
+   frame. Rows reveal in place, top to bottom — nothing reflows, headings
+   never migrate, earlier rows never move while being read. */
+.rpt-scene [data-in="false"] {
+  opacity: 0;
+  animation: none !important;
 }
 
 .rpt-anim .rpt-scene {
