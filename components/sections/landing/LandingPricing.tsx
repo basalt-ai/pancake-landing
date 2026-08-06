@@ -12,7 +12,11 @@ import { FxPill } from "./FxPill";
  */
 export function LandingPricing() {
   return (
-    <section className="lv2s lv2-pricing" id="pricing" aria-labelledby="lv2-pricing-title">
+    <section
+      className="lv2s lv2s--brand lv2-pricing"
+      id="pricing"
+      aria-labelledby="lv2-pricing-title"
+    >
       <div className="lv2-container">
         <header className="lv2-section-header">
           <h2 id="lv2-pricing-title" className="lv2-section-title">

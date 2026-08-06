@@ -396,6 +396,14 @@ body.modal-open:has(main.lv2) {
   max-width: 74rem;
   margin-inline: auto;
 }
+/* Section-background alternation (synthetic/greptile rhythm): the page walks
+   cream → white → plum → cream → white → pink-10 → cream. */
+.lv2s--surface {
+  background: var(--surface);
+}
+.lv2s--brand {
+  background: var(--weak-branded-surface);
+}
 .lv2-section-header {
   display: flex;
   flex-direction: column;
@@ -810,11 +818,8 @@ body.modal-open:has(main.lv2) {
   }
 }
 
-/* ── Testimonials: ride the cream canvas, keep their own internals ── */
-
-.lv2 .home-landing-section {
-  background: transparent;
-}
+/* ── Testimonials: the kit's own white band — part of the page's
+      cream/white alternation (tweets + UGC read as one white chapter) ── */
 .lv2 .lv2-testimonials {
   padding-inline: 2.5rem;
 }
@@ -844,26 +849,148 @@ body.modal-open:has(main.lv2) {
   padding-block-start: 0;
 }
 
-/* ── Manifesto — the why-now, type only ── */
+/* ── Manifesto — the dark chapter (synthetic's cream→dark flip) ── */
 
+.lv2-manifesto {
+  background: var(--inverted-surface);
+  color: var(--text-on-inverted-surface);
+  /* the tilted task cards may poke past the mound's box — clip, never scroll */
+  overflow: hidden;
+}
+/* Statement full-width first (synthetic's anatomy), then body | mountain. */
+.lv2-manifesto-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+  gap: clamp(2.5rem, 6vw, 6rem);
+  align-items: center;
+  margin-top: 1.5rem;
+}
+/* The page's one kicker — a deliberate chapter mark, not section grammar. */
+.lv2-manifesto-kicker {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 0.71875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--strong-branded-surface);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.625rem;
+  border-bottom: 2px solid var(--strong-branded-surface);
+  display: inline-block;
+}
 .lv2-manifesto-title {
   font-family: var(--font-aeonik-fono), ui-monospace, monospace;
   font-weight: 700;
-  font-size: clamp(2.5rem, 5.2vw, 4.25rem);
+  font-size: clamp(2.5rem, 4.6vw, 3.75rem);
   line-height: 1.02;
   letter-spacing: -0.02em;
-  max-width: 60rem;
 }
 .lv2-manifesto-title * {
   font-family: inherit;
 }
 .lv2-manifesto-body {
-  margin-top: 1.5rem;
   font-size: 1.125rem;
-  line-height: 1.5;
-  color: var(--subtle-text);
+  line-height: 1.55;
+  color: var(--subtle-text-on-inverted-surface);
   max-width: 36rem;
   text-wrap: pretty;
+}
+
+/* The mountain of busywork: three brand beads behind a pile of tilted task
+   cards (Figma/Retool dark-chapter pattern; the copy's own metaphor). */
+.lv2-manifesto-mountain {
+  position: relative;
+  aspect-ratio: 5 / 4;
+  min-height: 300px;
+}
+.lv2-manifesto-bead {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.9;
+}
+.lv2-manifesto-bead[data-tone="golden"] {
+  width: 46%;
+  aspect-ratio: 1;
+  left: 4%;
+  top: 8%;
+  background: var(--alt-strong-branded-surface-02);
+}
+.lv2-manifesto-bead[data-tone="purple"] {
+  width: 38%;
+  aspect-ratio: 1;
+  right: 6%;
+  top: 0;
+  background: var(--alt-strong-branded-surface-01);
+}
+.lv2-manifesto-bead[data-tone="mint"] {
+  width: 30%;
+  aspect-ratio: 1;
+  right: 20%;
+  top: 34%;
+  background: var(--positive-surface);
+}
+.lv2-manifesto-pile {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.lv2-manifesto-pile li {
+  position: absolute;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 600;
+  font-size: 0.875rem;
+  line-height: 1;
+  padding: 12px 16px;
+  border-radius: 12px;
+  corner-shape: round;
+  white-space: nowrap;
+}
+/* hand-set pile: narrow top, wide base — reads as a mound */
+.lv2-manifesto-pile li:nth-child(1) {
+  top: 24%;
+  left: 34%;
+  transform: rotate(-7deg);
+}
+.lv2-manifesto-pile li:nth-child(2) {
+  top: 42%;
+  left: 16%;
+  transform: rotate(4deg);
+}
+.lv2-manifesto-pile li:nth-child(3) {
+  top: 56%;
+  left: 44%;
+  transform: rotate(-3deg);
+}
+.lv2-manifesto-pile li:nth-child(4) {
+  top: 71%;
+  left: 4%;
+  transform: rotate(2deg);
+}
+.lv2-manifesto-pile li:nth-child(5) {
+  top: 73%;
+  left: 52%;
+  transform: rotate(6deg);
+}
+.lv2-manifesto-pile li:nth-child(6) {
+  top: 88%;
+  left: 22%;
+  transform: rotate(-4deg);
+}
+@media (max-width: 899px) {
+  .lv2-manifesto-grid {
+    grid-template-columns: 1fr;
+  }
+  /* fixed height, no ratio: min-height x aspect-ratio would force the box
+     wider than the column and crop the body text */
+  .lv2-manifesto-mountain {
+    max-width: 26rem;
+    width: 100%;
+    min-height: 0;
+    aspect-ratio: auto;
+    height: 320px;
+  }
 }
 
 /* ── Pricing ── */

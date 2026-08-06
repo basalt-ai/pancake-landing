@@ -50,7 +50,7 @@ const STEPS: Step[] = [
 
 export function HowItWorks() {
   return (
-    <section className="lv2s lv2-how" id="how-it-works" aria-labelledby="lv2-how-title">
+    <section className="lv2s lv2s--surface lv2-how" id="how-it-works" aria-labelledby="lv2-how-title">
       <div className="lv2-container">
         <header className="lv2-section-header">
           <h2 id="lv2-how-title" className="lv2-section-title">
