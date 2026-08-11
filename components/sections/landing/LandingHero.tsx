@@ -3,15 +3,15 @@
 import { useEffect, useRef } from "react";
 
 import { FxPill } from "./FxPill";
-import { ReportPillForm } from "./ReportPillForm";
 import { mountSnake } from "./snake";
 
 /**
  * The hero stage — full-height band under the nav where the snake wanders,
  * revealing the duplicate H1/H2 through its circles. Port of the static
- * landing's `.prefooter` section, plus the adopted owner.com-style live
- * experience (lp-skeleton-review, 2026-07-30): one input ("yourcompany.com") +
- * one CTA ("Get my AI GTM report") that hands the domain to /ai-gtm-report.
+ * landing's `.prefooter` section: H1 left, H2 + the two CTAs right — the
+ * same disposition as the previous production hero. (The owner.com-style
+ * AI GTM report input shipped here briefly; founder pulled it 2026-08-11
+ * pre-launch — the /ai-gtm-report route still exists, just unlinked.)
  */
 
 const H1_LINES = ["You run your company.", "We run your GTM."] as const;
@@ -34,7 +34,7 @@ export function LandingHero() {
       overlays: [h1SnakeRef.current, h2SnakeRef.current].filter(
         (el): el is HTMLSpanElement => el !== null,
       ),
-      // The H2/form/CTA column is a keep-out: the wander repels from it and
+      // The H2/CTA column is a keep-out: the wander repels from it and
       // the mobile orbit shrinks to the band above it (impeccable P0 — the
       // snake parked mid-H2 at the exact "what is this" moment). The H1 is
       // deliberately NOT covered: beads crossing it fire the reveal, the
@@ -76,7 +76,6 @@ export function LandingHero() {
               {H2_COPY}
             </span>
           </h2>
-          <ReportPillForm />
           <div className="lv2-button-group">
             <FxPill variant="outline" data-lv2-open="call">
               Book a call
