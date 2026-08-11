@@ -25,6 +25,27 @@ export function ReportExperience() {
     return () => document.documentElement.classList.remove("rpt-anim");
   }, []);
 
+  // Landing-hero handoff: /ai-gtm-report?url=acme.com starts the scan on
+  // arrival. Plain location.search (not useSearchParams) so the route keeps
+  // static rendering; the once-ref guards Strict Mode double-invocation.
+  const autoStartedRef = useRef(false);
+  useEffect(() => {
+    if (autoStartedRef.current) return;
+    const q = new URLSearchParams(window.location.search).get("url");
+    if (!q || !q.trim()) return;
+    autoStartedRef.current = true;
+    setUrl(q.trim());
+    scanStartRef.current = Date.now();
+    start(q.trim());
+    // Reset the guard on cleanup: Strict Mode's dev-only unmount pass aborts
+    // the in-flight fetch via useReport's cleanup, so without this the second
+    // effect pass would early-return and the scan would hang forever in dev.
+    // In prod the cleanup only runs on real unmount — no behavior change.
+    return () => {
+      autoStartedRef.current = false;
+    };
+  }, [start]);
+
   // Hand-off must land ON the report — wherever the page was scrolled during
   // the theater, the score and locked cards start in view.
   useEffect(() => {

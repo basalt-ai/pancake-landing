@@ -23,6 +23,15 @@ the 21st.dev community library; also `logo_search` for brand logos as SVG/TSX. T
 - **Setup**: already configured at user scope (`~/.claude.json`) with Tristan's API key —
   nothing to do. The key is private config; never move it into a committed file.
 
+## Skills (project, in `.claude/skills/`)
+
+### /landing-voice — the copy voice, distilled from synthetic.ai + greptile.com
+Ten hard rules (word budgets, one idea per sentence, concrete nouns, banned
+hedges, anaphora once per page) with the verbatim corpus for calibration.
+- **When**: writing or reviewing ANY visible copy on the landing page. Run it
+  before shipping copy changes — it is the house style, Tristan-requested
+  (2026-08-06).
+
 ## Skills (installed in `~/.claude/skills/`)
 
 ### /impeccable — design review, polish, and anti-slop detection

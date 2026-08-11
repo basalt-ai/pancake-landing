@@ -438,3 +438,27 @@ export const pricing = {
   },
 } as const;
 
+
+/**
+ * Pricing V2 — the GTM landing's model (founder call 2026-08-06): one flat
+ * subscription, no token packs, no tiers. Okara-style single plan. The V1
+ * `pricing` object above stays only for legacy pages until they migrate.
+ */
+export const pricingV2 = {
+  monthlyDollars: 99,
+  currency: "USD" as const,
+  currencySymbol: "$",
+  /** Okara's own header, the template the founder pointed at. */
+  title: "Simple, transparent pricing",
+  perMonth: "/ month flat",
+  blurb: "One subscription, the whole GTM team. Everything included.",
+  /** Feature list — only claims the landing already makes. */
+  features: [
+    "The Brain: ICP, positioning, keywords",
+    "Lead finding on live buying signals",
+    "Outreach campaigns in your voice",
+    "AI SEO: one article a day",
+    "Self-improves from your feedback",
+    "Spend caps and approvals built in",
+  ],
+} as const;

@@ -1,0 +1,1693 @@
+/*
+ * Landing v2 — the GTM landing, ported from public/landing-v2.html into the
+ * App Router page plus the sections below the hero. Unlayered on purpose,
+ * like report.css: the newest pages override the kit's layered defaults.
+ *
+ * Skin: cream canvas (chrome-20), plum ink, pink pills at radius 24 —
+ * humanist Aeonik everywhere, Aeonik Fono reserved for display type.
+ * The reused carousels (tweets + UGC) keep their own kit styling.
+ */
+
+.lv2 ::selection {
+  background: color-mix(in srgb, var(--strong-branded-surface) 45%, transparent);
+}
+
+.lv2 {
+  background: var(--elevated-surface);
+  color: var(--text);
+}
+/* Overscroll rubber-band shows body behind the page — keep it cream too. */
+body:has(main.lv2) {
+  background: var(--elevated-surface);
+}
+/* The layout's fixed Product Hunt badge collides with the hero CTAs; the
+   static landing never showed it — keep the port faithful. */
+body:has(main.lv2) .product-hunt-badge {
+  display: none;
+}
+/* Scoped to this page so a leaked class can never scroll-lock another route
+   (LandingModals also removes it on unmount — belt and braces). */
+body.modal-open:has(main.lv2) {
+  overflow: hidden;
+}
+
+/* Landing speaks humanist Aeonik; the kit's global rule puts Fono (mono) on
+   every element. Blanket-flip inside the page, then hand the reused sections
+   (tweets carousel + UGC wall) their designed Fono voice back. */
+.lv2,
+.lv2 * {
+  font-family: var(--font-aeonik), system-ui, -apple-system, sans-serif;
+}
+.lv2 .home-landing-testimonials *,
+.lv2 .home-ugc * {
+  /* Back to whatever the kit's layered styles say — some UGC captions are
+     --font-display, the rest ride the semantic layer's --font-body. */
+  font-family: revert-layer;
+}
+
+/* ── Buttons: landing geometry — h56 pill, radius 24, label-slide hover ── */
+
+.lv2 .button {
+  --button-radius: 24px;
+  height: auto;
+  padding: 20px 24px;
+  border: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap; /* landing buttons are always one line */
+  corner-shape: round; /* plain rounded rectangles, not the kit squircle */
+  position: relative; /* stacking context for the circle-fill FX */
+  overflow: hidden;
+  isolation: isolate;
+}
+/* The landing's pink button doesn't darken — its feedback is the label FX. */
+.lv2 .button:hover {
+  --button-background-color: var(--strong-branded-surface);
+  --button-border-color: var(--strong-branded-surface);
+}
+/* Secondary = the static landing's white pill with a hairline inset. */
+.lv2 .button[data-variant="outline"] {
+  --button-background-color: var(--surface);
+  --button-border-color: var(--surface);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 10%, transparent);
+  color: var(--text);
+}
+.lv2 .button:focus {
+  outline: none;
+}
+.lv2 .button:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+}
+@media (max-width: 479px) {
+  .lv2 .button {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+}
+
+/* The pointer-fill circle layer — straight port of landing-v2's .btn-fx. */
+.lv2-btn-fx {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+}
+.lv2-btn-fx .c {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform;
+}
+.lv2-btn-label {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  vertical-align: top;
+  overflow: hidden;
+  padding: 0.16em 0;
+  margin: -0.16em 0;
+}
+.lv2-btn-label .l1,
+.lv2-btn-label .l2 {
+  display: block;
+  transition: translate 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.lv2-btn-label .l2 {
+  position: absolute;
+  inset: 0.16em 0;
+  translate: 0 165%;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.lv2 .button:hover .lv2-btn-label .l1 {
+  translate: 0 -165%;
+}
+.lv2 .button:hover .lv2-btn-label .l2 {
+  translate: 0 0;
+}
+
+/* Inputs: white, hairline inset — same 24px geometry as the buttons so the
+   hero pill reads as one matched pair (founder call, report page precedent). */
+.lv2 .input {
+  border-radius: 24px;
+  corner-shape: round;
+  border: 0;
+  background: var(--surface);
+  padding-inline: 24px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 12%, transparent);
+  transition: box-shadow 0.18s ease;
+}
+/* Ink focus ring, not brand pink — pink on an empty field reads as an error. */
+.lv2 .input:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--palette-chrome-100) 45%, transparent);
+}
+
+.lv2-button-group {
+  display: flex;
+  flex-flow: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ── Viewport band: nav + hero stage fill the first screen ── */
+
+.lv2-viewport {
+  /* svh, not dvh: six sections follow this band — a dvh band grows/shrinks
+     with the iOS toolbar, shifting everything below it on every scroll. */
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 2.5rem;
+}
+@media (max-width: 767px) {
+  .lv2-viewport {
+    padding: 0 1.25rem;
+  }
+}
+
+.lv2-nav {
+  flex: none;
+  padding: 20px 0 14px;
+}
+.lv2-nav-inner {
+  width: 100%;
+  max-width: 74rem;
+  margin-inline: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+.lv2-nav-wordmark {
+  display: inline-flex;
+  align-items: center;
+}
+.lv2-nav-wordmark img {
+  height: 44px;
+  width: auto;
+  display: block;
+}
+@media (max-width: 479px) {
+  .lv2-nav-wordmark img {
+    height: 32px;
+  }
+}
+
+/* ── The snake stage — shared by the hero and the closing CTA ── */
+
+.lv2-stage {
+  position: relative;
+  overflow: hidden;
+  touch-action: pan-y pinch-zoom;
+}
+.lv2-stage-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Hero flavor: fills the viewport band, copy anchored to the bottom. */
+.lv2-viewport .lv2-stage {
+  width: 100%;
+  max-width: 74rem;
+  margin-inline: auto;
+  flex: 1;
+  min-height: 480px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.lv2-stage-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  /* H1 sits centered against the taller right column (subhead + CTAs) */
+  align-items: center;
+  gap: clamp(2rem, 4vw, 3.5rem);
+  width: 100%;
+  margin-top: auto;
+  padding-bottom: clamp(3rem, 10vh, 6rem);
+  text-align: left;
+}
+/* The hidden starting state exists only once JS marks the page (.lv2-anim on
+   <html>) — pre-hydration paint and no-JS visitors always see the copy. */
+.lv2-anim .lv2-stage-content {
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(8px);
+}
+.lv2-anim .lv2-stage-content.is-in {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  transition:
+    opacity 0.9s ease,
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.9s ease;
+}
+.lv2-hero-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.75rem;
+  max-width: clamp(280px, 38vw, 32rem);
+  flex: none;
+}
+.lv2-h2 {
+  position: relative;
+  font-weight: 500;
+  font-size: 1.125rem;
+  line-height: 1.45;
+  letter-spacing: 0;
+  text-wrap: pretty;
+}
+.lv2-h2-snake {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  color: var(--elevated-surface);
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  clip-path: path("M 0 0 Z");
+}
+@media (max-width: 1079px) {
+  .lv2-stage-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  .lv2-hero-right {
+    max-width: 32rem;
+    padding-top: 0;
+  }
+}
+@media (max-width: 479px) {
+  .lv2-stage-content {
+    gap: 1.25rem;
+  }
+  .lv2-hero-right {
+    gap: 1.25rem;
+  }
+  .lv2-h2 {
+    font-size: 1rem;
+  }
+}
+
+.lv2-h1 {
+  position: relative;
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 700;
+  /* Sized so the long line ("You run your company." = 11.143em, measured)
+     always fits its column: font <= available / 11.35 (metric + 2%).
+     Two lines, always. Desktop available = (V - 80px gutters) - 38vw right
+     column - 4vw gap = 0.58V - 80, and 0.58/11.35 = 5.11vw (the static page's
+     5.286vw assumed its narrower 36vw column). */
+  font-size: clamp(2.5rem, calc(5.11vw - 7.05px), 3.4rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-top: -0.4rem;
+  margin-bottom: -1.2rem;
+  padding-bottom: 0.6rem;
+}
+.lv2-h1 * {
+  font-family: inherit;
+}
+/* stacked: full stage width, gutter 2.5rem down to 767px then 1.25rem */
+@media (max-width: 1079px) {
+  .lv2-h1 {
+    font-size: min(3.4rem, calc(8.811vw - 7.05px));
+  }
+}
+@media (max-width: 767px) {
+  .lv2-h1 {
+    font-size: min(3.4rem, calc(8.811vw - 3.52px));
+  }
+}
+/* each sentence is one line — never allowed to wrap internally */
+.lv2-h1 .ln {
+  white-space: nowrap;
+}
+/* duplicate headline revealed where the snake passes */
+.lv2-h1-snake {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  color: var(--elevated-surface);
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  padding-bottom: 0.6rem;
+  clip-path: path("M 0 0 Z");
+}
+
+/* The owner.com-style live experience: domain in, report out. */
+.lv2-hero-pill {
+  display: flex;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+.lv2-hero-pill .input {
+  flex: 1;
+  min-width: 0;
+}
+/* Invalid domain: the negative ring. The lv2 input is border-0/box-shadow,
+   so the kit's layered border hook would be a no-op here. */
+.lv2 .input[data-err] {
+  box-shadow: inset 0 0 0 2px var(--negative-stroke);
+}
+@media (max-width: 479px) {
+  .lv2-hero-pill {
+    flex-direction: column;
+  }
+  .lv2-hero-pill .button {
+    width: 100%;
+  }
+}
+
+/* ── Section scaffolding below the hero ── */
+
+.lv2s {
+  /* Same vertical rhythm token as the reused social-proof sections
+     (112px desktop / 96px below 1024) so the page breathes evenly. */
+  padding: var(--spacing-home-landing-section-y) 2.5rem;
+}
+@media (max-width: 767px) {
+  .lv2s {
+    padding-inline: 1.25rem;
+  }
+}
+.lv2-container {
+  width: 100%;
+  max-width: 74rem;
+  margin-inline: auto;
+}
+/* Section-background alternation (synthetic/greptile rhythm): the page walks
+   cream → white → plum → cream → white → pink-10 → cream. */
+.lv2s--surface {
+  background: var(--surface);
+}
+.lv2s--brand {
+  background: var(--weak-branded-surface);
+}
+.lv2-section-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  max-width: 47rem;
+  margin-bottom: clamp(2.5rem, 6vh, 4rem);
+}
+.lv2-section-header .button {
+  margin-top: 0.5rem;
+}
+.lv2-section-title {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: clamp(2rem, 3.4vw, 2.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.lv2-section-title * {
+  font-family: inherit;
+}
+.lv2-section-lede {
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--subtle-text);
+  text-wrap: pretty;
+}
+
+/* ── How it works ── */
+
+.lv2-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3rem, 8vh, 5.5rem);
+}
+.lv2-step {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: center;
+}
+.lv2-step-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+.lv2-step-num {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: clamp(2.25rem, 3.4vw, 3rem);
+  line-height: 1;
+  /* pink-40, not pink-30 — the surface pink is 2.3:1 on cream; the numerals
+     are decorative (the <ol> carries order) but should still read. */
+  color: var(--palette-pink-40);
+}
+.lv2-step-title {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.lv2-step-body {
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: var(--subtle-text);
+  max-width: 30rem;
+  text-wrap: pretty;
+}
+.lv2-step-media {
+  position: relative;
+  border-radius: 28px;
+  corner-shape: round;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  max-width: 520px;
+  width: 100%;
+  justify-self: end;
+}
+/* The loops share the page's cream canvas — a hairline ring is the only
+   frame; painted in an overlay so it sits above the video. */
+.lv2-step-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
+  pointer-events: none;
+}
+/* alternate rows: media left, copy right */
+.lv2-step:nth-child(even) .lv2-step-media {
+  order: -1;
+  justify-self: start;
+}
+.lv2-step-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+@media (max-width: 899px) {
+  .lv2-step {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .lv2-step-media,
+  .lv2-step:nth-child(even) .lv2-step-media {
+    order: 1; /* copy first, loop under it */
+    justify-self: stretch;
+    max-width: none;
+  }
+}
+
+/* ── Lead-finding deep dive ──
+   One continuous pipeline: numbered copy on the left rail (dotted connector,
+   feedback-loop spine motif), a mock app panel on the right — same visual
+   language as the agents-loop video. No card grid. */
+
+.lv2-dive-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.lv2-dive-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 30rem);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+  padding: clamp(1.75rem, 4vh, 2.75rem) 0;
+}
+/* the rail: a dotted spine threading the numbers together */
+.lv2-dive-step::before {
+  content: "";
+  position: absolute;
+  left: 1.3rem;
+  top: 0;
+  bottom: 0;
+  border-left: 2px dotted color-mix(in srgb, var(--palette-chrome-100) 18%, transparent);
+}
+.lv2-dive-step:first-child::before {
+  top: clamp(1.75rem, 4vh, 2.75rem);
+}
+.lv2-dive-step:last-child::before {
+  bottom: auto;
+  height: clamp(1.75rem, 4vh, 2.75rem);
+}
+.lv2-dive-copy {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.625rem;
+  padding-left: 4rem;
+}
+.lv2-dive-num {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2.6rem;
+  height: 2.6rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--elevated-surface);
+  box-shadow: inset 0 0 0 2px var(--palette-pink-40);
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: var(--palette-pink-40);
+}
+.lv2-dive-title {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: clamp(1.375rem, 2vw, 1.75rem);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.lv2-dive-body {
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--subtle-text);
+  max-width: 34rem;
+  text-wrap: pretty;
+}
+
+/* mock app panels — window chrome + rows, Fono for the data voice */
+.lv2-dive-panel {
+  background: var(--surface);
+  border-radius: 18px;
+  corner-shape: round;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
+  overflow: hidden;
+}
+.lv2-dive-panel-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 10px 14px;
+  border-bottom: 1px solid color-mix(in srgb, var(--palette-chrome-100) 6%, transparent);
+}
+.lv2-dive-panel-dots {
+  display: inline-flex;
+  gap: 5px;
+}
+.lv2-dive-panel-dots i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--palette-chrome-100) 12%, transparent);
+}
+.lv2-dive-panel-label {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 600;
+  font-size: 0.71875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--subtle-text);
+}
+.lv2-dive-rows {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+}
+.lv2-dive-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 10px 14px;
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+.lv2-dive-row + .lv2-dive-row {
+  border-top: 1px solid color-mix(in srgb, var(--palette-chrome-100) 5%, transparent);
+}
+.lv2-dive-row.is-dropped {
+  opacity: 0.5;
+}
+.lv2-dive-row.is-lead {
+  background: var(--weak-branded-surface);
+}
+.lv2-dive-grow {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.lv2-dive-mono {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 500;
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Scoring rows put both classes on one span; .lv2-dive-grow's display:flex
+   disables text-overflow, so mobile rows cut mid-word instead of ellipsizing. */
+.lv2-dive-mono.lv2-dive-grow {
+  display: block;
+}
+.lv2-dive-name {
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+.lv2-dive-sub {
+  font-size: 0.8125rem;
+  color: var(--subtle-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lv2-dive-tag {
+  flex: none;
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 600;
+  font-size: 0.71875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  /* chrome-90: chrome-80 measured 4.42:1 on the 5%-chrome chip — just under AA */
+  color: var(--palette-chrome-90);
+  background: color-mix(in srgb, var(--palette-chrome-100) 5%, transparent);
+  border-radius: 100vw;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+.lv2-dive-tag.is-warm {
+  color: var(--palette-pink-40);
+  background: var(--weak-branded-surface);
+}
+.lv2-dive-fit {
+  flex: none;
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  color: var(--palette-pink-40);
+  background: var(--surface);
+  border-radius: 100vw;
+  padding: 5px 11px;
+  box-shadow: inset 0 0 0 1.5px var(--palette-pink-40);
+  white-space: nowrap;
+}
+.lv2-dive-live {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--palette-pink-40);
+  animation: lv2-dive-pulse 2s ease-in-out infinite;
+}
+@keyframes lv2-dive-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--palette-pink-40) 45%, transparent);
+  }
+  55% {
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--palette-pink-40) 0%, transparent);
+  }
+}
+.lv2-dive-avatar {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 0.71875rem;
+  color: var(--text);
+}
+.lv2-dive-avatar[data-tone="yellow"] {
+  background: var(--alt-strong-branded-surface-02);
+}
+.lv2-dive-avatar[data-tone="purple"] {
+  background: var(--alt-strong-branded-surface-01);
+}
+.lv2-dive-avatar[data-tone="mint"] {
+  background: var(--positive-surface);
+}
+.lv2-dive-bar {
+  flex: none;
+  width: 72px;
+  height: 6px;
+  border-radius: 100vw;
+  background: color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
+  overflow: hidden;
+}
+.lv2-dive-bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--strong-branded-surface);
+}
+.lv2-dive-score {
+  flex: none;
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 0.8125rem;
+}
+
+.lv2-dive-proof {
+  list-style: none;
+  margin: 1.5rem 0 2rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+.lv2-dive-proof li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.625rem;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.lv2-dive-proof svg {
+  flex: none;
+  align-self: center;
+  color: var(--palette-pink-40);
+}
+
+@media (max-width: 899px) {
+  .lv2-dive-step {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .lv2-dive-step::before {
+    display: none; /* the rail reads as clutter once the rows stack */
+  }
+  .lv2-dive-copy {
+    padding-left: 0;
+  }
+  .lv2-dive-num {
+    position: static;
+    margin-bottom: 0.25rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lv2-dive-live {
+    animation: none;
+  }
+}
+
+/* ── Testimonials: the kit's own white band — part of the page's
+      cream/white alternation (tweets + UGC read as one white chapter) ── */
+.lv2 .lv2-testimonials {
+  padding-inline: 2.5rem;
+}
+@media (max-width: 767px) {
+  .lv2 .lv2-testimonials {
+    padding-inline: 1.25rem;
+  }
+}
+/* the strip itself escapes the padding via the section-direct-child pattern */
+.lv2 .lv2-testimonials .home-landing-testimonials {
+  margin-inline: -2.5rem;
+}
+@media (max-width: 767px) {
+  .lv2 .lv2-testimonials .home-landing-testimonials {
+    margin-inline: -1.25rem;
+  }
+}
+.lv2 .lv2-testimonials .lv2-section-header {
+  margin-bottom: 0;
+}
+/* The UGC wall rides directly under the tweets — one breath between the
+   strips, not two full section paddings (founder call 2026-08-06). */
+.lv2 .lv2-testimonials {
+  padding-block-end: calc(2 * var(--spacing-xl));
+}
+.lv2 .home-ugc {
+  padding-block-start: 0;
+}
+
+/* ── Manifesto — the dark chapter, scroll-driven (synthetic's cream→dark
+   flip). ScrollTrigger pins the section on desktop; the DEFAULT styles below
+   are the resolved beat-4 scene so mobile / reduced-motion / no-JS visitors
+   always get the complete chapter. Canvas internals follow the pancake-studio
+   loop grammar (shorts/agents-loop): white cards on soft shadows, panel-grey
+   chips with a live dot, mint = done, ✓ glyph never a drawn check. ── */
+
+.lv2-manifesto {
+  background: var(--inverted-surface);
+  color: var(--text-on-inverted-surface);
+  /* tilted cards may poke past the canvas box — clip, never scroll */
+  overflow: hidden;
+}
+@media (min-width: 900px) {
+  /* One composed viewport-high frame while pinned. */
+  .lv2-manifesto {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: clamp(3rem, 6svh, 5rem);
+  }
+}
+.lv2-manifesto-title {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: clamp(2.25rem, 3.6vw, 3.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+.lv2-manifesto-title * {
+  font-family: inherit;
+}
+.lv2-manifesto-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 28rem);
+  gap: clamp(2.5rem, 6vw, 6rem);
+  align-items: center;
+  margin-top: clamp(2rem, 4svh, 3.5rem);
+}
+
+/* The four beats. Default: stacked, all readable (mobile / no-JS / reduced
+   motion). In pin mode (.lv2-manifesto--pin, added by GSAP on desktop) the
+   slot overlays them and ONE sentence shows at a time, display-sized — no
+   spoiling the ones still to come (founder call 2026-08-06). */
+.lv2-manifesto-beats {
+  max-width: 34rem;
+}
+.lv2-manifesto-slot {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 2.6svh, 2rem);
+}
+.lv2-manifesto-beat {
+  font-size: clamp(1.125rem, 1.35vw, 1.375rem);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+/* The payoff line lands in brand pink. */
+.lv2-manifesto-beat:last-child {
+  color: var(--strong-branded-surface);
+  font-weight: 500;
+}
+.lv2-manifesto--pin .lv2-manifesto-slot {
+  position: relative;
+  min-height: 13rem;
+}
+.lv2-manifesto--pin .lv2-manifesto-beat {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  font-size: clamp(1.5rem, 2.1vw, 2.125rem);
+  line-height: 1.4;
+}
+/* Beat progress ticks — pin mode only; GSAP paints the active one pink. */
+.lv2-manifesto-ticks {
+  display: none;
+}
+.lv2-manifesto--pin .lv2-manifesto-ticks {
+  display: flex;
+  gap: 10px;
+  margin-top: 1.75rem;
+}
+.lv2-manifesto-tick {
+  width: 28px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 247, 236, 0.22);
+}
+
+/* The canvas: beads behind, the founder's product window, six task cards.
+   GSAP also treats it as the camera (push-in scale, impact jolts). */
+.lv2-manifesto-canvas {
+  position: relative;
+  height: clamp(420px, 58svh, 540px);
+}
+.lv2-manifesto-bead {
+  position: absolute;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  opacity: 0.9;
+}
+.lv2-manifesto-bead[data-tone="golden"] {
+  width: 46%;
+  left: -4%;
+  top: 26%;
+  background: var(--alt-strong-branded-surface-02);
+}
+.lv2-manifesto-bead[data-tone="purple"] {
+  width: 38%;
+  right: -2%;
+  top: 2%;
+  background: var(--alt-strong-branded-surface-01);
+}
+.lv2-manifesto-bead[data-tone="mint"] {
+  width: 30%;
+  left: 38%;
+  top: 56%;
+  background: var(--positive-surface);
+}
+
+/* The founder's product window — studio window grammar: white card, one big
+   soft shadow, no border, a 2px rule under the bar. */
+.lv2-mwin {
+  position: absolute;
+  top: 2%;
+  left: 14%;
+  width: 62%;
+  z-index: 2;
+  background: var(--surface);
+  border-radius: 20px;
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+.lv2-mwin-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 2px solid rgba(44, 0, 42, 0.07);
+}
+.lv2-mwin-mark {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--text);
+}
+.lv2-mwin-url {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 500;
+  font-size: 0.6875rem;
+  letter-spacing: 0.03em;
+  color: rgba(44, 0, 42, 0.62);
+}
+.lv2-mwin-body {
+  position: relative;
+  padding: 16px;
+}
+.lv2-mwin-line {
+  display: block;
+  height: 12px;
+  border-radius: 6px;
+  background: #f7ede5;
+}
+.lv2-mwin-line + .lv2-mwin-line {
+  margin-top: 10px;
+}
+.lv2-mwin-line:nth-child(1) {
+  width: 92%;
+}
+.lv2-mwin-line:nth-child(2) {
+  width: 68%;
+}
+.lv2-mwin-line:nth-child(3) {
+  width: 82%;
+}
+.lv2-mwin-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: #f7ede5;
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 500;
+  font-size: 0.71875rem;
+  color: var(--text);
+  white-space: nowrap;
+}
+.lv2-mwin-chip-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--palette-pink-40);
+}
+
+/* Six task cards. Default = cleared: tidy grid, mint fill, ✓ landed.
+   GSAP rewinds them into the falling white mound mid-story. */
+.lv2-mtasks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.lv2-mtasks li {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #a8e5c9;
+  border: 2px solid rgba(44, 0, 42, 0.08);
+  color: var(--text);
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  line-height: 1;
+  padding: 10px 14px;
+  border-radius: 14px;
+  corner-shape: round;
+  white-space: nowrap;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+}
+.lv2-mtask-check {
+  font-weight: 700;
+  color: var(--palette-green-30);
+}
+
+/* Narrative-only props — cursor, "Ship it" button, backlog tally, impact
+   rings, signal dot. ALL default hidden so the resolved SSR scene is
+   unchanged; GSAP reveals them only inside the pinned desktop story. */
+.lv2-mship {
+  position: absolute;
+  left: 16px;
+  top: 84px;
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--elevated-surface);
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 600;
+  font-size: 0.71875rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+}
+.lv2-mcursor {
+  position: absolute;
+  left: 33%;
+  top: 30%;
+  z-index: 6;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.lv2-mtally {
+  position: absolute;
+  top: 4%;
+  right: 2%;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: #f7ede5;
+  color: var(--text);
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 500;
+  font-size: 0.71875rem;
+  white-space: nowrap;
+  transform-origin: 50% 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.lv2-mtally::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--palette-pink-40);
+}
+/* Two reusable aura rings (studio ping motif) — GSAP repositions them per
+   impact and fires fromTo with immediateRender:false; NO gsap.set, so the
+   hidden state lives here only. */
+.lv2-mping-a,
+.lv2-mping-b {
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    transparent 55%,
+    rgba(247, 237, 229, 0.5) 68%,
+    transparent 72%
+  );
+  transform: translate(-50%, -50%) scale(0.45);
+  opacity: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+/* Pancake's signal — travels from the mint bead to the first grid card. */
+.lv2-mdot {
+  position: absolute;
+  left: 53%;
+  top: 68%;
+  z-index: 1;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--positive-surface);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@media (max-width: 899px) {
+  .lv2-manifesto-grid {
+    grid-template-columns: 1fr;
+  }
+  .lv2-manifesto-canvas {
+    max-width: 26rem;
+    width: 100%;
+    height: 340px;
+    margin-top: 0.5rem;
+  }
+}
+/* Narrow phones: shrink the cards and pull the grid columns in so the longest
+   card never clips. !important beats the tidy-grid inline coordinates (GSAP
+   never runs at this width, so nothing else touches them). */
+@media (max-width: 479px) {
+  .lv2-mtasks li {
+    font-size: 0.71875rem;
+    padding: 8px 10px;
+    gap: 6px;
+    border-radius: 11px;
+  }
+  .lv2-mtasks li:nth-child(-n + 3) {
+    left: 0 !important;
+  }
+  .lv2-mtasks li:nth-child(n + 4) {
+    left: 46% !important;
+  }
+}
+
+/* ── Pricing ── */
+
+/* Card left, canonical pancake stack as the fold's counterweight right —
+   the /pricing page's own mascot, so the fold rhymes across pages. */
+.lv2-price-fold {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(2rem, 5vw, 5rem);
+}
+.lv2-price-decor {
+  flex: none;
+  width: min(330px, 26vw);
+}
+.lv2-price-decor .pancake-stack__svg {
+  width: 100%;
+  height: auto;
+}
+@media (max-width: 1079px) {
+  .lv2-price-decor {
+    display: none;
+  }
+}
+
+.lv2-price-card {
+  background: var(--surface);
+  border-radius: 28px;
+  corner-shape: round;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
+  padding: clamp(2rem, 4vw, 3rem);
+  max-width: 40rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+.lv2-price-figure {
+  display: flex;
+  align-items: baseline;
+  gap: 0.625rem;
+}
+.lv2-price-amount {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: clamp(3rem, 5vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.lv2-price-cycle {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--subtle-text);
+}
+.lv2-price-sub {
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: var(--subtle-text);
+  text-wrap: pretty;
+}
+.lv2-price-link {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 20px 8px;
+  line-height: 1;
+}
+/* Okara-style single-plan feature list — pink checks, one line each. */
+.lv2-price-features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+.lv2-price-features li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.625rem;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.lv2-price-features svg {
+  flex: none;
+  align-self: center;
+  color: var(--palette-pink-40);
+}
+/* /pricing rides the same skin: the band grows so the footer stays put. */
+.lv2-viewport--page .lv2s {
+  flex: 1;
+}
+
+/* ── Closing CTA band ── */
+
+.lv2-cta {
+  min-height: clamp(420px, 62vh, 580px);
+  display: flex;
+  align-items: center;
+}
+.lv2-cta-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 74rem;
+  margin-inline: auto;
+  padding: 4rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2rem;
+}
+.lv2-anim .lv2-cta-content {
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(8px);
+}
+.lv2-anim .lv2-cta-content.is-in {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  transition:
+    opacity 0.9s ease,
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.9s ease;
+}
+@media (max-width: 767px) {
+  .lv2-cta-content {
+    padding-inline: 1.25rem;
+  }
+}
+.lv2-cta-title {
+  position: relative;
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 700;
+  /* One line, no floor: "Try Pancake now" = 7.96em measured, so
+     font <= (V - gutters) / 7.96 — 12.56vw - 10.05px at the 2.5rem gutters,
+     12.56vw - 5.03px at the 1.25rem mobile gutters. A fixed floor would clip
+     the line on sub-360px phones (the hero formulas avoid floors too). */
+  font-size: min(3.4rem, calc(12.56vw - 10.05px));
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+@media (max-width: 767px) {
+  .lv2-cta-title {
+    font-size: min(3.4rem, calc(12.56vw - 5.03px));
+  }
+}
+.lv2-cta-title * {
+  font-family: inherit;
+}
+.lv2-cta-title-snake {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  color: var(--elevated-surface);
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  clip-path: path("M 0 0 Z");
+}
+
+/* ── Footer ── */
+
+.lv2-footer {
+  padding: 14px 2.5rem 20px;
+}
+@media (max-width: 767px) {
+  .lv2-footer {
+    padding-inline: 1.25rem;
+  }
+}
+.lv2-footer-inner {
+  width: 100%;
+  max-width: 74rem;
+  margin-inline: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-size: 14px;
+  font-weight: 500;
+}
+.lv2-footer-copy {
+  color: var(--subtle-text);
+}
+.lv2-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.1rem;
+}
+.lv2-footer-links a {
+  color: var(--subtle-text);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+.lv2-footer-links a:hover {
+  color: var(--text);
+}
+.lv2-footer-links .soc {
+  padding: 0.55rem;
+  margin: -0.55rem;
+}
+.lv2-footer-links .soc svg {
+  width: 19px;
+  height: 19px;
+  fill: currentColor;
+  display: block;
+}
+.lv2-footer-links .lv2-footer-legal {
+  margin-left: 0.4rem;
+}
+@media (max-width: 479px) {
+  .lv2-footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+  .lv2-footer-links {
+    gap: 1rem;
+  }
+}
+
+/* ── Modals: waitlist form + booking calendar (port of the static sheets) ── */
+
+.lv2-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: none;
+  padding: 1.25rem;
+  background: color-mix(in srgb, var(--palette-chrome-100) 55%, transparent);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.lv2-scrim.is-open {
+  display: grid;
+  place-items: center;
+}
+.lv2-sheet {
+  position: relative;
+  width: 100%;
+  max-width: 30rem;
+  background: var(--elevated-surface);
+  border-radius: 28px;
+  corner-shape: round;
+  padding: 2.25rem 2rem 2rem;
+  box-shadow: 0 24px 60px color-mix(in srgb, var(--palette-chrome-100) 22%, transparent);
+  animation: lv2-sheet-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.lv2-sheet.is-wide {
+  max-width: 61.5rem;
+  padding: 1.75rem 1rem 1rem;
+}
+@keyframes lv2-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (max-width: 479px) {
+  .lv2-sheet {
+    padding: 1.75rem 1.25rem 1.5rem;
+    border-radius: 22px;
+  }
+}
+
+.lv2-sheet-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--palette-chrome-100) 6%, transparent);
+  color: var(--text);
+  font: inherit;
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.lv2-sheet-close:hover {
+  background: color-mix(in srgb, var(--palette-chrome-100) 12%, transparent);
+}
+.lv2-sheet-close:focus-visible,
+.lv2-chip:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+.lv2-sheet h3 {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+.lv2-sheet-sub {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--subtle-text);
+  margin-bottom: 1.5rem;
+}
+.lv2-call-title {
+  padding: 0 0.75rem 0.9rem;
+}
+
+.lv2-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.1rem;
+}
+.lv2-field label,
+.lv2-field-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.lv2-field input,
+.lv2-field textarea {
+  font: inherit;
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--surface);
+  border: 0;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 12%, transparent);
+  border-radius: 14px;
+  corner-shape: round;
+  padding: 12px 14px;
+  width: 100%;
+  transition: box-shadow 0.18s ease;
+}
+.lv2-field textarea {
+  resize: vertical;
+  min-height: 74px;
+  line-height: 1.45;
+}
+.lv2-field input::placeholder,
+.lv2-field textarea::placeholder {
+  color: var(--subtle-text);
+}
+/* Ink focus ring, same rationale as the hero input: pink on an empty
+   field reads as an error state. */
+.lv2-field input:focus,
+.lv2-field textarea:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--palette-chrome-100) 45%, transparent);
+}
+.lv2-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.lv2-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.lv2-chip {
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text);
+  background: var(--surface);
+  border: 0;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 12%, transparent);
+  border-radius: 100vw;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.lv2-chip:hover {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 30%, transparent);
+}
+.lv2-chip[aria-pressed="true"] {
+  background: var(--strong-branded-surface);
+  box-shadow: inset 0 0 0 1px var(--strong-branded-surface);
+}
+
+/* Sheet buttons are full-width, submit and done-state Close alike (static:
+   `.sheet .button { width: 100%; margin-top: .5rem }`). */
+.lv2-sheet .button {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+.lv2-form-error {
+  font-size: 0.875rem;
+  color: var(--negative-text);
+  margin-top: 0.6rem;
+  min-height: 1.2em;
+}
+.lv2-sheet-done {
+  text-align: center;
+  padding: 1rem 0 0.5rem;
+}
+.lv2-sheet-done h3 {
+  margin-bottom: 0.5rem;
+}
+
+/* zcal renders its widget card at a fixed 950x610 inside the frame, offset
+   37px from the left and 80px from the top. FIT MODE holds the frame at
+   1024px and scales the whole card to the room available; NATIVE MODE hands
+   back to zcal's own tall scrollable layout below the readable floor. */
+.lv2-zcal-wrap {
+  overflow: hidden;
+  overflow: clip; /* no scroll container behind the clip */
+  border-radius: 18px;
+  background: var(--surface);
+  margin-inline: auto;
+  overscroll-behavior: contain;
+}
+.lv2-zcal-frame {
+  border: 0;
+  display: block;
+}
+.lv2-zcal-wrap.is-fit {
+  width: calc(950px * var(--zs, 1));
+  height: calc(610px * var(--zs, 1));
+}
+.lv2-zcal-wrap.is-fit .lv2-zcal-frame {
+  width: 1024px;
+  height: 690px;
+  transform-origin: top left;
+  transform: scale(var(--zs, 1)) translate(-37px, -80px);
+}
+.lv2-zcal-wrap.is-native {
+  width: 100%;
+  height: 780px;
+}
+.lv2-zcal-wrap.is-native .lv2-zcal-frame {
+  width: 100%;
+  height: 100%;
+  margin-top: 0;
+}
+.lv2-sheet-note {
+  font-size: 0.8125rem;
+  color: var(--subtle-text);
+  text-align: center;
+  margin-top: 0.75rem;
+}
+.lv2-sheet-note a {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.lv2-sheet-note.is-loud {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ── Reduced motion: everything still, everything visible ── */
+
+@media (prefers-reduced-motion: reduce) {
+  .lv2-stage-content,
+  .lv2-cta-content {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+  .lv2-btn-fx {
+    display: none;
+  }
+  .lv2-btn-label .l1,
+  .lv2-btn-label .l2 {
+    transition: none;
+  }
+  .lv2-sheet {
+    animation: none;
+  }
+}
