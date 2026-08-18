@@ -25,25 +25,25 @@ const STEPS: Step[] = [
       <>
         Add your website.
         <br />
-        Pancake creates the Brain.
+        Pancake builds your GTM Brain.
       </>
     ),
     body: (
       <>
-        Pancake turns your data into a living GTM strategy.
+        Pancake turns your website into a living plan.
         <br />
-        ICP, positioning, keywords and target accounts, always up to date.
+        Who buys from you, what to say to them, and where to show up. Always up to date.
       </>
     ),
     video: "/how/brain-loop.mp4",
-    alt: "Animation: from a single node, Pancake's Brain researches your company and grows into a full GTM knowledge graph — market profile, ICP, keywords, personas and market references.",
+    alt: "Animation: from a single node, Pancake's GTM Brain researches your company and grows into a full knowledge graph — market profile, ideal customers, keywords, personas and market references.",
   },
   {
     num: "02",
     title: "Agents start working.",
-    body: "Pancake autonomously launches outreach campaigns on hot leads and gets you ranked on Google and AI search.",
+    body: "Pancake reaches out to the people ready to buy and gets you found on Google and ChatGPT.",
     video: "/how/agents-loop.mp4",
-    alt: "Animation: the Pancake app finds ICP-checked leads and contacts them, then switches to the AI SEO planner publishing articles — with 'Recommended on Google' and 'Recommended by ChatGPT' chips.",
+    alt: "Animation: the Pancake app finds people who match your ideal customer and contacts them, then switches to the AI SEO planner publishing articles — with 'Recommended on Google' and 'Recommended by ChatGPT' chips.",
   },
   {
     num: "03",
@@ -60,11 +60,11 @@ export function HowItWorks() {
       <div className="lv2-container">
         <header className="lv2-section-header">
           <h2 id="lv2-how-title" className="lv2-section-title">
-            You build the product. Pancake sells it.
+            You run the business. Pancake sells it.
           </h2>
           <p className="lv2-section-lede">
             Pancake finds buyers in live conversations, writes outreach in your voice, publishes
-            articles that Google ranks and ChatGPT cites. Every day, while you ship.
+            articles that Google ranks and ChatGPT cites. Every day, while you work.
           </p>
         </header>
 

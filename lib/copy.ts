@@ -451,12 +451,12 @@ export const pricingV2 = {
   /** Okara's own header, the template the founder pointed at. */
   title: "Simple, transparent pricing",
   perMonth: "/ month flat",
-  blurb: "One subscription, the whole GTM team. Everything included.",
+  blurb: "One subscription, your whole sales and marketing team. Everything included.",
   /** Feature list — only claims the landing already makes. */
   features: [
-    "The Brain: ICP, positioning, keywords",
-    "Lead finding on live buying signals",
-    "Outreach campaigns in your voice",
+    "GTM Brain: who buys from you, and why",
+    "Finds people ready to buy, from live conversations",
+    "Outreach in your voice",
     "AI SEO: one article a day",
     "Self-improves from your feedback",
     "Spend caps and approvals built in",

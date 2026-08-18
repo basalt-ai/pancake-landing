@@ -21,27 +21,27 @@ import "@/app/_styles/landing-v2.css";
  * briefs/cmo-app/lp-skeleton-review.md).
  */
 
-// Page-level metadata mirrors the static landing head (GTM positioning);
+// Page-level metadata mirrors the hero (SMB positioning, 2026-08-11);
 // the root layout still carries the org-wide defaults.
 export const metadata: Metadata = {
-  title: "Pancake — You run your company. We run your GTM.",
+  title: "Pancake — You run your company. We bring you customers.",
   description:
-    "Pancake is a team of AI agents that understand your company and handle high quality GTM tasks autonomously.",
+    "Pancake is a team of AI agents that learn your business, find the people ready to buy, and reach out for you.",
   alternates: { canonical: "https://getpancake.ai" },
   openGraph: {
     type: "website",
     url: "https://getpancake.ai",
-    title: "You run your company. We run your GTM.",
+    title: "You run your company. We bring you customers.",
     description:
-      "Pancake is a team of AI agents that understand your company and handle high quality GTM tasks autonomously.",
+      "Pancake is a team of AI agents that learn your business, find the people ready to buy, and reach out for you.",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake" }],
     siteName: "Pancake",
   },
   twitter: {
     card: "summary_large_image",
-    title: "You run your company. We run your GTM.",
+    title: "You run your company. We bring you customers.",
     description:
-      "Pancake is a team of AI agents that understand your company and handle high quality GTM tasks autonomously.",
+      "Pancake is a team of AI agents that learn your business, find the people ready to buy, and reach out for you.",
     images: ["/og-image.png"],
   },
 };
@@ -55,7 +55,7 @@ const softwareApplicationJsonLd = {
   operatingSystem: "Web",
   url: "https://getpancake.ai",
   description:
-    "Pancake is a team of AI agents that understand your company and handle high quality GTM tasks autonomously: a living GTM Brain, outbound on hot leads, and content recommended on Google and AI search.",
+    "Pancake is a team of AI agents that learn your business, find the people ready to buy, and reach out for you: a living GTM Brain, outreach in your voice, and content recommended on Google and ChatGPT.",
   offers: {
     "@type": "Offer",
     url: "https://getpancake.ai/pricing",
