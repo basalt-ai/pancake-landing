@@ -15,6 +15,7 @@ import {
   WAITLIST_SLACK_DELIVERED_AT_FIELD,
   WAITLIST_SUBMISSION_ID_FIELD,
 } from "@/lib/analytics/waitlist-delivery";
+import { normalizeAirtableBaseId, normalizeAirtableToken } from "@/lib/airtable-config";
 import { getClientIp, rateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
@@ -383,9 +384,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Request not allowed." }, { status: 403 });
   }
 
-  const token = process.env.AIRTABLE_TOKEN;
-  const baseId = process.env.AIRTABLE_BASE_ID?.trim();
-  if (!token || !baseId || !/^app[a-zA-Z0-9]{14}$/.test(baseId)) {
+  const token = normalizeAirtableToken(process.env.AIRTABLE_TOKEN);
+  const baseId = normalizeAirtableBaseId(process.env.AIRTABLE_BASE_ID);
+  if (!token || !baseId) {
     return NextResponse.json({ error: "Waitlist backend is not configured." }, { status: 503 });
   }
 

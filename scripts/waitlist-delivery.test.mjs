@@ -16,6 +16,10 @@ import {
   isReportWaitlistResult,
   parseLandingWaitlistResult,
 } from "../lib/analytics/waitlist-response.ts";
+import {
+  normalizeAirtableBaseId,
+  normalizeAirtableToken,
+} from "../lib/airtable-config.ts";
 
 const secret = "test-secret-that-is-at-least-thirty-two-characters";
 const submissionId = "123e4567-e89b-42d3-a456-426614174000";
@@ -112,4 +116,12 @@ test("landing and report callers reject malformed 2xx response contracts", () =>
     true,
   );
   assert.equal(isReportWaitlistResult(null), false);
+});
+
+test("Airtable configuration trims surrounding whitespace and rejects internal CR/LF", () => {
+  assert.equal(normalizeAirtableToken(" \npat-example-token\r\n"), "pat-example-token");
+  assert.equal(normalizeAirtableToken("pat-example\ntoken"), undefined);
+  assert.equal(normalizeAirtableToken("   "), undefined);
+  assert.equal(normalizeAirtableBaseId("  app12345678901234\n"), "app12345678901234");
+  assert.equal(normalizeAirtableBaseId("app-invalid"), undefined);
 });

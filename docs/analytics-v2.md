@@ -12,13 +12,15 @@ A new waitlist record is the only primary conversion that can be measured today.
 As of this document:
 
 - The implementation is on branch `codex/ads-tracking-v2`, rebased from the current landing-page repository.
-- The Google Tag Manager changes are a draft and are **not published**.
+- Both Google Tag Manager changes are drafts and are **not published**: web workspace `6` has 28 modifications, and server workspace `7` has 1 modification.
 - The code is **not deployed to production** by this runbook.
+- Post-commit preview QA ran against `https://pancake-b4bpstlq1-getpancake.vercel.app`, deployment `dpl_GfK6T5qvwH2AnFT93LDtKAkwjLVJ`. The landing waitlist, fresh-session duplicate behavior, report-gate isolation, and scheduler loading passed; the exact Airtable QA rows were deleted afterward.
 - Pancake now owns Meta dataset/pixel `1427782115875153`. Its Traffic Permissions allow `getpancake.ai` and `zcal.co`, including their subdomains. Meta Lead tracking nevertheless remains paused because creating a new dataset-scoped CAPI token is blocked on Business Portfolio admin or developer access.
 - In Pancake **TEAM** settings—not personal Account settings—Zcal now shows GA4 `G-6KWBYRZSDX` and Meta Pixel `1427782115875153` connected. The connection state is UI-verified; actual booking-event delivery still requires a controlled booking and GA/Meta realtime validation.
 - The five Airtable analytics-delivery fields have been created and verified in Airtable. Deployment still requires a stable `ANALYTICS_EVENT_ID_SECRET`; without it, the waitlist API intentionally returns 503 before writing a lead.
-- A dedicated Pancake Reddit account/pixel is still pending. Reddit support has escalated the request for a separate `Pancake Main Ad Account` and pixel to a human; there is no ticket number yet.
-- Google Ads work is explicitly on hold until August 18, 2026. A new account has been started under customer ID `339-764-4166`, but it has no campaign, billing setup, or spend.
+- Production `AIRTABLE_TOKEN` was changed in place from Vercel's **Needs Attention** / non-sensitive state to **Sensitive**, without changing its value. Vercel now shows **Sensitive / Production**; the setting was updated on August 17, 2026, and no redeploy was triggered. Because the unchanged credential was previously readable, later rotation is still recommended.
+- Reddit Business Manager `Pancake` now has website `https://getpancake.ai`, confirmed by the UI success toast. A dedicated Pancake ad account/pixel is still pending; the support session ended at a satisfaction survey without a visible ticket/reference or a newly provisioned account.
+- Google Ads work is explicitly on hold until August 18, 2026 and requires admin approval before resuming. A new account has been started under customer ID `339-764-4166`, but it has no campaign, billing setup, or spend.
 
 No access token, webhook secret, API key, or local environment value belongs in this document.
 
@@ -96,7 +98,7 @@ The old `trial_click`, `meeting_click`, onboarding, Slack, and subscription even
 
 The first-party attribution cookie keeps an opaque attribution ID and an allow-listed, bounded history. Supported campaign identifiers include UTM parameters plus `fbclid`, `gclid`, `gbraid`, `wbraid`, `li_fat_id`, `msclkid`, `rdt_cid`, `ttclid`, and `twclid`.
 
-PostHog receives manual page views and the allow-listed acquisition events. On the landing integration, autocapture, page-leave capture, heatmaps, performance capture, and session recording are disabled. Referrers are reduced to their origin, and arbitrary URL parameters are removed.
+The production website code is configured to send PostHog manual page views and the allow-listed acquisition events. On the landing integration, autocapture, page-leave capture, heatmaps, performance capture, and session recording are disabled. Referrers are reduced to their origin, and arbitrary URL parameters are removed.
 
 For the landing waitlist (`Source=landing-v2`) only, the waitlist API normalizes email for duplicate lookup and performs an email-keyed Airtable upsert. Before the write, it creates a stable opaque `lead.<64 lowercase hex characters>` ID using HMAC-SHA256 over the normalized email and the server-only `ANALYTICS_EVENT_ID_SECRET`. The secret is mandatory, must contain at least 32 characters, and must remain stable across deployments. The browser receives only the opaque digest; no email address, Airtable record ID, secret, or free-form field is placed in the data layer.
 
@@ -118,16 +120,16 @@ Delivery timestamps are deliberately omitted from every upsert, so a concurrent/
 
 | Vendor or surface | Owner | Known identifiers and intended behavior |
 | --- | --- | --- |
-| GTM web container | GTM | Account `6360623272`; container `255346716`; public ID `GTM-P3Z79WKD`; current draft workspace `6` |
-| GTM server container | GTM / existing server endpoint | Container `255385456`; public ID `GTM-PRNN2DZS`; workspace `7`; GA transport endpoint `https://gtm.getpancake.ai` |
-| Google Analytics 4 | GTM | Measurement ID `G-6KWBYRZSDX`; receives the explicit page view and all v2 acquisition events |
+| GTM web container | GTM | Account `6360623272`; container `255346716`; public ID `GTM-P3Z79WKD`; workspace `6` has 28 unpublished modifications |
+| GTM server container | GTM / existing server endpoint | Container `255385456`; public ID `GTM-PRNN2DZS`; workspace `7` has 1 unpublished modification; GA transport endpoint `https://gtm.getpancake.ai` |
+| Google Analytics 4 | Two unpublished GTM drafts | Measurement ID `G-6KWBYRZSDX`; the web and server drafts together are configured to forward the explicit page view and all v2 acquisition events after production deployment and coordinated publication; `lead_submitted` key-event designation remains pending GA Editor access |
 | PostHog | Website code | EU Cloud project `Pancake-v1`, project ID `170554`; direct sanitized capture through `e.getpancake.ai` |
 | Meta | Base pixel in website code; browser Lead mapping in GTM; server Lead delivery inside the verified waitlist API; Zcal native booking integration | Pancake-owned website dataset/pixel `1427782115875153`; Traffic Permissions allow `getpancake.ai` and `zcal.co` plus subdomains; Pancake ad account `538746742816593`; direct initial `PageView` remains; browser and CAPI waitlist `Lead` must share the same opaque `event_id` |
 | LinkedIn | GTM only | Ad account `545060035`; company page `104917696`; partner ID `9238938`; event-specific waitlist conversion `29569610` named `v2_waitlist_lead_submitted` |
 | X Ads | GTM only | Ads account `18ce55v07al`; profile `@getpancake_ai`; website source `rehvg`; Lead event `rehvk`, full event ID `tw-rehvg-rehvk` |
-| Reddit | None until Pancake has a dedicated account and pixel | Business Manager `Pancake`, Business ID `53c537e5-7d98-4d2d-b641-1375882f0935`, still exposes only `BasaltAI Main Ad Account` and its pixel `a2_hvwir7k3hfy1`; the business website is `getbasalt.ai`; those Basalt assets are not approved for Pancake tracking |
-| Google Ads | On hold; no GTM conversion tag yet | Partially started Pancake customer ID `339-764-4166`; work is paused until August 18, 2026; there is no campaign, billing setup, or spend |
-| Zcal | Embedded scheduler, completed TEAM-level GA4/Meta native integrations, and preserved existing team webhook | Scheduler `ZEHl48rv`; GA4 `G-6KWBYRZSDX` connected; Meta Pixel `1427782115875153` connected; native verified-booking event is `zcal_invite_schedule_event`; controlled delivery validation remains pending |
+| Reddit | Tracking disabled until Pancake has a dedicated account and pixel | Business Manager `Pancake`, Business ID `53c537e5-7d98-4d2d-b641-1375882f0935`, now has website `https://getpancake.ai`, verified by a UI success toast; it still exposes only `BasaltAI Main Ad Account` and its paused pixel `a2_hvwir7k3hfy1`, which are not approved for Pancake tracking |
+| Google Ads | On hold; no GTM conversion tag yet | Partially started Pancake customer ID `339-764-4166`; work is paused until August 18, 2026 and explicit admin approval; there is no campaign, billing setup, or spend |
+| Zcal | Embedded scheduler, completed TEAM-level GA4/Meta native configuration, and preserved existing team webhook | Scheduler `ZEHl48rv`; GA4 `G-6KWBYRZSDX` connected; Meta Pixel `1427782115875153` connected; native booking event is configured as `zcal_invite_schedule_event`; actual delivery remains pending a controlled booking and GA/Meta realtime access |
 
 Steady-state ownership is deliberate:
 
@@ -136,13 +138,13 @@ Steady-state ownership is deliberate:
 - GA4 has no separate direct `gtag` installation.
 - PostHog remains direct because it is product analytics, not a GTM advertising tag.
 
-## Exact unpublished GTM draft
+## Exact unpublished GTM drafts
 
-The web-container workspace is a draft. Do not describe these changes as live until a named version is manually published.
+The web-container workspace shows **28 unpublished modifications**, and the server-container workspace shows **1 unpublished modification**, both verified directly in their GTM UIs. Do not describe either set as live until named versions are manually published.
 
 ### Data Layer Variables
 
-The draft contains these version-2 variables:
+Web workspace `6` contains these version-2 variables:
 
 - `DLV - event_id`
 - `DLV - schema_version`
@@ -162,9 +164,11 @@ The draft contains these version-2 variables:
 - `DLV - presentation`
 - `DLV - attribution_id`
 
+The website code clears every optional mapped field on every data-layer push. This prevents a value retained by GTM's data model—for example, a previous failure's `failure_type`—from leaking into a later event.
+
 ### Triggers
 
-- `Production page load`, page-view trigger limited to `getpancake.ai` and `www.getpancake.ai`.
+- `Production page load`, requiring Page Hostname regex `^(www\.)?getpancake\.ai$`.
 
 - `v2 acquisition events`, custom-event regex:
 
@@ -174,7 +178,7 @@ The draft contains these version-2 variables:
 
   `lead_submitted`
 
-  It also requires the exact production hostname `getpancake.ai` or `www.getpancake.ai`.
+  It also requires Page Hostname regex `^(www\.)?getpancake\.ai$`.
 
 - The legacy `Custom events` trigger remains attached to the GA event-forwarding tag and currently matches:
 
@@ -185,22 +189,22 @@ The draft contains these version-2 variables:
 ### GA4 tags
 
 - `Google Tag G-6KWBYRZSDX`
-  - Fires on Initialization / All Pages.
+  - Is configured to fire on Initialization / All Pages when the web draft is published with the production code.
   - Sets `server_container_url=https://gtm.getpancake.ai`.
   - Sets `send_page_view=false`.
 - `Forward events to GA4`
-  - Sends event name `{{Event}}` to `G-6KWBYRZSDX`.
+  - Is configured to send event name `{{Event}}` to `G-6KWBYRZSDX` after the code is deployed to production and the web GTM draft is published.
   - Uses both the legacy `Custom events` trigger and `v2 acquisition events`.
-  - Maps these event parameters: `event_id`, `schema_version`, `page_path`, `page_location`, `page_title`, `page_view_kind`, `funnel_stage`, `conversion_tier`, `cta_id`, `form_id`, `lead_type`, `handoff_count`, `failure_type`, `status_code`, `scheduler_id`, `presentation`, and `attribution_id`.
+  - Maps exactly 17 Data Layer Variables: `event_id`, `schema_version`, `page_path`, `page_location`, `page_title`, `page_view_kind`, `funnel_stage`, `conversion_tier`, `cta_id`, `form_id`, `lead_type`, `handoff_count`, `failure_type`, `status_code`, `scheduler_id`, `presentation`, and `attribution_id`.
 
 ### Advertising tags
 
-- Existing `LinkedIn - Page Visit`, partner ID `9238938`, fires on production page loads.
-- `LinkedIn - v2 Waitlist Lead - 29569610` fires only on `v2 waitlist lead submitted`.
-- `X - Base Pixel - rehvg` loads the Pancake X website source on production page loads.
-- `X - Waitlist Lead Submitted - rehvk` fires `tw-rehvg-rehvk` only on `v2 waitlist lead submitted`, carrying the stable event ID as the conversion ID.
+- Existing `LinkedIn - Page Visit`, partner ID `9238938`, is configured to fire on production page loads when the code is live and the web GTM draft is published.
+- `LinkedIn - v2 Waitlist Lead - 29569610` is configured to fire only on `v2 waitlist lead submitted` after production deployment and GTM publication.
+- `X - Base Pixel - rehvg` is configured to load the Pancake X website source on production page loads after production deployment and GTM publication.
+- `X - Waitlist Lead Submitted - rehvk` is configured to fire `tw-rehvg-rehvk` only on `v2 waitlist lead submitted` after production deployment and GTM publication, setting `conversion_id` to the stable `event_id`.
 - The legacy `Reddit - Page Visit` tag points to Basalt pixel `a2_hvwir7k3hfy1`. It is paused, must stay paused, and must not be reused. Do not insert or enable any Reddit ID until the separate Pancake pixel exists and ownership has been verified.
-- `Meta - v2 Waitlist Lead - Browser` is present but **paused** until all Meta gates below pass. When enabled, it sends the browser `Lead` with the server-issued event ID. The website's server-only CAPI module independently sends the matching server copy after the waitlist API verifies a new eligible Airtable row, and can retry a missing server delivery for the same persisted submission chain; GTM never calls a public CAPI relay.
+- `Meta - v2 Waitlist Lead - Browser` is present but **paused** until all Meta gates below pass. Its UI-verified code sends browser `Lead` using Meta's `eventID` option with the server-issued event ID. The website's server-only CAPI module independently sends the matching server copy after the waitlist API verifies a new eligible Airtable row, and can retry a missing server delivery for the same persisted submission chain; GTM never calls a public CAPI relay.
 
 ### Host gating already present in the draft and code
 
@@ -212,21 +216,58 @@ Setting `PANCAKE_ANALYTICS_DEBUG=1` on a non-production deployment enables GTM f
 
 Do not remove either layer of gating. The deployment-environment check and the runtime/container hostname checks protect different failure modes.
 
+### Server-container GA forwarding dependency
+
+GA4 delivery is a two-container pipeline:
+
+`website dataLayer -> GTM-P3Z79WKD web container -> gtm.getpancake.ai -> GTM-PRNN2DZS server container -> GA4`
+
+A direct audit of server container `GTM-PRNN2DZS`—container `255385456`, workspace `7`—found 0 draft changes before this fix and one tag:
+
+- `Google Analytics GA4`
+- Measurement ID `G-6KWBYRZSDX`
+- Event Name `{{Event Name}}`
+- Passes all event parameters and user properties
+- Triggered by `Custom Event`
+
+The published server trigger admitted only the legacy event set, including `page_view`:
+
+`^(trial_click|meeting_click|meeting_booked|page_view|user_signed_up|slack_connected|onboarding_done|subscription_started)$`
+
+It did not admit any of the seven v2 acquisition events. Publishing only the web draft would therefore have sent those events to the server endpoint, where the published server trigger would have dropped them before GA4.
+
+The unpublished server draft now expands `Custom Event` to include:
+
+- `lead_form_viewed`
+- `lead_form_started`
+- `scheduler_opened`
+- `scheduler_loaded`
+- `scheduler_fallback_clicked`
+- `lead_submit_failed`
+- `lead_submitted`
+
+The resulting server draft regex is:
+
+`^(trial_click|meeting_click|meeting_booked|page_view|user_signed_up|slack_connected|onboarding_done|subscription_started|lead_form_viewed|lead_form_started|scheduler_opened|scheduler_loaded|scheduler_fallback_clicked|lead_submit_failed|lead_submitted)$`
+
+The server workspace UI now shows exactly **1 unpublished modification**. This fixes the server-side filter configuration, but it does not prove GA4 receipt. Both workspace `6` and workspace `7` must be preview-validated and published as one coordinated release.
+
 ## GA4 page-view design
 
 There is one source of GA page-view truth:
 
 1. The website emits one `page_view` on initial render and one on each App Router navigation.
 2. The GTM Google Tag uses `send_page_view=false`, so it does not generate a competing automatic initial page view.
-3. `Forward events to GA4` forwards the website event.
-4. There is no direct `gtag` page-view sender in the website.
+3. Once published with the production code, web tag `Forward events to GA4` is intended to send the website event to the server endpoint.
+4. Once the server draft is also published, its expanded `Custom Event` trigger is intended to admit `page_view` and the seven v2 acquisition events, and `Google Analytics GA4` is intended to forward them to GA4.
+5. There is no direct `gtag` page-view sender in the website.
 
 In the GA4 web stream, open Enhanced Measurement, then Page views, and disable or verify disabled the advanced option that sends events for browser-history changes. If that setting remains enabled, Next.js navigation can be counted twice even though GTM uses `send_page_view=false`.
 
 Once GA access exists:
 
 - Confirm one initial and one virtual event in DebugView and Realtime.
-- Mark `lead_submitted` as the only current v2 key event.
+- Pending GA Editor access: mark `lead_submitted` as the only current v2 key event. It is not yet verified or configured as a GA4 key event.
 - Register useful low-cardinality event dimensions such as `cta_id`, `funnel_stage`, `conversion_tier`, `form_id`, `lead_type`, `scheduler_id`, `failure_type`, and `page_view_kind`.
 - Do not register `event_id` as a reporting dimension because it is intentionally unique and would create high cardinality.
 - Verify that requests reach the server endpoint successfully and that the server container does not add duplicate GA events.
@@ -248,28 +289,49 @@ There is no public browser-to-CAPI endpoint. After an origin-checked, rate-limit
 
 ## Validation matrix
 
-Use GTM Preview / Tag Assistant against a non-production deployment first. Production advertising tags must remain blocked by hostname while preview behavior is inspected.
+Use GTM Preview / Tag Assistant against a non-production deployment first. Production advertising tags must remain blocked by hostname while preview behavior is inspected. This matrix is the intended acceptance contract, not a claim that GA, LinkedIn, or X has already received these events. GA delivery requires the reviewed code in production plus both GTM drafts; LinkedIn and X require the production code plus the web draft. All three still require the relevant vendor setup/access and final validation.
 
 | Test | Data layer and backend expectation | Analytics expectation | Advertising expectation |
 | --- | --- | --- | --- |
-| Initial `/` load | Exactly one `page_view` with `page_view_kind=initial`; query-free path and a location containing only approved attribution parameters | One GA DebugView event and one PostHog `$pageview` | On production only: one Meta `PageView`, one LinkedIn base visit, one X base load; no Reddit request |
-| Navigate to `/pricing` | Exactly one `page_view` with `page_view_kind=virtual` | One GA event and one PostHog `$pageview` | No primary conversion |
-| Open waitlist | One `lead_form_viewed` with the clicked CTA ID | GA and PostHog receive the micro event | No paid conversion |
-| Begin waitlist form | At most one `lead_form_started` for the interaction | GA and PostHog receive the micro event | No paid conversion |
-| Invalid email | One diagnostic `lead_submit_failed` with `failure_type=validation` | GA and PostHog receive the diagnostic event | No paid conversion |
-| Server or network failure | One diagnostic failure with the correct type and safe status when available | GA and PostHog receive the diagnostic event | No paid conversion |
-| Later duplicate email | A new submission UUID does not match the stored owner; API returns `newly_created=false`, `recovered_conversion=false`, and no event ID | No primary key event | No paid conversion |
-| Exact retry after ambiguous timeout | The reused submission UUID matches; API returns `newly_created=false`, `recovered_conversion=true`, and the same opaque event ID; only blank Slack/Meta ledger destinations are retried | The browser emits the canonical `lead_submitted` once for that retry chain | Same Meta `event_id`; no second logical Meta conversion |
-| Honeypot submission | Pretend-success response with `newly_created=false` | No primary key event | No paid conversion |
-| New unique email | One Airtable row, one HMAC-derived opaque `lead.<64 lowercase hex characters>` ID, one submission UUID, delivery timestamps only after success, and one `lead_submitted` | Exactly one GA key event and one PostHog event | Exactly one LinkedIn conversion and one X conversion; Meta browser Lead and CAPI remain off until their gates pass; no Reddit or Google Ads conversion yet |
-| Open scheduler | One `scheduler_opened` | GA and PostHog micro event | No paid conversion |
-| Zcal loads | One `scheduler_loaded` | GA and PostHog micro event | No paid conversion |
-| Click Zcal fallback | One `scheduler_fallback_clicked` | GA and PostHog micro event | No paid conversion |
-| Controlled booking through the connected Zcal invite | No landing-browser `meeting_booked`; Zcal should emit its verified native `zcal_invite_schedule_event` | Confirm that event once in GA4 Realtime/DebugView | Confirm the corresponding booking event once in Meta Events Manager/Test Events; this remains unverified until the controlled booking and realtime access are available |
-| Complete a booking after webhook launch | One signature-verified, idempotent `meeting_booked` | One key event | Exactly one conversion in each explicitly enabled vendor |
+| Initial `/` load | Exactly one `page_view` with `page_view_kind=initial`; query-free path and a location containing only approved attribution parameters | After production deployment and both GTM publications, expect one GA event; production PostHog code is configured for one `$pageview` | On production only, expect the direct Meta `PageView` and the published LinkedIn/X base tags to fire; Reddit tracking stays disabled and the paused Basalt tag must not fire |
+| Navigate to `/pricing` | Exactly one `page_view` with `page_view_kind=virtual` | After production deployment and both GTM publications, expect one GA event; production PostHog code is configured for one `$pageview` | No primary conversion is intended |
+| Open waitlist | One `lead_form_viewed` with the clicked CTA ID | The web and server GA drafts plus production PostHog code are configured for the micro event | No paid conversion is intended |
+| Begin waitlist form | At most one `lead_form_started` for the interaction | The web and server GA drafts plus production PostHog code are configured for the micro event | No paid conversion is intended |
+| Invalid email | One diagnostic `lead_submit_failed` with `failure_type=validation` | The web and server GA drafts plus production PostHog code are configured for the diagnostic event | No paid conversion is intended |
+| Server or network failure | One diagnostic failure with the correct type and safe status when available | The web and server GA drafts plus production PostHog code are configured for the diagnostic event | No paid conversion is intended |
+| Later duplicate email | A new submission UUID does not match the stored owner; API returns `newly_created=false`, `recovered_conversion=false`, and no event ID | No primary `lead_submitted` is intended | No paid conversion is intended |
+| Exact retry after ambiguous timeout | The reused submission UUID matches; API returns `newly_created=false`, `recovered_conversion=true`, and the same opaque event ID; only blank Slack/Meta ledger destinations are retried | The browser emits the canonical `lead_submitted` once for that retry chain | When Meta is later enabled and validated, the deduplication design reuses the same `event_id`; no Meta delivery is currently claimed |
+| Honeypot submission | Pretend-success response with `newly_created=false` | No primary `lead_submitted` is intended | No paid conversion is intended |
+| New unique email | One Airtable row, one HMAC-derived opaque `lead.<64 lowercase hex characters>` ID, one submission UUID, delivery timestamps only after success, and one `lead_submitted` | The web and server GA drafts are configured to forward the event after both are published, but GA4 key-event designation is pending Editor access; production PostHog code is configured to capture it | LinkedIn `29569610` and X `tw-rehvg-rehvk` are configured to fire after production deployment and web GTM publication; Meta browser Lead and CAPI remain off until their gates pass; Reddit tracking is disabled; Google Ads is not configured |
+| Open scheduler | One `scheduler_opened` | The web and server GA drafts plus production PostHog code are configured for the micro event | No paid conversion is intended |
+| Zcal loads | One `scheduler_loaded` | The web and server GA drafts plus production PostHog code are configured for the micro event | No paid conversion is intended |
+| Click Zcal fallback | One `scheduler_fallback_clicked` | The web and server GA drafts plus production PostHog code are configured for the micro event | No paid conversion is intended |
+| Controlled booking through the connected Zcal invite | No landing-browser `meeting_booked`; Zcal is separately configured to emit native `zcal_invite_schedule_event` | Validate actual delivery in GA4 Realtime/DebugView | Validate the separate native event in Meta Events Manager/Test Events; no delivery has been verified because no controlled booking was made and realtime access is pending |
+| Complete a booking after canonical webhook launch | One signature-verified, idempotent `meeting_booked` from the confirmed webhook path | Configure and then validate the canonical key event | Configure and validate one deduplicated cross-vendor conversion per explicitly enabled vendor; the native Zcal signal does not replace this canonical contract |
 | Privacy inspection | No email, free text, secret, arbitrary query, or full external referrer in event payloads | Sanitized URLs only | Only approved fields and attribution identifiers |
 
 A controlled new-lead test writes a real Airtable row and can notify Slack. Agree on the test address and record-handling plan before running it.
+
+## Post-commit preview verification — August 17, 2026
+
+The post-commit verification used:
+
+- Preview: `https://pancake-b4bpstlq1-getpancake.vercel.app`
+- Vercel deployment ID: `dpl_GfK6T5qvwH2AnFT93LDtKAkwjLVJ`
+
+The following behavior was directly verified:
+
+- A new `landing-v2` waitlist submission succeeded.
+- The same email submitted from a fresh browser session also completed the user flow and was correctly treated as a duplicate.
+- Airtable contained exactly one matching `landing-v2` row. Its analytics event ID matched `lead.<64 lowercase hexadecimal characters>` and its submission ID was a valid UUID. `Slack Delivered At` was blank because `SLACK_WAITLIST_WEBHOOK_URL` was not configured in preview, so Slack delivery was **not tested**. `Meta CAPI Delivered At` was blank because Meta server delivery was preview-gated, as intended.
+- The exact waitlist QA row was deleted after verification.
+- The `/ai-gtm-report` email-gate contract passed and remained outside the advertising-delivery ledger. Its exact Airtable QA row was also deleted.
+- The Zcal scheduler iframe and available slots loaded without browser errors.
+- No controlled booking was made, so `zcal_invite_schedule_event`, native GA4/Meta booking delivery, and the preserved webhook's booked-event behavior remain untested.
+
+The web GTM workspace was checked directly in its UI: its 28 draft modifications, tag settings, triggers, 17 mapped variables, vendor IDs, and paused Meta state matched the configuration documented above. The later direct server-container audit found the legacy trigger gap described above and produced the single unpublished server-workspace fix. Neither container's live event flow has yet been certified through Tag Assistant and GA4.
+
+Tag Assistant's popup could not establish its live preview connection inside Codex Browser. Direct DOM inspection did show `gtm.js` and `gtag` loaded on the preview, which proves that the scripts loaded but does **not** certify tag firing or GA4 receipt. Final Tag Assistant validation must run in a normal main-world browser. GA4 DebugView/Realtime validation must follow after the required property access is available.
 
 ## External blockers
 
@@ -279,17 +341,17 @@ The Pancake Website dataset/pixel `1427782115875153` is owned by Pancake. Its Tr
 
 ### Reddit
 
-Reddit Business Manager `Pancake` has Business ID `53c537e5-7d98-4d2d-b641-1375882f0935`, but it still contains only `BasaltAI Main Ad Account`, using pixel `a2_hvwir7k3hfy1`, and the business website is `getbasalt.ai`. The UI exposes no **Create Ad Account** control, so Codex did not create or repurpose anything.
+Reddit Business Manager `Pancake` has Business ID `53c537e5-7d98-4d2d-b641-1375882f0935`. Its business website was successfully changed from the former Basalt URL to `https://getpancake.ai`, confirmed by Reddit's UI success toast. The manager still contains only `BasaltAI Main Ad Account`, using pixel `a2_hvwir7k3hfy1`, and the UI exposes no **Create Ad Account** control, so Codex did not create or repurpose anything.
 
-A support request was sent for a separate `Pancake Main Ad Account` and dedicated Pancake pixel. Reddit's AI support escalated the request to a human at 21:04 PT; the transfer is still pending and no ticket number has been issued. Until a human completes or clarifies the request, no Reddit identifier is approved for this release. The old Basalt pixel remains paused and must not be reused.
+A support request was sent for a separate `Pancake Main Ad Account` and dedicated Pancake pixel. Reddit's AI support escalated the request to a human at 21:04 PT, but the support session subsequently closed to a satisfaction survey without a visible ticket/reference, a human response, or a newly provisioned account. Basalt remains the only account shown. No Reddit identifier is approved for this release, and the old Basalt pixel remains paused and must not be reused.
 
 ### Google Ads
 
-Google Ads is explicitly on hold until August 18, 2026. A new Pancake account has been partially started under customer ID `339-764-4166`, but no campaign has been created, billing has not been configured, and no spend is authorized or occurring. Do not add a GTM conversion tag, campaign, billing method, or budget before work resumes. When it does resume, first verify account ownership and measurement access; create a waitlist conversion only after that, and create a booked-meeting conversion only after the signed Zcal webhook exists.
+Google Ads is explicitly on hold until August 18, 2026 and may resume only with admin approval. A new Pancake account has been partially started under customer ID `339-764-4166`, but no campaign has been created, billing has not been configured, and no spend is authorized or occurring. Do not add a GTM conversion tag, campaign, billing method, or budget before both conditions are met. When work resumes, first verify account ownership and measurement access; create a waitlist conversion only after that, and create a booked-meeting conversion only after the signed Zcal webhook exists.
 
 ### Google Analytics
 
-The current Google login does not show the property for `G-6KWBYRZSDX`. Editor access is still required to open DebugView and verify Enhanced Measurement, custom definitions, key events, retention, filters, and any future Google Ads link. The code and GTM architecture can be reviewed without that role, but end-to-end GA4 delivery must not be called verified until DebugView/Realtime have been observed in the property.
+The current Google login does not show the property for `G-6KWBYRZSDX`. Editor access is still required to open DebugView and verify Enhanced Measurement, custom definitions, key events, retention, filters, and any future Google Ads link. The code and both GTM drafts can be reviewed without that role, but end-to-end GA4 delivery must not be called verified until Tag Assistant has connected through both the web and server containers in a normal main-world browser and DebugView/Realtime have been observed in the property.
 
 The website and GTM design is intentionally manual for Next.js SPA page views. Per Google's SPA guidance, the GA4 web stream's Enhanced Measurement option for page changes based on browser-history events must be disabled to prevent duplicate virtual page views. This setting cannot be certified until the property is accessible.
 
@@ -297,11 +359,11 @@ The website and GTM design is intentionally manual for Next.js SPA page views. P
 
 The Zcal team already has an active webhook at `https://hooks.getpancake.ai/integrations/zcal/webhook`; Zcal showed it as last used four days before this review. It remains preserved: do not replace, disable, or repoint it until its owner, signature validation, payload handling, and downstream behavior have been confirmed.
 
-The native integrations are now completed and UI-verified in Pancake **TEAM** settings, not Account settings: GA4 `G-6KWBYRZSDX` is connected and Meta Pixel `1427782115875153` is connected. Both are configured around the verified booking signal `zcal_invite_schedule_event`. This is a genuine scheduled-booking event, not a scheduler open/load/click, and must stay distinct from the landing micro events.
+The native integration settings are completed and UI-verified in Pancake **TEAM** settings, not Account settings: GA4 `G-6KWBYRZSDX` is connected and Meta Pixel `1427782115875153` is connected. Both are configured around the native booking event `zcal_invite_schedule_event`. This event is separate from the landing scheduler open/load/click micro events, and its actual delivery has not yet been verified.
 
-Connection status is complete, but conversion-event delivery is not yet certified. Run one controlled booking, then observe exactly one `zcal_invite_schedule_event` in GA4 Realtime/DebugView and the corresponding event in Meta Events Manager/Test Events. This validation remains blocked until the controlled booking and the required GA/Meta realtime access are available.
+Connection status is complete, but conversion-event delivery is not yet certified. Run one controlled booking, then verify whether exactly one `zcal_invite_schedule_event` appears in GA4 Realtime/DebugView and the corresponding event appears in Meta Events Manager/Test Events. This validation remains blocked until the controlled booking and the required GA/Meta realtime access are available.
 
-The canonical first-party `meeting_booked` contract still requires confirmation that the preserved webhook verifies the official signature, enforces timestamp and replay protection, and stores an idempotency key. Its real payload must also be inspected to design an opaque way to correlate the booking with the originating attribution/session without placing personal data in the browser event layer.
+The canonical cross-vendor `meeting_booked` contract still requires confirmation that the preserved webhook verifies the official signature, enforces timestamp and replay protection, and stores an idempotency key. Its real payload must also be inspected to design an opaque way to correlate the booking with the originating attribution/session without placing personal data in the browser event layer. The separately configured native `zcal_invite_schedule_event` does not replace or certify this canonical webhook contract.
 
 ### Airtable delivery durability
 
@@ -309,31 +371,39 @@ The authorized `landing-v2` delivery ledger closes the normal commit-before-time
 
 Airtable `performUpsert` does not support a conditional create-only owner field. In the extremely narrow case where two first `landing-v2` requests for the same previously unseen email arrive simultaneously with different submission UUIDs, the losing update can overwrite `Analytics Submission ID`. Both requests still use the same event ID and only one Airtable row is created, but exact browser ownership cannot be guaranteed under that race. The route suppresses an immediate browser conversion on the losing upsert response; do not claim transactional exactly-once browser delivery. Meta remains deduplicable by the stable event ID. Slack is at-least-once if its success timestamp cannot be recorded.
 
+### Vercel credential hardening
+
+The production `AIRTABLE_TOKEN` environment variable had been flagged **Needs Attention** because it was not marked sensitive. It was updated in place with the same value on August 17, 2026, and is now UI-verified as **Sensitive / Production**. This settings change did not trigger a Vercel redeploy, and no credential value is recorded here.
+
+Code-level input hardening is also implemented in `lib/airtable-config.ts`. It trims surrounding deployment-UI whitespace, accepts only a structurally valid Airtable base ID, and rejects token values containing internal carriage-return or line-feed characters. The landing waitlist route, the shared Airtable client, and the metrics path all use these normalizers. The focused configuration tests pass 6/6. This guard reduces malformed header and deployment-input failures; it does not replace later credential rotation.
+
+Marking the variable sensitive prevents future UI reads, but it does not undo the fact that the unchanged credential was previously readable. Rotate the Airtable credential in a later controlled maintenance step, update Vercel with the replacement, verify the waitlist contract, and revoke the old credential. Do not rotate it casually during the coordinated analytics release.
+
 ## Deployment procedure
 
 ### Before production
 
 1. Reconfirm the five already-created Airtable ledger fields above, then configure a stable 32+-character `ANALYTICS_EVENT_ID_SECRET` before deploying the new API contract. If the secret is absent or shorter than 32 characters, a `landing-v2` waitlist request returns 503 and performs no Airtable write; the separate `gtm-report` email gate remains outside the advertising ledger. Keep the same secret across deployments; changing it changes the deterministic event ID and breaks recovery for existing v2 rows.
 2. Finish code review, focused delivery-ledger tests, type checking, linting, and a production build.
-3. Verify the existing production/preview host gating in both website code and the GTM draft.
+3. Verify the existing production/preview host gating in website code and web GTM workspace `6`; verify the event allow-list and GA tag in server GTM workspace `7`.
 4. Create a Vercel preview with `PANCAKE_ANALYTICS_DEBUG=1`; do not promote it automatically. By itself, this flag enables GTM only, while direct Meta and PostHog remain disabled. Meta CAPI test delivery also requires its separate test code, feature flag, and matching credentials.
-5. Connect GTM Preview to the preview and execute the validation matrix. Confirm explicitly that every production-host paid tag remains blocked.
-6. Keep Meta paused, keep Reddit absent, and keep Google Ads untouched until the explicit August 18, 2026 resume point.
-7. Record the exact commit and GTM workspace state that passed testing.
+5. Connect GTM Preview in a normal main-world browser and execute the validation matrix through **both** web workspace `6` and server workspace `7`. Confirm explicitly that every production-host paid tag remains blocked, that all seven v2 events reach the server container, and that the server GA tag is eligible to fire for them. GA4 receipt still requires DebugView/Realtime access.
+6. Keep Meta paused, keep Reddit tracking disabled with the Basalt tag paused, and keep Google Ads untouched until August 18, 2026 **and** explicit admin approval.
+7. Record the exact commit, web workspace `6` state, and server workspace `7` state that passed testing.
 
 ### Coordinated production release
 
 1. Tristan manually promotes the verified code to production.
 2. Confirm that the new production page loads and emits one `schema_version=1` initial `page_view`.
-3. Immediately publish the matching GTM web-container draft as a clearly named version.
-4. Do not publish GTM before the code. Draft-first would suppress initial GA page views until the new code arrives. Code-first can produce a very short interval with two GA initial page views because the previous GTM version still auto-sends one; keep that interval as short as possible.
+3. Publish the reviewed server-container workspace `7` draft as a clearly named version, then immediately publish the matching web-container workspace `6` draft. The server allow-list expansion is backward-compatible and must land first so the web container cannot send v2 events into the legacy server-side filter.
+4. Treat the two GTM publications as one coordinated release. Do not publish the web draft before the production code or the server draft. Code-first can produce a very short interval with two GA initial page views because the previous web GTM version still auto-sends one; keep that interval as short as possible.
 5. Run production smoke checks for page view, modal micro events, scheduler micro events, and one agreed unique waitlist lead.
 6. Check GA DebugView/Realtime and PostHog promptly. Advertising platforms can report with delay, so recheck their diagnostics later without firing duplicate test submissions.
-7. Record the production Vercel deployment and GTM version together as one release pair.
+7. Record the production Vercel deployment, web GTM version, and server GTM version together as one release set.
 
 ## Rollback
 
-The code deployment and GTM version form a pair. Do not roll back only one and leave the mismatch in place.
+The code deployment, web GTM version, and server GTM version form one release set. Do not roll back only one layer and leave the pipeline mismatched.
 
 ### A single vendor is wrong
 
@@ -341,17 +411,18 @@ Pause only the affected vendor conversion tag, publish a small named GTM hotfix,
 
 ### The GTM release is broadly wrong
 
-1. Revert the web container to the previously published GTM version.
-2. Immediately roll the Vercel production deployment back to its matching previous code version.
-3. Expect a brief return of the previous tracking behavior during the coordinated rollback; verify GA page views and ensure no new conversion tag continues firing.
+1. Revert the web container to its previously published GTM version so it stops producing the new mapping.
+2. Revert the server container to its matching previously published GTM version.
+3. Immediately roll the Vercel production deployment back to its matching previous code version.
+4. Expect a brief return of the previous tracking behavior during the coordinated rollback; verify GA page views and ensure no new conversion tag continues firing.
 
 ### The website release is broadly wrong
 
 1. Pause or revert new conversion tags first so they cannot consume malformed events.
 2. Roll Vercel back to the previous deployment.
-3. Restore the matching previous GTM version immediately afterward.
+3. Restore the matching previous web and server GTM versions immediately afterward.
 
-Never delete a GTM container, tag history, or vendor dataset during rollback. Published versions and Vercel deployments provide the recovery path.
+Never delete a GTM container, tag history, or vendor dataset during rollback. Published versions in both containers and Vercel deployments provide the recovery path.
 
 ## Accepted no-CMP limitation
 
