@@ -263,6 +263,14 @@ body.modal-open:has(main.lv2) {
   align-items: flex-start;
   gap: 1.75rem;
   max-width: clamp(280px, 38vw, 32rem);
+  /* Shrinkable, never fixed: the stage caps at 74rem while 38vw keeps
+     growing with the viewport, so on wide screens a `flex: none` column
+     overshot the stage and overflow:hidden clipped the H2 mid-word. */
+  flex: 0 1 auto;
+  min-width: 0;
+}
+/* The H1 is the row's fixed member; the right column yields to it. */
+.lv2-stage-content > .lv2-h1 {
   flex: none;
 }
 .lv2-h2 {
