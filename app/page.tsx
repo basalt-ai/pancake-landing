@@ -26,14 +26,14 @@ import "@/app/_styles/landing-v2.css";
 export const metadata: Metadata = {
   title: "Pancake — You run your company. We bring you customers.",
   description:
-    "Pancake’s AI agents monitor buying signals, find and contact warm leads, and grow your visibility in AI search. They also learn from every interaction.",
+    "Pancake’s AI agents monitor buying signals, find and contact warm leads, while growing your visibility in AI search. They also learn from every interaction.",
   alternates: { canonical: "https://getpancake.ai" },
   openGraph: {
     type: "website",
     url: "https://getpancake.ai",
     title: "You run your company. We bring you customers.",
     description:
-      "Pancake’s AI agents monitor buying signals, find and contact warm leads, and grow your visibility in AI search. They also learn from every interaction.",
+      "Pancake’s AI agents monitor buying signals, find and contact warm leads, while growing your visibility in AI search. They also learn from every interaction.",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake" }],
     siteName: "Pancake",
   },
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "You run your company. We bring you customers.",
     description:
-      "Pancake’s AI agents monitor buying signals, find and contact warm leads, and grow your visibility in AI search. They also learn from every interaction.",
+      "Pancake’s AI agents monitor buying signals, find and contact warm leads, while growing your visibility in AI search. They also learn from every interaction.",
     images: ["/og-image.png"],
   },
 };
@@ -55,7 +55,7 @@ const softwareApplicationJsonLd = {
   operatingSystem: "Web",
   url: "https://getpancake.ai",
   description:
-    "Pancake’s AI agents monitor buying signals, find and contact warm leads, and grow your visibility in AI search. They also learn from every interaction. A living GTM Brain, outreach in your voice, and content recommended on Google and ChatGPT.",
+    "Pancake’s AI agents monitor buying signals, find and contact warm leads, while growing your visibility in AI search. They also learn from every interaction. A living GTM Brain, outreach in your voice, and content recommended on Google and ChatGPT.",
   offers: {
     "@type": "Offer",
     url: "https://getpancake.ai/pricing",
