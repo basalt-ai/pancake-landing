@@ -58,7 +58,9 @@ export function LandingPricing() {
               ))}
             </ul>
             <div className="lv2-button-group">
-              <FxPill data-lv2-open="waitlist">Join waitlist</FxPill>
+              <FxPill data-lv2-open="waitlist" data-analytics-id="waitlist_pricing_card">
+                Join waitlist
+              </FxPill>
               <Link href="/pricing" className="lv2-price-link">
                 See full pricing
               </Link>

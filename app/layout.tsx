@@ -7,6 +7,7 @@ import "./_styles/home-ugc.css";
 import { AnalyticsEvents } from "@/components/analytics/AnalyticsEvents";
 import { PostHogAttribution } from "@/components/analytics/PostHogAttribution";
 import { ProductHuntBadge } from "@/components/shared/ProductHuntBadge";
+import { META_BROWSER_PIXEL_ID } from "@/lib/analytics/vendor-config";
 
 /**
  * Lato — Slack's UI typeface (SIL Open Font License, served via next/font/google).
@@ -130,9 +131,18 @@ const webSiteJsonLd = {
 };
 
 const googleTagManagerId = "GTM-P3Z79WKD";
-const metaPixelId = "1668160384441545";
-const linkedInPartnerId = "9238938";
-const redditPixelId = "a2_hvwir7k3hfy1";
+const metaPixelId = META_BROWSER_PIXEL_ID;
+// Vercel exposes VERCEL_ENV at build and runtime. Advertising and product
+// analytics run only in production. GTM alone can be explicitly enabled on a
+// preview for Tag Assistant; paid tags must still carry their production-host
+// conditions inside the container.
+const productionVendorTrackingEnabled =
+  process.env.NODE_ENV === "production" && process.env.VERCEL_ENV === "production";
+const tagManagerDebugEnabled =
+  !productionVendorTrackingEnabled && process.env.PANCAKE_ANALYTICS_DEBUG === "1";
+const tagManagerEnabled = productionVendorTrackingEnabled || tagManagerDebugEnabled;
+const productionHostnameGuard =
+  "var h=window.location.hostname.toLowerCase();if(h!=='getpancake.ai'&&h!=='www.getpancake.ai'){return;}";
 
 export default function RootLayout({
   children,
@@ -144,18 +154,21 @@ export default function RootLayout({
       <head>
         {/* eslint-disable-next-line @next/next/no-sync-scripts -- Attribution must run before a bounce. */}
         <script src="/pancake-attribution.min.js"></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        {tagManagerEnabled ? (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `(function(){${tagManagerDebugEnabled ? "" : productionHostnameGuard}(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','${googleTagManagerId}');`,
-          }}
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `!function(f,b,e,v,n,t,s)
+})(window,document,'script','dataLayer','${googleTagManagerId}');})();`,
+            }}
+          />
+        ) : null}
+        {productionVendorTrackingEnabled ? (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `(function(){${productionHostnameGuard}!function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 n.callMethod.apply(n,arguments):n.queue.push(arguments)};
 if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
@@ -164,45 +177,10 @@ t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
 fbq('init', '${metaPixelId}');
-fbq('track', 'PageView');`,
-          }}
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `_linkedin_partner_id = "${linkedInPartnerId}";
-window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
-window._linkedin_data_partner_ids.push(_linkedin_partner_id);
-(function(l) {
-  if (!l) {
-    window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
-    window.lintrk.q = [];
-  }
-  var s = document.getElementsByTagName("script")[0];
-  var b = document.createElement("script");
-  b.type = "text/javascript";
-  b.async = true;
-  b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
-  s.parentNode.insertBefore(b, s);
-})(window.lintrk);`,
-          }}
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `!function(w,d){
-  if (!w.rdt) {
-    var p = w.rdt = function(){p.sendEvent ? p.sendEvent.apply(p, arguments) : p.callQueue.push(arguments)};
-    p.callQueue = [];
-    var t = d.createElement("script");
-    t.src = "https://www.redditstatic.com/ads/pixel.js";
-    t.async = true;
-    var s = d.getElementsByTagName("script")[0];
-    s.parentNode.insertBefore(t, s);
-  }
-}(window, document);
-rdt("init", "${redditPixelId}");
-rdt("track", "PageVisit");`,
-          }}
-        />
+fbq('track', 'PageView');})();`,
+            }}
+          />
+        ) : null}
         {/* Organization + WebSite JSON-LD — present on every page */}
         <script
           type="application/ld+json"
@@ -218,35 +196,10 @@ rdt("track", "PageVisit");`,
           hydration mismatch caused by SSR vs client-side serialization
           of inline JSX `style` props. */}
       <body>
-        <noscript>
-          <iframe
-            src={`https://www.googletagmanager.com/ns.html?id=${googleTagManagerId}`}
-            height="0"
-            width="0"
-            style={{ display: "none", visibility: "hidden" }}
-          />
-        </noscript>
-        <noscript>
-          {/* eslint-disable-next-line @next/next/no-img-element -- Meta Pixel noscript fallback requires a raw tracking pixel. */}
-          <img
-            height="1"
-            width="1"
-            style={{ display: "none" }}
-            src={`https://www.facebook.com/tr?id=${metaPixelId}&ev=PageView&noscript=1`}
-            alt=""
-          />
-        </noscript>
-        <noscript>
-          {/* eslint-disable-next-line @next/next/no-img-element -- LinkedIn Insight Tag noscript fallback requires a raw tracking pixel. */}
-          <img
-            height="1"
-            width="1"
-            style={{ display: "none" }}
-            src={`https://px.ads.linkedin.com/collect/?pid=${linkedInPartnerId}&fmt=gif`}
-            alt=""
-          />
-        </noscript>
-        <PostHogAttribution />
+        {/* This React funnel cannot be used without JavaScript. Omitting the
+            GTM/Meta noscript fallbacks avoids unguarded requests from a
+            production deployment's generated Vercel hostname. */}
+        {productionVendorTrackingEnabled ? <PostHogAttribution /> : null}
         <a href="#main-content" className="skip-to-content">
           Skip to main content
         </a>

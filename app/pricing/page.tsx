@@ -96,8 +96,14 @@ export default function PricingPage() {
                 ))}
               </ul>
               <div className="lv2-button-group">
-                <FxPill data-lv2-open="waitlist">Join waitlist</FxPill>
-                <FxPill variant="outline" data-lv2-open="call">
+                <FxPill data-lv2-open="waitlist" data-analytics-id="waitlist_pricing_page">
+                  Join waitlist
+                </FxPill>
+                <FxPill
+                  variant="outline"
+                  data-lv2-open="call"
+                  data-analytics-id="call_pricing_page"
+                >
                   Book a call
                 </FxPill>
               </div>

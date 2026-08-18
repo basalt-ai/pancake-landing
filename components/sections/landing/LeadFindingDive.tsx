@@ -219,7 +219,9 @@ export function LeadFindingDive() {
         </ul>
 
         <div className="lv2-button-group">
-          <FxPill data-lv2-open="waitlist">Join waitlist</FxPill>
+          <FxPill data-lv2-open="waitlist" data-analytics-id="waitlist_lead_finding">
+            Join waitlist
+          </FxPill>
         </div>
       </div>
     </section>

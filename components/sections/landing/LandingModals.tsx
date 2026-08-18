@@ -2,6 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import {
+  isCallCtaId,
+  isWaitlistCtaId,
+  pushAcquisitionEvent,
+  type AcquisitionCtaId,
+} from "@/lib/analytics/data-layer";
+
 import { suspendAllSnakes } from "./snake";
 
 /**
@@ -12,6 +19,11 @@ import { suspendAllSnakes } from "./snake";
  */
 
 const ZCAL_URL = "https://zcal.co/i/ZEHl48rv?embed=1&embedType=iframe";
+const SCHEDULER_ID = "ZEHl48rv" as const;
+const WAITLIST_FORM_CONTEXT = {
+  form_id: "landing_waitlist",
+  lead_type: "waitlist",
+} as const;
 const HANDOFF_CHIPS = [
   "Outbound",
   "Content & social",
@@ -41,6 +53,11 @@ export function LandingModals() {
   const emailRef = useRef<HTMLInputElement>(null);
   const zcalWrapRef = useRef<HTMLDivElement>(null);
   const zcalFrameRef = useRef<HTMLIFrameElement>(null);
+  const activeCtaIdRef = useRef<AcquisitionCtaId | null>(null);
+  const waitlistStartedRef = useRef(false);
+  const leadSubmittedRef = useRef(false);
+  const submittingRef = useRef(false);
+  const schedulerLoadedRef = useRef(false);
 
   const close = useCallback(() => {
     openNameRef.current = null;
@@ -49,15 +66,44 @@ export function LandingModals() {
     document.body.classList.remove("modal-open");
     suspendAllSnakes(false);
     if (lastFocus.current instanceof HTMLElement) lastFocus.current.focus();
+    activeCtaIdRef.current = null;
   }, []);
 
-  const open = useCallback((name: "waitlist" | "call") => {
+  const open = useCallback((name: "waitlist" | "call", rawCtaId: string | null) => {
     if (openNameRef.current) return; // a dialog is already up — ignore background triggers
+
+    const ctaId =
+      name === "waitlist"
+        ? isWaitlistCtaId(rawCtaId)
+          ? rawCtaId
+          : null
+        : isCallCtaId(rawCtaId)
+          ? rawCtaId
+          : null;
+
+    activeCtaIdRef.current = ctaId;
+    waitlistStartedRef.current = false;
+    schedulerLoadedRef.current = false;
     openNameRef.current = name;
     lastFocus.current = document.activeElement;
     setOpenName(name);
     document.body.classList.add("modal-open");
     suspendAllSnakes(true);
+
+    if (name === "waitlist" && isWaitlistCtaId(ctaId) && !leadSubmittedRef.current) {
+      pushAcquisitionEvent("lead_form_viewed", {
+        ...WAITLIST_FORM_CONTEXT,
+        cta_id: ctaId,
+        open_method: "cta",
+      });
+    }
+    if (name === "call" && isCallCtaId(ctaId)) {
+      pushAcquisitionEvent("scheduler_opened", {
+        scheduler_id: SCHEDULER_ID,
+        cta_id: ctaId,
+        presentation: "embed",
+      });
+    }
   }, []);
 
   // Unmount with a dialog open (client-side navigation) must not strand the
@@ -76,7 +122,8 @@ export function LandingModals() {
       const t = (e.target as Element | null)?.closest?.("[data-lv2-open]");
       if (!t) return;
       const name = t.getAttribute("data-lv2-open");
-      if (name === "waitlist" || name === "call") open(name);
+      const ctaId = t.getAttribute("data-analytics-id");
+      if (name === "waitlist" || name === "call") open(name, ctaId);
     };
     document.addEventListener("click", onClick);
     return () => document.removeEventListener("click", onClick);
@@ -181,26 +228,56 @@ export function LandingModals() {
     };
   }, [openName, fitZcal]);
 
-  const toggleChip = (chip: string) =>
+  const markWaitlistStarted = useCallback(() => {
+    if (waitlistStartedRef.current || leadSubmittedRef.current) return;
+    const ctaId = activeCtaIdRef.current;
+    if (!isWaitlistCtaId(ctaId)) return;
+
+    waitlistStartedRef.current = true;
+    pushAcquisitionEvent("lead_form_started", {
+      ...WAITLIST_FORM_CONTEXT,
+      cta_id: ctaId,
+    });
+  }, []);
+
+  const toggleChip = (chip: string) => {
+    markWaitlistStarted();
     setChips((prev) => {
       const next = new Set(prev);
       if (next.has(chip)) next.delete(chip);
       else next.add(chip);
       return next;
     });
+  };
 
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (submittingRef.current || leadSubmittedRef.current) return;
+    markWaitlistStarted();
+
     const form = e.currentTarget;
     const data = new FormData(form);
     const email = String(data.get("email") || "").trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      const ctaId = activeCtaIdRef.current;
+      if (isWaitlistCtaId(ctaId)) {
+        pushAcquisitionEvent("lead_submit_failed", {
+          ...WAITLIST_FORM_CONTEXT,
+          cta_id: ctaId,
+          failure_type: "validation",
+        });
+      }
       setError("Enter a valid email address.");
       emailRef.current?.focus();
       return;
     }
     setError("");
+    // Preserve attribution across the async request even if the visitor closes
+    // the sheet before the response returns or opens a different CTA meanwhile.
+    const submissionCtaId = activeCtaIdRef.current;
+    submittingRef.current = true;
     setSending(true);
+    let failureTracked = false;
     try {
       const res = await fetch("/api/waitlist", {
         method: "POST",
@@ -212,16 +289,53 @@ export function LandingModals() {
           handoff: Array.from(chips),
           website: String(data.get("website") || ""),
           source: "landing-v2",
+          ctaId: submissionCtaId,
         }),
       });
+      const responseBody = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        newly_created?: boolean;
+        conversion_event_id?: string | null;
+      };
       if (!res.ok) {
-        const body = (await res.json().catch(() => ({}))) as { error?: string };
-        throw new Error(body.error || "Something went wrong.");
+        if (isWaitlistCtaId(submissionCtaId)) {
+          pushAcquisitionEvent("lead_submit_failed", {
+            ...WAITLIST_FORM_CONTEXT,
+            cta_id: submissionCtaId,
+            failure_type: "server",
+            status_code: res.status,
+          });
+          failureTracked = true;
+        }
+        throw new Error(responseBody.error || "Something went wrong.");
       }
+
+      if (
+        responseBody.newly_created === true &&
+        typeof responseBody.conversion_event_id === "string" &&
+        isWaitlistCtaId(submissionCtaId)
+      ) {
+        pushAcquisitionEvent("lead_submitted", {
+          ...WAITLIST_FORM_CONTEXT,
+          cta_id: submissionCtaId,
+          handoff_count: chips.size,
+        }, {
+          eventId: responseBody.conversion_event_id,
+        });
+      }
+      leadSubmittedRef.current = true;
       setDone(true);
     } catch (err) {
+      if (!failureTracked && isWaitlistCtaId(submissionCtaId)) {
+        pushAcquisitionEvent("lead_submit_failed", {
+          ...WAITLIST_FORM_CONTEXT,
+          cta_id: submissionCtaId,
+          failure_type: "network",
+        });
+      }
       setError(err instanceof Error ? err.message : "Something went wrong. Try again.");
     } finally {
+      submittingRef.current = false;
       setSending(false);
     }
   };
@@ -259,7 +373,19 @@ export function LandingModals() {
                 We onboard a handful of teams at a time. Tell us what you are building and we will
                 come back to you when it is your turn.
               </p>
-              <form onSubmit={submit} noValidate>
+              <form
+                onSubmit={submit}
+                onInputCapture={(e) => {
+                  const target = e.target;
+                  if (
+                    (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) &&
+                    target.name !== "website"
+                  ) {
+                    markWaitlistStarted();
+                  }
+                }}
+                noValidate
+              >
                 <div className="lv2-field">
                   <label htmlFor="lv2-wl-email">Email address</label>
                   <input
@@ -380,12 +506,35 @@ export function LandingModals() {
                 allow="clipboard-write; camera; microphone"
                 referrerPolicy="no-referrer-when-downgrade"
                 src={ZCAL_URL}
+                onLoad={() => {
+                  if (schedulerLoadedRef.current) return;
+                  const ctaId = activeCtaIdRef.current;
+                  if (!isCallCtaId(ctaId)) return;
+                  schedulerLoadedRef.current = true;
+                  pushAcquisitionEvent("scheduler_loaded", {
+                    scheduler_id: SCHEDULER_ID,
+                    cta_id: ctaId,
+                    presentation: "embed",
+                  });
+                }}
               />
             )}
           </div>
           <p className={`lv2-sheet-note${zcalLoud ? " is-loud" : ""}`}>
             Pick any slot that works, you will get the invite straight away. Calendar not loading?{" "}
-            <a href="https://zcal.co/i/ZEHl48rv" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://zcal.co/i/ZEHl48rv"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => {
+                const ctaId = activeCtaIdRef.current;
+                if (!isCallCtaId(ctaId)) return;
+                pushAcquisitionEvent("scheduler_fallback_clicked", {
+                  scheduler_id: SCHEDULER_ID,
+                  cta_id: ctaId,
+                });
+              }}
+            >
               Open it in a new tab
             </a>
             .

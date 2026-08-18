@@ -12,7 +12,9 @@ export function LandingNav() {
           {/* eslint-disable-next-line @next/next/no-img-element -- fixed-size brand asset, same treatment as the static landing */}
           <img src="/pancake-wordmark.png" alt="Pancake" />
         </a>
-        <FxPill data-lv2-open="waitlist">Join waitlist</FxPill>
+        <FxPill data-lv2-open="waitlist" data-analytics-id="waitlist_nav">
+          Join waitlist
+        </FxPill>
       </div>
     </header>
   );

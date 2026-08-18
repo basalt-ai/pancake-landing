@@ -77,10 +77,12 @@ export function LandingHero() {
             </span>
           </h2>
           <div className="lv2-button-group">
-            <FxPill variant="outline" data-lv2-open="call">
+            <FxPill variant="outline" data-lv2-open="call" data-analytics-id="call_hero">
               Book a call
             </FxPill>
-            <FxPill data-lv2-open="waitlist">Join waitlist</FxPill>
+            <FxPill data-lv2-open="waitlist" data-analytics-id="waitlist_hero">
+              Join waitlist
+            </FxPill>
           </div>
         </div>
       </div>
