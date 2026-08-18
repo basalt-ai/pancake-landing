@@ -20,7 +20,7 @@ import { mountSnake } from "./snake";
 // cadence that worked, and the voice skill's strongest form.
 const H1_LINES = ["You run your company.", "We bring you customers."] as const;
 const H2_COPY =
-  "Pancake is a team of AI agents that learn your business, find the people ready to buy, and reach out for you.";
+  "Pancake’s AI agents monitor buying signals, find and contact warm leads, and grow your visibility in AI search. They learn from every interaction.";
 
 export function LandingHero() {
   const stageRef = useRef<HTMLElement>(null);
