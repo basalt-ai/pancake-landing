@@ -25,19 +25,19 @@ import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 
 const BEATS = [
-  "With AI coding tools, a weekend hack can become a real product by Monday morning.",
-  "But turning it into a real business still means a mountain of GTM work.",
-  "Finding leads. Writing outreach. Publishing content. Getting cited by AI search. None of that got easier.",
+  "With AI, an idea can become a real product by Monday morning.",
+  "But turning it into a real business still means a mountain of sales and marketing work.",
+  "Finding customers. Writing outreach. Publishing content. Getting found on ChatGPT. None of that got easier.",
   "Pancake is changing that.",
 ] as const;
 
 const TASKS = [
-  "Find leads",
+  "Find customers",
   "Write outreach",
   "Publish content",
-  "Position the launch",
+  "Post on LinkedIn",
   "Follow up",
-  "Get cited by AI search",
+  "Get found on ChatGPT",
 ] as const;
 
 /** Mid-story mound each card falls into (top, left, rotate) — beats 2–3. */
@@ -341,7 +341,7 @@ export function Manifesto() {
     <section ref={sectionRef} className="lv2s lv2-manifesto" aria-labelledby="lv2-manifesto-title">
       <div className="lv2-container">
         <h2 id="lv2-manifesto-title" className="lv2-manifesto-title">
-          Shipping got 10x easier.
+          Building got 10x easier.
           <br />
           Selling didn&rsquo;t.
         </h2>
@@ -389,7 +389,7 @@ export function Manifesto() {
                 </li>
               ))}
             </ul>
-            <span className="lv2-mtally">GTM backlog</span>
+            <span className="lv2-mtally">Sales backlog</span>
             <i className="lv2-mping-a" />
             <i className="lv2-mping-b" />
             <div className="lv2-mcursor">

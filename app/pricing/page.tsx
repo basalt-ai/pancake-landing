@@ -13,7 +13,7 @@ import { LandingNav } from "@/components/sections/landing/LandingNav";
 import { pricingV2 } from "@/lib/copy";
 import "@/app/_styles/landing-v2.css";
 
-const DESCRIPTION = `Pancake is ${pricingV2.currencySymbol}${pricingV2.monthlyDollars}/month flat for the whole GTM agent team. Everything included. No tiers, no seats.`;
+const DESCRIPTION = `Pancake is ${pricingV2.currencySymbol}${pricingV2.monthlyDollars}/month flat for your whole AI sales and marketing team. Everything included. No tiers, no seats.`;
 
 export const metadata: Metadata = {
   title: `Pricing: $${pricingV2.monthlyDollars}/month flat · Pancake`,
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 const productJsonLd = {
   "@context": "https://schema.org",
   "@type": "Product",
-  name: "Pancake: AI agents for your GTM",
+  name: "Pancake: AI agents that bring you customers",
   description: DESCRIPTION,
   brand: { "@type": "Brand", name: "Pancake" },
   offers: {

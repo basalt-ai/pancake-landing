@@ -14,9 +14,13 @@ import { mountSnake } from "./snake";
  * pre-launch — the /ai-gtm-report route still exists, just unlinked.)
  */
 
-const H1_LINES = ["You run your company.", "We run your GTM."] as const;
+// SMB pass 2026-08-11: "GTM" read as big-company jargon to the audience we
+// actually sell to. Customers, not pipeline; bring, not find (covers outbound
+// AND being found on Google/ChatGPT). Two sentences, period each — the V1
+// cadence that worked, and the voice skill's strongest form.
+const H1_LINES = ["You run your company.", "We bring you customers."] as const;
 const H2_COPY =
-  "Pancake is a team of AI agents that understand your company and handle high quality GTM tasks autonomously.";
+  "Pancake is a team of AI agents that learn your business, find the people ready to buy, and reach out for you.";
 
 export function LandingHero() {
   const stageRef = useRef<HTMLElement>(null);
@@ -56,7 +60,7 @@ export function LandingHero() {
   }, []);
 
   return (
-    <section ref={stageRef} className="lv2-stage" aria-label="Pancake — AI agents for your GTM">
+    <section ref={stageRef} className="lv2-stage" aria-label="Pancake — AI agents that bring you customers">
       <canvas ref={canvasRef} className="lv2-stage-canvas" aria-hidden="true" />
       <div ref={contentRef} className="lv2-stage-content">
         <h1 className="lv2-h1">

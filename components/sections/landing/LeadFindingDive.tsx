@@ -74,7 +74,7 @@ const STEPS: Step[] = [
           </li>
           <li className="lv2-dive-row">
             <span className="lv2-dive-live" />
-            <span className="lv2-dive-mono">Influencer your ICP follows</span>
+            <span className="lv2-dive-mono">Influencer your buyers follow</span>
             <span className="lv2-dive-tag">every post</span>
           </li>
         </ul>
@@ -137,10 +137,10 @@ const STEPS: Step[] = [
   },
   {
     num: "04",
-    title: "It judges every profile against your ICP",
+    title: "It judges every profile against your ideal customer",
     body: "Buying role, company size, geography, language. Competitors disqualified on sight. Every pass carries a fit score and a reason. Every reject is logged with why.",
     artifact: (
-      <Panel label="Judged against your ICP">
+      <Panel label="Judged against your ideal customer">
         <ul className="lv2-dive-rows">
           <li className="lv2-dive-row is-lead">
             <Avatar initials="AM" tone="purple" />
@@ -181,7 +181,7 @@ export function LeadFindingDive() {
           </h2>
           <p className="lv2-section-lede">
             Pancake watches live buying conversations, scores them, and turns the people in them
-            into ICP-checked leads.
+            into customers worth your time.
           </p>
         </header>
 
