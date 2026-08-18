@@ -35,6 +35,7 @@ export type MetaWaitlistLead = {
   email: string;
   requestHostname: string;
   eventSourceUrl?: string;
+  eventTimeSeconds?: number;
   clientIp?: string;
   clientUserAgent?: string;
   fbp?: string;
@@ -78,6 +79,15 @@ function cleanEventSourceUrl(value: string | undefined) {
   } catch {
     return "https://getpancake.ai/";
   }
+}
+
+function cleanEventTimeSeconds(value: number | undefined) {
+  if (typeof value !== "number" || !Number.isInteger(value) || value <= 0) {
+    return Math.floor(Date.now() / 1000);
+  }
+  // Never send a future timestamp. Keeping the original Airtable submission
+  // time on retries prevents a delayed recovery from looking like a new lead.
+  return Math.min(value, Math.floor(Date.now() / 1000));
 }
 
 function analyticsDeliveryMode(requestHostname: string): "live" | "test" | null {
@@ -159,7 +169,7 @@ export async function sendMetaWaitlistLead(input: MetaWaitlistLead): Promise<Met
     data: [
       {
         event_name: "Lead",
-        event_time: Math.floor(Date.now() / 1000),
+        event_time: cleanEventTimeSeconds(input.eventTimeSeconds),
         event_id: input.eventId,
         event_source_url: cleanEventSourceUrl(input.eventSourceUrl),
         action_source: "website",

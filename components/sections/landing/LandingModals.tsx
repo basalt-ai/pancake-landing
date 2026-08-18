@@ -8,6 +8,11 @@ import {
   pushAcquisitionEvent,
   type AcquisitionCtaId,
 } from "@/lib/analytics/data-layer";
+import {
+  submissionAttemptForEmail,
+  type BrowserSubmissionAttempt,
+} from "@/lib/analytics/submission-id";
+import { parseLandingWaitlistResult } from "@/lib/analytics/waitlist-response";
 
 import { suspendAllSnakes } from "./snake";
 
@@ -58,6 +63,10 @@ export function LandingModals() {
   const leadSubmittedRef = useRef(false);
   const submittingRef = useRef(false);
   const schedulerLoadedRef = useRef(false);
+  // A failed request may have committed in Airtable before its HTTP response
+  // was lost. Reusing this UUID lets the API recognize that exact retry chain
+  // without turning a later duplicate email into another browser conversion.
+  const waitlistSubmissionRef = useRef<BrowserSubmissionAttempt | null>(null);
 
   const close = useCallback(() => {
     openNameRef.current = null;
@@ -272,6 +281,11 @@ export function LandingModals() {
       return;
     }
     setError("");
+    waitlistSubmissionRef.current = submissionAttemptForEmail(
+      waitlistSubmissionRef.current,
+      email,
+    );
+    const submissionId = waitlistSubmissionRef.current.id;
     // Preserve attribution across the async request even if the visitor closes
     // the sheet before the response returns or opens a different CTA meanwhile.
     const submissionCtaId = activeCtaIdRef.current;
@@ -290,14 +304,18 @@ export function LandingModals() {
           website: String(data.get("website") || ""),
           source: "landing-v2",
           ctaId: submissionCtaId,
+          submissionId,
         }),
       });
-      const responseBody = (await res.json().catch(() => ({}))) as {
-        error?: string;
-        newly_created?: boolean;
-        conversion_event_id?: string | null;
-      };
+      const responseBody: unknown = await res.json().catch(() => null);
       if (!res.ok) {
+        const responseError =
+          responseBody !== null &&
+          typeof responseBody === "object" &&
+          "error" in responseBody &&
+          typeof responseBody.error === "string"
+            ? responseBody.error
+            : undefined;
         if (isWaitlistCtaId(submissionCtaId)) {
           pushAcquisitionEvent("lead_submit_failed", {
             ...WAITLIST_FORM_CONTEXT,
@@ -307,20 +325,29 @@ export function LandingModals() {
           });
           failureTracked = true;
         }
-        throw new Error(responseBody.error || "Something went wrong.");
+        throw new Error(responseError || "Something went wrong.");
       }
 
-      if (
-        responseBody.newly_created === true &&
-        typeof responseBody.conversion_event_id === "string" &&
-        isWaitlistCtaId(submissionCtaId)
-      ) {
+      const result = parseLandingWaitlistResult(responseBody);
+      if (!result) {
+        if (isWaitlistCtaId(submissionCtaId)) {
+          pushAcquisitionEvent("lead_submit_failed", {
+            ...WAITLIST_FORM_CONTEXT,
+            cta_id: submissionCtaId,
+            failure_type: "server",
+          });
+          failureTracked = true;
+        }
+        throw new Error("We couldn't confirm that signup. Try again.");
+      }
+
+      if (result.kind !== "duplicate" && isWaitlistCtaId(submissionCtaId)) {
         pushAcquisitionEvent("lead_submitted", {
           ...WAITLIST_FORM_CONTEXT,
           cta_id: submissionCtaId,
           handoff_count: chips.size,
         }, {
-          eventId: responseBody.conversion_event_id,
+          eventId: result.eventId,
         });
       }
       leadSubmittedRef.current = true;

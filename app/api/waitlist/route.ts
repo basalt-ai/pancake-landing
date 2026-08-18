@@ -1,9 +1,20 @@
-import { createHash, createHmac } from "node:crypto";
-
 import { NextRequest, NextResponse } from "next/server";
 
 import { WAITLIST_CTA_IDS } from "@/lib/analytics/data-layer";
 import { sendMetaWaitlistLead } from "@/lib/analytics/meta-capi";
+import {
+  cleanAirtableString,
+  createWaitlistLeadEventId,
+  inspectWaitlistDelivery,
+  isSuccessfulDeliveryTimestamp,
+  isWaitlistSubmissionId,
+  WAITLIST_DELIVERY_VERSION,
+  WAITLIST_DELIVERY_VERSION_FIELD,
+  WAITLIST_EVENT_ID_FIELD,
+  WAITLIST_META_CAPI_DELIVERED_AT_FIELD,
+  WAITLIST_SLACK_DELIVERED_AT_FIELD,
+  WAITLIST_SUBMISSION_ID_FIELD,
+} from "@/lib/analytics/waitlist-delivery";
 import { getClientIp, rateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
@@ -24,7 +35,7 @@ const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-type AirtableRecord = { id?: unknown };
+type AirtableRecord = { id?: unknown; fields?: Record<string, unknown> };
 type AirtableListResponse = { records?: AirtableRecord[] };
 type AirtableUpsertResponse = {
   records?: AirtableRecord[];
@@ -107,14 +118,6 @@ function recordId(value: unknown) {
   return value.slice(0, 40);
 }
 
-function leadConversionEventId(airtableRecordId: string) {
-  const secret = process.env.ANALYTICS_EVENT_ID_SECRET?.trim();
-  const digest = secret && secret.length >= 32
-    ? createHmac("sha256", secret).update(`waitlist:${airtableRecordId}`).digest("hex")
-    : createHash("sha256").update(`pancake-waitlist:${airtableRecordId}`).digest("hex");
-  return `lead.${digest}`;
-}
-
 function readAttributionCookie(request: NextRequest) {
   const rawValue = request.cookies.get("pancake_attribution")?.value;
   if (!rawValue) return {};
@@ -156,7 +159,21 @@ async function findExistingLead(token: string, baseId: string, email: string) {
     maxRecords: "1",
     filterByFormula: `LOWER({Email}) = ${JSON.stringify(email)}`,
   });
-  query.append("fields[]", "Email");
+  for (const field of [
+    "Email",
+    "Company URL",
+    "What they do",
+    "GTM to hand off",
+    "Source",
+    "Submitted At",
+    WAITLIST_DELIVERY_VERSION_FIELD,
+    WAITLIST_EVENT_ID_FIELD,
+    WAITLIST_SUBMISSION_ID_FIELD,
+    WAITLIST_SLACK_DELIVERED_AT_FIELD,
+    WAITLIST_META_CAPI_DELIVERED_AT_FIELD,
+  ]) {
+    query.append("fields[]", field);
+  }
 
   const response = await airtableFetch(
     `https://api.airtable.com/v0/${baseId}/${TABLE_ID}?${query.toString()}`,
@@ -164,12 +181,14 @@ async function findExistingLead(token: string, baseId: string, email: string) {
   );
 
   if (!response.ok) {
-    console.error("Waitlist lookup failed:", response.status, await response.text());
+    // Never log the formula or response body; both may contain the email.
+    console.error("Waitlist lookup failed", { status: response.status });
     throw new Error("airtable_lookup_failed");
   }
 
   const body = (await response.json().catch(() => null)) as AirtableListResponse | null;
-  return recordId(body?.records?.[0]?.id);
+  const record = body?.records?.[0];
+  return record && recordId(record.id) ? record : null;
 }
 
 /** Accept "acme.com" as well as a full URL; return null when it can't be one. */
@@ -189,11 +208,11 @@ function normalizeUrl(raw: string): string | null {
 /**
  * Fire a Slack notification for a new signup. Best-effort: gated on an env var,
  * time-boxed, and fully swallowed on failure so it can never break a signup that
- * already succeeded in Airtable. No-op when SLACK_WAITLIST_WEBHOOK_URL is unset.
+ * already succeeded in Airtable.
  */
 async function notifySlack(fields: Record<string, unknown>) {
   const url = process.env.SLACK_WAITLIST_WEBHOOK_URL;
-  if (!url) return;
+  if (!url) return { status: "disabled" as const };
 
   const line = (label: string, value: unknown) =>
     value ? `*${label}:* ${String(value)}` : null;
@@ -225,17 +244,129 @@ async function notifySlack(fields: Record<string, unknown>) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 2500);
   try {
-    await fetch(url, {
+    const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
       signal: ctrl.signal,
       cache: "no-store",
     });
-  } catch (err) {
-    console.error("Slack waitlist notify failed:", err);
+    if (!response.ok) {
+      console.error("Slack waitlist notify failed", { status: response.status });
+      return { status: "failed" as const };
+    }
+    return { status: "sent" as const };
+  } catch {
+    console.error("Slack waitlist notify failed", {
+      reason: ctrl.signal.aborted ? "timeout" : "network",
+    });
+    return { status: "failed" as const };
   } finally {
     clearTimeout(timer);
+  }
+}
+
+async function updateAirtableRecord(
+  token: string,
+  baseId: string,
+  airtableRecordId: string,
+  fields: Record<string, unknown>,
+) {
+  try {
+    const response = await airtableFetch(
+      `https://api.airtable.com/v0/${baseId}/${TABLE_ID}/${airtableRecordId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fields, typecast: true }),
+      },
+    );
+    if (!response.ok) {
+      console.error("Waitlist delivery ledger update failed", { status: response.status });
+      return false;
+    }
+    return true;
+  } catch {
+    console.error("Waitlist delivery ledger update failed", { reason: "network_or_timeout" });
+    return false;
+  }
+}
+
+function submittedAtSeconds(fields: Record<string, unknown>) {
+  const value = cleanAirtableString(fields["Submitted At"], 100);
+  if (!value) return undefined;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) ? Math.floor(timestamp / 1000) : undefined;
+}
+
+type PendingDeliveryInput = {
+  token: string;
+  baseId: string;
+  airtableRecordId: string;
+  fields: Record<string, unknown>;
+  eventId: string;
+  request: NextRequest;
+  ctaId?: string;
+  handoffCount: number;
+};
+
+/**
+ * Retry only ledger entries that do not have a success timestamp. Meta accepts
+ * the stable event ID for deduplication. Slack Incoming Webhooks do not expose
+ * an idempotency key, so that delivery is intentionally at-least-once if the
+ * webhook succeeds but the Airtable timestamp write is lost.
+ */
+async function deliverPendingSideEffects(input: PendingDeliveryInput) {
+  const slackPending = !isSuccessfulDeliveryTimestamp(
+    input.fields[WAITLIST_SLACK_DELIVERED_AT_FIELD],
+  );
+  const source = cleanAirtableString(input.fields["Source"], 100);
+  const metaPending =
+    !isSuccessfulDeliveryTimestamp(input.fields[WAITLIST_META_CAPI_DELIVERED_AT_FIELD]) &&
+    source === "landing-v2" &&
+    Boolean(input.ctaId);
+
+  const attribution = readAttributionCookie(input.request);
+  const [slackDelivery, metaDelivery] = await Promise.all([
+    slackPending
+      ? notifySlack(input.fields)
+      : Promise.resolve({ status: "already_sent" as const }),
+    metaPending
+      ? sendMetaWaitlistLead({
+          eventId: input.eventId,
+          email: cleanAirtableString(input.fields["Email"], 200) ?? "",
+          requestHostname: approvedRequestHostname(input.request),
+          eventSourceUrl: input.request.headers.get("referer") ?? undefined,
+          eventTimeSeconds: submittedAtSeconds(input.fields),
+          clientIp: getClientIp(input.request),
+          clientUserAgent: input.request.headers.get("user-agent") ?? undefined,
+          fbp: input.request.cookies.get("_fbp")?.value,
+          fbc: input.request.cookies.get("_fbc")?.value ?? attribution.fbc,
+          attributionId: attribution.attributionId,
+          ctaId: input.ctaId,
+          handoffCount: input.handoffCount,
+        })
+      : Promise.resolve({ status: "already_sent" as const }),
+  ]);
+
+  const deliveredAt = new Date().toISOString();
+  const ledgerFields: Record<string, unknown> = {};
+  if (slackDelivery.status === "sent") {
+    ledgerFields[WAITLIST_SLACK_DELIVERED_AT_FIELD] = deliveredAt;
+  }
+  if (metaDelivery.status === "sent") {
+    ledgerFields[WAITLIST_META_CAPI_DELIVERED_AT_FIELD] = deliveredAt;
+  }
+  if (Object.keys(ledgerFields).length > 0) {
+    await updateAirtableRecord(
+      input.token,
+      input.baseId,
+      input.airtableRecordId,
+      ledgerFields,
+    );
   }
 }
 
@@ -265,10 +396,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
 
+  const rawSource = typeof body.source === "string" ? body.source.trim() : "landing-v2";
+  const source = SOURCE_CHOICES.has(rawSource) ? rawSource : "landing-v2";
+
   // Honeypot: pretend success so bots don't learn they were caught.
   if (typeof body.website === "string" && body.website.trim() !== "") {
     return NextResponse.json(
-      { ok: true, newly_created: false, conversion_event_id: null },
+      {
+        ok: true,
+        newly_created: false,
+        recovered_conversion: false,
+        conversion_event_id: null,
+      },
       { status: 201 },
     );
   }
@@ -286,20 +425,33 @@ export async function POST(request: NextRequest) {
   if (!EMAIL_RE.test(email) || email.length > 200) {
     return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
   }
+  let submissionId: string | undefined;
+  let conversionEventId: string | undefined;
+  if (source === "landing-v2") {
+    const eventIdSecret = process.env.ANALYTICS_EVENT_ID_SECRET?.trim();
+    if (!eventIdSecret || eventIdSecret.length < 32) {
+      return NextResponse.json({ error: "Waitlist backend is not configured." }, { status: 503 });
+    }
+    const candidateSubmissionId =
+      typeof body.submissionId === "string" ? body.submissionId.trim().toLowerCase() : "";
+    if (!isWaitlistSubmissionId(candidateSubmissionId)) {
+      return NextResponse.json({ error: "Invalid submission identifier." }, { status: 400 });
+    }
+    submissionId = candidateSubmissionId;
+    conversionEventId = createWaitlistLeadEventId(email, eventIdSecret);
+  }
 
   const companyUrl = typeof body.companyUrl === "string" ? normalizeUrl(body.companyUrl) : null;
   const about = typeof body.about === "string" ? body.about.trim().slice(0, 2000) : "";
   const handoff = Array.isArray(body.handoff)
     ? body.handoff.filter((v): v is string => typeof v === "string" && HANDOFF_CHOICES.includes(v))
     : [];
-  const rawSource = typeof body.source === "string" ? body.source.trim() : "landing-v2";
-  const source = SOURCE_CHOICES.has(rawSource) ? rawSource : "landing-v2";
   const rawCtaId = typeof body.ctaId === "string" ? body.ctaId.trim() : "";
   const ctaId = WAITLIST_CTA_ID_SET.has(rawCtaId) ? rawCtaId : undefined;
 
-  let existingRecordId: string | null;
+  let existingRecord: AirtableRecord | null;
   try {
-    existingRecordId = await findExistingLead(token, baseId, email);
+    existingRecord = await findExistingLead(token, baseId, email);
   } catch {
     return NextResponse.json(
       { error: "We couldn't verify that signup. Try again in a moment." },
@@ -307,9 +459,55 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (existingRecordId) {
+  const existingRecordId = recordId(existingRecord?.id);
+  if (existingRecord && existingRecordId) {
+    if (source !== "landing-v2" || !conversionEventId || !submissionId) {
+      return NextResponse.json(
+        {
+          ok: true,
+          newly_created: false,
+          recovered_conversion: false,
+          conversion_event_id: null,
+        },
+        { status: 200 },
+      );
+    }
+    const existingFields = existingRecord.fields ?? {};
+    const deliveryState = inspectWaitlistDelivery(
+      existingFields,
+      conversionEventId,
+      submissionId,
+    );
+    const recoveredConversion = deliveryState.recoverable;
+
+    // Old rows intentionally have no delivery version. They remain ordinary
+    // duplicates and can never be backfilled as fresh advertising conversions.
+    if (recoveredConversion) {
+      const storedHandoffCount = Array.isArray(existingFields["GTM to hand off"])
+        ? existingFields["GTM to hand off"].filter(
+            (value): value is string =>
+              typeof value === "string" && HANDOFF_CHOICES.includes(value),
+          ).length
+        : 0;
+      await deliverPendingSideEffects({
+        token,
+        baseId,
+        airtableRecordId: existingRecordId,
+        fields: existingFields,
+        eventId: conversionEventId,
+        request,
+        ctaId,
+        handoffCount: storedHandoffCount,
+      });
+    }
+
     return NextResponse.json(
-      { ok: true, newly_created: false, conversion_event_id: null },
+      {
+        ok: true,
+        newly_created: false,
+        recovered_conversion: recoveredConversion,
+        conversion_event_id: recoveredConversion ? conversionEventId : null,
+      },
       { status: 200 },
     );
   }
@@ -320,6 +518,11 @@ export async function POST(request: NextRequest) {
     Source: source || "landing-v2",
     "Submitted At": new Date().toISOString(),
   };
+  if (conversionEventId && submissionId) {
+    fields[WAITLIST_DELIVERY_VERSION_FIELD] = WAITLIST_DELIVERY_VERSION;
+    fields[WAITLIST_EVENT_ID_FIELD] = conversionEventId;
+    fields[WAITLIST_SUBMISSION_ID_FIELD] = submissionId;
+  }
   if (companyUrl) fields["Company URL"] = companyUrl;
   if (about) fields["What they do"] = about;
   if (handoff.length) fields["GTM to hand off"] = handoff;
@@ -338,8 +541,8 @@ export async function POST(request: NextRequest) {
         typecast: true,
       }),
     });
-  } catch (error) {
-    console.error("Waitlist write failed before response:", error);
+  } catch {
+    console.error("Waitlist write failed before response", { reason: "network_or_timeout" });
     return NextResponse.json(
       { error: "We couldn't save that. Try again in a moment." },
       { status: 502 },
@@ -347,12 +550,14 @@ export async function POST(request: NextRequest) {
   }
 
   if (!res.ok) {
-    console.error("Waitlist write failed:", res.status, await res.text());
+    // Airtable error bodies can echo submitted field values; status is enough.
+    console.error("Waitlist write failed", { status: res.status });
     return NextResponse.json({ error: "We couldn't save that. Try again in a moment." }, { status: 502 });
   }
 
   const responseBody = (await res.json().catch(() => null)) as AirtableUpsertResponse | null;
-  const createdRecordId = recordId(responseBody?.records?.[0]?.id);
+  const upsertedRecord = responseBody?.records?.[0];
+  const createdRecordId = recordId(upsertedRecord?.id);
   if (!createdRecordId) {
     console.error("Waitlist upsert succeeded without an Airtable record ID.");
     return NextResponse.json(
@@ -364,39 +569,52 @@ export async function POST(request: NextRequest) {
   const newlyCreated =
     responseBody?.createdRecords?.some((value) => recordId(value) === createdRecordId) === true;
   if (!newlyCreated) {
+    // A concurrent request won the atomic email upsert. Do not let this losing
+    // response claim a browser conversion; a later retry first re-reads the
+    // persisted submission owner and delivery ledger.
     return NextResponse.json(
-      { ok: true, newly_created: false, conversion_event_id: null },
+      {
+        ok: true,
+        newly_created: false,
+        recovered_conversion: false,
+        conversion_event_id: null,
+      },
       { status: 200 },
     );
   }
 
-  const conversionEventId = leadConversionEventId(createdRecordId);
-  const attribution = readAttributionCookie(request);
-  const metaDelivery =
-    source === "landing-v2" && ctaId
-      ? sendMetaWaitlistLead({
-          eventId: conversionEventId,
-          email,
-          requestHostname: approvedRequestHostname(request),
-          eventSourceUrl: request.headers.get("referer") ?? undefined,
-          clientIp: getClientIp(request),
-          clientUserAgent: request.headers.get("user-agent") ?? undefined,
-          fbp: request.cookies.get("_fbp")?.value,
-          fbc: request.cookies.get("_fbc")?.value ?? attribution.fbc,
-          attributionId: attribution.attributionId,
-          ctaId,
-          handoffCount: handoff.length,
-        })
-      : Promise.resolve({ status: "disabled" as const, reason: "flag" as const });
+  if (source !== "landing-v2" || !conversionEventId) {
+    await notifySlack(fields);
+    return NextResponse.json(
+      {
+        ok: true,
+        newly_created: true,
+        recovered_conversion: false,
+        conversion_event_id: null,
+      },
+      { status: 201 },
+    );
+  }
 
-  // Both side effects are best-effort and time-boxed. The row is authoritative,
-  // so neither Slack nor an ad vendor can turn a saved signup into an error.
-  await Promise.all([notifySlack(fields), metaDelivery]);
+  // Both side effects are best-effort and time-boxed. Successful deliveries
+  // receive timestamps, allowing the same submission chain to repair only a
+  // missing side effect after an ambiguous Airtable/HTTP timeout.
+  await deliverPendingSideEffects({
+    token,
+    baseId,
+    airtableRecordId: createdRecordId,
+    fields,
+    eventId: conversionEventId,
+    request,
+    ctaId,
+    handoffCount: handoff.length,
+  });
 
   return NextResponse.json(
     {
       ok: true,
       newly_created: true,
+      recovered_conversion: false,
       conversion_event_id: conversionEventId,
     },
     { status: 201 },
