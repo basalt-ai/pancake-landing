@@ -15,6 +15,7 @@ As of this document:
 - Both Google Tag Manager changes are drafts and are **not published**: web workspace `6` has 28 modifications, and server workspace `7` has 1 modification.
 - The code is **not deployed to production** by this runbook.
 - Post-commit preview QA ran against `https://pancake-b4bpstlq1-getpancake.vercel.app`, deployment `dpl_GfK6T5qvwH2AnFT93LDtKAkwjLVJ`. The landing waitlist, fresh-session duplicate behavior, report-gate isolation, and scheduler loading passed; the exact Airtable QA rows were deleted afterward.
+- Final code commit `f01b43e` has a separate ready preview at `https://pancake-br2gcjti5-getpancake.vercel.app`, deployment `dpl_G5X39Sf9P7iqsE3KtHszY8eYN2wP`. Its production build and landing-page smoke load passed; no additional external waitlist row or booking was created from this final preview.
 - Pancake now owns Meta dataset/pixel `1427782115875153`. Its Traffic Permissions allow `getpancake.ai` and `zcal.co`, including their subdomains. Meta Lead tracking nevertheless remains paused because creating a new dataset-scoped CAPI token is blocked on Business Portfolio admin or developer access.
 - In Pancake **TEAM** settings—not personal Account settings—Zcal now shows GA4 `G-6KWBYRZSDX` and Meta Pixel `1427782115875153` connected. The connection state is UI-verified; actual booking-event delivery still requires a controlled booking and GA/Meta realtime validation.
 - The five Airtable analytics-delivery fields have been created and verified in Airtable. Deployment still requires a stable `ANALYTICS_EVENT_ID_SECRET`; without it, the waitlist API intentionally returns 503 before writing a lead.
@@ -316,8 +317,10 @@ A controlled new-lead test writes a real Airtable row and can notify Slack. Agre
 
 The post-commit verification used:
 
-- Preview: `https://pancake-b4bpstlq1-getpancake.vercel.app`
-- Vercel deployment ID: `dpl_GfK6T5qvwH2AnFT93LDtKAkwjLVJ`
+- Full funnel QA preview: `https://pancake-b4bpstlq1-getpancake.vercel.app`
+- Full funnel QA deployment ID: `dpl_GfK6T5qvwH2AnFT93LDtKAkwjLVJ`
+- Final code commit `f01b43e` smoke preview: `https://pancake-br2gcjti5-getpancake.vercel.app`
+- Final code deployment ID: `dpl_G5X39Sf9P7iqsE3KtHszY8eYN2wP`
 
 The following behavior was directly verified:
 
@@ -328,6 +331,7 @@ The following behavior was directly verified:
 - The `/ai-gtm-report` email-gate contract passed and remained outside the advertising-delivery ledger. Its exact Airtable QA row was also deleted.
 - The Zcal scheduler iframe and available slots loaded without browser errors.
 - No controlled booking was made, so `zcal_invite_schedule_event`, native GA4/Meta booking delivery, and the preserved webhook's booked-event behavior remain untested.
+- The final code preview completed its Vercel production build and loaded the landing page successfully. The only code change after the full funnel QA was Airtable environment-value normalization, which is covered by the focused 6/6 test suite; no second external submission was created solely to retest that guard.
 
 The web GTM workspace was checked directly in its UI: its 28 draft modifications, tag settings, triggers, 17 mapped variables, vendor IDs, and paused Meta state matched the configuration documented above. The later direct server-container audit found the legacy trigger gap described above and produced the single unpublished server-workspace fix. Neither container's live event flow has yet been certified through Tag Assistant and GA4.
 
