@@ -28,7 +28,7 @@ import { gsap, useGSAP } from "@/lib/gsap";
 const REASONS = [
   {
     title: "Crowded from day one.",
-    body: "Anyone can launch in a weekend. Everyone does. Getting noticed is the hard part.",
+    body: "Launching takes a weekend now. Everyone launched. Getting noticed is the hard part.",
   },
   {
     title: "There is no prompt for selling.",
@@ -99,6 +99,24 @@ export function Manifesto() {
     return () => io.disconnect();
   }, []);
 
+  // ── Ambient loops (dots, rail, caret) pause while the diagram is off screen.
+  //    Axis-independent, so it must outlive the timeline's matchMedia contexts.
+  useEffect(() => {
+    const art = artRef.current;
+    if (!art || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        art.classList.toggle("is-off", !entries.some((e) => e.isIntersecting));
+      },
+      { threshold: 0.05 }
+    );
+    io.observe(art);
+    return () => {
+      io.disconnect();
+      art.classList.remove("is-off");
+    };
+  }, []);
+
   // ── The diagram: one paused timeline, played once on enter ──
   useGSAP(
     () => {
@@ -111,7 +129,7 @@ export function Manifesto() {
       mm.add(
         {
           rows: "(min-width: 1200px) and (prefers-reduced-motion: no-preference)",
-          columns: "(max-width: 1199px) and (prefers-reduced-motion: no-preference)",
+          columns: "(max-width: 1199.98px) and (prefers-reduced-motion: no-preference)",
         },
         (context) => {
           const vertical = !(context.conditions as { rows: boolean }).rows;
@@ -209,31 +227,32 @@ export function Manifesto() {
             1.72
           );
 
-          // Beat 4 (1.76 – 3.1) — the long selling row draws out, one open job at a time.
-          tl.fromTo(sellLabel, { y: 6 }, { autoAlpha: 1, y: 0, duration: 0.3 }, 1.76);
-          tl.to(beads[1], { scale: 1, duration: 0.35, ease: "back.out(2)" }, 1.76);
-          tl.to(originText[1], { autoAlpha: 1, duration: 0.3 }, 1.81);
-          tl.to(dashed, { clipPath: SHOWN, duration: 1.1, ease: "power2.out" }, 1.76);
+          // Beat 4 (1.62 – 2.8) — the long selling row draws out, one open job at a time.
+          tl.fromTo(sellLabel, { y: 6 }, { autoAlpha: 1, y: 0, duration: 0.3 }, 1.62);
+          tl.to(beads[1], { scale: 1, duration: 0.35, ease: "back.out(2)" }, 1.62);
+          tl.to(originText[1], { autoAlpha: 1, duration: 0.3 }, 1.67);
+          tl.to(dashed, { clipPath: SHOWN, duration: 1, ease: "power2.out" }, 1.62);
           tl.fromTo(
             chips,
             { scale: 0.9, y: vertical ? 0 : 12, x: vertical ? -12 : 0 },
-            { autoAlpha: 1, scale: 1, x: 0, y: 0, duration: 0.45, ease: "back.out(2)", stagger: 0.11 },
-            1.9
+            { autoAlpha: 1, scale: 1, x: 0, y: 0, duration: 0.45, ease: "back.out(2)", stagger: 0.09 },
+            1.74
           );
-          tl.to(lanes[0], { autoAlpha: 1, duration: 0.3 }, 1.9);
-          tl.to(lanes[1], { autoAlpha: 1, duration: 0.3 }, 2.23);
-          tl.fromTo(dest, { scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, 2.67);
+          tl.to(lanes[0], { autoAlpha: 1, duration: 0.3 }, 1.74);
+          tl.to(lanes[1], { autoAlpha: 1, duration: 0.3 }, 2.01);
+          tl.fromTo(dest, { scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, 2.36);
 
-          // Beat 5 (2.87 – 3.55) — Pancake's bracket spans the whole row.
-          tl.to(bracket, { clipPath: SHOWN, duration: 0.55 }, 2.87);
-          tl.fromTo(cap, { y: 6 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 3.17);
+          // Beat 5 (2.5 – 3.15) — Pancake's bracket spans the whole row.
+          tl.to(bracket, { clipPath: SHOWN, duration: 0.55 }, 2.5);
+          tl.fromTo(cap, { y: 6 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 2.8);
 
           // QA hook (same idea as window.__snakes): lets headless checks seek the
           // reveal to an exact time — e.g. window.__lv2Manifesto.pause(0.9).
           (window as unknown as { __lv2Manifesto?: gsap.core.Timeline }).__lv2Manifesto = tl;
 
-          // Play once when the diagram enters: its first ~96px (the Building
-          // row) are enough, since that is where the story starts.
+          // Play once the card is genuinely in frame. A viewport-relative inset,
+          // not a ratio: the stacked card can be taller than a short viewport,
+          // and a ratio it can never reach would strand the reveal forever.
           const play = () => {
             if (playedRef.current) return;
             playedRef.current = true;
@@ -246,24 +265,14 @@ export function Manifesto() {
                 io.disconnect();
               }
             },
-            { threshold: 0, rootMargin: "0px 0px -96px 0px" }
+            { threshold: 0, rootMargin: "0px 0px -25% 0px" }
           );
           io.observe(art);
 
-          // Ambient loops pause while the diagram is off screen.
-          const ioOff = new IntersectionObserver(
-            (entries) => {
-              art.classList.toggle("is-off", !entries.some((e) => e.isIntersecting));
-            },
-            { threshold: 0.05 }
-          );
-          ioOff.observe(art);
-
           return () => {
             io.disconnect();
-            ioOff.disconnect();
             tl.kill();
-            art.classList.remove("is-off");
+            delete (window as unknown as { __lv2Manifesto?: gsap.core.Timeline }).__lv2Manifesto;
             art.classList.add("is-live");
             gsap.set([ghostBox, ghostLine], { visibility: "hidden" });
           };
@@ -303,7 +312,7 @@ export function Manifesto() {
             it is still five jobs, all of them on you.
           </p>
         </div>
-        <ol className="lv2-mf-reasons">
+        <ol className="lv2-mf-reasons" role="list">
           {REASONS.map((r, i) => (
             <li key={r.title} className="lv2-mf-reason lv2-mf-reveal" style={css({ "--d": `${i * 90}ms` })}>
               <h3 className="lv2-mf-rtitle">{r.title}</h3>
@@ -387,8 +396,8 @@ export function Manifesto() {
               <span className="lv2-mf-payoff">And buyers answer.</span>
             </h3>
             <p className="lv2-mf-turn-body lv2-mf-reveal" style={css({ "--d": "80ms" })}>
-              The team of agents behind it runs all five jobs, in both directions: going out to
-              buyers, and being found by them. Not by sending more. By three rules.
+              The team of agents behind it runs all five, in both directions. Not by sending
+              more. By three rules.
             </p>
           </div>
           <dl className="lv2-mf-rules">
