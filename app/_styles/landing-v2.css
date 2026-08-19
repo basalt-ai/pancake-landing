@@ -857,21 +857,21 @@ body.modal-open:has(main.lv2) {
   padding-block-start: 0;
 }
 
-/* ── Manifesto v5 — the braintrust.dev block, structure 1:1: a two-tone
-   headline across the top, then copy + three glyph bullets + pill links on
-   the left and a dark square concept panel on the right (the loop Pancake
-   runs: Find → Reach → Learn). Scheme: the brand pink-20 field with plum ink
-   and a plum panel — the page's one full-pink chapter (pricing stays on the
-   pale pink-10). No pin. Text reveals once on enter (html.lv2-anim), the loop
-   draws once; no-JS and reduced-motion visitors get the complete chapter. ── */
+/* ── Manifesto v5 — the braintrust.dev block, structure 1:1, drawn with our
+   product: a two-tone headline, then copy + three literal-icon bullets +
+   design-system CTAs (outline FxPill + quiet link) on the left, and a plum
+   square panel on the right showing how Pancake works — two agent orbits in
+   parallel (Outreach pink, AI search golden), tangent at the white GTM Brain,
+   flowing down a mint line to Customers. Field: the brand pink-20, the page's
+   one full-pink chapter (pricing stays pale pink-10). No pin. Text reveals
+   once on enter (html.lv2-anim); the orbits draw once, then agent dots
+   circulate; no-JS and reduced-motion visitors get the complete chapter. ── */
 
 .lv2-manifesto {
   --lv2-mf-ink: var(--palette-chrome-100);
   --lv2-mf-field: var(--palette-pink-20);
   --lv2-mf-muted: color-mix(in srgb, var(--palette-chrome-100) 58%, var(--palette-pink-20));
   --lv2-mf-soft: color-mix(in srgb, var(--palette-chrome-100) 78%, var(--palette-pink-20));
-  --lv2-mf-pill: color-mix(in srgb, var(--palette-chrome-100) 9%, transparent);
-  --lv2-mf-pill-hover: color-mix(in srgb, var(--palette-chrome-100) 15%, transparent);
   position: relative;
   background: var(--lv2-mf-field);
   color: var(--lv2-mf-ink);
@@ -919,7 +919,7 @@ body.modal-open:has(main.lv2) {
   text-wrap: pretty;
 }
 
-/* three glyph bullets: mark, bold title, one line */
+/* three bullets: literal icon, bold title, one line */
 .lv2-mf-points {
   list-style: none;
   margin: 28px 0 0;
@@ -964,49 +964,47 @@ body.modal-open:has(main.lv2) {
   text-wrap: pretty;
 }
 
-/* pill links: translucent ink on the pink, small arrow */
+/* CTA row: the kit outline pill (FxPill, same as the hero) + a quiet link */
 .lv2-mf-links {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  margin-top: 28px;
-}
-.lv2-mf-pill {
-  display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
-  min-height: 40px; /* tap target */
-  padding: 9px 14px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--lv2-mf-pill);
+  gap: 0.75rem 1.5rem;
+  margin-top: 32px;
+}
+.lv2-mf-link {
+  display: inline-block;
+  padding: 10px 0; /* ≥40px tap row */
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.4;
   color: var(--lv2-mf-ink);
-  font-family: var(--font-aeonik), system-ui, sans-serif;
-  font-weight: 500;
-  font-size: 0.875rem;
-  line-height: 1.3;
   text-decoration: none;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 0.18s ease;
+  text-wrap: pretty;
 }
-.lv2-mf-pill:hover {
-  background: var(--lv2-mf-pill-hover);
+.lv2-mf-link-text {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
 }
-.lv2-mf-pill:focus {
+/* the arrow never carries the underline and never detaches (nbsp binds it) */
+.lv2-mf-arrow {
+  display: inline-block;
+  transition: translate 0.2s ease;
+}
+.lv2-mf-link:hover .lv2-mf-arrow {
+  translate: 3px 0;
+}
+.lv2-mf-link:focus {
   outline: none;
 }
-.lv2-mf-pill:focus-visible {
+.lv2-mf-link:focus-visible {
   outline: 2px solid var(--lv2-mf-ink);
-  outline-offset: 2px;
-}
-.lv2-mf-pill-arrow {
-  font-size: 0.75rem;
-  color: var(--lv2-mf-soft);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
-/* The concept panel: plum square, soft haze, the loop drawn once. */
+/* The panel: plum square, soft haze, the product drawn on it. */
 .lv2-mf-panel {
   position: relative;
   aspect-ratio: 1;
@@ -1017,41 +1015,97 @@ body.modal-open:has(main.lv2) {
     radial-gradient(55% 50% at 84% 80%, color-mix(in srgb, var(--alt-strong-branded-surface-02) 10%, transparent), transparent 70%);
   overflow: hidden;
 }
-.lv2-mf-loop {
+.lv2-mf-net {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   display: block;
 }
-.lv2-mf-loop path {
+.lv2-mf-orbit {
   fill: none;
-  stroke: var(--palette-pink-20);
+  stroke: color-mix(in srgb, var(--palette-pink-20) 66%, transparent);
+  stroke-width: 3;
+}
+.lv2-mf-goal {
+  fill: none;
+  stroke: color-mix(in srgb, var(--positive-surface) 75%, transparent);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.lv2-mf-loop-link,
-.lv2-mf-loop-return {
-  stroke: color-mix(in srgb, var(--palette-pink-20) 72%, transparent);
+/* the agents — one dot colour per system (outreach pink, AI search golden),
+   circulating along the orbits; hidden where motion paths are unsupported
+   and under reduced motion (they would pile up at the start point). */
+.lv2-mf-agent {
+  display: none;
+}
+@supports (offset-path: path("M0 0h1")) {
+  .lv2-mf-agent {
+    display: block;
+    animation: lv2-mf-orbit-run 10s linear infinite;
+  }
+  .lv2-mf-agent[data-o="l"] {
+    fill: var(--palette-pink-30);
+    offset-path: path("M150 120a90 90 0 1 1 0 180a90 90 0 1 1 0-180");
+  }
+  .lv2-mf-agent[data-o="r"] {
+    fill: var(--alt-strong-branded-surface-02);
+    offset-path: path("M330 120a90 90 0 1 0 0 180a90 90 0 1 0 0-180");
+  }
+  .lv2-mf-agent[data-n="2"] {
+    animation-delay: -5s;
+  }
+  .lv2-mf-agent[data-o="r"][data-n="1"] {
+    animation-delay: -2.5s;
+  }
+  .lv2-mf-agent[data-o="r"][data-n="2"] {
+    animation-delay: -7.5s;
+  }
+}
+@keyframes lv2-mf-orbit-run {
+  to {
+    offset-distance: 100%;
+  }
 }
 .lv2-mf-station {
   position: absolute;
-  left: 50%;
-  top: calc(27.08% + var(--i) * 22.92%);
   transform: translate(-50%, -50%);
   display: inline-flex;
   align-items: center;
   height: 36px;
-  padding: 0 18px;
+  padding: 0 16px;
   border-radius: 999px;
   background: var(--palette-pink-20);
   color: var(--palette-chrome-100);
   font-family: var(--font-aeonik-fono), ui-monospace, monospace;
   font-weight: 500;
-  font-size: 1rem;
+  font-size: 0.9375rem;
   line-height: 1;
   white-space: nowrap;
+}
+/* geometry (panel viewBox 480): orbits at (150,210) and (330,210), r 90 */
+.lv2-mf-station[data-s="outreach"] {
+  left: 31.25%;
+  top: 25%;
+}
+.lv2-mf-station[data-s="ai"] {
+  left: 68.75%;
+  top: 25%;
+}
+/* the Brain sits on the tangent point of the two orbits — white, the core */
+.lv2-mf-station[data-s="brain"] {
+  left: 50%;
+  top: 43.75%;
+  background: var(--surface);
+  font-weight: 600;
+}
+/* the goal — studio mint */
+.lv2-mf-station[data-s="customers"] {
+  left: 50%;
+  top: 81.25%;
+  background: #a8e5c9;
+  font-weight: 600;
 }
 
 /* Reveal once — hidden states exist only under html.lv2-anim (JS on). */
@@ -1067,8 +1121,9 @@ body.modal-open:has(main.lv2) {
     transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: var(--d, 0ms);
 }
-/* the loop draws station by station once the panel is in */
-.lv2-anim .lv2-mf-loop path {
+/* the panel draws once it is in: orbits sweep, stations pop, the goal drops */
+.lv2-anim .lv2-mf-orbit,
+.lv2-anim .lv2-mf-goal {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
 }
@@ -1076,24 +1131,33 @@ body.modal-open:has(main.lv2) {
   opacity: 0;
   transform: translate(-50%, -50%) scale(0.92);
 }
+.lv2-anim .lv2-mf-panel .lv2-mf-agent {
+  animation-play-state: paused;
+  opacity: 0;
+}
+.lv2-anim .lv2-mf-panel.is-in .lv2-mf-orbit {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s cubic-bezier(0.22, 1, 0.36, 1) calc(0.25s + var(--k, 0) * 0.2s);
+}
 .lv2-anim .lv2-mf-panel.is-in .lv2-mf-station {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
   transition:
-    opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1) calc(0.35s + var(--i) * 0.32s),
-    transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) calc(0.35s + var(--i) * 0.32s);
+    opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1) calc(0.55s + var(--i) * 0.22s),
+    transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) calc(0.55s + var(--i) * 0.22s);
 }
-.lv2-anim .lv2-mf-panel.is-in .lv2-mf-loop-link {
+.lv2-anim .lv2-mf-panel.is-in .lv2-mf-goal {
   stroke-dashoffset: 0;
-  transition: stroke-dashoffset 0.35s ease-out calc(0.6s + var(--k, 0) * 0.32s);
+  transition: stroke-dashoffset 0.55s cubic-bezier(0.22, 1, 0.36, 1) 1.15s;
 }
-.lv2-anim .lv2-mf-panel.is-in .lv2-mf-loop-return {
-  stroke-dashoffset: 0;
-  transition: stroke-dashoffset 1.1s cubic-bezier(0.22, 1, 0.36, 1) 1.35s;
+.lv2-anim .lv2-mf-panel.is-in .lv2-mf-goal-head {
+  transition-duration: 0.2s;
+  transition-delay: 1.6s;
 }
-.lv2-anim .lv2-mf-panel.is-in .lv2-mf-loop-head {
-  stroke-dashoffset: 0;
-  transition: stroke-dashoffset 0.25s ease-out 1.95s;
+.lv2-anim .lv2-mf-panel.is-in .lv2-mf-agent {
+  animation-play-state: running;
+  opacity: 1;
+  transition: opacity 0.6s ease 1.6s;
 }
 @media (prefers-reduced-motion: reduce) {
   .lv2-anim .lv2-mf-reveal,
@@ -1105,13 +1169,17 @@ body.modal-open:has(main.lv2) {
   .lv2-anim .lv2-mf-station {
     transform: translate(-50%, -50%);
   }
-  .lv2-anim .lv2-mf-loop path {
+  .lv2-anim .lv2-mf-orbit,
+  .lv2-anim .lv2-mf-goal {
     stroke-dashoffset: 0;
     transition: none;
   }
+  .lv2-mf-agent {
+    display: none !important;
+  }
 }
 
-/* Single column: headline → copy → bullets → pills → panel. */
+/* Single column: headline → copy → bullets → CTAs → panel. */
 @media (max-width: 899px) {
   .lv2-mf-grid {
     grid-template-columns: 1fr;
@@ -1133,8 +1201,8 @@ body.modal-open:has(main.lv2) {
   }
   .lv2-mf-station {
     height: 32px;
-    padding: 0 14px;
-    font-size: 0.9375rem;
+    padding: 0 13px;
+    font-size: 0.875rem;
   }
 }
 
