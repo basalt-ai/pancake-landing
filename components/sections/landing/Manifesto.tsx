@@ -73,6 +73,8 @@ const css = (vars: Record<string, string | number>) => vars as React.CSSProperti
 export function Manifesto() {
   const sectionRef = useRef<HTMLElement>(null);
   const artRef = useRef<HTMLDivElement>(null);
+  /** The reveal is a one-time event, even across a breakpoint change. */
+  const playedRef = useRef(false);
 
   // ── Text reveals: one observer, add .is-in once, unobserve ──
   useEffect(() => {
@@ -104,162 +106,169 @@ export function Manifesto() {
       if (!art) return;
       const mm = gsap.matchMedia();
 
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const q = gsap.utils.selector(art);
-        const buildLabel = q('[data-row="build"] .lv2-mf-rowlabel');
-        const sellLabel = q('[data-row="sell"] .lv2-mf-rowlabel');
-        const beads = q(".lv2-mf-bead");
-        const originText = q(".lv2-mf-origin b");
-        const solid = q('.lv2-mf-line[data-kind="solid"]');
-        const dashed = q('.lv2-mf-line[data-kind="dashed"]');
-        const prompt = q(".lv2-mf-prompt");
-        const done = q(".lv2-mf-done");
-        const ping = q(".lv2-mf-ping");
-        const chips = q(".lv2-mf-chip");
-        const lanes = q(".lv2-mf-lane");
-        const dest = q(".lv2-mf-dest");
-        const bracket = q(".lv2-mf-bracket");
-        const cap = q(".lv2-mf-cap");
-        const ghosts = q(".lv2-mf-ghost");
-        const ghostBox = q(".lv2-mf-ghosts");
-        const ghostLine = q(".lv2-mf-ghostline");
+      // Conditions, not DOM sniffing: crossing 1200px rebuilds the timeline on
+      // the right axis (rows run horizontally above that width, vertically below).
+      mm.add(
+        {
+          rows: "(min-width: 1200px) and (prefers-reduced-motion: no-preference)",
+          columns: "(max-width: 1199px) and (prefers-reduced-motion: no-preference)",
+        },
+        (context) => {
+          const vertical = !(context.conditions as { rows: boolean }).rows;
+          // Told once: a later breakpoint change keeps the resolved scene.
+          if (playedRef.current) {
+            art.classList.add("is-live");
+            return;
+          }
+          const q = gsap.utils.selector(art);
+          const buildLabel = q('[data-row="build"] .lv2-mf-rowlabel');
+          const sellLabel = q('[data-row="sell"] .lv2-mf-rowlabel');
+          const beads = q(".lv2-mf-bead");
+          const originText = q(".lv2-mf-origin b");
+          const solid = q('.lv2-mf-line[data-kind="solid"]');
+          const dashed = q('.lv2-mf-line[data-kind="dashed"]');
+          const prompt = q(".lv2-mf-prompt");
+          const done = q(".lv2-mf-done");
+          const ping = q(".lv2-mf-ping");
+          const chips = q(".lv2-mf-chip");
+          const lanes = q(".lv2-mf-lane");
+          const dest = q(".lv2-mf-dest");
+          const bracket = q(".lv2-mf-bracket");
+          const cap = q(".lv2-mf-cap");
+          const ghosts = q(".lv2-mf-ghost");
+          const ghostBox = q(".lv2-mf-ghosts");
+          const ghostLine = q(".lv2-mf-ghostline");
 
-        // Orientation: rows are horizontal tracks on wide screens, vertical
-        // columns below (see landing-v2.css). Read it from the ghost box shape.
-        const isVertical = () => {
-          const el = ghostBox[0] as HTMLElement | undefined;
-          return !!el && el.offsetHeight > el.offsetWidth;
-        };
-        // clip-path "draw" states — same units on both ends so GSAP interpolates.
-        const SHOWN = "inset(0% 0% 0% 0%)";
-        const hidden = (vertical: boolean) => (vertical ? "inset(0% 0% 100% 0%)" : "inset(0% 100% 0% 0%)");
+          // clip-path "draw" states — same units on both ends so GSAP interpolates.
+          const SHOWN = "inset(0% 0% 0% 0%)";
+          const HIDDEN = vertical ? "inset(0% 0% 100% 0%)" : "inset(0% 100% 0% 0%)";
 
-        // Rewind the resolved CSS scene into its opening state (JS-only).
-        art.classList.remove("is-live");
-        gsap.set([buildLabel, sellLabel, originText, prompt, done, chips, lanes, dest, cap], { autoAlpha: 0 });
-        gsap.set(beads, { scale: 0, transformOrigin: "50% 50%" });
-        gsap.set([solid, dashed, bracket], { clipPath: hidden(isVertical()) });
-        gsap.set(ghostBox, { visibility: "visible" });
-        gsap.set(ghosts, { autoAlpha: 0, x: 0, y: 0 });
-        gsap.set(ghostLine, { visibility: "visible", clipPath: hidden(isVertical()) });
+          // Rewind the resolved CSS scene into its opening state (JS-only).
+          art.classList.remove("is-live");
+          gsap.set([buildLabel, sellLabel, originText, prompt, done, chips, lanes, dest, cap], { autoAlpha: 0 });
+          gsap.set(beads, { scale: 0, transformOrigin: "50% 50%" });
+          gsap.set([solid, dashed, bracket], { clipPath: HIDDEN });
+          gsap.set(ghostBox, { visibility: "visible" });
+          gsap.set(ghosts, { autoAlpha: 0, x: 0, y: 0 });
+          gsap.set(ghostLine, { visibility: "visible", clipPath: HIDDEN });
 
-        const tl = gsap.timeline({
-          paused: true,
-          defaults: { ease: "power3.out" },
-          onComplete: () => {
+          const tl = gsap.timeline({
+            paused: true,
+            defaults: { ease: "power3.out" },
+            onComplete: () => {
+              art.classList.add("is-live");
+              gsap.set([ghostBox, ghostLine], { visibility: "hidden" });
+            },
+          });
+
+          // Beat 1 (0 – 0.75) — the build row, the long way: Idea … Design · Code · Test · Launch.
+          tl.fromTo(buildLabel, { y: 6 }, { autoAlpha: 1, y: 0, duration: 0.3 }, 0);
+          tl.to(beads[0], { scale: 1, duration: 0.35, ease: "back.out(2)" }, 0);
+          tl.to(originText[0], { autoAlpha: 1, duration: 0.3 }, 0.05);
+          tl.to(ghostLine, { clipPath: SHOWN, duration: 0.5 }, 0.05);
+          tl.fromTo(
+            ghosts,
+            { autoAlpha: 0, scale: 0.96, y: vertical ? 0 : 10, x: vertical ? -10 : 0 },
+            { autoAlpha: 1, scale: 1, x: 0, y: 0, duration: 0.4, ease: "back.out(1.8)", stagger: 0.06 },
+            0.15
+          );
+
+          // Beat 2 (0.75 – 1.33) — THE FOLD: the far steps slide back into the
+          // first slot, each passing UNDER the one ahead (z-order in CSS), so no
+          // text ever sits on text; once they are all hidden behind "Design",
+          // "Design" dissolves and the prompt card takes the slot.
+          const delta = (axis: "x" | "y") => (i: number, target: Element) => {
+            const to = (prompt[0] as HTMLElement).getBoundingClientRect();
+            const from = (target as HTMLElement).getBoundingClientRect();
+            return axis === "x" ? to.left - from.left : to.top - from.top;
+          };
+          tl.to(
+            ghosts,
+            { x: delta("x"), y: delta("y"), duration: 0.4, ease: "power2.in", stagger: { each: 0.04, from: "end" } },
+            0.75
+          );
+          tl.set(ghosts.slice(1), { autoAlpha: 0 }, 1.23);
+          tl.to(ghosts[0], { autoAlpha: 0, duration: 0.1, ease: "power1.in" }, 1.23);
+          tl.to(ghostLine, { clipPath: HIDDEN, duration: 0.45, ease: "power2.in" }, 0.75);
+
+          // Beat 3 (1.27 – 2.1) — the short mint row: prompt card, ✓ Live, aura.
+          tl.to(solid, { clipPath: SHOWN, duration: 0.35 }, 1.27);
+          // immediateRender:false — the fold measures the prompt card's slot at
+          // play time, so it must not carry this pop's start transform beforehand.
+          tl.fromTo(
+            prompt,
+            { y: 8, scale: 0.85 },
+            { autoAlpha: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(2)", immediateRender: false },
+            1.33
+          );
+          tl.fromTo(done, { scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.45, ease: "back.out(2.4)" }, 1.62);
+          tl.fromTo(
+            ping,
+            { scale: 1, opacity: 0.7 },
+            { scale: 1.35, opacity: 0, duration: 0.6, ease: "power2.out", immediateRender: false },
+            1.72
+          );
+
+          // Beat 4 (1.76 – 3.1) — the long selling row draws out, one open job at a time.
+          tl.fromTo(sellLabel, { y: 6 }, { autoAlpha: 1, y: 0, duration: 0.3 }, 1.76);
+          tl.to(beads[1], { scale: 1, duration: 0.35, ease: "back.out(2)" }, 1.76);
+          tl.to(originText[1], { autoAlpha: 1, duration: 0.3 }, 1.81);
+          tl.to(dashed, { clipPath: SHOWN, duration: 1.1, ease: "power2.out" }, 1.76);
+          tl.fromTo(
+            chips,
+            { scale: 0.9, y: vertical ? 0 : 12, x: vertical ? -12 : 0 },
+            { autoAlpha: 1, scale: 1, x: 0, y: 0, duration: 0.45, ease: "back.out(2)", stagger: 0.11 },
+            1.9
+          );
+          tl.to(lanes[0], { autoAlpha: 1, duration: 0.3 }, 1.9);
+          tl.to(lanes[1], { autoAlpha: 1, duration: 0.3 }, 2.23);
+          tl.fromTo(dest, { scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, 2.67);
+
+          // Beat 5 (2.87 – 3.55) — Pancake's bracket spans the whole row.
+          tl.to(bracket, { clipPath: SHOWN, duration: 0.55 }, 2.87);
+          tl.fromTo(cap, { y: 6 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 3.17);
+
+          // QA hook (same idea as window.__snakes): lets headless checks seek the
+          // reveal to an exact time — e.g. window.__lv2Manifesto.pause(0.9).
+          (window as unknown as { __lv2Manifesto?: gsap.core.Timeline }).__lv2Manifesto = tl;
+
+          // Play once when the diagram enters: its first ~96px (the Building
+          // row) are enough, since that is where the story starts.
+          const play = () => {
+            if (playedRef.current) return;
+            playedRef.current = true;
+            tl.play(0);
+          };
+          const io = new IntersectionObserver(
+            (entries) => {
+              if (entries.some((e) => e.isIntersecting)) {
+                play();
+                io.disconnect();
+              }
+            },
+            { threshold: 0, rootMargin: "0px 0px -96px 0px" }
+          );
+          io.observe(art);
+
+          // Ambient loops pause while the diagram is off screen.
+          const ioOff = new IntersectionObserver(
+            (entries) => {
+              art.classList.toggle("is-off", !entries.some((e) => e.isIntersecting));
+            },
+            { threshold: 0.05 }
+          );
+          ioOff.observe(art);
+
+          return () => {
+            io.disconnect();
+            ioOff.disconnect();
+            tl.kill();
+            art.classList.remove("is-off");
             art.classList.add("is-live");
             gsap.set([ghostBox, ghostLine], { visibility: "hidden" });
-          },
-        });
-
-        // Beat 1 (0 – 0.75) — the build row, the long way: Idea … Design · Code · Test · Launch.
-        tl.fromTo(buildLabel, { y: 6 }, { autoAlpha: 1, y: 0, duration: 0.3 }, 0);
-        tl.to(beads[0], { scale: 1, duration: 0.35, ease: "back.out(2)" }, 0);
-        tl.to(originText[0], { autoAlpha: 1, duration: 0.3 }, 0.05);
-        tl.to(ghostLine, { clipPath: SHOWN, duration: 0.5 }, 0.05);
-        tl.fromTo(
-          ghosts,
-          { autoAlpha: 0, scale: 0.96, y: () => (isVertical() ? 0 : 10), x: () => (isVertical() ? -10 : 0) },
-          { autoAlpha: 1, scale: 1, x: 0, y: 0, duration: 0.4, ease: "back.out(1.8)", stagger: 0.06 },
-          0.15
-        );
-
-        // Beat 2 (0.75 – 1.33) — THE FOLD: the far steps slide back into the
-        // first slot, each passing UNDER the one ahead (z-order in CSS), so no
-        // text ever sits on text; once they are all hidden behind "Design",
-        // "Design" dissolves and the prompt card takes the slot.
-        const delta = (axis: "x" | "y") => (i: number, target: Element) => {
-          const to = (prompt[0] as HTMLElement).getBoundingClientRect();
-          const from = (target as HTMLElement).getBoundingClientRect();
-          return axis === "x" ? to.left - from.left : to.top - from.top;
-        };
-        tl.to(
-          ghosts,
-          { x: delta("x"), y: delta("y"), duration: 0.4, ease: "power2.in", stagger: { each: 0.04, from: "end" } },
-          0.75
-        );
-        tl.set(ghosts.slice(1), { autoAlpha: 0 }, 1.23);
-        tl.to(ghosts[0], { autoAlpha: 0, duration: 0.1, ease: "power1.in" }, 1.23);
-        tl.to(ghostLine, { clipPath: () => hidden(isVertical()), duration: 0.45, ease: "power2.in" }, 0.75);
-
-        // Beat 3 (1.27 – 2.1) — the short mint row: prompt card, ✓ Live, aura.
-        tl.to(solid, { clipPath: SHOWN, duration: 0.35 }, 1.27);
-        // immediateRender:false — the fold measures the prompt card's slot at
-        // play time, so it must not carry this pop's start transform beforehand.
-        tl.fromTo(
-          prompt,
-          { y: 8, scale: 0.85 },
-          { autoAlpha: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(2)", immediateRender: false },
-          1.33
-        );
-        tl.fromTo(done, { scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.45, ease: "back.out(2.4)" }, 1.62);
-        tl.fromTo(
-          ping,
-          { scale: 1, opacity: 0.7 },
-          { scale: 1.35, opacity: 0, duration: 0.6, ease: "power2.out", immediateRender: false },
-          1.72
-        );
-
-        // Beat 4 (1.76 – 3.1) — the long selling row draws out, one open job at a time.
-        tl.fromTo(sellLabel, { y: 6 }, { autoAlpha: 1, y: 0, duration: 0.3 }, 1.76);
-        tl.to(beads[1], { scale: 1, duration: 0.35, ease: "back.out(2)" }, 1.76);
-        tl.to(originText[1], { autoAlpha: 1, duration: 0.3 }, 1.81);
-        tl.to(dashed, { clipPath: SHOWN, duration: 1.1, ease: "power2.out" }, 1.76);
-        tl.fromTo(
-          chips,
-          { scale: 0.9, y: () => (isVertical() ? 0 : 12), x: () => (isVertical() ? -12 : 0) },
-          { autoAlpha: 1, scale: 1, x: 0, y: 0, duration: 0.45, ease: "back.out(2)", stagger: 0.11 },
-          1.9
-        );
-        tl.to(lanes[0], { autoAlpha: 1, duration: 0.3 }, 1.9);
-        tl.to(lanes[1], { autoAlpha: 1, duration: 0.3 }, 2.23);
-        tl.fromTo(dest, { scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, 2.67);
-
-        // Beat 5 (2.87 – 3.55) — Pancake's bracket spans the whole row.
-        tl.to(bracket, { clipPath: SHOWN, duration: 0.55 }, 2.87);
-        tl.fromTo(cap, { y: 6 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 3.17);
-
-        // QA hook (same idea as window.__snakes): lets headless checks seek the
-        // reveal to an exact time — e.g. window.__lv2Manifesto.pause(0.9).
-        (window as unknown as { __lv2Manifesto?: gsap.core.Timeline }).__lv2Manifesto = tl;
-
-        // Play once when the diagram enters: its first ~96px (the Building
-        // row) are enough, since that is where the story starts.
-        let played = false;
-        const play = () => {
-          if (played) return;
-          played = true;
-          tl.play(0);
-        };
-        const io = new IntersectionObserver(
-          (entries) => {
-            if (entries.some((e) => e.isIntersecting)) {
-              play();
-              io.disconnect();
-            }
-          },
-          { threshold: 0, rootMargin: "0px 0px -96px 0px" }
-        );
-        io.observe(art);
-
-        // Ambient loops pause while the diagram is off screen.
-        const ioOff = new IntersectionObserver(
-          (entries) => {
-            art.classList.toggle("is-off", !entries.some((e) => e.isIntersecting));
-          },
-          { threshold: 0.05 }
-        );
-        ioOff.observe(art);
-
-        return () => {
-          io.disconnect();
-          ioOff.disconnect();
-          tl.kill();
-          art.classList.remove("is-off");
-          art.classList.add("is-live");
-          gsap.set([ghostBox, ghostLine], { visibility: "hidden" });
-        };
-      });
+          };
+        },
+      );
 
       // Reduced motion: the CSS end state, ambient off (CSS), nothing to run.
       mm.add("(prefers-reduced-motion: reduce)", () => {
