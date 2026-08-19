@@ -165,8 +165,14 @@ export function Manifesto() {
             className="lv2-mf-panel lv2-mf-reveal"
             style={css({ "--d": "120ms" })}
             role="img"
-            aria-label="Diagram: buying signals flow into two parallel lanes of agents, outreach and AI search, and both lanes meet at one point: customers. In the middle, the GTM Brain points at buying signals, outreach and AI search: it improves all three."
+            aria-label="Diagram: buying signals flow into two parallel lanes of agents, outreach and AI search, and both lanes meet at one point: customers. In the middle, the GTM Brain radiates improvements to buying signals, outreach and AI search."
           >
+            {/* the Brain improves Signals, Outreach and AI search: soft aura
+                rings ripple out from it toward the three pills (studio ping
+                motif); a faint static halo remains without motion */}
+            <i className="lv2-mf-halo" aria-hidden="true" />
+            <i className="lv2-mf-ring" aria-hidden="true" />
+            <i className="lv2-mf-ring" data-r="2" aria-hidden="true" />
             <svg className="lv2-mf-net" viewBox="0 0 480 480" aria-hidden="true">
               {/* the two lanes: Signals → (Outreach | AI search) → Customers */}
               <path
@@ -180,17 +186,6 @@ export function Manifesto() {
                 pathLength="1"
                 style={css({ "--k": 1 })}
               />
-              {/* the Brain improves all three: spokes out to Signals, Outreach,
-                  AI search, each with an arrowhead and a soft outward pulse */}
-              <path className="lv2-mf-spoke" d="M240 212V174" pathLength="1" />
-              <path className="lv2-mf-spoke" d="M240 268v38" pathLength="1" />
-              <path className="lv2-mf-spoke" d="M186 240h-14" pathLength="1" />
-              <path className="lv2-mf-spokehead" d="M233 172 240 164l7 8" pathLength="1" />
-              <path className="lv2-mf-spokehead" d="M233 308l7 8 7-8" pathLength="1" />
-              <path className="lv2-mf-spokehead" d="M174 233l-8 7 8 7" pathLength="1" />
-              <circle className="lv2-mf-pulse" data-p="up" r="3" />
-              <circle className="lv2-mf-pulse" data-p="down" r="3" />
-              <circle className="lv2-mf-pulse" data-p="left" r="3" />
               {/* the agents: dots flowing along each lane toward Customers */}
               <circle className="lv2-mf-agent" data-o="t" data-n="1" r="5" />
               <circle className="lv2-mf-agent" data-o="t" data-n="2" r="5" />
