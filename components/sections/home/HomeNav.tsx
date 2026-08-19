@@ -124,9 +124,9 @@ export function HomeNav() {
             <Link href={sideLinkHref} className={navLinkClassName}>
               {sideLinkLabel}
             </Link>
-            {/* Persistent conversion path — the page previously had zero CTAs
-                between hero and closing. Real <a> to app.getpancake.ai so the
-                hostname-based trial_click tracking in AnalyticsEvents fires. */}
+            {/* Persistent product handoff for the legacy landing. Acquisition
+                tracking for v2 is event-based and does not infer conversions
+                from this destination hostname. */}
             <a
               href="https://app.getpancake.ai"
               className="button inline-flex w-fit shrink-0 items-center justify-center no-underline"

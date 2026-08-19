@@ -1,19 +1,22 @@
+import { normalizeAirtableBaseId, normalizeAirtableToken } from "./airtable-config";
+
 // Shared Airtable helper for Pancake
-const AIRTABLE_TOKEN = process.env.AIRTABLE_TOKEN!;
-const AIRTABLE_BASE = process.env.AIRTABLE_BASE_ID!;
 
 const TABLES = {
   signups: "tblXBOYUY7OfKItXz",
 } as const;
 
 function airtableUrl(table: string, extra = "") {
-  const base = AIRTABLE_BASE.trim();
-  return `https://api.airtable.com/v0/${base}/${encodeURIComponent(table)}${extra}`;
+  const baseId = normalizeAirtableBaseId(process.env.AIRTABLE_BASE_ID);
+  if (!baseId) throw new Error("AIRTABLE_BASE_ID is missing or invalid");
+  return `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(table)}${extra}`;
 }
 
 function headers() {
+  const token = normalizeAirtableToken(process.env.AIRTABLE_TOKEN);
+  if (!token) throw new Error("AIRTABLE_TOKEN is missing or invalid");
   return {
-    Authorization: `Bearer ${AIRTABLE_TOKEN}`,
+    Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
   };
 }
