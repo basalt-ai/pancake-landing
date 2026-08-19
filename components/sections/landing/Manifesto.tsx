@@ -28,11 +28,11 @@ import { gsap, useGSAP } from "@/lib/gsap";
 const REASONS = [
   {
     title: "Crowded from day one.",
-    body: "Launching takes a weekend now. Everyone did. Getting noticed is the hard part.",
+    body: "Anyone can launch in a weekend. Everyone does. Getting noticed is the hard part.",
   },
   {
     title: "There is no prompt for selling.",
-    body: "It still runs on tools glued together by hand. Or on nothing.",
+    body: "It runs on tools glued together by hand. Or on nothing.",
   },
   {
     title: "Buyers stopped answering.",
@@ -53,20 +53,20 @@ const RULES = [
   },
   {
     label: "Taste",
-    body: "Nothing goes out in your name below your standard.",
+    body: "Nothing goes out in your name that you wouldn’t send yourself.",
   },
   {
     label: "Continuous improvement",
     body: (
       <>
-        Whatever Pancake learns improves your agents, not everyone&rsquo;s. Your data stays yours.
+        What Pancake learns improves your agents, not everyone else&rsquo;s. Your data stays yours.
       </>
     ),
   },
 ] as const;
 
 const ART_LABEL =
-  "Diagram: building a product is a short path, from an idea through a few prompts to live. Selling it is a long path, from live through five open jobs (find buyers, write outreach, follow up, publish articles, get found on ChatGPT) to the first customers. Pancake runs the whole selling path.";
+  "Building takes three steps: an idea, a few prompts, live. Selling takes five more, all of them on you: find buyers, write outreach, follow up, publish articles, get found on ChatGPT. Pancake runs all five.";
 
 const css = (vars: Record<string, string | number>) => vars as React.CSSProperties;
 
@@ -387,8 +387,8 @@ export function Manifesto() {
               <span className="lv2-mf-payoff">And buyers answer.</span>
             </h3>
             <p className="lv2-mf-turn-body lv2-mf-reveal" style={css({ "--d": "80ms" })}>
-              The team of agents behind it does every one of those jobs, in both directions: going
-              out to buyers, and being found by them. Not by sending more. By three rules.
+              The team of agents behind it runs all five jobs, in both directions: going out to
+              buyers, and being found by them. Not by sending more. By three rules.
             </p>
           </div>
           <dl className="lv2-mf-rules">
@@ -404,7 +404,7 @@ export function Manifesto() {
             ))}
           </dl>
           <a href="#lead-finding" className="lv2-mf-link lv2-mf-reveal" style={css({ "--d": "160ms" })}>
-            <span className="lv2-mf-link-text">How Pancake finds your next customers</span>&nbsp;
+            <span className="lv2-mf-link-text">See how it finds your buyers</span>&nbsp;
             <span className="lv2-mf-arrow" aria-hidden="true">
               &rarr;
             </span>
