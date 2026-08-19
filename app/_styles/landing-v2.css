@@ -862,7 +862,8 @@ body.modal-open:has(main.lv2) {
    design-system CTAs (outline FxPill + quiet link) on the left, and a plum
    square panel on the right showing how Pancake works, drawn as one simple
    lens: buying signals in on the left, two parallel agent lanes (Outreach
-   above, AI search below), the white GTM Brain between them, both lanes
+   above, AI search below), the white GTM Brain between them radiating
+   mint aura rings toward Signals, Outreach and AI search, both lanes
    meeting at mint Customers on the right. Field: the brand pink-20, the
    page's one full-pink chapter (pricing stays pale pink-10). No pin. Text
    reveals once on enter (html.lv2-anim); the lanes draw once, then agent
@@ -1029,56 +1030,51 @@ body.modal-open:has(main.lv2) {
   stroke-width: 3;
   stroke-linecap: round;
 }
-/* the Brain's ties to both lanes — dotted, quiet */
-.lv2-mf-tie {
-  fill: none;
-  stroke: color-mix(in srgb, var(--palette-pink-20) 40%, transparent);
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-dasharray: 0.5 8;
+/* the Brain's aura — it improves Signals, Outreach and AI search: a faint
+   static halo, plus two mint rings rippling out toward the three pills
+   (the studio ping motif). Rings sit under the station pills. */
+.lv2-mf-halo,
+.lv2-mf-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  pointer-events: none;
 }
-/* the agents — one colour per lane (outreach pink, AI search golden), flowing
-   toward Customers and fading at both ends; hidden where motion paths are
-   unsupported and under reduced motion. */
-.lv2-mf-agent {
-  display: none;
+.lv2-mf-halo {
+  width: 46%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--positive-surface) 13%, transparent),
+    transparent 70%
+  );
 }
-@supports (offset-path: path("M0 0h1")) {
-  .lv2-mf-agent {
-    display: block;
-    animation: lv2-mf-flow 7s linear infinite;
-  }
-  .lv2-mf-agent[data-o="t"] {
-    fill: var(--palette-pink-30);
-    offset-path: path("M95 240C95 185 160 140 240 140C320 140 385 185 385 240");
-  }
-  .lv2-mf-agent[data-o="b"] {
-    fill: var(--alt-strong-branded-surface-02);
-    offset-path: path("M95 240C95 295 160 340 240 340C320 340 385 295 385 240");
-  }
-  .lv2-mf-agent[data-n="2"] {
-    animation-delay: -3.5s;
-  }
-  .lv2-mf-agent[data-o="b"][data-n="1"] {
-    animation-delay: -1.75s;
-  }
-  .lv2-mf-agent[data-o="b"][data-n="2"] {
-    animation-delay: -5.25s;
-  }
+.lv2-mf-ring {
+  width: 47%;
+  border: 2px solid color-mix(in srgb, var(--positive-surface) 55%, transparent);
+  transform: translate(-50%, -50%) scale(0.3);
+  opacity: 0;
+  animation: lv2-mf-aura 3.6s cubic-bezier(0.25, 0.6, 0.45, 1) infinite;
 }
-@keyframes lv2-mf-flow {
+.lv2-mf-ring[data-r="2"] {
+  animation-delay: 1.8s;
+}
+@keyframes lv2-mf-aura {
   0% {
-    offset-distance: 0%;
+    transform: translate(-50%, -50%) scale(0.3);
     opacity: 0;
   }
-  12% {
-    opacity: 1;
+  18% {
+    opacity: 0.75;
   }
-  86% {
-    opacity: 1;
+  70% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
   }
   100% {
-    offset-distance: 100%;
+    transform: translate(-50%, -50%) scale(1);
     opacity: 0;
   }
 }
@@ -1142,8 +1138,7 @@ body.modal-open:has(main.lv2) {
 }
 /* the panel draws once it is in: lanes sweep from Signals, stations pop,
    the ties dot in, then the agents flow */
-.lv2-anim .lv2-mf-lane,
-.lv2-anim .lv2-mf-tie {
+.lv2-anim .lv2-mf-lane {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
 }
@@ -1151,7 +1146,8 @@ body.modal-open:has(main.lv2) {
   opacity: 0;
   transform: translate(-50%, -50%) scale(0.92);
 }
-.lv2-anim .lv2-mf-panel .lv2-mf-agent {
+.lv2-anim .lv2-mf-panel .lv2-mf-agent,
+.lv2-anim .lv2-mf-panel .lv2-mf-ring {
   animation-play-state: paused;
   visibility: hidden;
 }
@@ -1166,15 +1162,11 @@ body.modal-open:has(main.lv2) {
     opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1) calc(0.3s + var(--i) * 0.28s),
     transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) calc(0.3s + var(--i) * 0.28s);
 }
-.lv2-anim .lv2-mf-panel.is-in .lv2-mf-tie {
-  stroke-dasharray: 0.5 8;
-  stroke-dashoffset: 0;
-  transition: stroke-dashoffset 0.4s ease-out 1.35s;
-}
-.lv2-anim .lv2-mf-panel.is-in .lv2-mf-agent {
+.lv2-anim .lv2-mf-panel.is-in .lv2-mf-agent,
+.lv2-anim .lv2-mf-panel.is-in .lv2-mf-ring {
   animation-play-state: running;
   visibility: visible;
-  transition: visibility 0s 1.7s;
+  transition: visibility 0s 1.6s;
 }
 @media (prefers-reduced-motion: reduce) {
   .lv2-anim .lv2-mf-reveal,
@@ -1186,15 +1178,12 @@ body.modal-open:has(main.lv2) {
   .lv2-anim .lv2-mf-station {
     transform: translate(-50%, -50%);
   }
-  .lv2-anim .lv2-mf-lane,
-  .lv2-anim .lv2-mf-tie {
+  .lv2-anim .lv2-mf-lane {
     stroke-dashoffset: 0;
     transition: none;
   }
-  .lv2-anim .lv2-mf-tie {
-    stroke-dasharray: 0.5 8;
-  }
-  .lv2-mf-agent {
+  .lv2-mf-agent,
+  .lv2-mf-ring {
     display: none !important;
   }
 }
