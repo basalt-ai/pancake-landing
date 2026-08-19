@@ -857,353 +857,660 @@ body.modal-open:has(main.lv2) {
   padding-block-start: 0;
 }
 
-/* ── Manifesto — the dark chapter, scroll-driven (synthetic's cream→dark
-   flip). ScrollTrigger pins the section on desktop; the DEFAULT styles below
-   are the resolved beat-4 scene so mobile / reduced-motion / no-JS visitors
-   always get the complete chapter. Canvas internals follow the pancake-studio
-   loop grammar (shorts/agents-loop): white cards on soft shadows, panel-grey
-   chips with a live dot, mint = done, ✓ glyph never a drawn check. ── */
+/* ── Manifesto v3 — "The Distance". The page's dark plum chapter as a free-
+   scrolling editorial argument: the claim with the founder's three reasons
+   ruled beside it, ONE diagram that literalises the H2 by length (a short
+   solid mint Building row vs a long dashed Selling row of five open jobs,
+   bracketed by Pancake), then the turn with the three quality rules.
+   No pin. The DEFAULT styles are the resolved end state — no-JS, reduced-
+   motion and pre-hydration visitors get the complete still; GSAP rewinds and
+   replays the diagram once on enter, text reveals gate on html.lv2-anim.
+   Artifact grammar = pancake-studio loops: white/panel cards on one soft
+   shadow, live dot pink-40, done = mint fill + ✓ glyph, Fono for labels. ── */
 
 .lv2-manifesto {
+  --lv2-mf-hair: color-mix(in srgb, var(--palette-chrome-20) 14%, transparent);
+  --lv2-mf-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+  --lv2-mf-panel: color-mix(in srgb, var(--palette-chrome-20) 4%, var(--inverted-surface));
+  --lv2-mf-box: 36px;
+  --lv2-mf-gap: clamp(3rem, 6vw, 4.5rem);
+  position: relative;
   background: var(--inverted-surface);
   color: var(--text-on-inverted-surface);
-  /* tilted cards may poke past the canvas box — clip, never scroll */
-  overflow: hidden;
 }
-@media (min-width: 900px) {
-  /* One composed viewport-high frame while pinned. */
-  .lv2-manifesto {
-    min-height: 100svh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding-block: clamp(3rem, 6svh, 5rem);
-  }
+
+/* Two grids share the columns — block B (claim | reasons) and block D
+   (turn | rules) are parallel frames. */
+.lv2-mf-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  column-gap: clamp(3rem, 5vw, 5rem);
+  align-items: start;
+}
+.lv2-mf-art,
+.lv2-mf-turn {
+  margin-top: var(--lv2-mf-gap);
+}
+
+/* Kit .badge transposed onto plum: flat fill, same-colour hairline, uppercase,
+   squircle, no shadow (Tristan's rule for small labels). Fono 600 on plum. */
+.lv2-mf-badge {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 600;
+  font-size: var(--font-size-eyebrow);
+  line-height: 1.2;
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+.lv2-mf-badge--cream {
+  --badge-background-color: color-mix(in srgb, var(--palette-chrome-20) 10%, transparent);
+  --badge-border-color: color-mix(in srgb, var(--palette-chrome-20) 12%, transparent);
+  color: var(--text-on-inverted-surface);
+}
+
+/* Block B — the claim */
+.lv2-mf-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.lv2-mf-head .lv2-mf-badge {
+  margin-bottom: 20px;
 }
 .lv2-manifesto-title {
   font-family: var(--font-aeonik-fono), ui-monospace, monospace;
   font-weight: 700;
-  font-size: clamp(2.25rem, 3.6vw, 3.25rem);
+  font-size: clamp(2.25rem, 3.6vw, 3.125rem);
   line-height: 1.02;
   letter-spacing: -0.02em;
 }
 .lv2-manifesto-title * {
   font-family: inherit;
 }
-.lv2-manifesto-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 28rem);
-  gap: clamp(2.5rem, 6vw, 6rem);
-  align-items: center;
-  margin-top: clamp(2rem, 4svh, 3.5rem);
+/* each sentence is one line on desktop; below 900 they wrap, but never
+   between "10x" and "easier." */
+@media (min-width: 900px) {
+  .lv2-manifesto-title .ln {
+    white-space: nowrap;
+  }
 }
-
-/* The four beats. Default: stacked, all readable (mobile / no-JS / reduced
-   motion). In pin mode (.lv2-manifesto--pin, added by GSAP on desktop) the
-   slot overlays them and ONE sentence shows at a time, display-sized — no
-   spoiling the ones still to come (founder call 2026-08-06). */
-.lv2-manifesto-beats {
-  max-width: 34rem;
+.lv2-manifesto-title .nb {
+  white-space: nowrap;
 }
-.lv2-manifesto-slot {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(1.25rem, 2.6svh, 2rem);
+@media (max-width: 359px) {
+  .lv2-manifesto-title {
+    font-size: 2rem;
+  }
 }
-.lv2-manifesto-beat {
-  font-size: clamp(1.125rem, 1.35vw, 1.375rem);
+.lv2-mf-lede {
+  margin-top: 28px;
+  font-size: 1.1875rem;
   line-height: 1.5;
+  color: var(--subtle-text-on-inverted-surface);
+  max-width: 34rem;
   text-wrap: pretty;
 }
-/* The payoff line lands in brand pink. */
-.lv2-manifesto-beat:last-child {
-  color: var(--strong-branded-surface);
-  font-weight: 500;
+
+/* the three reasons — a ruled broadsheet deck, no numerals (how-it-works and
+   the dive already number their steps) */
+.lv2-mf-reasons {
+  list-style: none;
+  margin: 44px 0 0; /* eyebrow 24 + its 20 margin: first hairline level with the H2 */
+  padding: 0;
 }
-.lv2-manifesto--pin .lv2-manifesto-slot {
-  position: relative;
-  min-height: 13rem;
+.lv2-mf-reason {
+  padding: 22px 0;
+  border-top: 1px solid var(--lv2-mf-hair);
 }
-.lv2-manifesto--pin .lv2-manifesto-beat {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  font-size: clamp(1.5rem, 2.1vw, 2.125rem);
-  line-height: 1.4;
+.lv2-mf-reason:last-child {
+  border-bottom: 1px solid var(--lv2-mf-hair);
 }
-/* Beat progress ticks — pin mode only; GSAP paints the active one pink. */
-.lv2-manifesto-ticks {
-  display: none;
+.lv2-mf-rtitle {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 1.375rem;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
 }
-.lv2-manifesto--pin .lv2-manifesto-ticks {
-  display: flex;
-  gap: 10px;
-  margin-top: 1.75rem;
-}
-.lv2-manifesto-tick {
-  width: 28px;
-  height: 3px;
-  border-radius: 2px;
-  background: rgba(255, 247, 236, 0.22);
+.lv2-mf-rbody {
+  margin-top: 8px;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: var(--subtle-text-on-inverted-surface);
+  max-width: 30rem;
+  text-wrap: pretty;
 }
 
-/* The canvas: beads behind, the founder's product window, six task cards.
-   GSAP also treats it as the camera (push-in scale, impact jolts). */
-.lv2-manifesto-canvas {
+/* ── The Distance diagram ── */
+.lv2-mf-art {
   position: relative;
-  height: clamp(420px, 58svh, 540px);
-}
-.lv2-manifesto-bead {
-  position: absolute;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  opacity: 0.9;
-}
-.lv2-manifesto-bead[data-tone="golden"] {
-  width: 46%;
-  left: -4%;
-  top: 26%;
-  background: var(--alt-strong-branded-surface-02);
-}
-.lv2-manifesto-bead[data-tone="purple"] {
-  width: 38%;
-  right: -2%;
-  top: 2%;
-  background: var(--alt-strong-branded-surface-01);
-}
-.lv2-manifesto-bead[data-tone="mint"] {
-  width: 30%;
-  left: 38%;
-  top: 56%;
-  background: var(--positive-surface);
-}
-
-/* The founder's product window — studio window grammar: white card, one big
-   soft shadow, no border, a 2px rule under the bar. */
-.lv2-mwin {
-  position: absolute;
-  top: 2%;
-  left: 14%;
-  width: 62%;
-  z-index: 2;
-  background: var(--surface);
-  border-radius: 20px;
-  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.35);
+  width: 100%;
+  padding: 36px 40px 32px;
+  border-radius: var(--radius-lg);
+  corner-shape: round;
+  background-color: var(--lv2-mf-panel);
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--palette-chrome-20) 7%, transparent) 1px,
+    transparent 1.2px
+  );
+  background-size: 20px 20px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-20) 12%, transparent);
   overflow: hidden;
 }
-.lv2-mwin-bar {
+.lv2-mf-row {
+  position: relative;
+}
+.lv2-mf-row[data-row="build"] {
+  margin-bottom: 40px;
+}
+.lv2-mf-rowlabel {
+  display: inline-flex;
+  margin-bottom: 12px;
+}
+.lv2-mf-track {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  border-bottom: 2px solid rgba(44, 0, 42, 0.07);
+  height: 40px;
 }
-.lv2-mwin-mark {
+.lv2-mf-row[data-row="build"] .lv2-mf-track {
+  gap: 28px;
+  width: max-content;
+}
+.lv2-mf-row[data-row="sell"] .lv2-mf-track {
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 22px; /* room for the lane labels above the chips */
+}
+
+/* rails */
+.lv2-mf-line {
+  position: absolute;
+  top: 50%;
+  height: 2px;
+  transform: translateY(-50%);
+  z-index: 0;
+}
+.lv2-mf-line[data-kind="solid"] {
+  left: 6px;
+  right: 30px;
+  background: color-mix(in srgb, var(--positive-surface) 60%, transparent);
+}
+.lv2-mf-line[data-kind="dashed"],
+.lv2-mf-ghostline {
+  left: 6px;
+  right: 75px; /* ends at the Customers ring centre */
+  background: repeating-linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--palette-chrome-20) 28%, transparent) 0 6px,
+    transparent 6px 12px
+  );
+}
+.lv2-mf-line[data-kind="dashed"] {
+  animation: lv2-mf-march 2.4s linear infinite;
+}
+@keyframes lv2-mf-march {
+  to {
+    background-position: 12px 0;
+  }
+}
+
+/* origin / destination stations */
+.lv2-mf-origin,
+.lv2-mf-dest {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--subtle-text-on-inverted-surface);
+  white-space: nowrap;
+}
+.lv2-mf-origin b,
+.lv2-mf-dest b {
+  font-weight: inherit;
+  /* station names sit ON the rail: mask it behind the label */
+  padding: 3px 5px;
+  margin: -3px -5px;
+  border-radius: 4px;
+  background: var(--lv2-mf-panel);
+}
+.lv2-mf-bead {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex: none;
+}
+.lv2-mf-bead[data-tone="yellow"] {
+  background: var(--alt-strong-branded-surface-02);
+}
+.lv2-mf-bead[data-tone="purple"] {
+  background: var(--alt-strong-branded-surface-01);
+}
+.lv2-mf-ring {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: var(--text);
-}
-.lv2-mwin-url {
-  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
-  font-weight: 500;
-  font-size: 0.6875rem;
-  letter-spacing: 0.03em;
-  color: rgba(44, 0, 42, 0.62);
-}
-.lv2-mwin-body {
-  position: relative;
-  padding: 16px;
-}
-.lv2-mwin-line {
-  display: block;
-  height: 12px;
-  border-radius: 6px;
-  background: #f7ede5;
-}
-.lv2-mwin-line + .lv2-mwin-line {
-  margin-top: 10px;
-}
-.lv2-mwin-line:nth-child(1) {
-  width: 92%;
-}
-.lv2-mwin-line:nth-child(2) {
-  width: 68%;
-}
-.lv2-mwin-line:nth-child(3) {
-  width: 82%;
-}
-.lv2-mwin-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin-top: 14px;
-  padding: 7px 13px;
-  border-radius: 999px;
-  background: #f7ede5;
-  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
-  font-weight: 500;
-  font-size: 0.71875rem;
-  color: var(--text);
-  white-space: nowrap;
-}
-.lv2-mwin-chip-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--palette-pink-40);
+  border: 1.5px dashed color-mix(in srgb, var(--palette-chrome-20) 55%, transparent);
+  flex: none;
 }
 
-/* Six task cards. Default = cleared: tidy grid, mint fill, ✓ landed.
-   GSAP rewinds them into the falling white mound mid-story. */
-.lv2-mtasks {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.lv2-mtasks li {
-  position: absolute;
-  z-index: 3;
-  display: flex;
+/* the boxes — all the same height, radius 12, parallel, one soft shadow */
+.lv2-mf-prompt,
+.lv2-mf-ghost,
+.lv2-mf-done,
+.lv2-mf-chip {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: #a8e5c9;
-  border: 2px solid rgba(44, 0, 42, 0.08);
-  color: var(--text);
+  height: var(--lv2-mf-box);
+  padding: 11px 14px; /* real vertical padding (36px box), not just flex centring */
+  border-radius: 12px;
+  corner-shape: round;
   font-family: var(--font-aeonik-fono), ui-monospace, monospace;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 0.8125rem;
   line-height: 1;
-  padding: 10px 14px;
-  border-radius: 14px;
-  corner-shape: round;
+  color: var(--text);
   white-space: nowrap;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+  box-shadow: var(--lv2-mf-shadow);
 }
-.lv2-mtask-check {
+.lv2-mf-prompt,
+.lv2-mf-ghost {
+  background: var(--surface);
+}
+.lv2-mf-caret {
+  width: 1.5px;
+  height: 14px;
+  margin-left: 6px;
+  background: var(--palette-pink-40);
+  animation: lv2-mf-blink 1.1s steps(2, jump-none) infinite;
+}
+@keyframes lv2-mf-blink {
+  to {
+    opacity: 0;
+  }
+}
+.lv2-mf-done {
+  gap: 8px;
+  padding: 11px 14px 11px 12px;
+  font-weight: 600;
+  background: #a8e5c9; /* studio mint (loop grammar) */
+}
+.lv2-mf-check {
   font-weight: 700;
+  font-size: 0.875rem;
   color: var(--palette-green-30);
 }
-
-/* Narrative-only props — cursor, "Ship it" button, backlog tally, impact
-   rings, signal dot. ALL default hidden so the resolved SSR scene is
-   unchanged; GSAP reveals them only inside the pinned desktop story. */
-.lv2-mship {
+/* the ✓ Live aura — CSS is the hidden state; GSAP fires it with immediateRender:false */
+.lv2-mf-ping {
   position: absolute;
-  left: 16px;
-  top: 84px;
-  display: inline-flex;
-  align-items: center;
-  padding: 7px 14px;
-  border-radius: 999px;
-  background: var(--text);
-  color: var(--elevated-surface);
-  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  left: 50%;
+  top: 50%;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: radial-gradient(circle, transparent 55%, rgba(247, 237, 229, 0.5) 68%, transparent 72%);
+  transform: translate(-50%, -50%) scale(0.45);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+.lv2-mf-chip {
+  gap: 8px;
+  padding: 11px 14px 11px 12px;
   font-weight: 600;
-  font-size: 0.71875rem;
-  white-space: nowrap;
-  opacity: 0;
-  visibility: hidden;
+  background: var(--palette-chrome-30);
 }
-.lv2-mcursor {
-  position: absolute;
-  left: 33%;
-  top: 30%;
-  z-index: 6;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+.lv2-mf-chip--lane2 {
+  margin-left: 24px; /* a breath before "They find you" */
 }
-.lv2-mtally {
-  position: absolute;
-  top: 4%;
-  right: 2%;
-  z-index: 4;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 7px 13px;
-  border-radius: 999px;
-  background: #f7ede5;
-  color: var(--text);
-  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
-  font-weight: 500;
-  font-size: 0.71875rem;
-  white-space: nowrap;
-  transform-origin: 50% 0;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-.lv2-mtally::before {
-  content: "";
+.lv2-mf-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: var(--palette-pink-40);
+  flex: none;
+  animation: lv2-dive-pulse 2s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 0.35s);
 }
-/* Two reusable aura rings (studio ping motif) — GSAP repositions them per
-   impact and fires fromTo with immediateRender:false; NO gsap.set, so the
-   hidden state lives here only. */
-.lv2-mping-a,
-.lv2-mping-b {
+.lv2-mf-lane {
   position: absolute;
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    transparent 55%,
-    rgba(247, 237, 229, 0.5) 68%,
-    transparent 72%
-  );
-  transform: translate(-50%, -50%) scale(0.45);
-  opacity: 0;
-  z-index: 5;
-  pointer-events: none;
-}
-/* Pancake's signal — travels from the mint bead to the first grid card. */
-.lv2-mdot {
-  position: absolute;
-  left: 53%;
-  top: 68%;
-  z-index: 1;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--positive-surface);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+  left: 0;
+  bottom: calc(100% + 8px);
+  font-style: normal;
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 600;
+  font-size: 0.6875rem;
+  line-height: 1.3;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--palette-chrome-20) 60%, transparent);
+  white-space: nowrap;
 }
 
-@media (max-width: 899px) {
-  .lv2-manifesto-grid {
-    grid-template-columns: 1fr;
+/* the mint measurement bracket under the whole Selling row + its caption */
+.lv2-mf-bracket {
+  display: block;
+  margin: 14px 0 0 6px;
+  width: calc(100% - 6px - 75px); /* bead centre → ring centre */
+  height: 10px;
+  border: 2px solid var(--positive-surface);
+  border-top: 0;
+  border-radius: 0 0 8px 8px;
+}
+.lv2-mf-cap {
+  margin: 10px 0 0 6px;
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 600;
+  font-size: 0.875rem;
+  line-height: 1.3;
+  color: var(--text-on-inverted-surface);
+}
+
+/* the fold props — JS-only overlay, never in flow, hidden by default */
+.lv2-mf-ghosts {
+  position: absolute;
+  left: 76px;
+  right: 8px;
+  top: 36px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 1; /* under the prompt card: the steps get absorbed into it */
+}
+.lv2-mf-prompt,
+.lv2-mf-done {
+  z-index: 2;
+}
+.lv2-mf-ghost {
+  opacity: 0;
+}
+.lv2-mf-ghostline {
+  position: absolute;
+  top: 55px;
+  right: 8px;
+  height: 2px;
+  visibility: hidden;
+  z-index: 0;
+}
+
+/* Ambient loops run only once the diagram is live, and pause off screen.
+   Without JS the diagram is live from the start. */
+.lv2-anim .lv2-mf-art:not(.is-live) .lv2-mf-dot,
+.lv2-anim .lv2-mf-art:not(.is-live) .lv2-mf-caret,
+.lv2-anim .lv2-mf-art:not(.is-live) .lv2-mf-line[data-kind="dashed"],
+.lv2-mf-art.is-off .lv2-mf-dot,
+.lv2-mf-art.is-off .lv2-mf-caret,
+.lv2-mf-art.is-off .lv2-mf-line[data-kind="dashed"] {
+  animation-play-state: paused;
+}
+
+/* Block D — the turn */
+.lv2-mf-turncopy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.lv2-mf-turn-title {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: clamp(1.75rem, 2.6vw, 2.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.lv2-mf-turn-title * {
+  font-family: inherit;
+}
+/* the only pink type in the chapter — the payoff */
+.lv2-mf-payoff {
+  color: var(--strong-branded-surface);
+}
+.lv2-mf-turn-body {
+  margin-top: 20px;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--subtle-text-on-inverted-surface);
+  max-width: 30rem;
+  text-wrap: pretty;
+}
+.lv2-mf-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 20px;
+  padding: 10px 0; /* ≥40px tap row */
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-on-inverted-surface);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+.lv2-mf-arrow {
+  display: inline-block;
+  transition: translate 0.2s ease;
+}
+.lv2-mf-link:hover .lv2-mf-arrow {
+  translate: 3px 0;
+}
+.lv2-mf-link:focus {
+  outline: none;
+}
+.lv2-mf-link:focus-visible {
+  outline: 2px solid var(--text-on-inverted-surface);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.lv2-mf-rules {
+  margin: 0; /* first hairline level with the turn title's top, like the reasons */
+}
+.lv2-mf-rule {
+  padding: 18px 0;
+  border-top: 1px solid var(--lv2-mf-hair);
+}
+.lv2-mf-rule:last-child {
+  border-bottom: 1px solid var(--lv2-mf-hair);
+}
+.lv2-mf-rule dt {
+  display: flex;
+}
+.lv2-mf-rule dd {
+  margin: 10px 0 0;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: var(--text-on-inverted-surface);
+  max-width: 30rem;
+  text-wrap: pretty;
+}
+
+/* Text reveals — hidden state exists only under html.lv2-anim (JS on) */
+.lv2-anim .lv2-mf-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+}
+.lv2-anim .lv2-mf-reveal.is-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--d, 0ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .lv2-anim .lv2-mf-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
-  .lv2-manifesto-canvas {
-    max-width: 26rem;
-    width: 100%;
-    height: 340px;
-    margin-top: 0.5rem;
+  .lv2-mf-dot,
+  .lv2-mf-caret,
+  .lv2-mf-line[data-kind="dashed"] {
+    animation: none;
   }
 }
-/* Narrow phones: shrink the cards and pull the grid columns in so the longest
-   card never clips. !important beats the tidy-grid inline coordinates (GSAP
-   never runs at this width, so nothing else touches them). */
+
+/* ── Responsive ── */
+
+/* Vertical tracks: below 1200 the Selling row no longer fits on one line, so
+   both rows turn into columns side by side — the length comparison survives
+   as height (short mint column vs tall dashed column). */
+@media (max-width: 1199px) {
+  .lv2-mf-art {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: 24px;
+    padding: 28px 24px 24px;
+  }
+  .lv2-mf-row[data-row="build"] {
+    margin-bottom: 0;
+  }
+  .lv2-mf-track,
+  .lv2-mf-row[data-row="build"] .lv2-mf-track,
+  .lv2-mf-row[data-row="sell"] .lv2-mf-track {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 12px;
+    padding-left: 20px;
+    height: auto;
+    width: 100%;
+    margin-top: 0;
+  }
+  .lv2-mf-line {
+    left: 5px;
+    top: 6px;
+    bottom: 18px;
+    right: auto;
+    width: 2px;
+    height: auto;
+    transform: none;
+  }
+  .lv2-mf-line[data-kind="solid"] {
+    bottom: 18px; /* ✓ Live pill centre */
+  }
+  .lv2-mf-line[data-kind="dashed"] {
+    bottom: 7px; /* Customers ring centre */
+  }
+  .lv2-mf-line[data-kind="dashed"],
+  .lv2-mf-ghostline {
+    background: repeating-linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--palette-chrome-20) 28%, transparent) 0 6px,
+      transparent 6px 12px
+    );
+  }
+  @keyframes lv2-mf-march {
+    to {
+      background-position: 0 12px;
+    }
+  }
+  .lv2-mf-origin {
+    margin-left: -20px; /* bead centred on the rail */
+  }
+  .lv2-mf-dest {
+    margin-left: -21px;
+    gap: 7px;
+  }
+  .lv2-mf-chip--lane1,
+  .lv2-mf-chip--lane2 {
+    margin-top: 20px; /* room for the lane label */
+  }
+  .lv2-mf-chip--lane2 {
+    margin-left: 0;
+  }
+  .lv2-mf-bracket {
+    margin: 14px 0 0;
+    width: 100%;
+  }
+  .lv2-mf-cap {
+    margin-left: 0;
+  }
+  .lv2-mf-ghosts {
+    left: 20px;
+    right: auto;
+    top: 60px; /* label 24 + 12, "Idea" 12 + gap 12: the prompt card's slot */
+    height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 12px;
+  }
+  .lv2-mf-ghostline {
+    left: 5px;
+    top: 42px;
+    right: auto;
+    width: 2px;
+    height: 190px;
+  }
+}
+
+/* Single column: claim → reasons → diagram → turn → rules, in reading order. */
+@media (max-width: 899px) {
+  .lv2-mf-grid {
+    grid-template-columns: 1fr;
+    row-gap: 40px;
+  }
+  .lv2-mf-reasons {
+    margin-top: 0;
+  }
+  .lv2-mf-lede {
+    margin-top: 20px;
+  }
+}
+@media (max-width: 599px) {
+  .lv2-mf-prompt,
+  .lv2-mf-ghost,
+  .lv2-mf-done,
+  .lv2-mf-chip {
+    font-size: 0.75rem;
+  }
+  .lv2-mf-cap {
+    font-size: 0.75rem;
+  }
+}
+/* Narrow phones: the diagram stacks (Building above Selling), boxes 34px. */
 @media (max-width: 479px) {
-  .lv2-mtasks li {
-    font-size: 0.71875rem;
-    padding: 8px 10px;
-    gap: 6px;
-    border-radius: 11px;
+  .lv2-manifesto {
+    --lv2-mf-box: 34px;
   }
-  .lv2-mtasks li:nth-child(-n + 3) {
-    left: 0 !important;
+  .lv2-mf-art {
+    grid-template-columns: 1fr;
+    row-gap: 28px;
+    padding: 24px 20px 20px;
   }
-  .lv2-mtasks li:nth-child(n + 4) {
-    left: 46% !important;
+  .lv2-mf-prompt,
+  .lv2-mf-ghost,
+  .lv2-mf-done,
+  .lv2-mf-chip {
+    padding: 10px 10px 10px 9px;
+  }
+  .lv2-mf-lede {
+    font-size: 1.0625rem;
+  }
+  .lv2-mf-rtitle {
+    font-size: 1.25rem;
+  }
+  .lv2-mf-rbody,
+  .lv2-mf-rule dd {
+    font-size: 1rem;
+  }
+  .lv2-mf-turn-title {
+    font-size: 1.5rem;
+  }
+  .lv2-mf-turn-body {
+    font-size: 1.0625rem;
   }
 }
 
