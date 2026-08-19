@@ -78,9 +78,10 @@ function Glyph({ kind }: { kind: (typeof POINTS)[number]["glyph"] }) {
   );
 }
 
-/** Orbit + station geometry lives in one place: the 480×480 panel viewBox. */
+/** Station geometry lives in the CSS (panel viewBox 480). */
 const STATIONS = [
-  { s: "outreach", label: "Outreach", i: 0 },
+  { s: "signals", label: "Buying signals", i: 0 },
+  { s: "outreach", label: "Outreach", i: 1 },
   { s: "ai", label: "AI search", i: 1 },
   { s: "brain", label: "GTM Brain", i: 2 },
   { s: "customers", label: "Customers", i: 3 },
@@ -155,29 +156,46 @@ export function Manifesto() {
             </div>
           </div>
 
-          {/* The panel: two agent orbits tangent at the Brain, flowing to Customers. */}
+          {/* The panel: signals in, two parallel agent lanes, the Brain between
+              them, one meeting point: Customers. */}
           <div
             className="lv2-mf-panel lv2-mf-reveal"
             style={css({ "--d": "120ms" })}
             role="img"
-            aria-label="Diagram: two loops of agents run in parallel, outreach on one side and AI search on the other, joined at the GTM Brain that improves both. Everything flows to one goal: customers."
+            aria-label="Diagram: buying signals flow into two parallel lanes of agents, outreach and AI search. The GTM Brain sits between the lanes and improves both. Both lanes meet at one point: customers."
           >
             <svg className="lv2-mf-net" viewBox="0 0 480 480" aria-hidden="true">
-              {/* the two orbits, tangent at the Brain (240,210) */}
-              <circle className="lv2-mf-orbit" cx="150" cy="210" r="90" pathLength="1" />
-              <circle className="lv2-mf-orbit" cx="330" cy="210" r="90" pathLength="1" style={css({ "--k": 1 })} />
-              {/* the goal: Brain down to Customers */}
-              <path className="lv2-mf-goal" d="M240 234V356" pathLength="1" />
-              <path className="lv2-mf-goal lv2-mf-goal-head" d="M228 348 240 360 252 348" pathLength="1" />
-              {/* the agents: two dots per orbit, circulating (CSS offset-path) */}
-              <circle className="lv2-mf-agent" data-o="l" data-n="1" r="5" />
-              <circle className="lv2-mf-agent" data-o="l" data-n="2" r="5" />
-              <circle className="lv2-mf-agent" data-o="r" data-n="1" r="5" />
-              <circle className="lv2-mf-agent" data-o="r" data-n="2" r="5" />
+              {/* the two lanes: Signals → (Outreach | AI search) → Customers */}
+              <path
+                className="lv2-mf-lane"
+                d="M95 240C95 185 160 140 240 140C320 140 385 185 385 240"
+                pathLength="1"
+              />
+              <path
+                className="lv2-mf-lane"
+                d="M95 240C95 295 160 340 240 340C320 340 385 295 385 240"
+                pathLength="1"
+                style={css({ "--k": 1 })}
+              />
+              {/* the Brain improves both lanes: two short dashed ties */}
+              <path className="lv2-mf-tie" d="M240 168v44" pathLength="1" />
+              <path className="lv2-mf-tie" d="M240 268v44" pathLength="1" />
+              {/* the agents: dots flowing along each lane toward Customers */}
+              <circle className="lv2-mf-agent" data-o="t" data-n="1" r="5" />
+              <circle className="lv2-mf-agent" data-o="t" data-n="2" r="5" />
+              <circle className="lv2-mf-agent" data-o="b" data-n="1" r="5" />
+              <circle className="lv2-mf-agent" data-o="b" data-n="2" r="5" />
             </svg>
             {STATIONS.map((st) => (
               <span key={st.s} className="lv2-mf-station" data-s={st.s} style={css({ "--i": st.i })}>
-                {st.label}
+                {st.s === "signals" ? (
+                  <>
+                    <span className="lv2-mf-station-long">Buying signals</span>
+                    <span className="lv2-mf-station-short">Signals</span>
+                  </>
+                ) : (
+                  st.label
+                )}
               </span>
             ))}
           </div>
