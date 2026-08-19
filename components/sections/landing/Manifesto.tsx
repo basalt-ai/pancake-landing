@@ -36,7 +36,7 @@ const POINTS = [
   {
     glyph: "loop",
     title: "Learn from every correction",
-    body: "What Pancake learns improves your agents, not everyone’s. Your data stays yours.",
+    body: "What Pancake learns improves your agents. Your data stays yours.",
   },
 ] as const;
 
@@ -65,15 +65,16 @@ function Glyph({ kind }: { kind: (typeof POINTS)[number]["glyph"] }) {
     );
   }
   return (
-    <svg viewBox="0 0 20 20" aria-hidden="true">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M23 4v6h-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
       <path
-        d="M16.6 10a6.6 6.6 0 1 1-1.85-4.58"
+        d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="2.4"
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      <path d="M15.1 2.4v3.2h3.2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -118,15 +119,17 @@ export function Manifesto() {
       <div className="lv2-container">
         <h2 id="lv2-manifesto-title" className="lv2-manifesto-title lv2-mf-reveal">
           Building got <span className="nb">10x easier.</span> <span className="nb">Selling didn&rsquo;t.</span>{" "}
-          <span className="lv2-mf-muted">You need a team that sells while you build.</span>
+          <span className="lv2-mf-muted">You need a team that brings customers while you build.</span>
         </h2>
 
         <div className="lv2-mf-grid">
           <div className="lv2-mf-copy">
             <p className="lv2-mf-body lv2-mf-reveal" style={css({ "--d": "80ms" })}>
-              An idea is a working product by Monday. Then you have to sell it: a full market, tools
-              glued together by hand, buyers who stopped answering templates. Pancake does it for you,
-              end to end.
+              An idea is a working product by Monday. Then you have to sell it:
+              <br />
+              a full market, tools glued together by hand, buyers who stopped answering templates.
+              <br />
+              Pancake does it for you, end to end.
             </p>
 
             <ul className="lv2-mf-points">
@@ -162,7 +165,7 @@ export function Manifesto() {
             className="lv2-mf-panel lv2-mf-reveal"
             style={css({ "--d": "120ms" })}
             role="img"
-            aria-label="Diagram: buying signals flow into two parallel lanes of agents, outreach and AI search. The GTM Brain sits between the lanes and improves both. Both lanes meet at one point: customers."
+            aria-label="Diagram: buying signals flow into two parallel lanes of agents, outreach and AI search, and both lanes meet at one point: customers. In the middle, the GTM Brain points at buying signals, outreach and AI search: it improves all three."
           >
             <svg className="lv2-mf-net" viewBox="0 0 480 480" aria-hidden="true">
               {/* the two lanes: Signals → (Outreach | AI search) → Customers */}
@@ -177,9 +180,17 @@ export function Manifesto() {
                 pathLength="1"
                 style={css({ "--k": 1 })}
               />
-              {/* the Brain improves both lanes: two short dashed ties */}
-              <path className="lv2-mf-tie" d="M240 168v44" pathLength="1" />
-              <path className="lv2-mf-tie" d="M240 268v44" pathLength="1" />
+              {/* the Brain improves all three: spokes out to Signals, Outreach,
+                  AI search, each with an arrowhead and a soft outward pulse */}
+              <path className="lv2-mf-spoke" d="M240 212V174" pathLength="1" />
+              <path className="lv2-mf-spoke" d="M240 268v38" pathLength="1" />
+              <path className="lv2-mf-spoke" d="M186 240h-14" pathLength="1" />
+              <path className="lv2-mf-spokehead" d="M233 172 240 164l7 8" pathLength="1" />
+              <path className="lv2-mf-spokehead" d="M233 308l7 8 7-8" pathLength="1" />
+              <path className="lv2-mf-spokehead" d="M174 233l-8 7 8 7" pathLength="1" />
+              <circle className="lv2-mf-pulse" data-p="up" r="3" />
+              <circle className="lv2-mf-pulse" data-p="down" r="3" />
+              <circle className="lv2-mf-pulse" data-p="left" r="3" />
               {/* the agents: dots flowing along each lane toward Customers */}
               <circle className="lv2-mf-agent" data-o="t" data-n="1" r="5" />
               <circle className="lv2-mf-agent" data-o="t" data-n="2" r="5" />

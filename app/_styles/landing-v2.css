@@ -862,8 +862,9 @@ body.modal-open:has(main.lv2) {
    design-system CTAs (outline FxPill + quiet link) on the left, and a plum
    square panel on the right showing how Pancake works, drawn as one simple
    lens: buying signals in on the left, two parallel agent lanes (Outreach
-   above, AI search below), the white GTM Brain between them, both lanes
-   meeting at mint Customers on the right. Field: the brand pink-20, the
+   above, AI search below), the white GTM Brain between them with mint
+   arrow spokes showing it improves Signals, Outreach and AI search, both
+   lanes meeting at mint Customers on the right. Field: the brand pink-20, the
    page's one full-pink chapter (pricing stays pale pink-10). No pin. Text
    reveals once on enter (html.lv2-anim); the lanes draw once, then agent
    dots flow; no-JS and reduced-motion visitors get the complete chapter. ── */
@@ -1029,13 +1030,54 @@ body.modal-open:has(main.lv2) {
   stroke-width: 3;
   stroke-linecap: round;
 }
-/* the Brain's ties to both lanes — dotted, quiet */
-.lv2-mf-tie {
+/* the Brain's spokes — it improves Signals, Outreach and AI search; mint,
+   with an arrowhead pointing at each, distinct from the pink work lanes */
+.lv2-mf-spoke,
+.lv2-mf-spokehead {
   fill: none;
-  stroke: color-mix(in srgb, var(--palette-pink-20) 40%, transparent);
+  stroke: color-mix(in srgb, var(--positive-surface) 68%, transparent);
   stroke-width: 2.5;
   stroke-linecap: round;
-  stroke-dasharray: 0.5 8;
+  stroke-linejoin: round;
+}
+/* the improvement pulses — small mint dots flowing Brain → pill */
+.lv2-mf-pulse {
+  display: none;
+}
+@supports (offset-path: path("M0 0h1")) {
+  .lv2-mf-pulse {
+    display: block;
+    fill: var(--positive-surface);
+    animation: lv2-mf-pulse-run 2.6s ease-out infinite;
+  }
+  .lv2-mf-pulse[data-p="up"] {
+    offset-path: path("M240 214V172");
+  }
+  .lv2-mf-pulse[data-p="down"] {
+    offset-path: path("M240 266v42");
+    animation-delay: 0.85s;
+  }
+  .lv2-mf-pulse[data-p="left"] {
+    offset-path: path("M188 240h-18");
+    animation-delay: 1.7s;
+  }
+}
+@keyframes lv2-mf-pulse-run {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.9;
+  }
+  58% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
 }
 /* the agents — one colour per lane (outreach pink, AI search golden), flowing
    toward Customers and fading at both ends; hidden where motion paths are
@@ -1143,7 +1185,8 @@ body.modal-open:has(main.lv2) {
 /* the panel draws once it is in: lanes sweep from Signals, stations pop,
    the ties dot in, then the agents flow */
 .lv2-anim .lv2-mf-lane,
-.lv2-anim .lv2-mf-tie {
+.lv2-anim .lv2-mf-spoke,
+.lv2-anim .lv2-mf-spokehead {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
 }
@@ -1151,7 +1194,8 @@ body.modal-open:has(main.lv2) {
   opacity: 0;
   transform: translate(-50%, -50%) scale(0.92);
 }
-.lv2-anim .lv2-mf-panel .lv2-mf-agent {
+.lv2-anim .lv2-mf-panel .lv2-mf-agent,
+.lv2-anim .lv2-mf-panel .lv2-mf-pulse {
   animation-play-state: paused;
   visibility: hidden;
 }
@@ -1166,15 +1210,19 @@ body.modal-open:has(main.lv2) {
     opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1) calc(0.3s + var(--i) * 0.28s),
     transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) calc(0.3s + var(--i) * 0.28s);
 }
-.lv2-anim .lv2-mf-panel.is-in .lv2-mf-tie {
-  stroke-dasharray: 0.5 8;
+.lv2-anim .lv2-mf-panel.is-in .lv2-mf-spoke {
   stroke-dashoffset: 0;
   transition: stroke-dashoffset 0.4s ease-out 1.35s;
 }
-.lv2-anim .lv2-mf-panel.is-in .lv2-mf-agent {
+.lv2-anim .lv2-mf-panel.is-in .lv2-mf-spokehead {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.25s ease-out 1.7s;
+}
+.lv2-anim .lv2-mf-panel.is-in .lv2-mf-agent,
+.lv2-anim .lv2-mf-panel.is-in .lv2-mf-pulse {
   animation-play-state: running;
   visibility: visible;
-  transition: visibility 0s 1.7s;
+  transition: visibility 0s 1.9s;
 }
 @media (prefers-reduced-motion: reduce) {
   .lv2-anim .lv2-mf-reveal,
@@ -1187,14 +1235,13 @@ body.modal-open:has(main.lv2) {
     transform: translate(-50%, -50%);
   }
   .lv2-anim .lv2-mf-lane,
-  .lv2-anim .lv2-mf-tie {
+  .lv2-anim .lv2-mf-spoke,
+  .lv2-anim .lv2-mf-spokehead {
     stroke-dashoffset: 0;
     transition: none;
   }
-  .lv2-anim .lv2-mf-tie {
-    stroke-dasharray: 0.5 8;
-  }
-  .lv2-mf-agent {
+  .lv2-mf-agent,
+  .lv2-mf-pulse {
     display: none !important;
   }
 }
