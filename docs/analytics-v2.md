@@ -21,7 +21,7 @@ As of this document:
 - The five Airtable analytics-delivery fields have been created and verified in Airtable. Deployment still requires a stable `ANALYTICS_EVENT_ID_SECRET`; without it, the waitlist API intentionally returns 503 before writing a lead.
 - Production `AIRTABLE_TOKEN` was changed in place from Vercel's **Needs Attention** / non-sensitive state to **Sensitive**, without changing its value. Vercel now shows **Sensitive / Production**; the setting was updated on August 17, 2026, and no redeploy was triggered. Because the unchanged credential was previously readable, later rotation is still recommended.
 - Reddit Business Manager `Pancake` now has website `https://getpancake.ai`, confirmed by the UI success toast. A dedicated Pancake ad account/pixel is still pending; the support session ended at a satisfaction survey without a visible ticket/reference or a newly provisioned account.
-- Google Ads work is explicitly on hold until August 18, 2026 and requires admin approval before resuming. A new account has been started under customer ID `339-764-4166`, but it has no campaign, billing setup, or spend.
+- Google Ads administrator access was verified on August 18, 2026 for the authoritative existing Pancake account, customer ID `606-248-5603`. That account contains historical campaigns, spend, and conversion goals; all observed campaigns are currently paused. This migration has not created a Google Ads campaign, budget, billing method, conversion action, GA4 link, or GTM tag. A separate unused account shell, `339-764-4166`, was mistakenly started while access to the existing account was unavailable; it must not be used or deleted without an explicit cleanup decision.
 
 No access token, webhook secret, API key, or local environment value belongs in this document.
 
@@ -129,7 +129,7 @@ Delivery timestamps are deliberately omitted from every upsert, so a concurrent/
 | LinkedIn | GTM only | Ad account `545060035`; company page `104917696`; partner ID `9238938`; event-specific waitlist conversion `29569610` named `v2_waitlist_lead_submitted` |
 | X Ads | GTM only | Ads account `18ce55v07al`; profile `@getpancake_ai`; website source `rehvg`; Lead event `rehvk`, full event ID `tw-rehvg-rehvk` |
 | Reddit | Tracking disabled until Pancake has a dedicated account and pixel | Business Manager `Pancake`, Business ID `53c537e5-7d98-4d2d-b641-1375882f0935`, now has website `https://getpancake.ai`, verified by a UI success toast; it still exposes only `BasaltAI Main Ad Account` and its paused pixel `a2_hvwir7k3hfy1`, which are not approved for Pancake tracking |
-| Google Ads | On hold; no GTM conversion tag yet | Partially started Pancake customer ID `339-764-4166`; work is paused until August 18, 2026 and explicit admin approval; there is no campaign, billing setup, or spend |
+| Google Ads | Existing Pancake account; no v2 GTM conversion tag yet | Authoritative customer ID `606-248-5603`; administrator access verified; historical campaigns and conversion goals exist, and all observed campaigns are paused. Audit and reuse the existing account before adding any v2 measurement. Unused duplicate shell `339-764-4166` is not approved for use |
 | Zcal | Embedded scheduler, completed TEAM-level GA4/Meta native configuration, and preserved existing team webhook | Scheduler `ZEHl48rv`; GA4 `G-6KWBYRZSDX` connected; Meta Pixel `1427782115875153` connected; native booking event is configured as `zcal_invite_schedule_event`; actual delivery remains pending a controlled booking and GA/Meta realtime access |
 
 Steady-state ownership is deliberate:
@@ -351,7 +351,11 @@ A support request was sent for a separate `Pancake Main Ad Account` and dedicate
 
 ### Google Ads
 
-Google Ads is explicitly on hold until August 18, 2026 and may resume only with admin approval. A new Pancake account has been partially started under customer ID `339-764-4166`, but no campaign has been created, billing has not been configured, and no spend is authorized or occurring. Do not add a GTM conversion tag, campaign, billing method, or budget before both conditions are met. When work resumes, first verify account ownership and measurement access; create a waitlist conversion only after that, and create a booked-meeting conversion only after the signed Zcal webhook exists.
+Google Ads administrator access is verified for the authoritative existing Pancake account, customer ID `606-248-5603`. The account is not blank: it contains historical campaigns and spend, plus existing primary conversion goals for purchases, subscriptions, lead-form submissions, sign-ups, appointments, and engagement. All three observed campaigns are currently paused, and no ad is serving. Do not recreate this setup from scratch. Audit the existing conversion actions and their sources first, then reuse or replace them deliberately for the v2 funnel.
+
+The separate customer `339-764-4166` is an unused duplicate shell mistakenly started while access to `606-248-5603` was unavailable. It has no approved role in the Pancake setup. No campaign, billing method, budget, conversion action, or spend was introduced there by this migration. Do not use or delete it without an explicit cleanup decision.
+
+This migration has not yet added a Google Ads GTM tag, v2 waitlist conversion, GA4 link, campaign, billing method, budget, or spend. Any future waitlist conversion must target `606-248-5603` and fire only for the confirmed primary `lead_submitted` event. Create a booked-meeting conversion only after the signed Zcal webhook exists; scheduler opens, loads, and clicks are not conversions.
 
 ### Google Analytics
 
@@ -392,7 +396,7 @@ Marking the variable sensitive prevents future UI reads, but it does not undo th
 3. Verify the existing production/preview host gating in website code and web GTM workspace `6`; verify the event allow-list and GA tag in server GTM workspace `7`.
 4. Create a Vercel preview with `PANCAKE_ANALYTICS_DEBUG=1`; do not promote it automatically. By itself, this flag enables GTM only, while direct Meta and PostHog remain disabled. Meta CAPI test delivery also requires its separate test code, feature flag, and matching credentials.
 5. Connect GTM Preview in a normal main-world browser and execute the validation matrix through **both** web workspace `6` and server workspace `7`. Confirm explicitly that every production-host paid tag remains blocked, that all seven v2 events reach the server container, and that the server GA tag is eligible to fire for them. GA4 receipt still requires DebugView/Realtime access.
-6. Keep Meta paused, keep Reddit tracking disabled with the Basalt tag paused, and keep Google Ads untouched until August 18, 2026 **and** explicit admin approval.
+6. Keep Meta paused and Reddit tracking disabled with the Basalt tag paused. In Google Ads, use only customer `606-248-5603`; audit its existing conversion actions before adding any v2 conversion, and do not activate campaigns, billing, budgets, or spend as part of this release.
 7. Record the exact commit, web workspace `6` state, and server workspace `7` state that passed testing.
 
 ### Coordinated production release
