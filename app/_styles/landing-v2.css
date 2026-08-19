@@ -859,7 +859,7 @@ body.modal-open:has(main.lv2) {
 
 /* ── Manifesto v3 — "The Distance". The page's dark plum chapter as a free-
    scrolling editorial argument: the claim with the founder's three reasons
-   ruled beside it, ONE diagram that literalises the H2 by length (a short
+   ruled below it, ONE diagram that literalises the H2 by length (a short
    solid mint Building row vs a long dashed Selling row of five open jobs,
    bracketed by Pancake), then the turn with the three quality rules.
    No pin. The DEFAULT styles are the resolved end state — no-JS, reduced-
@@ -872,6 +872,8 @@ body.modal-open:has(main.lv2) {
   --lv2-mf-hair: color-mix(in srgb, var(--palette-chrome-20) 14%, transparent);
   --lv2-mf-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
   --lv2-mf-panel: color-mix(in srgb, var(--palette-chrome-20) 4%, var(--inverted-surface));
+  /* studio "done" mint = the kit's positive surface lifted toward white */
+  --lv2-mf-mint: color-mix(in srgb, var(--positive-surface) 60%, white);
   --lv2-mf-box: 36px;
   --lv2-mf-gap: clamp(3rem, 6vw, 4.5rem);
   position: relative;
@@ -879,8 +881,8 @@ body.modal-open:has(main.lv2) {
   color: var(--text-on-inverted-surface);
 }
 
-/* Two grids share the columns — block B (claim | reasons) and block D
-   (turn | rules) are parallel frames. */
+/* Two grids share the columns — the claim row (H2 | lede) and the turn
+   (copy | rules) are parallel frames. */
 .lv2-mf-grid {
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
@@ -908,7 +910,10 @@ body.modal-open:has(main.lv2) {
   color: var(--text-on-inverted-surface);
 }
 
-/* Block B — the claim */
+/* ── Beat 1: the claim row ── */
+.lv2-mf-claim {
+  align-items: end; /* the lede's last line sits on the H2's last line */
+}
 .lv2-mf-head {
   display: flex;
   flex-direction: column;
@@ -920,7 +925,7 @@ body.modal-open:has(main.lv2) {
 .lv2-manifesto-title {
   font-family: var(--font-aeonik-fono), ui-monospace, monospace;
   font-weight: 700;
-  font-size: clamp(2.25rem, 3.6vw, 3.125rem);
+  font-size: clamp(2.25rem, 3.6vw, 3.25rem);
   line-height: 1.02;
   letter-spacing: -0.02em;
 }
@@ -943,27 +948,29 @@ body.modal-open:has(main.lv2) {
   }
 }
 .lv2-mf-lede {
-  margin-top: 28px;
-  font-size: 1.1875rem;
+  font-size: 1.125rem;
   line-height: 1.5;
   color: var(--subtle-text-on-inverted-surface);
-  max-width: 34rem;
+  max-width: 30rem;
   text-wrap: pretty;
+  /* optical: the lede's last baseline meets the H2's last baseline */
+  padding-bottom: 0.15em;
 }
 
-/* the three reasons — a ruled broadsheet deck, no numerals (how-it-works and
-   the dive already number their steps) */
+/* the three reasons — a ruled broadsheet deck, three columns, no numerals
+   (how-it-works and the dive already number their steps), no cards */
 .lv2-mf-reasons {
   list-style: none;
-  margin: 44px 0 0; /* eyebrow 24 + its 20 margin: first hairline level with the H2 */
+  margin: clamp(2.5rem, 5vw, 3.5rem) 0 0;
   padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: clamp(2rem, 4vw, 3.5rem);
+  row-gap: 0;
 }
 .lv2-mf-reason {
-  padding: 22px 0;
+  padding-top: 20px;
   border-top: 1px solid var(--lv2-mf-hair);
-}
-.lv2-mf-reason:last-child {
-  border-bottom: 1px solid var(--lv2-mf-hair);
 }
 .lv2-mf-rtitle {
   font-family: var(--font-aeonik-fono), ui-monospace, monospace;
@@ -978,15 +985,15 @@ body.modal-open:has(main.lv2) {
   font-size: 1.0625rem;
   line-height: 1.5;
   color: var(--subtle-text-on-inverted-surface);
-  max-width: 30rem;
+  max-width: 24rem;
   text-wrap: pretty;
 }
 
-/* ── The Distance diagram ── */
+/* ── Beat 2: the Distance diagram ── */
 .lv2-mf-art {
   position: relative;
   width: 100%;
-  padding: 36px 40px 32px;
+  padding: 32px 40px;
   border-radius: var(--radius-lg);
   corner-shape: round;
   background-color: var(--lv2-mf-panel);
@@ -998,15 +1005,28 @@ body.modal-open:has(main.lv2) {
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-20) 12%, transparent);
   overflow: hidden;
 }
+/* every text run inside the diagram is Fono — including <b>/<i> children,
+   which the page-level `.lv2 *` rule would otherwise flip back to Aeonik */
+.lv2-mf-art,
+.lv2-mf-art * {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+}
 .lv2-mf-row {
   position: relative;
 }
 .lv2-mf-row[data-row="build"] {
-  margin-bottom: 40px;
+  margin-bottom: 36px;
 }
 .lv2-mf-rowlabel {
-  display: inline-flex;
+  display: block;
+  height: 16px;
   margin-bottom: 12px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  line-height: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--palette-chrome-20) 72%, transparent);
 }
 .lv2-mf-track {
   position: relative;
@@ -1022,6 +1042,8 @@ body.modal-open:has(main.lv2) {
   justify-content: space-between;
   width: 100%;
   margin-top: 22px; /* room for the lane labels above the chips */
+  /* the bracket + caption hang below the track (absolute, see below) */
+  margin-bottom: 56px;
 }
 
 /* rails */
@@ -1064,19 +1086,21 @@ body.modal-open:has(main.lv2) {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
   font-weight: 500;
   font-size: 0.75rem;
   line-height: 1;
   color: var(--subtle-text-on-inverted-surface);
   white-space: nowrap;
 }
+.lv2-mf-dest {
+  color: var(--text-on-inverted-surface); /* the goal reads bright */
+}
 .lv2-mf-origin b,
 .lv2-mf-dest b {
   font-weight: inherit;
-  /* station names sit ON the rail: mask it behind the label */
-  padding: 3px 5px;
-  margin: -3px -5px;
+  /* station names sit ON the rail: mask it behind the label, flush to the bead */
+  padding: 3px 6px 3px 8px;
+  margin: -3px -6px -3px -8px;
   border-radius: 4px;
   background: var(--lv2-mf-panel);
 }
@@ -1096,7 +1120,8 @@ body.modal-open:has(main.lv2) {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  border: 1.5px dashed color-mix(in srgb, var(--palette-chrome-20) 55%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--palette-chrome-20) 60%, transparent);
+  background: var(--lv2-mf-panel); /* hollow: masks the rail, nothing inside yet */
   flex: none;
 }
 
@@ -1113,8 +1138,7 @@ body.modal-open:has(main.lv2) {
   padding: 11px 14px; /* real vertical padding (36px box), not just flex centring */
   border-radius: 12px;
   corner-shape: round;
-  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.8125rem;
   line-height: 1;
   color: var(--text);
@@ -1124,6 +1148,10 @@ body.modal-open:has(main.lv2) {
 .lv2-mf-prompt,
 .lv2-mf-ghost {
   background: var(--surface);
+}
+.lv2-mf-prompt,
+.lv2-mf-done {
+  z-index: 2; /* above the fold overlay: the steps get absorbed into the card */
 }
 .lv2-mf-caret {
   width: 1.5px;
@@ -1140,24 +1168,21 @@ body.modal-open:has(main.lv2) {
 .lv2-mf-done {
   gap: 8px;
   padding: 11px 14px 11px 12px;
-  font-weight: 600;
-  background: #a8e5c9; /* studio mint (loop grammar) */
+  background: var(--lv2-mf-mint);
 }
 .lv2-mf-check {
   font-weight: 700;
   font-size: 0.875rem;
-  color: var(--palette-green-30);
+  /* green-40, not green-30: on this mint the lighter green is only 4:1 */
+  color: var(--palette-green-40);
 }
-/* the ✓ Live aura — CSS is the hidden state; GSAP fires it with immediateRender:false */
+/* the ✓ Live aura — an echo of the pill itself. CSS is the hidden state; GSAP
+   fires it with immediateRender:false */
 .lv2-mf-ping {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: radial-gradient(circle, transparent 55%, rgba(247, 237, 229, 0.5) 68%, transparent 72%);
-  transform: translate(-50%, -50%) scale(0.45);
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 2px var(--positive-surface);
   opacity: 0;
   pointer-events: none;
   z-index: 3;
@@ -1165,7 +1190,6 @@ body.modal-open:has(main.lv2) {
 .lv2-mf-chip {
   gap: 8px;
   padding: 11px 14px 11px 12px;
-  font-weight: 600;
   background: var(--palette-chrome-30);
 }
 .lv2-mf-chip--lane2 {
@@ -1185,7 +1209,6 @@ body.modal-open:has(main.lv2) {
   left: 0;
   bottom: calc(100% + 8px);
   font-style: normal;
-  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
   font-weight: 600;
   font-size: 0.6875rem;
   line-height: 1.3;
@@ -1195,49 +1218,64 @@ body.modal-open:has(main.lv2) {
   white-space: nowrap;
 }
 
-/* the mint measurement bracket under the whole Selling row + its caption */
+/* the mint measurement bracket under the whole Selling row + its caption —
+   both live inside the track (absolute) so they can re-anchor in vertical mode */
 .lv2-mf-bracket {
-  display: block;
-  margin: 14px 0 0 6px;
-  width: calc(100% - 6px - 75px); /* bead centre → ring centre */
-  height: 10px;
+  position: absolute;
+  left: 6px; /* bead centre */
+  right: 75px; /* ring centre */
+  top: calc(100% + 12px);
+  height: 12px;
   border: 2px solid var(--positive-surface);
   border-top: 0;
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 6px 6px;
+  z-index: 0;
 }
 .lv2-mf-cap {
-  margin: 10px 0 0 6px;
-  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  position: absolute;
+  left: 0;
+  top: calc(100% + 34px);
+  margin: 0;
   font-weight: 600;
   font-size: 0.875rem;
   line-height: 1.3;
   color: var(--text-on-inverted-surface);
+  white-space: nowrap;
 }
 
 /* the fold props — JS-only overlay, never in flow, hidden by default */
 .lv2-mf-ghosts {
   position: absolute;
-  left: 76px;
+  left: 72px; /* the prompt card's slot: "● Idea" (44) + gap 28 */
   right: 8px;
-  top: 36px;
+  top: 28px; /* label 16 + 12 */
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   visibility: hidden;
   pointer-events: none;
-  z-index: 1; /* under the prompt card: the steps get absorbed into it */
-}
-.lv2-mf-prompt,
-.lv2-mf-done {
-  z-index: 2;
+  z-index: 1;
 }
 .lv2-mf-ghost {
   opacity: 0;
 }
+/* fold order: each step slides UNDER the one ahead of it (Design on top) */
+.lv2-mf-ghost:nth-child(1) {
+  z-index: 4;
+}
+.lv2-mf-ghost:nth-child(2) {
+  z-index: 3;
+}
+.lv2-mf-ghost:nth-child(3) {
+  z-index: 2;
+}
+.lv2-mf-ghost:nth-child(4) {
+  z-index: 1;
+}
 .lv2-mf-ghostline {
   position: absolute;
-  top: 55px;
+  top: 47px; /* rail centre of the track (28 + 20 - 1) */
   right: 8px;
   height: 2px;
   visibility: hidden;
@@ -1255,11 +1293,26 @@ body.modal-open:has(main.lv2) {
   animation-play-state: paused;
 }
 
-/* Block D — the turn */
+/* ── Beat 3: the turn ── */
+.lv2-mf-turn {
+  grid-template-areas:
+    "copy rules"
+    "link rules";
+  grid-template-rows: auto 1fr; /* the link follows the copy, not the rules' height */
+  row-gap: 16px;
+}
 .lv2-mf-turncopy {
+  grid-area: copy;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+}
+.lv2-mf-rules {
+  grid-area: rules;
+}
+.lv2-mf-link {
+  grid-area: link;
+  justify-self: start;
 }
 .lv2-mf-turn-title {
   font-family: var(--font-aeonik-fono), ui-monospace, monospace;
@@ -1278,25 +1331,30 @@ body.modal-open:has(main.lv2) {
 }
 .lv2-mf-turn-body {
   margin-top: 20px;
-  font-size: 1.125rem;
+  font-size: 1.0625rem;
   line-height: 1.5;
   color: var(--subtle-text-on-inverted-surface);
   max-width: 30rem;
   text-wrap: pretty;
 }
 .lv2-mf-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-top: 20px;
+  display: inline-block;
   padding: 10px 0; /* ≥40px tap row */
   font-weight: 600;
   font-size: 1rem;
+  line-height: 1.4;
   color: var(--text-on-inverted-surface);
+  text-decoration: none;
+  max-width: 30rem;
+  text-wrap: pretty;
+}
+.lv2-mf-link-text {
   text-decoration: underline;
   text-underline-offset: 4px;
   text-decoration-thickness: 1px;
 }
+/* the arrow is an inline-block, so it never carries the underline and never
+   detaches from the last word (a no-break space binds them) */
 .lv2-mf-arrow {
   display: inline-block;
   transition: translate 0.2s ease;
@@ -1313,10 +1371,10 @@ body.modal-open:has(main.lv2) {
   border-radius: 4px;
 }
 .lv2-mf-rules {
-  margin: 0; /* first hairline level with the turn title's top, like the reasons */
+  margin: 7px 0 0; /* first hairline on the turn title's cap line */
 }
 .lv2-mf-rule {
-  padding: 18px 0;
+  padding: 20px 0;
   border-top: 1px solid var(--lv2-mf-hair);
 }
 .lv2-mf-rule:last-child {
@@ -1364,7 +1422,8 @@ body.modal-open:has(main.lv2) {
 
 /* Vertical tracks: below 1200 the Selling row no longer fits on one line, so
    both rows turn into columns side by side — the length comparison survives
-   as height (short mint column vs tall dashed column). */
+   as height (short mint column vs tall dashed column), the mint bracket
+   becomes a brace hugging the tall column. */
 @media (max-width: 1199px) {
   .lv2-mf-art {
     display: grid;
@@ -1378,20 +1437,20 @@ body.modal-open:has(main.lv2) {
   .lv2-mf-track,
   .lv2-mf-row[data-row="build"] .lv2-mf-track,
   .lv2-mf-row[data-row="sell"] .lv2-mf-track {
-    display: flex;
+    display: inline-flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
     gap: 12px;
     padding-left: 20px;
     height: auto;
-    width: 100%;
-    margin-top: 0;
+    width: max-content;
+    max-width: 100%;
+    margin: 0 0 40px; /* room for the caption under the column */
   }
   .lv2-mf-line {
     left: 5px;
     top: 6px;
-    bottom: 18px;
     right: auto;
     width: 2px;
     height: auto;
@@ -1430,17 +1489,26 @@ body.modal-open:has(main.lv2) {
   .lv2-mf-chip--lane2 {
     margin-left: 0;
   }
+  /* the brace: hugs the column's right edge from bead centre to ring centre */
   .lv2-mf-bracket {
-    margin: 14px 0 0;
-    width: 100%;
+    left: calc(100% + 14px);
+    right: auto;
+    top: 6px;
+    bottom: 7px;
+    width: 12px;
+    height: auto;
+    border: 2px solid var(--positive-surface);
+    border-left: 0;
+    border-radius: 0 6px 6px 0;
   }
   .lv2-mf-cap {
-    margin-left: 0;
+    left: 0;
+    top: calc(100% + 14px);
   }
   .lv2-mf-ghosts {
     left: 20px;
     right: auto;
-    top: 60px; /* label 24 + 12, "Idea" 12 + gap 12: the prompt card's slot */
+    top: 52px; /* label 16 + 12, "Idea" 12 + gap 12: the prompt card's slot */
     height: auto;
     flex-direction: column;
     align-items: flex-start;
@@ -1449,24 +1517,56 @@ body.modal-open:has(main.lv2) {
   }
   .lv2-mf-ghostline {
     left: 5px;
-    top: 42px;
+    top: 34px;
     right: auto;
     width: 2px;
     height: 190px;
   }
 }
+/* 900–1199: the tall column has room to its right — the caption reads
+   beside the brace, vertically centred, like a callout. */
+@media (max-width: 1199px) and (min-width: 900px) {
+  .lv2-mf-row[data-row="sell"] .lv2-mf-track {
+    margin-bottom: 0;
+  }
+  .lv2-mf-cap {
+    left: calc(100% + 40px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
 
-/* Single column: claim → reasons → diagram → turn → rules, in reading order. */
+/* Single column: claim → lede → reasons → diagram → turn → rules → link. */
 @media (max-width: 899px) {
   .lv2-mf-grid {
     grid-template-columns: 1fr;
-    row-gap: 40px;
-  }
-  .lv2-mf-reasons {
-    margin-top: 0;
+    row-gap: 24px;
   }
   .lv2-mf-lede {
-    margin-top: 20px;
+    padding-bottom: 0;
+  }
+  .lv2-mf-reasons {
+    grid-template-columns: 1fr;
+    margin-top: 40px;
+  }
+  .lv2-mf-reason {
+    padding: 20px 0;
+  }
+  .lv2-mf-reason:last-child {
+    border-bottom: 1px solid var(--lv2-mf-hair);
+  }
+  .lv2-mf-turn {
+    grid-template-areas:
+      "copy"
+      "rules"
+      "link";
+    row-gap: 32px;
+  }
+  .lv2-mf-rules {
+    margin-top: 0;
+  }
+  .lv2-mf-link {
+    margin-top: -8px;
   }
 }
 @media (max-width: 599px) {
@@ -1477,7 +1577,7 @@ body.modal-open:has(main.lv2) {
     font-size: 0.75rem;
   }
   .lv2-mf-cap {
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
   }
 }
 /* Narrow phones: the diagram stacks (Building above Selling), boxes 34px. */
@@ -1489,6 +1589,9 @@ body.modal-open:has(main.lv2) {
     grid-template-columns: 1fr;
     row-gap: 28px;
     padding: 24px 20px 20px;
+  }
+  .lv2-mf-row[data-row="build"] .lv2-mf-track {
+    margin-bottom: 0;
   }
   .lv2-mf-prompt,
   .lv2-mf-ghost,
@@ -1510,7 +1613,7 @@ body.modal-open:has(main.lv2) {
     font-size: 1.5rem;
   }
   .lv2-mf-turn-body {
-    font-size: 1.0625rem;
+    font-size: 1rem;
   }
 }
 

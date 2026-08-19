@@ -4,13 +4,13 @@
  * The manifesto — the page's dark chapter, now a free-scrolling editorial
  * argument (v3, "The Distance"). Three beats, all readable at a glance:
  *
- *   1. The claim (H2) with the founder's three reasons ruled beside it.
+ *   1. The claim (H2 + lede) with the founder's three reasons ruled below.
  *   2. ONE diagram that literalises the H2 by length: Building is a short
  *      solid mint row (Idea → a few prompts → ✓ Live); Selling is a long
  *      dashed row of five open jobs (You reach them / They find you) that only
  *      ends at Customers, with a mint bracket underneath: "Pancake runs this."
- *   3. The turn (Pancake does the selling, end to end, and buyers answer) with
- *      the three quality rules as a ruled definition list.
+ *   3. The turn (Pancake does the selling, and buyers answer) with the three
+ *      quality rules as a ruled definition list, then the hand-off link.
  *
  * No pin, no scrub. Text reveals once on enter (CSS transitions gated on
  * html.lv2-anim, IntersectionObserver). The diagram plays ONE GSAP timeline
@@ -28,15 +28,15 @@ import { gsap, useGSAP } from "@/lib/gsap";
 const REASONS = [
   {
     title: "Crowded from day one.",
-    body: "Launching takes a weekend now. So everyone launched. Getting noticed is the hard part.",
+    body: "Launching takes a weekend now. Everyone did. Getting noticed is the hard part.",
   },
   {
     title: "There is no prompt for selling.",
-    body: "It still runs on tools glued together by hand. Or on nothing at all.",
+    body: "It still runs on tools glued together by hand. Or on nothing.",
   },
   {
     title: "Buyers stopped answering.",
-    body: "Years of mass mail taught people to skip anything that reads like a template. A reply now takes a real reason.",
+    body: "Years of mass outreach taught people to skip anything that reads like a template. A reply now takes a real reason.",
   },
 ] as const;
 
@@ -49,24 +49,26 @@ const GHOSTS = ["Design", "Code", "Test", "Launch"] as const;
 const RULES = [
   {
     label: "Precision",
-    body: "Every person Pancake contacts has a real reason to hear from you. So they have a reason to answer.",
+    body: "Everyone Pancake contacts has a real reason to hear from you.",
   },
   {
     label: "Taste",
-    body: "What Pancake writes in your name matches your standards.",
+    body: "Nothing goes out in your name below your standard.",
   },
   {
     label: "Continuous improvement",
     body: (
       <>
-        Each correction improves your agents, not everyone&rsquo;s. Your data stays yours.
+        Whatever Pancake learns improves your agents, not everyone&rsquo;s. Your data stays yours.
       </>
     ),
   },
 ] as const;
 
 const ART_LABEL =
-  "Diagram. Building: from idea, a few prompts, then live. Selling: from live, five open jobs before the first customers. You reach them: find buyers, write outreach, follow up. They find you: publish articles, get found on ChatGPT. Pancake runs the whole selling row.";
+  "Diagram: building a product is a short path, from an idea through a few prompts to live. Selling it is a long path, from live through five open jobs (find buyers, write outreach, follow up, publish articles, get found on ChatGPT) to the first customers. Pancake runs the whole selling path.";
+
+const css = (vars: Record<string, string | number>) => vars as React.CSSProperties;
 
 export function Manifesto() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -128,7 +130,9 @@ export function Manifesto() {
           const el = ghostBox[0] as HTMLElement | undefined;
           return !!el && el.offsetHeight > el.offsetWidth;
         };
-        const hidden = (vertical: boolean) => (vertical ? "inset(0 0 100% 0)" : "inset(0 100% 0 0)");
+        // clip-path "draw" states — same units on both ends so GSAP interpolates.
+        const SHOWN = "inset(0% 0% 0% 0%)";
+        const hidden = (vertical: boolean) => (vertical ? "inset(0% 0% 100% 0%)" : "inset(0% 100% 0% 0%)");
 
         // Rewind the resolved CSS scene into its opening state (JS-only).
         art.classList.remove("is-live");
@@ -148,11 +152,11 @@ export function Manifesto() {
           },
         });
 
-        // Beat 1 — the build row, the long way (Idea … Design · Code · Test · Launch).
+        // Beat 1 (0 – 0.75) — the build row, the long way: Idea … Design · Code · Test · Launch.
         tl.fromTo(buildLabel, { y: 6 }, { autoAlpha: 1, y: 0, duration: 0.3 }, 0);
         tl.to(beads[0], { scale: 1, duration: 0.35, ease: "back.out(2)" }, 0);
         tl.to(originText[0], { autoAlpha: 1, duration: 0.3 }, 0.05);
-        tl.to(ghostLine, { clipPath: "inset(0 0 0 0)", duration: 0.5 }, 0.05);
+        tl.to(ghostLine, { clipPath: SHOWN, duration: 0.5 }, 0.05);
         tl.fromTo(
           ghosts,
           { autoAlpha: 0, scale: 0.96, y: () => (isVertical() ? 0 : 10), x: () => (isVertical() ? -10 : 0) },
@@ -160,7 +164,10 @@ export function Manifesto() {
           0.15
         );
 
-        // Beat 2 — THE FOLD: four steps collapse into one prompt card.
+        // Beat 2 (0.75 – 1.33) — THE FOLD: the far steps slide back into the
+        // first slot, each passing UNDER the one ahead (z-order in CSS), so no
+        // text ever sits on text; once they are all hidden behind "Design",
+        // "Design" dissolves and the prompt card takes the slot.
         const delta = (axis: "x" | "y") => (i: number, target: Element) => {
           const to = (prompt[0] as HTMLElement).getBoundingClientRect();
           const from = (target as HTMLElement).getBoundingClientRect();
@@ -168,51 +175,62 @@ export function Manifesto() {
         };
         tl.to(
           ghosts,
-          { x: delta("x"), y: delta("y"), duration: 0.45, ease: "power2.in", stagger: { each: 0.05, from: "end" } },
+          { x: delta("x"), y: delta("y"), duration: 0.4, ease: "power2.in", stagger: { each: 0.04, from: "end" } },
           0.75
         );
-        tl.to(ghosts, { autoAlpha: 0, duration: 0.15, stagger: { each: 0.05, from: "end" } }, 1.05);
+        tl.set(ghosts.slice(1), { autoAlpha: 0 }, 1.23);
+        tl.to(ghosts[0], { autoAlpha: 0, duration: 0.1, ease: "power1.in" }, 1.23);
         tl.to(ghostLine, { clipPath: () => hidden(isVertical()), duration: 0.45, ease: "power2.in" }, 0.75);
 
-        // Beat 3 — the short mint row completes: prompt card, ✓ Live, aura.
-        tl.to(solid, { clipPath: "inset(0 0 0 0)", duration: 0.35 }, 1.1);
-        tl.fromTo(prompt, { y: 10, scale: 0.85 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(2)" }, 1.1);
-        tl.fromTo(done, { scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.45, ease: "back.out(2.4)" }, 1.42);
+        // Beat 3 (1.27 – 2.1) — the short mint row: prompt card, ✓ Live, aura.
+        tl.to(solid, { clipPath: SHOWN, duration: 0.35 }, 1.27);
+        // immediateRender:false — the fold measures the prompt card's slot at
+        // play time, so it must not carry this pop's start transform beforehand.
+        tl.fromTo(
+          prompt,
+          { y: 8, scale: 0.85 },
+          { autoAlpha: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(2)", immediateRender: false },
+          1.33
+        );
+        tl.fromTo(done, { scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.45, ease: "back.out(2.4)" }, 1.62);
         tl.fromTo(
           ping,
-          { scale: 0.45, opacity: 0.6 },
-          { scale: 1.5, opacity: 0, duration: 0.6, ease: "power2.out", immediateRender: false },
-          1.52
+          { scale: 1, opacity: 0.7 },
+          { scale: 1.35, opacity: 0, duration: 0.6, ease: "power2.out", immediateRender: false },
+          1.72
         );
 
-        // Beat 4 — the long selling row draws out, one open job at a time.
-        tl.fromTo(sellLabel, { y: 6 }, { autoAlpha: 1, y: 0, duration: 0.3 }, 1.55);
-        tl.to(beads[1], { scale: 1, duration: 0.35, ease: "back.out(2)" }, 1.55);
-        tl.to(originText[1], { autoAlpha: 1, duration: 0.3 }, 1.6);
-        tl.to(dashed, { clipPath: "inset(0 0 0 0)", duration: 1.1 }, 1.55);
+        // Beat 4 (1.76 – 3.1) — the long selling row draws out, one open job at a time.
+        tl.fromTo(sellLabel, { y: 6 }, { autoAlpha: 1, y: 0, duration: 0.3 }, 1.76);
+        tl.to(beads[1], { scale: 1, duration: 0.35, ease: "back.out(2)" }, 1.76);
+        tl.to(originText[1], { autoAlpha: 1, duration: 0.3 }, 1.81);
+        tl.to(dashed, { clipPath: SHOWN, duration: 1.1, ease: "power2.out" }, 1.76);
         tl.fromTo(
           chips,
           { scale: 0.9, y: () => (isVertical() ? 0 : 12), x: () => (isVertical() ? -12 : 0) },
           { autoAlpha: 1, scale: 1, x: 0, y: 0, duration: 0.45, ease: "back.out(2)", stagger: 0.11 },
-          1.68
+          1.9
         );
-        tl.to(lanes[0], { autoAlpha: 1, duration: 0.3 }, 1.68);
-        tl.to(lanes[1], { autoAlpha: 1, duration: 0.3 }, 2.01);
-        tl.fromTo(dest, { scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, 2.45);
+        tl.to(lanes[0], { autoAlpha: 1, duration: 0.3 }, 1.9);
+        tl.to(lanes[1], { autoAlpha: 1, duration: 0.3 }, 2.23);
+        tl.fromTo(dest, { scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, 2.67);
 
-        // Beat 5 — Pancake's bracket spans the whole row.
-        tl.to(bracket, { clipPath: "inset(0 0 0 0)", duration: 0.55 }, 2.65);
-        tl.fromTo(cap, { y: 6 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 2.95);
+        // Beat 5 (2.87 – 3.55) — Pancake's bracket spans the whole row.
+        tl.to(bracket, { clipPath: SHOWN, duration: 0.55 }, 2.87);
+        tl.fromTo(cap, { y: 6 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 3.17);
 
-        // Play once when the diagram enters (fires immediately for deep links).
+        // QA hook (same idea as window.__snakes): lets headless checks seek the
+        // reveal to an exact time — e.g. window.__lv2Manifesto.pause(0.9).
+        (window as unknown as { __lv2Manifesto?: gsap.core.Timeline }).__lv2Manifesto = tl;
+
+        // Play once when the diagram enters: its first ~96px (the Building
+        // row) are enough, since that is where the story starts.
         let played = false;
         const play = () => {
           if (played) return;
           played = true;
           tl.play(0);
         };
-        // The story starts at the panel's top edge (the Building row), so it
-        // may start as soon as that edge is ~48px into the viewport.
         const io = new IntersectionObserver(
           (entries) => {
             if (entries.some((e) => e.isIntersecting)) {
@@ -220,7 +238,7 @@ export function Manifesto() {
               io.disconnect();
             }
           },
-          { threshold: 0, rootMargin: "0px 0px -48px 0px" }
+          { threshold: 0, rootMargin: "0px 0px -96px 0px" }
         );
         io.observe(art);
 
@@ -259,40 +277,36 @@ export function Manifesto() {
       aria-labelledby="lv2-manifesto-title"
     >
       <div className="lv2-container">
-        {/* ── Beat 1: the claim, the three reasons ── */}
-        <div className="lv2-mf-grid lv2-mf-top">
+        {/* ── Beat 1: the claim, then the three reasons ── */}
+        <div className="lv2-mf-grid lv2-mf-claim">
           <div className="lv2-mf-head">
             <span className="badge lv2-mf-badge lv2-mf-badge--cream lv2-mf-reveal">Why Pancake exists</span>
-            <h2 id="lv2-manifesto-title" className="lv2-manifesto-title lv2-mf-reveal" style={{ "--d": "60ms" } as React.CSSProperties}>
+            <h2 id="lv2-manifesto-title" className="lv2-manifesto-title lv2-mf-reveal" style={css({ "--d": "60ms" })}>
               <span className="ln">
                 Building got <span className="nb">10x easier.</span>
               </span>
               <br />
               <span className="ln">Selling didn&rsquo;t.</span>
             </h2>
-            <p className="lv2-mf-lede lv2-mf-reveal" style={{ "--d": "120ms" } as React.CSSProperties}>
-              A working product is a few prompts away. Getting it in front of the people who&rsquo;ll buy
-              it is still five jobs, all of them on you.
-            </p>
           </div>
-          <ol className="lv2-mf-reasons">
-            {REASONS.map((r, i) => (
-              <li
-                key={r.title}
-                className="lv2-mf-reason lv2-mf-reveal"
-                style={{ "--d": `${150 + i * 90}ms` } as React.CSSProperties}
-              >
-                <h3 className="lv2-mf-rtitle">{r.title}</h3>
-                <p className="lv2-mf-rbody">{r.body}</p>
-              </li>
-            ))}
-          </ol>
+          <p className="lv2-mf-lede lv2-mf-reveal" style={css({ "--d": "120ms" })}>
+            A working product is a few prompts away. Getting it in front of the people who&rsquo;ll buy
+            it is still five jobs, all of them on you.
+          </p>
         </div>
+        <ol className="lv2-mf-reasons">
+          {REASONS.map((r, i) => (
+            <li key={r.title} className="lv2-mf-reason lv2-mf-reveal" style={css({ "--d": `${i * 90}ms` })}>
+              <h3 className="lv2-mf-rtitle">{r.title}</h3>
+              <p className="lv2-mf-rbody">{r.body}</p>
+            </li>
+          ))}
+        </ol>
 
         {/* ── Beat 2: the diagram ── */}
         <div ref={artRef} className="lv2-mf-art" role="img" aria-label={ART_LABEL}>
           <div className="lv2-mf-row" data-row="build" aria-hidden="true">
-            <span className="badge lv2-mf-badge lv2-mf-badge--cream lv2-mf-rowlabel">Building</span>
+            <span className="lv2-mf-rowlabel">Building</span>
             <div className="lv2-mf-track">
               <i className="lv2-mf-line" data-kind="solid" />
               <span className="lv2-mf-origin">
@@ -320,7 +334,7 @@ export function Manifesto() {
           </div>
 
           <div className="lv2-mf-row" data-row="sell" aria-hidden="true">
-            <span className="badge lv2-mf-badge lv2-mf-badge--cream lv2-mf-rowlabel">Selling</span>
+            <span className="lv2-mf-rowlabel">Selling</span>
             <div className="lv2-mf-track">
               <i className="lv2-mf-line" data-kind="dashed" />
               <span className="lv2-mf-origin">
@@ -337,7 +351,7 @@ export function Manifesto() {
                         ? "lv2-mf-chip lv2-mf-chip--lane2"
                         : "lv2-mf-chip"
                   }
-                  style={{ "--i": i } as React.CSSProperties}
+                  style={css({ "--i": i })}
                 >
                   {i === 0 && <i className="lv2-mf-lane">You reach them</i>}
                   {i === 3 && <i className="lv2-mf-lane">They find you</i>}
@@ -349,40 +363,28 @@ export function Manifesto() {
                 <i className="lv2-mf-ring" />
                 <b>Customers</b>
               </span>
+              <i className="lv2-mf-bracket" />
+              <p className="lv2-mf-cap">Pancake runs this.</p>
             </div>
-            <i className="lv2-mf-bracket" />
-            <p className="lv2-mf-cap">Pancake runs this.</p>
           </div>
         </div>
 
-        {/* ── Beat 3: the turn, the three rules ── */}
+        {/* ── Beat 3: the turn, the three rules, the hand-off ── */}
         <div className="lv2-mf-grid lv2-mf-turn">
           <div className="lv2-mf-turncopy">
             <h3 className="lv2-mf-turn-title lv2-mf-reveal">
               So Pancake does the selling.
               <br />
-              End to end.
-              <br />
               <span className="lv2-mf-payoff">And buyers answer.</span>
             </h3>
-            <p className="lv2-mf-turn-body lv2-mf-reveal" style={{ "--d": "80ms" } as React.CSSProperties}>
-              The team of agents behind it reaches the people ready to buy and gets you found when
-              they look. Never by volume. Three rules instead.
+            <p className="lv2-mf-turn-body lv2-mf-reveal" style={css({ "--d": "80ms" })}>
+              The team of agents behind it does every one of those jobs, in both directions: going
+              out to buyers, and being found by them. Not by sending more. By three rules.
             </p>
-            <a href="#lead-finding" className="lv2-mf-link lv2-mf-reveal" style={{ "--d": "160ms" } as React.CSSProperties}>
-              How Pancake finds your next customers
-              <span className="lv2-mf-arrow" aria-hidden="true">
-                &rarr;
-              </span>
-            </a>
           </div>
           <dl className="lv2-mf-rules">
             {RULES.map((rule, i) => (
-              <div
-                key={rule.label}
-                className="lv2-mf-rule lv2-mf-reveal"
-                style={{ "--d": `${120 + i * 90}ms` } as React.CSSProperties}
-              >
+              <div key={rule.label} className="lv2-mf-rule lv2-mf-reveal" style={css({ "--d": `${120 + i * 90}ms` })}>
                 <dt>
                   <span className="badge lv2-mf-badge" data-variant="success">
                     {rule.label}
@@ -392,6 +394,12 @@ export function Manifesto() {
               </div>
             ))}
           </dl>
+          <a href="#lead-finding" className="lv2-mf-link lv2-mf-reveal" style={css({ "--d": "160ms" })}>
+            <span className="lv2-mf-link-text">How Pancake finds your next customers</span>&nbsp;
+            <span className="lv2-mf-arrow" aria-hidden="true">
+              &rarr;
+            </span>
+          </a>
         </div>
       </div>
     </section>
