@@ -879,6 +879,32 @@ body.modal-open:has(main.lv2) {
   position: relative;
   background: var(--inverted-surface);
   color: var(--text-on-inverted-surface);
+  overflow: hidden; /* the haze below is inset-0 */
+}
+/* The plum chapter is lit, not printed: two soft brand pools (the studio
+   loops' haze motif) keep the dark field from reading flat between the cream
+   sections above and below. Decorative, behind everything. */
+.lv2-manifesto::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      58% 52% at 6% 10%,
+      color-mix(in srgb, var(--strong-branded-surface) 9%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      52% 48% at 96% 82%,
+      color-mix(in srgb, var(--alt-strong-branded-surface-02) 8%, transparent),
+      transparent 70%
+    );
+}
+.lv2-manifesto > .lv2-container {
+  position: relative;
+  z-index: 1;
 }
 
 /* Two grids share the columns — the claim row (H2 | lede) and the turn
