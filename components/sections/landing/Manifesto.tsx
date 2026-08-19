@@ -1,8 +1,8 @@
 /**
  * The manifesto — the page's dark chapter, v4: the Synthetic "Our aspiration"
- * pattern, nothing more. An eyebrow with a pink bar, the founder-approved
- * claim, one paragraph that carries the argument from the "Why we're building
- * Pancake" one-pager (the three reasons, then the turn), and one link forward.
+ * pattern, kept tight. An eyebrow with a pink bar, the founder-approved claim,
+ * and on the right: one setup line, the one-pager's three reasons as a ruled
+ * list with mono labels (Crowded / Unsolved / Ignored), the turn, one link.
  * No diagram, no pin, no timeline. Text reveals once on enter (CSS transitions
  * gated on html.lv2-anim + IntersectionObserver); no-JS and reduced-motion
  * visitors get the complete chapter from the first paint.
@@ -11,6 +11,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+
+/** The one-pager's three reasons selling got harder, one line each. */
+const REASONS = [
+  { label: "Crowded", line: "Everyone launched. Every market is full." },
+  { label: "Unsolved", line: "There is no Cursor for selling. You glue tools together by hand." },
+  { label: "Ignored", line: "Buyers stopped answering anything that reads like a template." },
+] as const;
 
 const css = (vars: Record<string, string | number>) => vars as React.CSSProperties;
 
@@ -56,17 +63,21 @@ export function Manifesto() {
             <span className="ln">Selling didn&rsquo;t.</span>
           </h2>
           <div className="lv2-mf-copy">
-            <p className="lv2-mf-body lv2-mf-reveal" style={css({ "--d": "160ms" })}>
-              With AI, an idea is a working product by Monday. Then you have to sell it. Everyone
-              launched, so every market is crowded. Nobody built a Cursor for selling, so you glue
-              tools together by hand. And buyers, after years of mass outreach, stopped answering
-              anything that reads like a template.{" "}
-              <strong className="lv2-mf-close">
-                Pancake does the selling for you, end to end, with a team of agents that never trades
-                quality for volume.
-              </strong>
+            <p className="lv2-mf-setup lv2-mf-reveal" style={css({ "--d": "160ms" })}>
+              An idea is a working product by Monday. Then you have to sell it.
             </p>
-            <a href="#lead-finding" className="lv2-mf-link lv2-mf-reveal" style={css({ "--d": "240ms" })}>
+            <dl className="lv2-mf-reasons">
+              {REASONS.map((r, i) => (
+                <div key={r.label} className="lv2-mf-reason lv2-mf-reveal" style={css({ "--d": `${220 + i * 70}ms` })}>
+                  <dt>{r.label}</dt>
+                  <dd>{r.line}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="lv2-mf-close lv2-mf-reveal" style={css({ "--d": "440ms" })}>
+              Pancake does the selling for you, end to end, and never trades quality for volume.
+            </p>
+            <a href="#lead-finding" className="lv2-mf-link lv2-mf-reveal" style={css({ "--d": "520ms" })}>
               <span className="lv2-mf-link-text">See how it finds your buyers</span>&nbsp;
               <span className="lv2-mf-arrow" aria-hidden="true">
                 &rarr;

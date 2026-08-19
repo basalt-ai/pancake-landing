@@ -858,8 +858,9 @@ body.modal-open:has(main.lv2) {
 }
 
 /* ── Manifesto v4 — the dark plum chapter as Synthetic's "Our aspiration"
-   block: an eyebrow with a pink bar, the founder-approved claim, one
-   paragraph carrying the argument (three reasons, then the turn), one link.
+   block, kept tight: an eyebrow with a pink bar, the founder-approved claim,
+   and on the right a setup line, the three reasons as a ruled ledger with
+   mono labels, the turn, one link.
    No diagram, no pin. Text reveals once on enter (html.lv2-anim); no-JS and
    reduced-motion visitors get the complete chapter from the first paint. ── */
 
@@ -967,21 +968,59 @@ body.modal-open:has(main.lv2) {
   align-items: flex-start;
   padding-top: 0.35rem; /* optical: first line sits on the H2's cap line */
 }
-.lv2-mf-body {
+.lv2-mf-setup {
   font-size: 1.125rem;
-  line-height: 1.55;
+  line-height: 1.5;
   color: var(--subtle-text-on-inverted-surface);
-  max-width: 34rem;
+  max-width: 30rem;
   text-wrap: pretty;
 }
-/* the turn reads in full cream; the setup stays muted */
-.lv2-mf-close {
-  font-weight: 400;
+/* the three reasons — a ruled ledger: mono label, one cream line each */
+.lv2-mf-reasons {
+  width: 100%;
+  max-width: 32rem;
+  margin: 22px 0 0;
+}
+.lv2-mf-reason {
+  display: grid;
+  grid-template-columns: 6.25rem minmax(0, 1fr);
+  column-gap: 1rem;
+  align-items: baseline;
+  padding: 13px 0;
+  border-top: 1px solid color-mix(in srgb, var(--palette-chrome-20) 14%, transparent);
+}
+.lv2-mf-reason:last-child {
+  border-bottom: 1px solid color-mix(in srgb, var(--palette-chrome-20) 14%, transparent);
+}
+.lv2-mf-reason dt {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 600;
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--subtle-text-on-inverted-surface);
+  padding-top: 0.1em;
+}
+.lv2-mf-reason dd {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.45;
   color: var(--text-on-inverted-surface);
+  text-wrap: pretty;
+}
+/* the turn: full cream, a touch more weight */
+.lv2-mf-close {
+  margin-top: 22px;
+  font-weight: 500;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--text-on-inverted-surface);
+  max-width: 30rem;
+  text-wrap: pretty;
 }
 .lv2-mf-link {
   display: inline-block;
-  margin-top: 18px;
+  margin-top: 14px;
   padding: 10px 0; /* ≥40px tap row */
   font-weight: 600;
   font-size: 1rem;
@@ -1056,8 +1095,16 @@ body.modal-open:has(main.lv2) {
   .lv2-mf-bar {
     height: 10px;
   }
-  .lv2-mf-body {
+  .lv2-mf-setup,
+  .lv2-mf-close {
     font-size: 1.0625rem;
+  }
+  .lv2-mf-reason {
+    grid-template-columns: 5.25rem minmax(0, 1fr);
+    column-gap: 0.75rem;
+  }
+  .lv2-mf-reason dd {
+    font-size: 1rem;
   }
 }
 
