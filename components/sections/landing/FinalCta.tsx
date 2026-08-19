@@ -55,10 +55,12 @@ export function FinalCta() {
           </span>
         </h2>
         <div className="lv2-button-group">
-          <FxPill variant="outline" data-lv2-open="call">
+          <FxPill variant="outline" data-lv2-open="call" data-analytics-id="call_final">
             Book a call
           </FxPill>
-          <FxPill data-lv2-open="waitlist">Join waitlist</FxPill>
+          <FxPill data-lv2-open="waitlist" data-analytics-id="waitlist_final">
+            Join waitlist
+          </FxPill>
         </div>
       </div>
     </section>

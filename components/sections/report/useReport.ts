@@ -9,6 +9,11 @@ import type {
   ScanEvent,
   SignalItem,
 } from "@/lib/scan/types";
+import {
+  submissionAttemptForEmail,
+  type BrowserSubmissionAttempt,
+} from "@/lib/analytics/submission-id";
+import { isReportWaitlistResult } from "@/lib/analytics/waitlist-response";
 import { DEMO_DOMAIN, DEMO_EVENTS } from "./demo-data";
 
 /**
@@ -217,6 +222,7 @@ export function useReport() {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const reducedRef = useRef(false);
+  const unlockSubmissionRef = useRef<BrowserSubmissionAttempt | null>(null);
 
   /** Dispatch everything queued, now. Used when pacing has no audience. */
   const flushAll = useCallback(() => {
@@ -382,6 +388,10 @@ export function useReport() {
   const unlock = useCallback(
     async (email: string): Promise<{ ok: boolean; message?: string }> => {
       try {
+        unlockSubmissionRef.current = submissionAttemptForEmail(
+          unlockSubmissionRef.current,
+          email,
+        );
         const res = await fetch("/api/waitlist", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -391,11 +401,22 @@ export function useReport() {
             about: `Ran the free AI GTM report on ${state.domain}`,
             source: "gtm-report",
             website: "",
+            submissionId: unlockSubmissionRef.current.id,
           }),
         });
+        const responseBody: unknown = await res.json().catch(() => null);
         if (!res.ok) {
-          const data = (await res.json().catch(() => null)) as { error?: string } | null;
-          return { ok: false, message: data?.error ?? "That didn't save. Try again." };
+          const responseError =
+            responseBody !== null &&
+            typeof responseBody === "object" &&
+            "error" in responseBody &&
+            typeof responseBody.error === "string"
+              ? responseBody.error
+              : undefined;
+          return { ok: false, message: responseError ?? "That didn't save. Try again." };
+        }
+        if (!isReportWaitlistResult(responseBody)) {
+          return { ok: false, message: "We couldn't confirm that save. Try again." };
         }
         dispatch({ type: "unlocked" });
         return { ok: true };
@@ -409,6 +430,7 @@ export function useReport() {
   const reset = useCallback(() => {
     abortRef.current?.abort();
     queueRef.current = [];
+    unlockSubmissionRef.current = null;
     dispatch({ type: "reset" });
   }, []);
 

@@ -1,4 +1,5 @@
 import { listAllRecords, type AirtableRecord, TABLES } from "./airtable";
+import { normalizeAirtableBaseId, normalizeAirtableToken } from "./airtable-config";
 
 export type Point = { date: string; value: number };
 
@@ -69,7 +70,10 @@ function buildDateRange(startIso: string, endIso: string): string[] {
 }
 
 export async function getMetrics(): Promise<Metrics> {
-  if (!process.env.AIRTABLE_TOKEN || !process.env.AIRTABLE_BASE_ID) {
+  if (
+    !normalizeAirtableToken(process.env.AIRTABLE_TOKEN) ||
+    !normalizeAirtableBaseId(process.env.AIRTABLE_BASE_ID)
+  ) {
     throw new Error("AIRTABLE env vars missing");
   }
 

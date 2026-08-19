@@ -29,7 +29,7 @@ Refinements (copy, perf, polish) come later. Don't pre-optimize.
 - **TypeScript** `^5.6.3` with `tsconfig.json` (`strict`, path alias `@/*` → repo root).
 - **Package manager:** **npm** (`package-lock.json` at repo root; no `pnpm-lock.yaml` / `yarn.lock` / `bun.lockb`).
 - **GSAP:** `gsap` + `@gsap/react` installed; import from `@/lib/gsap` only (see `lib/gsap.ts`).
-- **Analytics:** production **Google Tag Manager** container `GTM-P3Z79WKD` plus direct Meta, LinkedIn, and Reddit base pixels in `app/layout.tsx` (inline bootstrap `<script>` + `<noscript>` fallbacks; not `@next/third-parties`, not `next/script`). **Preserve as-is;** do not reinstall or “migrate” unless Tristan asks.
+- **Analytics:** production **Google Tag Manager** container `GTM-P3Z79WKD`; direct Meta bootstrap/PageView remains in `app/layout.tsx`, while GA4, LinkedIn, X, and future Reddit tags are GTM-owned. The v2 migration was explicitly authorized by Tristan in August 2026. Do not add direct LinkedIn/Reddit/X copies or publish a GTM draft automatically.
 
 ---
 
@@ -37,7 +37,7 @@ Refinements (copy, perf, polish) come later. Don't pre-optimize.
 
 - **Match Figma exactly.** Spacing, type, color, radius — pixel-perfect. Use the design system page as source of truth, never invent values.
 - **Never reference values, styles, or assets from the old design system.** If you find a trace of the old system in the codebase (old hex values, old Tailwind classes, old component files, old fonts, old logos), flag it — do not use it. Phase 1 strips them before any new design work begins. The only design source of truth from Phase 2 onward is the Figma v3 design system.
-- **Google Analytics is preserved as-is.** Don't modify, reinstall, or "improve" the existing GA setup. Phase 7 verifies it still fires correctly after the rebuild. That's it.
+- **Analytics changes require explicit scope.** The authorized v2 contract uses one vendor-neutral `page_view` plus allowlisted waitlist/scheduler events; GTM maps them to GA4 and paid platforms. Keep vendor tags production-only, never put form values or arbitrary query strings in analytics, and never treat CTA/scheduler clicks as primary conversions.
 - **Design tokens are sacred.** No hardcoded hex, px, or font weights in components. Always reference `tokens.css` / `@theme` block.
 - **Copy comes from Figma verbatim.** Don't rewrite, don't improve, don't add.
 - **One phase = one branch + one PR.** No compound changes.
