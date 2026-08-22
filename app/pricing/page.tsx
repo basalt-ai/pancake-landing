@@ -87,6 +87,7 @@ export default function PricingPage() {
                   Book a call
                 </FxPill>
               </div>
+              <p className="lv2-price-fine">{pricingV2.fine}</p>
             </div>
           </div>
         </section>

@@ -448,43 +448,25 @@ export const pricingV2 = {
   monthlyDollars: 99,
   currency: "USD" as const,
   currencySymbol: "$",
-  /** Okara's pricing structure, the template the founder pointed at: plain
-      header, one card, a short descriptor under the price, then capability
-      groups with sub-bullets. Plain words, no slogans (founder, 2026-08-19). */
+  /** Okara's shape, value instead of a feature inventory (founder, 2026-08-19):
+      plain header, the price, an access line, then what a month buys, with
+      the figures up front. */
   title: "Simple, transparent pricing",
   blurb: "One plan, everything included. No hidden fees, no surprises.",
   perMonth: "/ month flat",
   /** The line under the price (Okara: "Full agent suite access"). */
   access: "Every agent included",
-  /** Intro to the capability list (Okara: "Everything in Free, plus …:"). */
-  includedIntro: "Everything included:",
-  /** Capability groups with sub-bullets — only claims the landing already
-      makes (how-it-works, the deep dive, the hero). */
-  groups: [
-    {
-      name: "GTM Brain",
-      items: ["Who buys from you, and why", "What to say, where to show up", "Always up to date"],
-    },
-    {
-      name: "Outreach Agent",
-      items: [
-        "Watches live buying conversations",
-        "Finds people ready to buy",
-        "Outreach in your voice",
-        "Follow-ups",
-      ],
-    },
-    {
-      name: "AI SEO Agent",
-      items: ["One article a day", "Ranks on Google, cited by ChatGPT"],
-    },
-    {
-      name: "Feedback loop",
-      items: ["Learns from every correction", "Gets better every day"],
-    },
-    {
-      name: "Guardrails",
-      items: ["Approvals built in", "Hard spend cap on every run"],
-    },
+  /** Intro to the value list. */
+  includedIntro: "What a month gets you:",
+  /** The value lines — figure first. The lead and customer ranges are the
+      founder's own (2026-08-19). The 90-day AI-search window is a placeholder
+      he has to confirm before this ships. */
+  value: [
+    { figure: "5 to 15", rest: "warm leads" },
+    { figure: "2 to 3", rest: "new customers" },
+    { figure: "30", rest: "articles, ranking on Google and cited by ChatGPT within 90 days" },
+    { rest: "Approvals and a hard spend cap. You stay in control." },
   ],
+  /** The line under the CTA (Okara's "Cancel anytime" slot). */
+  fine: "No card needed.",
 } as const;

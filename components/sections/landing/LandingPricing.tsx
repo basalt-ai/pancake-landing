@@ -44,6 +44,7 @@ export function LandingPricing() {
                 See full pricing
               </Link>
             </div>
+            <p className="lv2-price-fine">{pricingV2.fine}</p>
           </div>
           <div className="lv2-price-decor" aria-hidden="true">
             <PancakeStack count={3} />
