@@ -4,6 +4,7 @@ import { PancakeStack } from "@/components/sections/pricing/PancakeStack";
 import { pricingV2 } from "@/lib/copy";
 
 import { FxPill } from "./FxPill";
+import { PriceGroups } from "./PriceGroups";
 
 /**
  * Pricing — one flat number, Okara-simple (founder call 2026-08-06: $99/month
@@ -33,30 +34,8 @@ export function LandingPricing() {
               </span>
               <span className="lv2-price-cycle">{pricingV2.perMonth}</span>
             </p>
-            <p className="lv2-price-sub">{pricingV2.blurb}</p>
-            <ul className="lv2-price-features">
-              {pricingV2.features.map((f) => (
-                <li key={f}>
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    aria-hidden="true"
-                    focusable="false"
-                  >
-                    <path
-                      d="M3 8.5 6.5 12 13 4.5"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  {f}
-                </li>
-              ))}
-            </ul>
+            <p className="lv2-price-sub">{pricingV2.access}</p>
+            <PriceGroups />
             <div className="lv2-button-group">
               <FxPill data-lv2-open="waitlist" data-analytics-id="waitlist_pricing_card">
                 Join waitlist
@@ -65,6 +44,7 @@ export function LandingPricing() {
                 See full pricing
               </Link>
             </div>
+            <p className="lv2-price-fine">{pricingV2.fine}</p>
           </div>
           <div className="lv2-price-decor" aria-hidden="true">
             <PancakeStack count={3} />

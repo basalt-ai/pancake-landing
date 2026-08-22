@@ -7,6 +7,7 @@
 import type { Metadata } from "next";
 
 import { FxPill } from "@/components/sections/landing/FxPill";
+import { PriceGroups } from "@/components/sections/landing/PriceGroups";
 import { LandingFooter } from "@/components/sections/landing/LandingFooter";
 import { LandingModals } from "@/components/sections/landing/LandingModals";
 import { LandingNav } from "@/components/sections/landing/LandingNav";
@@ -72,29 +73,8 @@ export default function PricingPage() {
                 </span>
                 <span className="lv2-price-cycle">{pricingV2.perMonth}</span>
               </p>
-              <ul className="lv2-price-features">
-                {pricingV2.features.map((f) => (
-                  <li key={f}>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      aria-hidden="true"
-                      focusable="false"
-                    >
-                      <path
-                        d="M3 8.5 6.5 12 13 4.5"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    {f}
-                  </li>
-                ))}
-              </ul>
+              <p className="lv2-price-sub">{pricingV2.access}</p>
+              <PriceGroups />
               <div className="lv2-button-group">
                 <FxPill data-lv2-open="waitlist" data-analytics-id="waitlist_pricing_page">
                   Join waitlist
@@ -107,6 +87,7 @@ export default function PricingPage() {
                   Book a call
                 </FxPill>
               </div>
+              <p className="lv2-price-fine">{pricingV2.fine}</p>
             </div>
           </div>
         </section>

@@ -1296,7 +1296,18 @@ body.modal-open:has(main.lv2) {
   line-height: 1;
 }
 /* Okara-style single-plan feature list — pink checks, one line each. */
-.lv2-price-features {
+/* The value list (Okara's shape, figures up front): intro, then checked
+   lines with the number in Fono. Shared by the homepage card and /pricing. */
+.lv2-price-value {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.lv2-price-value-intro {
+  font-size: 1rem;
+  font-weight: 600;
+}
+.lv2-price-value-list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -1304,19 +1315,30 @@ body.modal-open:has(main.lv2) {
   flex-direction: column;
   gap: 0.625rem;
 }
-.lv2-price-features li {
+.lv2-price-value-list li {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: 0.625rem;
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.5;
+  font-size: 1.0625rem;
+  line-height: 1.4;
+  text-wrap: pretty;
 }
-.lv2-price-features svg {
+.lv2-price-value-list svg {
   flex: none;
-  align-self: center;
+  margin-top: 0.3em;
   color: var(--palette-pink-40);
 }
+.lv2-price-value-figure {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-weight: 700;
+}
+/* the line under the CTA (Okara's "Cancel anytime" slot) */
+.lv2-price-fine {
+  margin-top: -0.5rem;
+  font-size: 0.875rem;
+  color: var(--subtle-text);
+}
+
 /* /pricing rides the same skin: the band grows so the footer stays put. */
 .lv2-viewport--page .lv2s {
   flex: 1;
