@@ -448,20 +448,43 @@ export const pricingV2 = {
   monthlyDollars: 99,
   currency: "USD" as const,
   currencySymbol: "$",
-  /** Value-based header (founder, 2026-08-19): the price of a tool, the work
-      of a team. Replaces Okara's generic "Simple, transparent pricing". */
-  title: "Priced like a tool. Works like a team.",
+  /** Okara's pricing structure, the template the founder pointed at: plain
+      header, one card, a short descriptor under the price, then capability
+      groups with sub-bullets. Plain words, no slogans (founder, 2026-08-19). */
+  title: "Simple, transparent pricing",
+  blurb: "One plan, everything included. No hidden fees, no surprises.",
   perMonth: "/ month flat",
-  blurb: "Everything Pancake does is included. No tiers, no seats. Less than the tools it replaces.",
-  /** What $99 buys, as outcomes — one line each, parallel, only claims the
-      landing already makes elsewhere (Brain, live conversations, your voice,
-      one article a day, improves daily, approvals + spend cap). */
-  features: [
-    "Your GTM Brain: who buys from you, and why, kept current.",
-    "People found while they are ready to buy, not bought lists.",
-    "Outreach that sounds like you, so people answer.",
-    "One article a day that Google ranks and ChatGPT cites.",
-    "Agents that get better every day from your corrections.",
-    "Approvals and a hard spend cap. No surprises.",
+  /** The line under the price (Okara: "Full agent suite access"). */
+  access: "Every agent included",
+  /** Intro to the capability list (Okara: "Everything in Free, plus …:"). */
+  includedIntro: "Everything included:",
+  /** Capability groups with sub-bullets — only claims the landing already
+      makes (how-it-works, the deep dive, the hero). */
+  groups: [
+    {
+      name: "GTM Brain",
+      items: ["Who buys from you, and why", "What to say, where to show up", "Always up to date"],
+    },
+    {
+      name: "Outreach Agent",
+      items: [
+        "Watches live buying conversations",
+        "Finds people ready to buy",
+        "Outreach in your voice",
+        "Follow-ups",
+      ],
+    },
+    {
+      name: "AI SEO Agent",
+      items: ["One article a day", "Ranks on Google, cited by ChatGPT"],
+    },
+    {
+      name: "Feedback loop",
+      items: ["Learns from every correction", "Gets better every day"],
+    },
+    {
+      name: "Guardrails",
+      items: ["Approvals built in", "Hard spend cap on every run"],
+    },
   ],
 } as const;
