@@ -23,7 +23,7 @@ Most AI tools are reactive. They wait to be prompted. When you close the tab, th
 - [Paperclips vs Pancake](https://getpancake.ai/pancake-vs-paperclips) — head-to-head comparison: the 70k-star open-source framework for orchestrating AI agents in an org chart, built and hosted by you, vs the managed platform that runs the autonomous company as a service. July 11, 2026.
 - [Pricing](https://getpancake.ai/pricing) — plans and what's included
 - [Blog](https://getpancake.ai/blog) — founder stories and industry analysis
-- [Sign up](https://app.getpancake.ai) — try for free, no credit card needed, $100 in free credits
+- [Sign up](https://beta.getpancake.ai) — try for free, no credit card needed, $100 in free credits
 
 ## Blog
 

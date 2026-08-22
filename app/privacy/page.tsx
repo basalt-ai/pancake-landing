@@ -29,8 +29,8 @@ export default function PrivacyPolicyPage() {
                 https://getpancake.ai
               </a>
               ), web application (
-              <a href="https://app.getpancake.ai" target="_blank" rel="noopener noreferrer">
-                https://app.getpancake.ai
+              <a href="https://beta.getpancake.ai" target="_blank" rel="noopener noreferrer">
+                https://beta.getpancake.ai
               </a>
               ), or third-party integrations such as Slack.
             </p>

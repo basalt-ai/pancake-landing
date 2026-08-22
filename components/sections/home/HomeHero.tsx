@@ -62,7 +62,7 @@ export function HomeHero() {
           <p className="home-hero-body whitespace-pre-line">{HERO_SUB}</p>
           <div className="home-hero-cta-row">
             <a
-              href="https://app.getpancake.ai"
+              href="https://beta.getpancake.ai"
               className="button inline-flex w-fit shrink-0 items-center justify-center no-underline"
               data-size="lg"
             >
