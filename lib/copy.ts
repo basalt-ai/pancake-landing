@@ -448,17 +448,20 @@ export const pricingV2 = {
   monthlyDollars: 99,
   currency: "USD" as const,
   currencySymbol: "$",
-  /** Okara's own header, the template the founder pointed at. */
-  title: "Simple, transparent pricing",
+  /** Value-based header (founder, 2026-08-19): the price of a tool, the work
+      of a team. Replaces Okara's generic "Simple, transparent pricing". */
+  title: "Priced like a tool. Works like a team.",
   perMonth: "/ month flat",
-  blurb: "One subscription, your whole sales and marketing team. Everything included.",
-  /** Feature list — only claims the landing already makes. */
+  blurb: "Everything Pancake does is included. No tiers, no seats. Less than the tools it replaces.",
+  /** What $99 buys, as outcomes — one line each, parallel, only claims the
+      landing already makes elsewhere (Brain, live conversations, your voice,
+      one article a day, improves daily, approvals + spend cap). */
   features: [
-    "GTM Brain: who buys from you, and why",
-    "Finds people ready to buy, from live conversations",
-    "Outreach in your voice",
-    "AI SEO: one article a day",
-    "Self-improves from your feedback",
-    "Spend caps and approvals built in",
+    "Your GTM Brain: who buys from you, and why, kept current.",
+    "People found while they are ready to buy, not bought lists.",
+    "Outreach that sounds like you, so people answer.",
+    "One article a day that Google ranks and ChatGPT cites.",
+    "Agents that get better every day from your corrections.",
+    "Approvals and a hard spend cap. No surprises.",
   ],
 } as const;
