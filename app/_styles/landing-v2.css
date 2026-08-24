@@ -1851,41 +1851,57 @@ body.modal-open:has(main.lv2) {
   overflow-wrap: anywhere;
 }
 
-/* ── Careers (/careers) — kinro structure in the landing's own grammar:
-      lv2 section headers, price-card surfaces, kit badges, FxPills. ── */
+/* ── Careers (/careers) — standout.work company-page format, Pancake skin.
+      Dense: nav in a plain padded strip (no viewport min-height), bands
+      full-bleed with compact rhythm, facts strip, team grid from LinkedIn. ── */
 
-/* Compact page header: title block and a small stack on one line — not a
-   viewport-filling band (founder, 2026-08-24 round 6). */
-.lv2-careers-hero {
-  padding-block: 3rem 4rem;
+/* Nav strip without the 100svh viewport contract */
+.lv2-page-top {
+  padding: 0 2.5rem;
 }
-.lv2-careers-fold {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: clamp(2rem, 5vw, 5rem);
-}
-.lv2-careers-fold .lv2-section-header {
-  margin-bottom: 0;
-}
-.lv2-careers-decor {
-  flex: none;
-  width: min(190px, 15vw);
-}
-.lv2-careers-decor .pancake-stack__svg {
-  width: 100%;
-  height: auto;
-}
-@media (max-width: 1079px) {
-  .lv2-careers-decor {
-    display: none;
+@media (max-width: 767px) {
+  .lv2-page-top {
+    padding: 0 1.25rem;
   }
 }
 
-/* While the roles list is short, the white band breathes less than the
-   homepage's full section rhythm. */
-.lv2-careers .lv2s--surface {
-  padding-block: 5rem;
+.lv2-careers .lv2s {
+  padding-block: 3rem;
+}
+.lv2-careers .lv2-careers-hero {
+  padding-block: 2.5rem 3rem;
+}
+.lv2-careers .lv2-section-header {
+  margin-bottom: 1.75rem;
+}
+.lv2-careers-hero .lv2-section-header {
+  margin-bottom: 0;
+}
+
+/* Facts strip under the hero lede — standout's quick-facts row */
+.lv2 .lv2-careers-facts {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0;
+  padding: 0;
+  margin: 1.5rem 0 0;
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--subtle-text);
+}
+.lv2 .lv2-careers-facts li + li::before {
+  content: "·";
+  margin: 0 0.7rem;
+}
+.lv2 .lv2-careers-facts a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.lv2 .lv2-careers-facts a:hover {
+  color: var(--text);
 }
 
 /* Role cards — the price card's surface, one row per role */
@@ -1895,7 +1911,7 @@ body.modal-open:has(main.lv2) {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.9rem;
 }
 .lv2-careers-card {
   display: flex;
@@ -1903,13 +1919,17 @@ body.modal-open:has(main.lv2) {
   align-items: center;
   gap: 2rem;
   background: var(--surface);
-  border-radius: 28px;
+  border-radius: 20px;
   corner-shape: round;
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
-  padding: 1.5rem clamp(1.5rem, 3vw, 2.25rem);
+  padding: 1.25rem 1.5rem;
   text-decoration: none;
   color: var(--text);
   transition: box-shadow 0.2s ease;
+}
+/* On the white band the cards need a visible edge */
+.lv2s--surface .lv2-careers-card {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 12%, transparent);
 }
 a.lv2-careers-card:hover {
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 30%, transparent);
@@ -1920,7 +1940,7 @@ a.lv2-careers-card:hover .lv2-careers-arrow {
 .lv2-careers-card-main {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.35rem;
   min-width: 0;
 }
 .lv2-careers-card-title {
@@ -1949,6 +1969,11 @@ a.lv2-careers-card:hover .lv2-careers-arrow {
   display: inline-block;
   transition: translate 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
+.lv2-careers-empty {
+  font-size: 1rem;
+  color: var(--subtle-text);
+  margin: 0;
+}
 @media (max-width: 599px) {
   .lv2-careers-card {
     flex-direction: column;
@@ -1957,72 +1982,66 @@ a.lv2-careers-card:hover .lv2-careers-arrow {
   }
 }
 
-/* Team cards — same surface, kinro's grid */
+/* Team grid — five across on desktop, LinkedIn photos */
 .lv2 .lv2-careers-team {
   list-style: none;
   padding: 0;
   margin: 0;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1rem;
 }
 @media (max-width: 1023px) {
   .lv2 .lv2-careers-team {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 @media (max-width: 639px) {
   .lv2 .lv2-careers-team {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 .lv2-careers-member {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.75rem;
+  gap: 0.5rem;
   background: var(--surface);
-  border-radius: 28px;
+  border-radius: 20px;
   corner-shape: round;
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
-  padding: clamp(1.5rem, 3vw, 2rem);
+  padding: 1.25rem;
 }
 .lv2-careers-member img {
-  width: 72px;
-  height: 72px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   object-fit: cover;
+  margin-bottom: 0.25rem;
 }
 .lv2-careers-member-name {
-  font-size: 1.0625rem;
-  font-weight: 600;
-}
-.lv2-careers-member p {
   font-size: 0.9375rem;
-  line-height: 1.55;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.lv2 .lv2-careers-member-role {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--subtle-text);
-  margin: 0;
 }
-.lv2-careers-member-links {
-  display: flex;
-  gap: 1rem;
-}
-.lv2-careers-member-links a {
-  font-size: 0.875rem;
+.lv2-careers-member a {
+  font-size: 0.8125rem;
   font-weight: 500;
   color: var(--text);
   text-decoration: underline;
   text-underline-offset: 3px;
+  margin-top: auto;
 }
 
-/* Badges inside the careers bands keep the kit's label voice under the
-   page-level Aeonik blanket. */
-.lv2 .lv2-careers .badge,
-.lv2 .lv2-careers .badge * {
-  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
-}
-
-/* The mailto in the closing lede */
+/* Closing note */
 .lv2-careers .lv2-section-lede a {
   color: var(--text);
   text-decoration: underline;
