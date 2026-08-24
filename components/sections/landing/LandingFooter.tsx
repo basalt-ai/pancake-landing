@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 /**
- * Landing footer — rime.ai-style plum band: link columns up top, the vector
- * wordmark blown up to full container width below (painted via CSS mask so it
- * stays crisp and recolorable), the pancake mark hovering over the "P" the way
- * rime's pink dot sits over the "i", and a mono legal bar at the bottom.
+ * Landing footer — rime.ai-style plum band: link columns on the left, the
+ * vector wordmark beside them on the right (painted via CSS mask so it stays
+ * crisp at any size), and a mono legal bar at the bottom. No pancake mark and
+ * no pink hover on this surface (founder, 2026-08-24).
  *
  * Server component on purpose: every target is a real href (anchors into the
  * landing sections, routes, or external links) — no modal triggers, so the
@@ -69,33 +69,26 @@ export function LandingFooter() {
   return (
     <footer className="lv2-footer">
       <div className="lv2-footer-inner">
-        <nav className="lv2-footer-cols" aria-label="Footer">
-          {COLUMNS.map((col) => (
-            <div key={col.title} className="lv2-footer-col">
-              <span className="lv2-footer-eyebrow">{col.title}</span>
-              <ul>
-                {col.links.map((link) => (
-                  <li key={link.href}>
-                    <FooterLinkItem {...link} />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </nav>
+        <div className="lv2-footer-top">
+          <nav className="lv2-footer-cols" aria-label="Footer">
+            {COLUMNS.map((col) => (
+              <div key={col.title} className="lv2-footer-col">
+                <span className="lv2-footer-eyebrow">{col.title}</span>
+                <ul>
+                  {col.links.map((link) => (
+                    <li key={link.href}>
+                      <FooterLinkItem {...link} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </nav>
 
-        <a href="/" className="lv2-footer-brand" aria-label="Pancake — home">
-          {/* eslint-disable-next-line @next/next/no-img-element -- fixed brand asset, decorative */}
-          <img
-            src="/pancake-mark.png"
-            alt=""
-            className="lv2-footer-brand-mark"
-            loading="lazy"
-            width={160}
-            height={166}
-          />
-          <span className="lv2-footer-wordmark" aria-hidden="true" />
-        </a>
+          <a href="/" className="lv2-footer-brand" aria-label="Pancake — home">
+            <span className="lv2-footer-wordmark" aria-hidden="true" />
+          </a>
+        </div>
 
         <div className="lv2-footer-legal">
           <span>

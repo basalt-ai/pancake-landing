@@ -1440,14 +1440,26 @@ body.modal-open:has(main.lv2) {
   gap: 2.25rem;
 }
 
-/* Link columns */
+/* Top row: link columns left, wordmark right (founder arrow, 2026-08-24). */
+.lv2-footer-top {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
 .lv2-footer-cols {
+  flex: 1 1 auto;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 2rem;
 }
 @media (max-width: 767px) {
+  .lv2-footer-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2.75rem;
+  }
   .lv2-footer-cols {
+    width: 100%;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 2.5rem 1.5rem;
   }
@@ -1485,8 +1497,9 @@ body.modal-open:has(main.lv2) {
   text-decoration: none;
   transition: color 0.2s ease;
 }
+/* Hover brightens cream → white (no pink on this surface; founder 2026-08-24). */
 .lv2-footer-col a:hover {
-  color: var(--strong-branded-surface);
+  color: var(--palette-chrome-0);
 }
 /* Cream ring instead of the UA blue — the default ring disappears into plum. */
 .lv2-footer a:focus-visible {
@@ -1495,27 +1508,24 @@ body.modal-open:has(main.lv2) {
   border-radius: 2px;
 }
 
-/* Giant wordmark — the vector logo as a CSS mask so it scales crisp and
-   recolors on hover. The pancake mark floats in the empty canvas above the
-   "P", rime's pink-dot move. */
+/* Wordmark — the vector logo as a CSS mask so it scales crisp. Cream at rest,
+   white on hover like the links; no pink, no pancake mark (founder). */
 .lv2-footer-brand {
-  position: relative;
   display: block;
-  /* Signature, not monument — full-bleed read as "wtf huge" (founder,
-     2026-08-24). Roughly half the container, left-aligned. The negative
-     margin lets the k-flourish's built-in headroom overlap the column gap. */
-  width: clamp(280px, 46%, 560px);
-  margin-top: -2rem;
+  flex: 0 0 auto;
+  width: clamp(220px, 30%, 400px);
+  margin-left: auto;
   color: var(--text-on-inverted-surface);
   transition: color 0.35s ease;
 }
 @media (max-width: 767px) {
   .lv2-footer-brand {
-    width: min(70%, 320px);
+    width: min(60%, 280px);
+    margin-left: 0;
   }
 }
 .lv2-footer-brand:hover {
-  color: var(--strong-branded-surface);
+  color: var(--palette-chrome-0);
 }
 .lv2-footer-wordmark {
   display: block;
@@ -1527,20 +1537,6 @@ body.modal-open:has(main.lv2) {
   /* Forced-colors mode strips author backgrounds, which blanks a mask-painted
      shape — keep the fill so the wordmark survives Windows High Contrast. */
   forced-color-adjust: none;
-}
-.lv2-footer-brand-mark {
-  position: absolute;
-  /* Hovers just off the "P" cap-line — the same move as the brand lockup,
-     rime's dot-over-the-i. Percentages track the wordmark's 422/166 box. */
-  left: 4%;
-  top: 17%;
-  width: clamp(44px, 8.5%, 108px);
-  height: auto;
-  transform: rotate(-8deg);
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.lv2-footer-brand:hover .lv2-footer-brand-mark {
-  transform: rotate(6deg);
 }
 
 /* Legal bar — the font is set on every descendant too, because the page-level
@@ -1576,7 +1572,7 @@ body.modal-open:has(main.lv2) {
   transition: color 0.2s ease;
 }
 .lv2 .lv2-footer-legal a:hover {
-  color: var(--strong-branded-surface);
+  color: var(--text-on-inverted-surface);
 }
 
 /* ── Modals: waitlist form + booking calendar (port of the static sheets) ── */
@@ -1735,9 +1731,6 @@ body.modal-open:has(main.lv2) {
   }
   .lv2-sheet {
     animation: none;
-  }
-  .lv2-footer-brand-mark {
-    transition: none;
   }
 }
 
