@@ -28,6 +28,7 @@ const COLUMNS: { title: string; links: FooterLink[] }[] = [
     title: "Company",
     links: [
       { href: "/#why", label: "About" },
+      { href: "/careers", label: "Careers" },
       { href: "https://zcal.co/i/ZEHl48rv", label: "Book a call", external: true },
       { href: "mailto:hey@pancake.ai", label: "Contact" },
     ],

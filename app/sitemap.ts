@@ -17,6 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: "https://getpancake.ai/pricing", lastModified: new Date(), priority: 0.8 },
     { url: "https://getpancake.ai/ai-gtm-report", lastModified: new Date(), priority: 0.9 },
     { url: "https://getpancake.ai/open-roadmap", lastModified: new Date(), priority: 0.6 },
+    { url: "https://getpancake.ai/careers", lastModified: new Date(), priority: 0.5 },
     { url: "https://getpancake.ai/privacy", lastModified: new Date(), priority: 0.3 },
     { url: "https://getpancake.ai/terms", lastModified: new Date(), priority: 0.3 },
     { url: "https://getpancake.ai/blog", lastModified: new Date(), priority: 0.8 },

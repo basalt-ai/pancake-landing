@@ -76,12 +76,16 @@ export function LandingModals() {
     [],
   );
 
-  // Any [data-lv2-open="call"] element on the page is a trigger.
+  // Any [data-lv2-open="call"] element on the page is a trigger. Triggers may
+  // be links carrying the zcal URL as an href fallback (they still work as
+  // plain links on pages that don't mount this component) — preventDefault
+  // keeps the dialog from also navigating here.
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       const t = (e.target as Element | null)?.closest?.("[data-lv2-open]");
       if (!t) return;
       if (t.getAttribute("data-lv2-open") !== "call") return;
+      e.preventDefault();
       openDialog(t.getAttribute("data-analytics-id"));
     };
     document.addEventListener("click", onClick);

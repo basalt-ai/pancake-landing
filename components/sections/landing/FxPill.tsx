@@ -104,6 +104,7 @@ export function FxPillLink({
   variant,
   children,
   onClick,
+  className,
   ...rest
 }: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   href: string;
@@ -128,7 +129,7 @@ export function FxPillLink({
       {...rest}
       ref={linkRef}
       href={href}
-      className="button"
+      className={className ? `button ${className}` : "button"}
       data-variant={variant}
       onClick={handleClick}
     >

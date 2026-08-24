@@ -15,7 +15,7 @@ export const WAITLIST_CTA_IDS = [
   "waitlist_pricing_page",
 ] as const;
 
-export const CALL_CTA_IDS = ["call_hero", "call_final", "call_pricing_page"] as const;
+export const CALL_CTA_IDS = ["call_nav", "call_hero", "call_final", "call_pricing_page"] as const;
 
 /** The "Get started" links to app.getpancake.ai (waitlist retired 2026-08-24). */
 export const APP_CTA_IDS = [
