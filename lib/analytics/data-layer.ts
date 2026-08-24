@@ -17,12 +17,24 @@ export const WAITLIST_CTA_IDS = [
 
 export const CALL_CTA_IDS = ["call_hero", "call_final", "call_pricing_page"] as const;
 
+/** The "Get started" links to app.getpancake.ai (waitlist retired 2026-08-24). */
+export const APP_CTA_IDS = [
+  "app_nav",
+  "app_hero",
+  "app_lead_finding",
+  "app_pricing_card",
+  "app_final",
+  "app_pricing_page",
+] as const;
+
 export type WaitlistCtaId = (typeof WAITLIST_CTA_IDS)[number];
 export type CallCtaId = (typeof CALL_CTA_IDS)[number];
-export type AcquisitionCtaId = WaitlistCtaId | CallCtaId;
+export type AppCtaId = (typeof APP_CTA_IDS)[number];
+export type AcquisitionCtaId = WaitlistCtaId | CallCtaId | AppCtaId;
 
 const WAITLIST_CTA_ID_SET = new Set<string>(WAITLIST_CTA_IDS);
 const CALL_CTA_ID_SET = new Set<string>(CALL_CTA_IDS);
+const APP_CTA_ID_SET = new Set<string>(APP_CTA_IDS);
 const ATTRIBUTION_QUERY_KEYS = new Set([
   "utm_source",
   "utm_medium",
@@ -49,6 +61,10 @@ export function isCallCtaId(value: string | null): value is CallCtaId {
   return value !== null && CALL_CTA_ID_SET.has(value);
 }
 
+export function isAppCtaId(value: string | null): value is AppCtaId {
+  return value !== null && APP_CTA_ID_SET.has(value);
+}
+
 type LeadFormContext = {
   form_id: "landing_waitlist";
   lead_type: "waitlist";
@@ -71,6 +87,7 @@ export type AcquisitionEventPayloads = {
     status_code?: number;
   };
   lead_submitted: LeadFormContext & { handoff_count: number };
+  app_cta_clicked: { cta_id: AppCtaId };
 };
 
 export type AcquisitionEventName = keyof AcquisitionEventPayloads;
@@ -84,6 +101,7 @@ const ACQUISITION_EVENT_NAMES = new Set<AcquisitionEventName>([
   "scheduler_fallback_clicked",
   "lead_submit_failed",
   "lead_submitted",
+  "app_cta_clicked",
 ]);
 
 export function isAcquisitionEventName(value: unknown): value is AcquisitionEventName {
@@ -91,7 +109,7 @@ export function isAcquisitionEventName(value: unknown): value is AcquisitionEven
 }
 
 type EventMetadata = {
-  funnelStage: "lead" | "meeting";
+  funnelStage: "lead" | "meeting" | "app";
   conversionTier: "primary" | "micro" | "diagnostic";
 };
 
@@ -103,6 +121,8 @@ const EVENT_METADATA: Record<AcquisitionEventName, EventMetadata> = {
   scheduler_fallback_clicked: { funnelStage: "meeting", conversionTier: "micro" },
   lead_submit_failed: { funnelStage: "lead", conversionTier: "diagnostic" },
   lead_submitted: { funnelStage: "lead", conversionTier: "primary" },
+  // CTA clicks are micro by contract — signups convert in-app, not here.
+  app_cta_clicked: { funnelStage: "app", conversionTier: "micro" },
 };
 
 type DataLayerWindow = Window & {
@@ -190,6 +210,12 @@ function sanitizePayload(
 ): Record<string, string | number> | null {
   // Copy only named, bounded fields. Never spread caller input into dataLayer.
   const raw = payload as unknown as Record<string, unknown>;
+
+  if (eventName === "app_cta_clicked") {
+    const ctaId = typeof raw.cta_id === "string" ? raw.cta_id : null;
+    if (!isAppCtaId(ctaId)) return null;
+    return { cta_id: ctaId };
+  }
 
   if (eventName.startsWith("lead_")) {
     const ctaId = typeof raw.cta_id === "string" ? raw.cta_id : null;

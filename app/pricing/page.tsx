@@ -2,7 +2,7 @@
  * Pricing V2 — one flat plan, Okara-simplified (founder call 2026-08-06:
  * $99/month flat, everything included; the V1 token-pack model is retired).
  * Rides the landing skin (.lv2) so the two pages read as one product:
- * nav + header + single plan card with the feature list + waitlist modal.
+ * nav + header + single plan card with the feature list + booking modal.
  */
 import type { Metadata } from "next";
 

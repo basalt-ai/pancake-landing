@@ -9,7 +9,7 @@ import { PriceGroups } from "./PriceGroups";
 /**
  * Pricing — one flat number, Okara-simple (founder call 2026-08-06: $99/month
  * flat, no tokens, no tiers — that model was Pancake V1). One card: price,
- * feature list, waitlist. Figures come from `pricingV2` in lib/copy.ts.
+ * feature list, app CTA. Figures come from `pricingV2` in lib/copy.ts.
  */
 export function LandingPricing() {
   return (
