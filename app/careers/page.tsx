@@ -65,7 +65,7 @@ const TEAM: TeamMember[] = [
   {
     name: "Zakaria Benhadi",
     role: "Founding Engineer",
-    photo: "/pancake-mark.png",
+    photo: "/team/zakaria.jpg",
     linkedin: "https://www.linkedin.com/in/zakaria-benhadi-13b02288/",
   },
   {
@@ -121,8 +121,8 @@ export default function CareersPage() {
         </div>
       </section>
 
-      {/* Open roles — full-bleed white band */}
-      <section className="lv2s lv2s--surface" aria-labelledby="careers-roles-heading">
+      {/* Open roles */}
+      <section className="lv2s" aria-labelledby="careers-roles-heading">
         <div className="lv2-container">
           <header className="lv2-section-header">
             <h2 id="careers-roles-heading" className="lv2-section-title">
@@ -190,7 +190,7 @@ export default function CareersPage() {
       )}
 
       {/* Always-hiring note */}
-      <section className="lv2s lv2s--surface" aria-labelledby="careers-note-heading">
+      <section className="lv2s" aria-labelledby="careers-note-heading">
         <div className="lv2-container">
           <header className="lv2-section-header">
             <h2 id="careers-note-heading" className="lv2-section-title">

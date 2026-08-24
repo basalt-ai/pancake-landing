@@ -1868,6 +1868,11 @@ body.modal-open:has(main.lv2) {
 .lv2-careers .lv2s {
   padding-block: 3rem;
 }
+/* One canvas, no white bands (founder: "keep it beige") — sections separate
+   with full-bleed hairlines instead. */
+.lv2-careers .lv2s + .lv2s {
+  border-top: 1px solid color-mix(in srgb, var(--palette-chrome-100) 10%, transparent);
+}
 .lv2-careers .lv2-careers-hero {
   padding-block: 2.5rem 3rem;
 }
