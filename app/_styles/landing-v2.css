@@ -1851,13 +1851,27 @@ body.modal-open:has(main.lv2) {
   overflow-wrap: anywhere;
 }
 
-/* ── Careers (/careers) — standout.work-shaped: blurb, facts, roles, steps ── */
+/* ── Careers (/careers) — kinro.com/careers structure in the Pancake skin:
+      hero claim, an "Open roles" band of white cards, then the always-hiring
+      note band with the plum Meet-the-team pill. ── */
 
-.lv2-careers {
+.lv2-careers-inner {
   width: 100%;
-  max-width: 52rem;
+  max-width: 74rem;
   margin-inline: auto;
-  padding-bottom: 2rem;
+}
+/* The page is short — grow the roles band so the note band and footer hug
+   the bottom of the first viewport instead of floating in cream. */
+.lv2-viewport--page > .lv2-careers {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.lv2-careers .lv2s {
+  padding-block: 0;
+}
+.lv2-careers .lv2-careers-hero {
+  padding-block: 4rem 4.5rem;
 }
 .lv2 .lv2-careers-eyebrow {
   font-family: var(--font-aeonik-fono), ui-monospace, monospace;
@@ -1869,105 +1883,178 @@ body.modal-open:has(main.lv2) {
   margin-bottom: 1rem;
 }
 .lv2-careers-title {
-  font-size: clamp(2.25rem, 6vw, 3.5rem);
+  font-size: clamp(2.25rem, 6vw, 3.75rem);
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.05;
+  max-width: 16em;
   margin: 0 0 1.25rem;
 }
 .lv2-careers-lede {
-  font-size: 1.125rem;
-  line-height: 1.55;
-  max-width: 36rem;
-  margin: 0 0 1.75rem;
-}
-.lv2 .lv2-careers-facts {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 0;
-  padding: 0;
-  margin: 0 0 3.5rem;
-  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
-  font-size: 13px;
-  letter-spacing: 0.04em;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  max-width: 34rem;
+  margin: 0;
   color: var(--subtle-text);
 }
-.lv2 .lv2-careers-facts li + li::before {
-  content: "·";
-  margin: 0 0.7rem;
+
+/* Roles band — full-bleed hairline on top, kinro-style */
+.lv2-careers .lv2-careers-roles-band {
+  flex: 1;
+  border-top: 1px solid color-mix(in srgb, var(--palette-chrome-100) 10%, transparent);
+  padding-block: 3.25rem 4rem;
 }
-.lv2 .lv2-careers-facts a {
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+.lv2-careers-roles-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  margin-bottom: 1.75rem;
 }
-.lv2 .lv2-careers-facts a:hover {
-  color: var(--text);
-}
-.lv2-careers-h2 {
-  font-size: 1.35rem;
+.lv2-careers-roles-head h2 {
+  font-size: 1.375rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  margin: 0 0 0.9rem;
 }
-.lv2-careers-none {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--subtle-text);
-  max-width: 34rem;
-  margin: 0 0 3.5rem;
-}
-.lv2 .lv2-careers-roles {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 3.5rem;
-}
-.lv2 .lv2-careers-roles li {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem 0;
-  border-top: 1px solid color-mix(in srgb, var(--palette-chrome-100) 10%, transparent);
-}
-.lv2-careers-role-title {
-  font-weight: 600;
-}
-.lv2-careers-role-meta {
+.lv2 .lv2-careers-count {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
   color: var(--subtle-text);
 }
-.lv2 .lv2-careers-steps {
+.lv2 .lv2-careers-cards {
   list-style: none;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 2rem;
   padding: 0;
-  margin: 0 0 3rem;
-}
-@media (max-width: 767px) {
-  .lv2 .lv2-careers-steps {
-    grid-template-columns: 1fr;
-    gap: 1.75rem;
-  }
-}
-.lv2 .lv2-careers-steps li {
+  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.9rem;
 }
-.lv2 .lv2-careers-step-n {
-  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
-  font-weight: 700;
-  color: var(--palette-pink-40);
+.lv2-careers-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  background: var(--surface);
+  border-radius: 20px;
+  corner-shape: round;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
+  padding: 1.4rem 1.75rem;
+  text-decoration: none;
+  color: var(--text);
+  transition: box-shadow 0.2s ease;
 }
-.lv2-careers-step-title {
+a.lv2-careers-card:hover {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 30%, transparent);
+}
+a.lv2-careers-card:hover .lv2-careers-arrow {
+  translate: 4px 0;
+}
+.lv2-careers-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+.lv2-careers-card-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  font-size: 1.0625rem;
   font-weight: 600;
 }
-.lv2-careers-step-body {
+.lv2 .lv2-careers-chip {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100vw;
+  background: color-mix(in srgb, var(--palette-green-20) 35%, transparent);
+}
+.lv2-careers-card-blurb {
   font-size: 0.9375rem;
   line-height: 1.5;
   color: var(--subtle-text);
 }
-.lv2-careers-cta {
-  margin-top: 0.5rem;
+.lv2-careers-card-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: none;
+  font-size: 0.875rem;
+  color: var(--subtle-text);
+  white-space: nowrap;
+}
+.lv2-careers-arrow {
+  display: inline-block;
+  transition: translate 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.lv2-careers-card--empty {
+  color: var(--subtle-text);
+  font-size: 0.9375rem;
+}
+@media (max-width: 599px) {
+  .lv2-careers-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+  }
+}
+
+/* Note band — hairline, note left, plum pill right */
+.lv2-careers .lv2-careers-note-band {
+  border-top: 1px solid color-mix(in srgb, var(--palette-chrome-100) 10%, transparent);
+  padding-block: 2.5rem 3rem;
+}
+.lv2-careers-note {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.lv2-careers-note p {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--subtle-text);
+  max-width: 26rem;
+  margin: 0;
+}
+.lv2-careers-note p a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+.lv2-careers-note p a:hover {
+  text-decoration-thickness: 3px;
+}
+.lv2 .lv2-careers-meet {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--inverted-surface);
+  color: var(--text-on-inverted-surface);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 16px 22px;
+  border-radius: 24px;
+  corner-shape: round;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.lv2 .lv2-careers-meet:hover .lv2-careers-meet-arrow,
+.lv2 .lv2-careers-meet:hover span {
+  translate: 3px 0;
+}
+.lv2 .lv2-careers-meet span {
+  display: inline-block;
+  transition: translate 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.lv2 .lv2-careers-meet:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
 }
