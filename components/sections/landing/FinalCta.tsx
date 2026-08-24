@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-import { FxPill } from "./FxPill";
+import { FxPill, FxPillLink } from "./FxPill";
 import { mountSnake } from "./snake";
 
 /**
@@ -58,9 +58,9 @@ export function FinalCta() {
           <FxPill variant="outline" data-lv2-open="call" data-analytics-id="call_final">
             Book a call
           </FxPill>
-          <FxPill data-lv2-open="waitlist" data-analytics-id="waitlist_final">
-            Join waitlist
-          </FxPill>
+          <FxPillLink href="https://app.getpancake.ai" data-analytics-id="app_final">
+            Get started
+          </FxPillLink>
         </div>
       </div>
     </section>

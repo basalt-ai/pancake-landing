@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PancakeStack } from "@/components/sections/pricing/PancakeStack";
 import { pricingV2 } from "@/lib/copy";
 
-import { FxPill } from "./FxPill";
+import { FxPillLink } from "./FxPill";
 import { PriceGroups } from "./PriceGroups";
 
 /**
@@ -37,9 +37,9 @@ export function LandingPricing() {
             <p className="lv2-price-sub">{pricingV2.access}</p>
             <PriceGroups />
             <div className="lv2-button-group">
-              <FxPill data-lv2-open="waitlist" data-analytics-id="waitlist_pricing_card">
-                Join waitlist
-              </FxPill>
+              <FxPillLink href="https://app.getpancake.ai" data-analytics-id="app_pricing_card">
+                Get started
+              </FxPillLink>
               <Link href="/pricing" className="lv2-price-link">
                 See full pricing
               </Link>

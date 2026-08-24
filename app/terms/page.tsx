@@ -1,27 +1,27 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { HomeNav } from "@/components/sections/home/HomeNav";
-import { Footer } from "@/components/shared/Footer";
-import { H1 } from "@/components/ui/Headings";
+import { LandingFooter } from "@/components/sections/landing/LandingFooter";
+import { LandingNav } from "@/components/sections/landing/LandingNav";
+import "@/app/_styles/landing-v2.css";
 
 export const metadata: Metadata = {
   title: "Terms of Service — Pancake",
   description:
     "The terms governing your access to and use of Pancake — including the website, web app, and Slack integration.",
+  alternates: { canonical: "https://getpancake.ai/terms" },
 };
 
 export default function TermsOfServicePage() {
   return (
-    <main id="main-content" className="flex min-h-screen flex-col">
-      <HomeNav />
-      <section className="legal-section flex-1" aria-labelledby="terms-heading">
-        <div className="legal-section__inner">
-          <H1 id="terms-heading" className="legal-section__title">
-            Terms of Service
-          </H1>
+    <main id="main-content" className="lv2">
+      <div className="lv2-viewport lv2-viewport--page">
+        <LandingNav />
+        <section className="lv2s" aria-labelledby="terms-heading">
+          <article className="lv2-legal">
+            <p className="lv2-legal-updated">Last updated: August 24, 2026</p>
+            <h1 id="terms-heading">Terms of Service</h1>
 
-          <article className="legal-prose">
             <p>
               Welcome to Pancake. These Terms of Service (“Terms”) govern your access to and use
               of Pancake’s services, including our website, web application, and integrations
@@ -57,7 +57,29 @@ export default function TermsOfServicePage() {
               <li>Reverse engineer or attempt to extract source code (except where permitted by law)</li>
             </ul>
 
-            <h2>4. Slack Integration</h2>
+            <h2>4. Fees &amp; Billing</h2>
+            <p>
+              Some features of Pancake require a paid subscription. Current pricing is listed on
+              our{" "}
+              <Link href="/pricing" prefetch={false}>
+                pricing page
+              </Link>
+              .
+            </p>
+            <ul>
+              <li>Subscriptions are billed in advance and renew automatically until cancelled</li>
+              <li>
+                You can cancel at any time; access continues until the end of the current billing
+                period
+              </li>
+              <li>
+                We may change prices with reasonable advance notice; changes apply from your next
+                billing cycle
+              </li>
+              <li>Except where required by law, payments are non-refundable</li>
+            </ul>
+
+            <h2>5. Slack Integration</h2>
             <p>If you use Pancake with Slack:</p>
             <ul>
               <li>
@@ -73,7 +95,7 @@ export default function TermsOfServicePage() {
               </li>
             </ul>
 
-            <h2>5. User Content</h2>
+            <h2>6. User Content</h2>
             <p>You retain ownership of any content you submit to Pancake (“User Content”).</p>
             <p>
               By using the service, you grant Pancake a limited, non-exclusive license to use,
@@ -84,7 +106,7 @@ export default function TermsOfServicePage() {
               third-party rights.
             </p>
 
-            <h2>6. AI-Generated Content</h2>
+            <h2>7. AI-Generated Content</h2>
             <p>Pancake may generate responses or outputs using artificial intelligence.</p>
             <ul>
               <li>AI outputs may be inaccurate or incomplete</li>
@@ -92,7 +114,7 @@ export default function TermsOfServicePage() {
               <li>Pancake is not responsible for decisions made based on AI-generated content</li>
             </ul>
 
-            <h2>7. Data &amp; Privacy</h2>
+            <h2>8. Data &amp; Privacy</h2>
             <p>
               Your use of the service is also governed by our{" "}
               <Link href="/privacy" prefetch={false}>
@@ -102,7 +124,7 @@ export default function TermsOfServicePage() {
             </p>
             <p>We encourage you to review it to understand how we collect and process data.</p>
 
-            <h2>8. Infrastructure &amp; Data Hosting</h2>
+            <h2>9. Infrastructure &amp; Data Hosting</h2>
             <p>
               Pancake is hosted on infrastructure provided by Google Cloud Platform located in the
               United States.
@@ -112,18 +134,18 @@ export default function TermsOfServicePage() {
               the United States and other jurisdictions where our service providers operate.
             </p>
 
-            <h2>9. Service Availability</h2>
+            <h2>10. Service Availability</h2>
             <p>
               We aim to provide a reliable service but do not guarantee that Pancake will be
               uninterrupted or error-free.
             </p>
             <p>We may modify, suspend, or discontinue parts of the service at any time.</p>
 
-            <h2>10. Termination</h2>
+            <h2>11. Termination</h2>
             <p>We may suspend or terminate your access to Pancake if you violate these Terms.</p>
             <p>You may stop using the service at any time.</p>
 
-            <h2>11. Disclaimer of Warranties</h2>
+            <h2>12. Disclaimer of Warranties</h2>
             <p>Pancake is provided “as is” and “as available.”</p>
             <p>To the maximum extent permitted by law, we disclaim all warranties, express or implied, including:</p>
             <ul>
@@ -132,7 +154,7 @@ export default function TermsOfServicePage() {
               <li>Non-infringement</li>
             </ul>
 
-            <h2>12. Limitation of Liability</h2>
+            <h2>13. Limitation of Liability</h2>
             <p>To the maximum extent permitted by law, Pancake shall not be liable for:</p>
             <ul>
               <li>Indirect, incidental, or consequential damages</li>
@@ -142,13 +164,13 @@ export default function TermsOfServicePage() {
               Our total liability shall not exceed the amount you paid (if any) to use the service.
             </p>
 
-            <h2>13. Governing Law</h2>
+            <h2>14. Governing Law</h2>
             <p>
               These Terms are governed by the laws of the State of California, United States,
               without regard to conflict of law principles.
             </p>
 
-            <h2>14. Contact</h2>
+            <h2>15. Contact</h2>
             <p>If you have any questions about these Terms, you can contact us at:</p>
             <p>
               <a href="mailto:hey@pancake.ai">
@@ -156,9 +178,9 @@ export default function TermsOfServicePage() {
               </a>
             </p>
           </article>
-        </div>
-      </section>
-      <Footer />
+        </section>
+      </div>
+      <LandingFooter />
     </main>
   );
 }

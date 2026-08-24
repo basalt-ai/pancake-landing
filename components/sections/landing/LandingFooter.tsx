@@ -1,69 +1,124 @@
+import Link from "next/link";
+
 /**
- * Landing footer — port of the static landing's minimal bar: copyright left,
- * monochrome social glyphs + legal links right. Icons are inline SVG with
- * `fill: currentColor` so they ride the muted link color.
+ * Landing footer — rime.ai-style plum band: link columns up top, the vector
+ * wordmark blown up to full container width below (painted via CSS mask so it
+ * stays crisp and recolorable), the pancake mark hovering over the "P" the way
+ * rime's pink dot sits over the "i", and a mono legal bar at the bottom.
+ *
+ * Server component on purpose: every target is a real href (anchors into the
+ * landing sections, routes, or external links) — no modal triggers, so the
+ * footer behaves identically on /, /pricing, and the legal pages.
  */
 
-type Social = { href: string; label: string; path: string };
+type FooterLink = { href: string; label: string; external?: boolean };
 
-const SOCIALS: Social[] = [
+const COLUMNS: { title: string; links: FooterLink[] }[] = [
   {
-    href: "https://x.com/getpancake_ai",
-    label: "X",
-    path: "M18.9 2H22l-6.94 7.93L23.2 22h-6.4l-5.02-6.56L6.04 22H2.96l7.43-8.49L2.4 2h6.56l4.54 6 5.4-6zm-1.12 18.2h1.7L7.02 3.71H5.2L17.78 20.2z",
+    title: "Product",
+    links: [
+      { href: "/#how-it-works", label: "How it works" },
+      { href: "/pricing", label: "Pricing" },
+      { href: "/open-roadmap", label: "Roadmap" },
+      { href: "https://app.getpancake.ai", label: "Open the app", external: true },
+    ],
   },
   {
-    href: "https://www.linkedin.com/company/get-pancake",
-    label: "LinkedIn",
-    path: "M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.55C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.72C24 .77 23.2 0 22.22 0z",
+    title: "Company",
+    links: [
+      { href: "/#why", label: "About" },
+      { href: "/blog", label: "Blog" },
+      { href: "https://zcal.co/i/ZEHl48rv", label: "Book a call", external: true },
+      { href: "mailto:hey@pancake.ai", label: "Contact" },
+    ],
   },
   {
-    href: "https://discord.gg/brJ99Up6ym",
-    label: "Discord",
-    path: "M20.32 4.37a19.8 19.8 0 0 0-4.89-1.52.07.07 0 0 0-.08.04c-.21.38-.44.87-.6 1.25a18.3 18.3 0 0 0-5.5 0 12.6 12.6 0 0 0-.61-1.25.08.08 0 0 0-.08-.04 19.7 19.7 0 0 0-4.88 1.52.07.07 0 0 0-.03.03A20.3 20.3 0 0 0 .1 18.06a.08.08 0 0 0 .03.05 19.9 19.9 0 0 0 6 3.03.08.08 0 0 0 .08-.03c.46-.63.87-1.3 1.23-2a.08.08 0 0 0-.04-.1 13 13 0 0 1-1.87-.9.08.08 0 0 1 0-.13l.37-.28a.07.07 0 0 1 .08-.01 14.2 14.2 0 0 0 12.06 0 .07.07 0 0 1 .08 0l.37.3a.08.08 0 0 1 0 .12 12.3 12.3 0 0 1-1.88.9.08.08 0 0 0-.04.1c.36.7.78 1.37 1.23 2a.08.08 0 0 0 .08.03 19.8 19.8 0 0 0 6.03-3.03.08.08 0 0 0 .03-.05 20.2 20.2 0 0 0-3.56-13.66.06.06 0 0 0-.03-.03zM8.02 15.33c-1.18 0-2.16-1.08-2.16-2.42 0-1.33.96-2.42 2.16-2.42 1.21 0 2.18 1.1 2.16 2.42 0 1.34-.96 2.42-2.16 2.42zm7.97 0c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.22 0 2.18 1.1 2.16 2.42 0 1.34-.94 2.42-2.16 2.42z",
+    title: "Compare",
+    links: [
+      { href: "/viktor-vs-pancake", label: "vs Viktor" },
+      { href: "/claude-tag-vs-pancake", label: "vs Claude Tag" },
+      { href: "/openclaw-vs-pancake", label: "vs OpenClaw" },
+      { href: "/pancake-vs-paperclips", label: "vs Paperclips" },
+    ],
   },
   {
-    href: "https://www.youtube.com/@trypancake",
-    label: "YouTube",
-    path: "M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.5A3.02 3.02 0 0 0 .5 6.19C0 8.07 0 12 0 12s0 3.93.5 5.81a3.02 3.02 0 0 0 2.12 2.14c1.88.5 9.38.5 9.38.5s7.5 0 9.38-.5a3.02 3.02 0 0 0 2.12-2.14C24 15.93 24 12 24 12s0-3.93-.5-5.81zM9.55 15.57V8.43L15.82 12l-6.27 3.57z",
-  },
-  {
-    href: "https://www.tiktok.com/@getpancake",
-    label: "TikTok",
-    path: "M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z",
-  },
-  {
-    href: "https://www.instagram.com/get.pancake",
-    label: "Instagram",
-    path: "M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.72 3.72 0 0 1-1.38-.9 3.72 3.72 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41 1.27-.06 1.65-.07 4.85-.07M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63a5.88 5.88 0 0 0-2.13 1.38A5.88 5.88 0 0 0 .63 4.14C.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.8.72 1.48 1.38 2.13a5.88 5.88 0 0 0 2.13 1.38c.76.3 1.64.5 2.91.56 1.28.06 1.69.07 4.95.07s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56a5.88 5.88 0 0 0 2.13-1.38 5.88 5.88 0 0 0 1.38-2.13c.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.88 5.88 0 0 0-1.38-2.13A5.88 5.88 0 0 0 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm7.85-10.4a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z",
+    title: "Social",
+    links: [
+      { href: "https://x.com/getpancake_ai", label: "X", external: true },
+      { href: "https://www.linkedin.com/company/get-pancake", label: "LinkedIn", external: true },
+      { href: "https://discord.gg/brJ99Up6ym", label: "Discord", external: true },
+      { href: "https://www.youtube.com/@trypancake", label: "YouTube", external: true },
+      { href: "https://www.tiktok.com/@getpancake", label: "TikTok", external: true },
+      { href: "https://www.instagram.com/get.pancake", label: "Instagram", external: true },
+    ],
   },
 ];
 
+function FooterLinkItem({ href, label, external }: FooterLink) {
+  if (external) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer">
+        {label}
+      </a>
+    );
+  }
+  if (href.startsWith("mailto:")) {
+    return <a href={href}>{label}</a>;
+  }
+  return (
+    <Link href={href} prefetch={false}>
+      {label}
+    </Link>
+  );
+}
+
 export function LandingFooter() {
+  const year = new Date().getFullYear();
+
   return (
     <footer className="lv2-footer">
       <div className="lv2-footer-inner">
-        <span className="lv2-footer-copy">© 2026 Pancake</span>
-        <nav className="lv2-footer-links" aria-label="Social and legal">
-          {SOCIALS.map((s) => (
-            <a
-              key={s.label}
-              href={s.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={s.label}
-              className="soc"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d={s.path} />
-              </svg>
-            </a>
+        <nav className="lv2-footer-cols" aria-label="Footer">
+          {COLUMNS.map((col) => (
+            <div key={col.title} className="lv2-footer-col">
+              <span className="lv2-footer-eyebrow">{col.title}</span>
+              <ul>
+                {col.links.map((link) => (
+                  <li key={link.href}>
+                    <FooterLinkItem {...link} />
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
-          <a href="/privacy" className="lv2-footer-legal">
-            Privacy
-          </a>
-          <a href="/terms">Terms</a>
         </nav>
+
+        <a href="/" className="lv2-footer-brand" aria-label="Pancake — home">
+          {/* eslint-disable-next-line @next/next/no-img-element -- fixed brand asset, decorative */}
+          <img
+            src="/pancake-mark.png"
+            alt=""
+            className="lv2-footer-brand-mark"
+            loading="lazy"
+            width={160}
+            height={166}
+          />
+          <span className="lv2-footer-wordmark" aria-hidden="true" />
+        </a>
+
+        <div className="lv2-footer-legal">
+          <span>
+            © {year} Pancake · San Francisco, CA
+          </span>
+          <nav aria-label="Legal">
+            <Link href="/privacy" prefetch={false}>
+              Privacy
+            </Link>
+            <Link href="/terms" prefetch={false}>
+              Terms
+            </Link>
+          </nav>
+        </div>
       </div>
     </footer>
   );

@@ -6,7 +6,7 @@
  */
 import type { Metadata } from "next";
 
-import { FxPill } from "@/components/sections/landing/FxPill";
+import { FxPill, FxPillLink } from "@/components/sections/landing/FxPill";
 import { PriceGroups } from "@/components/sections/landing/PriceGroups";
 import { LandingFooter } from "@/components/sections/landing/LandingFooter";
 import { LandingModals } from "@/components/sections/landing/LandingModals";
@@ -76,9 +76,9 @@ export default function PricingPage() {
               <p className="lv2-price-sub">{pricingV2.access}</p>
               <PriceGroups />
               <div className="lv2-button-group">
-                <FxPill data-lv2-open="waitlist" data-analytics-id="waitlist_pricing_page">
-                  Join waitlist
-                </FxPill>
+                <FxPillLink href="https://app.getpancake.ai" data-analytics-id="app_pricing_page">
+                  Get started
+                </FxPillLink>
                 <FxPill
                   variant="outline"
                   data-lv2-open="call"

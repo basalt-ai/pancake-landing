@@ -1415,14 +1415,20 @@ body.modal-open:has(main.lv2) {
   clip-path: path("M 0 0 Z");
 }
 
-/* ── Footer ── */
+/* ── Footer — rime.ai-style plum band: columns, giant wordmark, mono bar ── */
 
 .lv2-footer {
-  padding: 14px 2.5rem 20px;
+  margin-top: 8px; /* a sliver of cream so the rounded shoulders read */
+  background: var(--inverted-surface);
+  color: var(--text-on-inverted-surface);
+  border-radius: 36px 36px 0 0;
+  corner-shape: round;
+  padding: 4.5rem 2.5rem 1.5rem;
 }
 @media (max-width: 767px) {
   .lv2-footer {
-    padding-inline: 1.25rem;
+    border-radius: 24px 24px 0 0;
+    padding: 3rem 1.25rem 1.25rem;
   }
 }
 .lv2-footer-inner {
@@ -1430,53 +1436,128 @@ body.modal-open:has(main.lv2) {
   max-width: 74rem;
   margin-inline: auto;
   display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+}
+
+/* Link columns */
+.lv2-footer-cols {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2rem;
+}
+@media (max-width: 767px) {
+  .lv2-footer-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.5rem 1.5rem;
+  }
+}
+.lv2-footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.lv2 .lv2-footer-eyebrow {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--subtle-text-on-inverted-surface);
+}
+.lv2-footer-col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+.lv2-footer-col a {
+  /* inline-block + padding buys a ~36px touch box; the negative margin keeps
+     the column's optical rhythm (same trick as the shared footer). */
+  display: inline-block;
+  padding: 0.35rem 0;
+  margin: -0.35rem 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-on-inverted-surface);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.lv2-footer-col a:hover {
+  color: var(--strong-branded-surface);
+}
+
+/* Giant wordmark — the vector logo as a CSS mask so it scales crisp and
+   recolors on hover. The pancake mark floats in the empty canvas above the
+   "P", rime's pink-dot move. */
+.lv2-footer-brand {
+  position: relative;
+  display: block;
+  color: var(--text-on-inverted-surface);
+  transition: color 0.35s ease;
+}
+.lv2-footer-brand:hover {
+  color: var(--strong-branded-surface);
+}
+.lv2-footer-wordmark {
+  display: block;
+  width: 100%;
+  aspect-ratio: 422 / 166;
+  background: currentColor;
+  -webkit-mask: url(/pancake-logo.svg) no-repeat center / contain;
+  mask: url(/pancake-logo.svg) no-repeat center / contain;
+}
+.lv2-footer-brand-mark {
+  position: absolute;
+  /* Hovers just off the "P" cap-line — the same move as the brand lockup,
+     rime's dot-over-the-i. Percentages track the wordmark's 422/166 box. */
+  left: 4%;
+  top: 17%;
+  width: clamp(44px, 8.5%, 108px);
+  height: auto;
+  transform: rotate(-8deg);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.lv2-footer-brand:hover .lv2-footer-brand-mark {
+  transform: rotate(6deg);
+}
+
+/* Legal bar — the font is set on every descendant too, because the page-level
+   `.lv2 *` blanket targets elements directly and would beat inheritance. */
+.lv2 .lv2-footer-legal,
+.lv2 .lv2-footer-legal * {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+}
+.lv2 .lv2-footer-legal {
+  display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  font-size: 14px;
-  font-weight: 500;
-}
-.lv2-footer-copy {
-  color: var(--subtle-text);
-}
-.lv2-footer-links {
-  display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 1.1rem;
+  border-top: 1px solid
+    color-mix(in srgb, var(--text-on-inverted-surface) 16%, transparent);
+  padding-top: 1.3rem;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--subtle-text-on-inverted-surface);
 }
-.lv2-footer-links a {
-  color: var(--subtle-text);
+.lv2 .lv2-footer-legal nav {
+  display: flex;
+  gap: 1.4rem;
+}
+.lv2 .lv2-footer-legal a {
+  color: var(--subtle-text-on-inverted-surface);
   text-decoration: none;
+  padding: 0.35rem 0;
+  margin: -0.35rem 0;
   transition: color 0.2s ease;
-  display: inline-flex;
-  align-items: center;
 }
-.lv2-footer-links a:hover {
-  color: var(--text);
-}
-.lv2-footer-links .soc {
-  padding: 0.55rem;
-  margin: -0.55rem;
-}
-.lv2-footer-links .soc svg {
-  width: 19px;
-  height: 19px;
-  fill: currentColor;
-  display: block;
-}
-.lv2-footer-links .lv2-footer-legal {
-  margin-left: 0.4rem;
-}
-@media (max-width: 479px) {
-  .lv2-footer-inner {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.6rem;
-  }
-  .lv2-footer-links {
-    gap: 1rem;
-  }
+.lv2 .lv2-footer-legal a:hover {
+  color: var(--strong-branded-surface);
 }
 
 /* ── Modals: waitlist form + booking calendar (port of the static sheets) ── */
@@ -1740,4 +1821,81 @@ body.modal-open:has(main.lv2) {
   .lv2-sheet {
     animation: none;
   }
+  .lv2-footer-brand-mark {
+    transition: none;
+  }
+}
+
+/* ── Legal pages (/privacy, /terms) — synthetic.ai-plain: one column of
+      readable prose on the cream canvas, the landing nav and footer around. ── */
+
+.lv2-legal {
+  width: 100%;
+  max-width: 46rem;
+  margin-inline: auto;
+  padding: 0 0 3rem; /* .lv2s already provides the section's vertical rhythm */
+}
+.lv2 .lv2-legal-updated {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--subtle-text);
+  margin-bottom: 1rem;
+}
+.lv2-legal h1 {
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0 0 2.25rem;
+}
+.lv2-legal h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 2.5rem 0 0.75rem;
+}
+.lv2-legal h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 1.75rem 0 0.5rem;
+}
+.lv2-legal p,
+.lv2-legal li {
+  font-size: 1rem;
+  line-height: 1.65;
+  margin: 0 0 0.9rem;
+}
+.lv2-legal ul {
+  list-style: disc; /* the kit reset strips markers; legal lists need them */
+  padding-left: 1.25rem;
+  margin: 0 0 1rem;
+}
+.lv2-legal ul ul {
+  list-style: circle;
+  margin-top: 0.4rem;
+}
+.lv2-legal li {
+  margin-bottom: 0.4rem;
+}
+.lv2-legal a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--strong-branded-surface);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+.lv2-legal a:hover {
+  color: var(--palette-pink-40);
+}
+.lv2 .lv2-legal code {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-size: 0.85em;
+  background: var(--surface);
+  padding: 0.15em 0.4em;
+  border-radius: 6px;
+  overflow-wrap: anywhere;
 }
