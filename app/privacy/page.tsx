@@ -1,30 +1,34 @@
 import type { Metadata } from "next";
 
-import { HomeNav } from "@/components/sections/home/HomeNav";
-import { Footer } from "@/components/shared/Footer";
-import { H1 } from "@/components/ui/Headings";
+import { LandingFooter } from "@/components/sections/landing/LandingFooter";
+import { LandingNav } from "@/components/sections/landing/LandingNav";
+import "@/app/_styles/landing-v2.css";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — Pancake",
   description:
     "How Pancake (Basalt AI Inc.) collects, uses, and protects personal data across our website, web app, and Slack integration.",
+  alternates: { canonical: "https://getpancake.ai/privacy" },
 };
+
+/* Content note: the "Google User Data" section is part of our Google OAuth
+   verification — edit it only with that process in mind. */
 
 export default function PrivacyPolicyPage() {
   return (
-    <main id="main-content" className="flex min-h-screen flex-col">
-      <HomeNav />
-      <section className="legal-section flex-1" aria-labelledby="privacy-heading">
-        <div className="legal-section__inner">
-          <H1 id="privacy-heading" className="legal-section__title">
-            Privacy Policy
-          </H1>
+    <main id="main-content" className="lv2">
+      <div className="lv2-viewport lv2-viewport--page">
+        <LandingNav />
+        <section className="lv2s" aria-labelledby="privacy-heading">
+          <article className="lv2-legal">
+            <p className="lv2-legal-updated">Last updated: August 24, 2026</p>
+            <h1 id="privacy-heading">Privacy Policy</h1>
 
-          <article className="legal-prose">
             <p>
-              As part of its activities, Pancake may process personal data. We
-              attach the utmost importance to the security and confidentiality
-              of user data, whether collected via our website (
+              Pancake is operated by Basalt AI Inc., 535 Mission St, San Francisco, CA 94105,
+              USA. As part of its activities, Pancake may process personal data. We attach the
+              utmost importance to the security and confidentiality of user data, whether
+              collected via our website (
               <a href="https://getpancake.ai" target="_blank" rel="noopener noreferrer">
                 https://getpancake.ai
               </a>
@@ -79,7 +83,31 @@ export default function PrivacyPolicyPage() {
               <li>We do not use Slack data for advertising or unrelated purposes</li>
             </ul>
 
-            <h2>3. Data We Do Not Use</h2>
+            <h2>3. Cookies &amp; Analytics</h2>
+            <p>
+              Our website uses cookies and similar technologies to understand how visitors use
+              the site and to measure our marketing.
+            </p>
+            <ul>
+              <li>
+                <strong>Analytics:</strong> Google Analytics 4 (loaded through Google Tag
+                Manager) and PostHog measure page views and product usage.
+              </li>
+              <li>
+                <strong>Advertising measurement:</strong> tags from Meta, LinkedIn, and X
+                measure the performance of our ad campaigns.
+              </li>
+              <li>
+                <strong>Attribution:</strong> a first-party script records which page or
+                campaign brought you to the site.
+              </li>
+            </ul>
+            <p>
+              You can remove or block cookies in your browser settings at any time. The website
+              works without them.
+            </p>
+
+            <h2>4. Data We Do Not Use</h2>
             <p>
               In some cases, Pancake may receive data from Slack (such as event payloads or
               system logs) that is <strong>not actively used</strong>.
@@ -93,7 +121,7 @@ export default function PrivacyPolicyPage() {
               </li>
             </ul>
 
-            <h2>4. Data Retention</h2>
+            <h2>5. Data Retention</h2>
             <p>Personal data is retained only as long as necessary for the purposes described above:</p>
             <ul>
               <li>Account data: retained while the account is active</li>
@@ -108,7 +136,7 @@ export default function PrivacyPolicyPage() {
             </ul>
             <p>We may retain certain data longer if required by law.</p>
 
-            <h2>5. Your Rights</h2>
+            <h2>6. Your Rights</h2>
             <p>In accordance with GDPR and applicable laws, you have the right to:</p>
             <ul>
               <li>Access your data</li>
@@ -124,7 +152,7 @@ export default function PrivacyPolicyPage() {
               </a>
             </p>
 
-            <h2>6. Data Security</h2>
+            <h2>7. Data Security</h2>
             <p>
               We implement appropriate technical and organizational measures to protect personal
               data from unauthorized access, loss, or disclosure. All data is transmitted over
@@ -132,7 +160,7 @@ export default function PrivacyPolicyPage() {
             </p>
             <p>Data is hosted on GCP infrastructure located in the United States.</p>
 
-            <h2>7. Google User Data</h2>
+            <h2>8. Google User Data</h2>
             <p>
               Pancake integrates with Google Workspace to act as a cofounder for our users. With
               your explicit consent, Pancake requests access to the following Google OAuth scopes:
@@ -251,7 +279,7 @@ export default function PrivacyPolicyPage() {
               , including the Limited Use requirements.
             </p>
 
-            <h2>8. Contact</h2>
+            <h2>9. Contact</h2>
             <p>For any questions or requests regarding your data, you can contact us at:</p>
             <p>
               <a href="mailto:privacy@pancake.ai">
@@ -259,15 +287,15 @@ export default function PrivacyPolicyPage() {
               </a>
             </p>
 
-            <h2>9. Changes to This Policy</h2>
+            <h2>10. Changes to This Policy</h2>
             <p>
               This policy may be updated at any time. We encourage you to review it regularly.
               Significant changes will be communicated where appropriate.
             </p>
           </article>
-        </div>
-      </section>
-      <Footer />
+        </section>
+      </div>
+      <LandingFooter />
     </main>
   );
 }

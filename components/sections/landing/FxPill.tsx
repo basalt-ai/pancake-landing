@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, type RefObject } from "react";
 
 import { Button, type ButtonProps } from "@/components/ui/Button";
+import { isAppCtaId, pushAcquisitionEvent } from "@/lib/analytics/data-layer";
 
 /**
  * Kit Button wearing landing-v2's exact clothes — both halves of its hover:
@@ -102,6 +103,8 @@ export function FxPillLink({
   href,
   variant,
   children,
+  onClick,
+  className,
   ...rest
 }: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   href: string;
@@ -112,13 +115,23 @@ export function FxPillLink({
   const circleRef = useRef<HTMLSpanElement>(null);
   useFxCircle(linkRef, circleRef);
 
+  // The waitlist pills used to emit lead_form_viewed on click; their app-link
+  // replacements keep the funnel measurable through the allow-listed
+  // app_cta_clicked event (GTM/PostHog read it from dataLayer).
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    onClick?.(e);
+    const ctaId = e.currentTarget.getAttribute("data-analytics-id");
+    if (isAppCtaId(ctaId)) pushAcquisitionEvent("app_cta_clicked", { cta_id: ctaId });
+  };
+
   return (
     <Link
       {...rest}
       ref={linkRef}
       href={href}
-      className="button"
+      className={className ? `button ${className}` : "button"}
       data-variant={variant}
+      onClick={handleClick}
     >
       <FxInner circleRef={circleRef}>{children}</FxInner>
     </Link>

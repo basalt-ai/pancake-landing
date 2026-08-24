@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-import { FxPill } from "./FxPill";
+import { FxPill, FxPillLink } from "./FxPill";
 import { mountSnake } from "./snake";
 
 /**
@@ -84,9 +84,9 @@ export function LandingHero() {
             <FxPill variant="outline" data-lv2-open="call" data-analytics-id="call_hero">
               Book a call
             </FxPill>
-            <FxPill data-lv2-open="waitlist" data-analytics-id="waitlist_hero">
-              Join waitlist
-            </FxPill>
+            <FxPillLink href="https://app.getpancake.ai" data-analytics-id="app_hero">
+              Get started
+            </FxPillLink>
           </div>
         </div>
       </div>

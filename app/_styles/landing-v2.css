@@ -202,6 +202,47 @@ body.modal-open:has(main.lv2) {
   }
 }
 
+/* Right cluster: text links + the two pills (rime-shaped, 2026-08-24). */
+.lv2-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.lv2-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  margin-right: 1.1rem;
+}
+.lv2 .lv2-nav-links a {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
+  padding: 0.5rem 0; /* ~36px touch box without moving the baseline */
+  margin: -0.5rem 0;
+}
+.lv2 .lv2-nav-links a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 5px;
+}
+/* Nav pills run one size down from the hero's h56 geometry. */
+.lv2 .lv2-nav-right .button {
+  padding: 14px 20px;
+  font-size: 0.9375rem;
+}
+@media (max-width: 991px) {
+  .lv2-nav-links {
+    display: none;
+  }
+}
+@media (max-width: 599px) {
+  .lv2 .lv2-nav-call {
+    display: none;
+  }
+}
+
 /* ── The snake stage — shared by the hero and the closing CTA ── */
 
 .lv2-stage {
@@ -1415,14 +1456,20 @@ body.modal-open:has(main.lv2) {
   clip-path: path("M 0 0 Z");
 }
 
-/* ── Footer ── */
+/* ── Footer — rime.ai-style plum band: columns, giant wordmark, mono bar ── */
 
 .lv2-footer {
-  padding: 14px 2.5rem 20px;
+  margin-top: 8px; /* a sliver of cream so the rounded shoulders read */
+  background: var(--inverted-surface);
+  color: var(--text-on-inverted-surface);
+  border-radius: 36px 36px 0 0;
+  corner-shape: round;
+  padding: 4.5rem 2.5rem 1.5rem;
 }
 @media (max-width: 767px) {
   .lv2-footer {
-    padding-inline: 1.25rem;
+    border-radius: 24px 24px 0 0;
+    padding: 3rem 1.25rem 1.25rem;
   }
 }
 .lv2-footer-inner {
@@ -1430,53 +1477,143 @@ body.modal-open:has(main.lv2) {
   max-width: 74rem;
   margin-inline: auto;
   display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+}
+
+/* Top row: link columns left, wordmark right (founder arrow, 2026-08-24). */
+.lv2-footer-top {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
+.lv2-footer-cols {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem;
+}
+@media (max-width: 767px) {
+  .lv2-footer-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2.75rem;
+  }
+  .lv2-footer-cols {
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.5rem 1.5rem;
+  }
+}
+.lv2-footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.lv2 .lv2-footer-eyebrow {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--subtle-text-on-inverted-surface);
+}
+.lv2-footer-col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+.lv2-footer-col a {
+  /* inline-block + padding buys a ~36px touch box; the negative margin keeps
+     the column's optical rhythm (same trick as the shared footer). */
+  display: inline-block;
+  padding: 0.35rem 0;
+  margin: -0.35rem 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-on-inverted-surface);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+/* Hover brightens cream → white (no pink on this surface; founder 2026-08-24). */
+.lv2-footer-col a:hover {
+  color: var(--palette-chrome-0);
+}
+/* Cream ring instead of the UA blue — the default ring disappears into plum. */
+.lv2-footer a:focus-visible {
+  outline: 2px solid var(--text-on-inverted-surface);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Wordmark — the vector logo as a CSS mask so it scales crisp. Cream at rest,
+   white on hover like the links; no pink, no pancake mark (founder). */
+.lv2-footer-brand {
+  display: block;
+  flex: 0 0 auto;
+  width: clamp(220px, 30%, 400px);
+  margin-left: auto;
+  color: var(--text-on-inverted-surface);
+  transition: color 0.35s ease;
+}
+@media (max-width: 767px) {
+  .lv2-footer-brand {
+    width: min(60%, 280px);
+    margin-left: 0;
+  }
+}
+.lv2-footer-brand:hover {
+  color: var(--palette-chrome-0);
+}
+.lv2-footer-wordmark {
+  display: block;
+  width: 100%;
+  aspect-ratio: 422 / 166;
+  background: currentColor;
+  -webkit-mask: url(/pancake-logo.svg) no-repeat center / contain;
+  mask: url(/pancake-logo.svg) no-repeat center / contain;
+  /* Forced-colors mode strips author backgrounds, which blanks a mask-painted
+     shape — keep the fill so the wordmark survives Windows High Contrast. */
+  forced-color-adjust: none;
+}
+
+/* Legal bar — the font is set on every descendant too, because the page-level
+   `.lv2 *` blanket targets elements directly and would beat inheritance. */
+.lv2 .lv2-footer-legal,
+.lv2 .lv2-footer-legal * {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+}
+.lv2 .lv2-footer-legal {
+  display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  font-size: 14px;
-  font-weight: 500;
-}
-.lv2-footer-copy {
-  color: var(--subtle-text);
-}
-.lv2-footer-links {
-  display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 1.1rem;
+  border-top: 1px solid
+    color-mix(in srgb, var(--text-on-inverted-surface) 16%, transparent);
+  padding-top: 1.3rem;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--subtle-text-on-inverted-surface);
 }
-.lv2-footer-links a {
-  color: var(--subtle-text);
+.lv2 .lv2-footer-legal nav {
+  display: flex;
+  gap: 1.4rem;
+}
+.lv2 .lv2-footer-legal a {
+  color: var(--subtle-text-on-inverted-surface);
   text-decoration: none;
+  padding: 0.35rem 0;
+  margin: -0.35rem 0;
   transition: color 0.2s ease;
-  display: inline-flex;
-  align-items: center;
 }
-.lv2-footer-links a:hover {
-  color: var(--text);
-}
-.lv2-footer-links .soc {
-  padding: 0.55rem;
-  margin: -0.55rem;
-}
-.lv2-footer-links .soc svg {
-  width: 19px;
-  height: 19px;
-  fill: currentColor;
-  display: block;
-}
-.lv2-footer-links .lv2-footer-legal {
-  margin-left: 0.4rem;
-}
-@media (max-width: 479px) {
-  .lv2-footer-inner {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.6rem;
-  }
-  .lv2-footer-links {
-    gap: 1rem;
-  }
+.lv2 .lv2-footer-legal a:hover {
+  color: var(--text-on-inverted-surface);
 }
 
 /* ── Modals: waitlist form + booking calendar (port of the static sheets) ── */
@@ -1548,8 +1685,7 @@ body.modal-open:has(main.lv2) {
 .lv2-sheet-close:hover {
   background: color-mix(in srgb, var(--palette-chrome-100) 12%, transparent);
 }
-.lv2-sheet-close:focus-visible,
-.lv2-chip:focus-visible {
+.lv2-sheet-close:focus-visible {
   outline: 2px solid var(--text);
   outline-offset: 2px;
 }
@@ -1562,111 +1698,8 @@ body.modal-open:has(main.lv2) {
   letter-spacing: -0.02em;
   margin-bottom: 0.5rem;
 }
-.lv2-sheet-sub {
-  font-size: 0.9375rem;
-  line-height: 1.5;
-  color: var(--subtle-text);
-  margin-bottom: 1.5rem;
-}
 .lv2-call-title {
   padding: 0 0.75rem 0.9rem;
-}
-
-.lv2-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  margin-bottom: 1.1rem;
-}
-.lv2-field label,
-.lv2-field-label {
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-.lv2-field input,
-.lv2-field textarea {
-  font: inherit;
-  font-size: 1rem;
-  color: var(--text);
-  background: var(--surface);
-  border: 0;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 12%, transparent);
-  border-radius: 14px;
-  corner-shape: round;
-  padding: 12px 14px;
-  width: 100%;
-  transition: box-shadow 0.18s ease;
-}
-.lv2-field textarea {
-  resize: vertical;
-  min-height: 74px;
-  line-height: 1.45;
-}
-.lv2-field input::placeholder,
-.lv2-field textarea::placeholder {
-  color: var(--subtle-text);
-}
-/* Ink focus ring, same rationale as the hero input: pink on an empty
-   field reads as an error state. */
-.lv2-field input:focus,
-.lv2-field textarea:focus {
-  outline: none;
-  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--palette-chrome-100) 45%, transparent);
-}
-.lv2-hp {
-  position: absolute;
-  left: -9999px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
-
-.lv2-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
-.lv2-chip {
-  font: inherit;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text);
-  background: var(--surface);
-  border: 0;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 12%, transparent);
-  border-radius: 100vw;
-  padding: 8px 14px;
-  cursor: pointer;
-  transition:
-    background 0.18s ease,
-    box-shadow 0.18s ease;
-}
-.lv2-chip:hover {
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 30%, transparent);
-}
-.lv2-chip[aria-pressed="true"] {
-  background: var(--strong-branded-surface);
-  box-shadow: inset 0 0 0 1px var(--strong-branded-surface);
-}
-
-/* Sheet buttons are full-width, submit and done-state Close alike (static:
-   `.sheet .button { width: 100%; margin-top: .5rem }`). */
-.lv2-sheet .button {
-  width: 100%;
-  margin-top: 0.5rem;
-}
-.lv2-form-error {
-  font-size: 0.875rem;
-  color: var(--negative-text);
-  margin-top: 0.6rem;
-  min-height: 1.2em;
-}
-.lv2-sheet-done {
-  text-align: center;
-  padding: 1rem 0 0.5rem;
-}
-.lv2-sheet-done h3 {
-  margin-bottom: 0.5rem;
 }
 
 /* zcal renders its widget card at a fixed 950x610 inside the frame, offset
@@ -1740,4 +1773,286 @@ body.modal-open:has(main.lv2) {
   .lv2-sheet {
     animation: none;
   }
+}
+
+/* ── Legal pages (/privacy, /terms) — synthetic.ai-plain: one column of
+      readable prose on the cream canvas, the landing nav and footer around. ── */
+
+.lv2-legal {
+  width: 100%;
+  max-width: 46rem;
+  margin-inline: auto;
+  padding: 0 0 3rem; /* .lv2s already provides the section's vertical rhythm */
+}
+.lv2 .lv2-legal-updated {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--subtle-text);
+  margin-bottom: 1rem;
+}
+.lv2-legal h1 {
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0 0 2.25rem;
+}
+.lv2-legal h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 2.5rem 0 0.75rem;
+}
+.lv2-legal h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 1.75rem 0 0.5rem;
+}
+.lv2-legal p,
+.lv2-legal li {
+  font-size: 1rem;
+  line-height: 1.65;
+  margin: 0 0 0.9rem;
+}
+.lv2-legal ul {
+  list-style: disc; /* the kit reset strips markers; legal lists need them */
+  padding-left: 1.25rem;
+  margin: 0 0 1rem;
+}
+.lv2-legal ul ul {
+  list-style: circle;
+  margin-top: 0.4rem;
+}
+.lv2-legal li {
+  margin-bottom: 0.4rem;
+}
+.lv2-legal a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--strong-branded-surface);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+/* Hover feedback lives in the underline, not the text color — pink-40 text
+   on the cream canvas is 3.9:1, under the 4.5:1 WCAG floor for prose links. */
+.lv2-legal a:hover {
+  text-decoration-thickness: 3px;
+}
+.lv2 .lv2-legal code {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-size: 0.85em;
+  background: var(--surface);
+  padding: 0.15em 0.4em;
+  border-radius: 6px;
+  overflow-wrap: anywhere;
+}
+
+/* ── Careers (/careers) — standout.work company-page format, Pancake skin.
+      Dense: nav in a plain padded strip (no viewport min-height), bands
+      full-bleed with compact rhythm, facts strip, team grid from LinkedIn. ── */
+
+/* Nav strip without the 100svh viewport contract */
+.lv2-page-top {
+  padding: 0 2.5rem;
+}
+@media (max-width: 767px) {
+  .lv2-page-top {
+    padding: 0 1.25rem;
+  }
+}
+
+.lv2-careers .lv2s {
+  padding-block: 3rem;
+}
+/* One canvas, no white bands (founder: "keep it beige") — sections separate
+   with full-bleed hairlines instead. */
+.lv2-careers .lv2s + .lv2s {
+  border-top: 1px solid color-mix(in srgb, var(--palette-chrome-100) 10%, transparent);
+}
+.lv2-careers .lv2-careers-hero {
+  padding-block: 2.5rem 3rem;
+}
+.lv2-careers .lv2-section-header {
+  margin-bottom: 1.75rem;
+}
+.lv2-careers-hero .lv2-section-header {
+  margin-bottom: 0;
+}
+
+/* Facts strip under the hero lede — standout's quick-facts row */
+.lv2 .lv2-careers-facts {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0;
+  padding: 0;
+  margin: 1.5rem 0 0;
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--subtle-text);
+}
+.lv2 .lv2-careers-facts li + li::before {
+  content: "·";
+  margin: 0 0.7rem;
+}
+.lv2 .lv2-careers-facts a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.lv2 .lv2-careers-facts a:hover {
+  color: var(--text);
+}
+
+/* Role cards — the price card's surface, one row per role */
+.lv2 .lv2-careers-cards {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+.lv2-careers-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  background: var(--surface);
+  border-radius: 20px;
+  corner-shape: round;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
+  padding: 1.25rem 1.5rem;
+  text-decoration: none;
+  color: var(--text);
+  transition: box-shadow 0.2s ease;
+}
+/* On the white band the cards need a visible edge */
+.lv2s--surface .lv2-careers-card {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 12%, transparent);
+}
+a.lv2-careers-card:hover {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 30%, transparent);
+}
+a.lv2-careers-card:hover .lv2-careers-arrow {
+  translate: 4px 0;
+}
+.lv2-careers-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+.lv2-careers-card-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+.lv2-careers-card-blurb {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--subtle-text);
+}
+.lv2-careers-card-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: none;
+  font-size: 0.875rem;
+  color: var(--subtle-text);
+  white-space: nowrap;
+}
+.lv2-careers-arrow {
+  display: inline-block;
+  transition: translate 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.lv2-careers-empty {
+  font-size: 1rem;
+  color: var(--subtle-text);
+  margin: 0;
+}
+@media (max-width: 599px) {
+  .lv2-careers-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+  }
+}
+
+/* Team grid — five across on desktop, LinkedIn photos */
+.lv2 .lv2-careers-team {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1rem;
+}
+@media (max-width: 1023px) {
+  .lv2 .lv2-careers-team {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 639px) {
+  .lv2 .lv2-careers-team {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.lv2-careers-member {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background: var(--surface);
+  border-radius: 20px;
+  corner-shape: round;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
+  padding: 1.25rem;
+}
+.lv2-careers-member img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 0.25rem;
+}
+.lv2-careers-member-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.lv2 .lv2-careers-member-role {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--subtle-text);
+}
+.lv2-careers-member a {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  margin-top: auto;
+}
+
+/* Closing note */
+.lv2-careers .lv2-section-lede a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+.lv2-careers .lv2-section-lede a:hover {
+  text-decoration-thickness: 3px;
 }

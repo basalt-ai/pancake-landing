@@ -54,7 +54,33 @@ Every acquisition event has `schema_version=1` and includes:
 | --- | --- | --- | --- |
 | `page_view` | Once on the initial render and once for each Next.js App Router navigation | `page_view_kind=initial\|virtual`, `source=next_app_router` | Supporting event only |
 
-### Waitlist events
+### App CTA event (added 2026-08-24)
+
+The landing waitlist was retired on 2026-08-24: every former waitlist pill is
+now a direct link to `https://app.getpancake.ai` labeled "Get started". Those
+links emit one allow-listed micro event so the funnel stays measurable:
+
+| Event | Tier | Exact firing rule | Event-specific fields |
+| --- | --- | --- | --- |
+| `app_cta_clicked` | Micro | A "Get started" app link is clicked (fires before navigation) | `cta_id` |
+
+Approved app CTA IDs are `app_nav`, `app_hero`, `app_lead_finding`,
+`app_pricing_card`, `app_final`, and `app_pricing_page`.
+
+**GTM action required:** the published container has no trigger for
+`app_cta_clicked` yet, and the `lead_form_*`/`lead_submitted` events below can
+no longer fire from the landing (the waitlist modal has no remaining trigger).
+Add a Custom Event trigger for `app_cta_clicked` and decide deliberately what
+replaces `lead_submitted` as the paid-platform conversion (the in-app signup is
+the natural successor). PostHog already captures the new event via
+`PANCAKE_ACQUISITION_EVENT` with no changes.
+
+### Waitlist events (retired from the landing 2026-08-24)
+
+The events below remain implemented in `lib/analytics/data-layer.ts` and the
+`/api/waitlist` route (still called by the `/ai-gtm-report` flow via
+`useReport`), but no landing CTA opens the waitlist modal anymore, so they no
+longer fire from `/` or `/pricing`.
 
 All waitlist events use `form_id=landing_waitlist` and `lead_type=waitlist`.
 
