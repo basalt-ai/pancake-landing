@@ -1854,9 +1854,14 @@ body.modal-open:has(main.lv2) {
 /* ── Careers (/careers) — kinro structure in the landing's own grammar:
       lv2 section headers, price-card surfaces, kit badges, FxPills. ── */
 
+/* Compact page header: title block and a small stack on one line — not a
+   viewport-filling band (founder, 2026-08-24 round 6). */
+.lv2-careers-hero {
+  padding-block: 3rem 4rem;
+}
 .lv2-careers-fold {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: clamp(2rem, 5vw, 5rem);
 }
@@ -1865,7 +1870,7 @@ body.modal-open:has(main.lv2) {
 }
 .lv2-careers-decor {
   flex: none;
-  width: min(300px, 24vw);
+  width: min(190px, 15vw);
 }
 .lv2-careers-decor .pancake-stack__svg {
   width: 100%;
@@ -1875,6 +1880,12 @@ body.modal-open:has(main.lv2) {
   .lv2-careers-decor {
     display: none;
   }
+}
+
+/* While the roles list is short, the white band breathes less than the
+   homepage's full section rhythm. */
+.lv2-careers .lv2s--surface {
+  padding-block: 5rem;
 }
 
 /* Role cards — the price card's surface, one row per role */
