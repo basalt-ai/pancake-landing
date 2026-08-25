@@ -8,6 +8,7 @@ import { AnalyticsEvents } from "@/components/analytics/AnalyticsEvents";
 import { PostHogAttribution } from "@/components/analytics/PostHogAttribution";
 import { ProductHuntBadge } from "@/components/shared/ProductHuntBadge";
 import {
+  LEADJOURNEY_TRACKING_SCRIPT_URL,
   META_BROWSER_PIXEL_ID,
   PANCAKE_ANALYTICS_INGEST_ORIGIN,
 } from "@/lib/analytics/vendor-config";
@@ -157,6 +158,9 @@ export default function RootLayout({
       <head>
         {/* eslint-disable-next-line @next/next/no-sync-scripts -- Attribution must run before a bounce. */}
         <script src="/pancake-attribution.min.js"></script>
+        {productionVendorTrackingEnabled ? (
+          <script src={LEADJOURNEY_TRACKING_SCRIPT_URL} async></script>
+        ) : null}
         {productionVendorTrackingEnabled ? (
           <script
             dangerouslySetInnerHTML={{
