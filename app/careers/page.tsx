@@ -70,7 +70,7 @@ const TEAM: TeamMember[] = [
   },
   {
     name: "Théophile Cousin",
-    role: "Engineer",
+    role: "Founding Engineer",
     photo: "/team/theophile.jpg",
     linkedin: "https://www.linkedin.com/in/theocousin/",
   },
