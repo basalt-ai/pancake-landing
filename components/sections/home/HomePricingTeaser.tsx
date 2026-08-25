@@ -134,12 +134,12 @@ export function HomePricingTeaser() {
           </ul>
           <div className="home-pricing-teaser__cta">
             {/*
-              Signup CTA MUST stay a real <a href="https://app.getpancake.ai">
+              Signup CTA MUST stay a real <a href="https://beta.getpancake.ai">
               anchor — analytics fires on the hostname (no buttons/router).
               Class string mirrors the closing CTA in HomeLandingBody.
             */}
             <a
-              href="https://app.getpancake.ai"
+              href="https://beta.getpancake.ai"
               className="button inline-flex w-fit shrink-0 items-center justify-center no-underline"
               data-size="lg"
             >

@@ -22,7 +22,7 @@ const columns: { title: string; links: FooterLink[] }[] = [
     links: [
       { href: "/pricing", label: "Pricing" },
       { href: "/open-roadmap", label: "Roadmap" },
-      { href: "https://app.getpancake.ai", label: "Sign in" },
+      { href: "https://beta.getpancake.ai", label: "Sign in" },
     ],
   },
   {

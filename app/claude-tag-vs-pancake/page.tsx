@@ -22,7 +22,7 @@ import { Footer } from "@/components/shared/Footer";
 import { Badge } from "@/components/ui/Badge";
 import { H2, H3 } from "@/components/ui/Headings";
 
-const APP_URL = "https://app.getpancake.ai";
+const APP_URL = "https://beta.getpancake.ai";
 
 export const metadata: Metadata = {
   title: "Claude Tag vs Pancake: The Same Claude, 75% Cheaper, 1,000+ Tools",

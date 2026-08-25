@@ -7,7 +7,10 @@ import "./_styles/home-ugc.css";
 import { AnalyticsEvents } from "@/components/analytics/AnalyticsEvents";
 import { PostHogAttribution } from "@/components/analytics/PostHogAttribution";
 import { ProductHuntBadge } from "@/components/shared/ProductHuntBadge";
-import { META_BROWSER_PIXEL_ID } from "@/lib/analytics/vendor-config";
+import {
+  META_BROWSER_PIXEL_ID,
+  PANCAKE_ANALYTICS_INGEST_ORIGIN,
+} from "@/lib/analytics/vendor-config";
 
 /**
  * Lato — Slack's UI typeface (SIL Open Font License, served via next/font/google).
@@ -154,6 +157,16 @@ export default function RootLayout({
       <head>
         {/* eslint-disable-next-line @next/next/no-sync-scripts -- Attribution must run before a bounce. */}
         <script src="/pancake-attribution.min.js"></script>
+        {productionVendorTrackingEnabled ? (
+          <script
+            dangerouslySetInnerHTML={{
+              // This deliberately runs immediately after the synchronous cookie writer, before
+              // React hydration or vendor SDKs. The API independently decodes the same cookie and
+              // accepts only its newest UUID, so the body cannot fabricate an event or payload.
+              __html: `(function(){${productionHostnameGuard}try{var n='pancake_attribution=',p=document.cookie.split(';'),r=null;for(var x=0;x<p.length;x++){var q=p[x].trim();if(q.indexOf(n)===0){r=q.slice(n.length);break;}}if(!r){return;}var s=JSON.parse(decodeURIComponent(r)),t=Array.isArray(s.t)&&s.t.length?s.t[s.t.length-1]:null,i=t&&t.i;if(typeof i!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(i)){return;}fetch('${PANCAKE_ANALYTICS_INGEST_ORIGIN}/analytics/acquisition-touch',{method:'POST',mode:'cors',credentials:'include',referrerPolicy:'origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({touchId:i}),keepalive:true}).catch(function(){});}catch(_){}})();`,
+            }}
+          />
+        ) : null}
         {tagManagerEnabled ? (
           <script
             dangerouslySetInnerHTML={{
