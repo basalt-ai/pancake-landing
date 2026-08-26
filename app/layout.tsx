@@ -156,6 +156,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${aeonik.variable} ${aeonikFono.variable} ${lato.variable}`}>
       <head>
+        <meta
+          name="facebook-domain-verification"
+          content="va3luu0l4mgbrin7rt11dvnra2stty"
+        />
         {/* eslint-disable-next-line @next/next/no-sync-scripts -- Attribution must run before a bounce. */}
         <script src="/pancake-attribution.min.js"></script>
         {productionVendorTrackingEnabled ? (
