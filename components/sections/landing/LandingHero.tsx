@@ -32,6 +32,22 @@ export function LandingHero() {
 
   useEffect(() => {
     if (!stageRef.current || !canvasRef.current) return;
+    // Freeze the real loaded viewport height into --lv2-vh0 (used by
+    // .lv2-viewport ≤767px): iOS 26's floating tab bar makes 100svh come up
+    // short of the visible screen, which also shrank the snake's orbit band
+    // into a cramped churn. Set BEFORE mountSnake so the stage measures at
+    // its final height. Width-gated re-measure: the iOS toolbar collapse is
+    // a height-only resize and must not reflow the band mid-scroll.
+    const setVh0 = () =>
+      document.documentElement.style.setProperty("--lv2-vh0", `${window.innerHeight}px`);
+    setVh0();
+    let lastVw = window.innerWidth;
+    const onVh0Resize = () => {
+      if (window.innerWidth === lastVw) return;
+      lastVw = window.innerWidth;
+      setVh0();
+    };
+    window.addEventListener("resize", onVh0Resize);
     const cleanup = mountSnake({
       stage: stageRef.current,
       canvas: canvasRef.current,
@@ -59,6 +75,8 @@ export function LandingHero() {
     return () => {
       cancelAnimationFrame(raf);
       document.documentElement.classList.remove("lv2-anim");
+      window.removeEventListener("resize", onVh0Resize);
+      document.documentElement.style.removeProperty("--lv2-vh0");
       cleanup();
     };
   }, []);
