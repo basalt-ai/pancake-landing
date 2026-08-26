@@ -8,9 +8,12 @@
  * that width onto the visually identical copy.
  *
  * A finger down (or a wheel nudge) pauses the drift — the touch analog of a
- * hover-pause, so a reader can hold a card still (WCAG 2.2.2). After a short
- * idle it resumes from wherever the user left the scroll. `prefers-reduced-
- * motion` disables the drift entirely; the strip stays swipeable.
+ * hover-pause, so a reader can hold a card still (WCAG 2.2.2). After an idle
+ * it resumes from wherever the user left the scroll: a short one for wheel
+ * nudges (a cursor rolling past shouldn't stall the strip), a long one after
+ * touch — a tap or swipe is intent to READ, and 1.2s stole 50-word cards
+ * back mid-sentence (mobile QA 2026-08-26). `prefers-reduced-motion`
+ * disables the drift entirely; the strip stays swipeable.
  */
 
 type MarqueeOptions = {
@@ -20,8 +23,10 @@ type MarqueeOptions = {
   direction?: 1 | -1;
   /** Flex gap between cards in px — corrects the half-gap wrap seam. */
   gap?: number;
-  /** Idle after an interaction before the drift resumes. */
+  /** Idle after a wheel/mouse interaction before the drift resumes. */
   resumeDelayMs?: number;
+  /** Idle after a touch interaction — longer: a tap/swipe means reading. */
+  touchResumeDelayMs?: number;
   /**
    * "loop" (default): content is duplicated, so crossing one set width
    * rebases seamlessly onto the identical copy. "bounce": no duplication,
@@ -35,6 +40,7 @@ export function startAutoMarquee(el: HTMLElement, opts: MarqueeOptions = {}): ()
   const speed = opts.speed ?? 36;
   const gap = opts.gap ?? 0;
   const resumeDelay = opts.resumeDelayMs ?? 1200;
+  const touchResumeDelay = opts.touchResumeDelayMs ?? 6500;
   const mode = opts.mode ?? "loop";
 
   const prm =
@@ -108,12 +114,18 @@ export function startAutoMarquee(el: HTMLElement, opts: MarqueeOptions = {}): ()
       }
       last = 0;
       paused = false;
-    }, resumeDelay);
+    }, lastWasTouch ? touchResumeDelay : resumeDelay);
   };
 
-  const onDown = () => pause();
+  let lastWasTouch = false;
+  const onDown = (e: Event) => {
+    const pt = (e as PointerEvent).pointerType;
+    lastWasTouch = e.type === "touchstart" || pt === "touch" || pt === "pen";
+    pause();
+  };
   const onUp = () => scheduleResume();
   const onWheel = () => {
+    lastWasTouch = false;
     pause();
     scheduleResume();
   };

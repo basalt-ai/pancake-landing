@@ -1,21 +1,18 @@
 import Link from "next/link";
 
 import { FxPillLink } from "./FxPill";
+import { LandingNavMenu } from "./LandingNavMenu";
+import { NAV_LINKS } from "./nav-links";
 
 /**
  * Landing nav — rime.ai-shaped: wordmark left, text links + two pills right
  * (Book a call outline, Get started primary). Text links collapse away below
- * 768px; the footer carries the full map there. "Book a call" is a real link
+ * 768px, where the bar pins to the top and a menu button opens the plum
+ * sheet carrying the same map (mobile QA 2026-08-26 — the footer alone was
+ * the only navigation on a ~13-viewport page). "Book a call" is a real link
  * to zcal with a data-lv2-open="call" upgrade: pages that mount LandingModals
  * intercept it into the booking dialog, everywhere else it just navigates.
  */
-
-const NAV_LINKS: { href: string; label: string; external?: boolean }[] = [
-  { href: "/#how-it-works", label: "How it works" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/careers", label: "Careers" },
-  { href: "https://app.getpancake.ai", label: "Log in", external: true },
-];
 
 export function LandingNav() {
   return (
@@ -53,6 +50,7 @@ export function LandingNav() {
           <FxPillLink href="https://app.getpancake.ai" data-analytics-id="app_nav">
             Get started
           </FxPillLink>
+          <LandingNavMenu />
         </div>
       </div>
     </header>

@@ -219,6 +219,7 @@ body.modal-open:has(main.lv2) {
   font-weight: 500;
   color: var(--text);
   text-decoration: none;
+  white-space: nowrap; /* "How it works" must never fold inside itself */
   padding: 0.5rem 0; /* ~36px touch box without moving the baseline */
   margin: -0.5rem 0;
 }
@@ -232,7 +233,24 @@ body.modal-open:has(main.lv2) {
   padding: 14px 20px;
   font-size: 0.9375rem;
 }
+/* Tablets keep the text links (mobile QA 2026-08-26: the old 991px cutoff
+   contradicted the "below 768px" intent and left 768-991 with no nav) —
+   the row tightens one step so four links + two pills fit at 768. */
 @media (max-width: 991px) {
+  .lv2-nav-links {
+    gap: 1.1rem;
+    margin-right: 0.9rem;
+  }
+}
+/* Pill tightening ONLY where the fit problem exists — leaking it below 768
+   shrank the fixed bar's Get started pill under the 44px guideline
+   (review 2026-08-26). */
+@media (min-width: 768px) and (max-width: 991px) {
+  .lv2 .lv2-nav-right .button {
+    padding: 12px 16px;
+  }
+}
+@media (max-width: 767px) {
   .lv2-nav-links {
     display: none;
   }
@@ -241,6 +259,113 @@ body.modal-open:has(main.lv2) {
   .lv2 .lv2-nav-call {
     display: none;
   }
+}
+/* Phones: the nav pins to the top of the page — Get started stays reachable
+   through the ~13-viewport scroll, and the menu button below carries the map
+   the text links carried. Pages compensate for the fixed bar's height. */
+@media (max-width: 767px) {
+  .lv2-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    background: var(--elevated-surface);
+    padding: 11px 1.25rem;
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--palette-chrome-100) 8%, transparent);
+  }
+  .lv2-viewport,
+  .lv2-page-top {
+    padding-top: 66px;
+  }
+  /* Anchor jumps (e.g. /#how-it-works) must clear the fixed bar. */
+  .lv2 [id] {
+    scroll-margin-top: 78px;
+  }
+}
+
+/* ── Mobile menu — plum sheet, the footer's map moved into thumb reach ── */
+
+.lv2-nav-menu-btn {
+  display: none;
+}
+@media (max-width: 767px) {
+  .lv2 .lv2-nav-menu-btn {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-right: -8px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .lv2 .lv2-nav-menu-btn:focus-visible {
+    outline: 2px solid var(--text);
+    outline-offset: 2px;
+  }
+}
+.lv2-nav-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: none;
+  flex-direction: column;
+  background: var(--inverted-surface);
+  color: var(--text-on-inverted-surface);
+  padding: 1.1rem 1.25rem 1.75rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.lv2-nav-menu.is-open {
+  display: flex;
+}
+.lv2-nav-menu-head {
+  display: flex;
+  justify-content: flex-end;
+}
+.lv2 .lv2-nav-menu-close {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--text-on-inverted-surface) 10%, transparent);
+  color: var(--text-on-inverted-surface);
+  font: inherit;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.lv2 .lv2-nav-menu-close:focus-visible {
+  outline: 2px solid var(--text-on-inverted-surface);
+  outline-offset: 2px;
+}
+.lv2-nav-menu nav {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1.25rem;
+}
+.lv2 .lv2-nav-menu nav a {
+  font-family: var(--font-aeonik-fono), ui-monospace, monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-on-inverted-surface);
+  text-decoration: none;
+  padding: 0.6rem 0;
+}
+.lv2 .lv2-nav-menu nav a:focus-visible {
+  outline: 2px solid var(--text-on-inverted-surface);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+/* Scoped lock, same belt-and-braces shape as body.modal-open above. */
+body.menu-open:has(main.lv2) {
+  overflow: hidden;
 }
 
 /* ── The snake stage — shared by the hero and the closing CTA ── */
@@ -360,12 +485,15 @@ body.modal-open:has(main.lv2) {
   position: relative;
   font-family: var(--font-aeonik-fono), ui-monospace, monospace;
   font-weight: 700;
-  /* Sized so the long line ("You run your company." = 11.143em, measured)
-     always fits its column: font <= available / 11.35 (metric + 2%).
+  /* Sized so the long line ("We bring you customers." = 12.2em, measured)
+     always fits its column: font <= available / 12.44 (metric + 2%).
      Two lines, always. Desktop available = (V - 80px gutters) - 38vw right
-     column - 4vw gap = 0.58V - 80, and 0.58/11.35 = 5.11vw (the static page's
-     5.286vw assumed its narrower 36vw column). */
-  font-size: clamp(2.5rem, calc(5.11vw - 7.05px), 3.4rem);
+     column - 4vw gap = 0.58V - 80, and 0.58/12.44 = 4.66vw.
+     RE-DERIVE all three formulas whenever H1_LINES changes in
+     LandingHero.tsx: the 2026-08-11 copy pass grew the long line and the
+     stale 11.35 divisors clipped the trailing "s." on every phone
+     (mobile QA 2026-08-26). */
+  font-size: clamp(2.5rem, calc(4.66vw - 6.43px), 3.4rem);
   line-height: 1;
   letter-spacing: -0.02em;
   margin-top: -0.4rem;
@@ -378,12 +506,12 @@ body.modal-open:has(main.lv2) {
 /* stacked: full stage width, gutter 2.5rem down to 767px then 1.25rem */
 @media (max-width: 1079px) {
   .lv2-h1 {
-    font-size: min(3.4rem, calc(8.811vw - 7.05px));
+    font-size: min(3.4rem, calc(8.038vw - 6.43px));
   }
 }
 @media (max-width: 767px) {
   .lv2-h1 {
-    font-size: min(3.4rem, calc(8.811vw - 3.52px));
+    font-size: min(3.4rem, calc(8.038vw - 3.215px));
   }
 }
 /* each sentence is one line — never allowed to wrap internally */
@@ -567,8 +695,11 @@ body.modal-open:has(main.lv2) {
   .lv2-step-media,
   .lv2-step:nth-child(even) .lv2-step-media {
     order: 1; /* copy first, loop under it */
-    justify-self: stretch;
-    max-width: none;
+    /* Keep the desktop 520px cap when stacked (mobile QA 2026-08-26):
+       full-bleed squares blew the top-weighted 1080x1080 loops up to ~688px
+       of mostly dead air on tablets. Left-aligned, like the copy. */
+    justify-self: start;
+    max-width: 520px;
   }
 }
 
@@ -859,6 +990,30 @@ body.modal-open:has(main.lv2) {
   .lv2-dive-num {
     position: static;
     margin-bottom: 0.25rem;
+  }
+  /* Stacked panels have room — labels and chips step up from the
+     desktop-density 0.71875rem so the proof rows stay legible; scoped here
+     so desktop keeps its measured density (mobile QA 2026-08-26). */
+  .lv2-dive-tag {
+    font-size: 0.8125rem;
+  }
+  .lv2-dive-panel-label,
+  .lv2-dive-avatar {
+    font-size: 0.75rem;
+  }
+}
+/* Phones: the mock rows stop amputating — row text wraps instead of
+   ellipsizing mid-word ("Competitor company pa…"), and the window dots yield
+   their width so long panel headers hold one line (mobile QA 2026-08-26). */
+@media (max-width: 599px) {
+  .lv2-dive-mono,
+  .lv2-dive-sub {
+    white-space: normal;
+  }
+}
+@media (max-width: 479px) {
+  .lv2-dive-panel-dots {
+    display: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1242,6 +1397,17 @@ body.modal-open:has(main.lv2) {
     max-width: 32rem;
   }
 }
+/* Tablets: the phone-width caps left ~30% of the band as dead pink beside
+   the plum panel — the panel spans the column and the copy takes a fuller
+   measure, still left-justified (mobile QA 2026-08-26). */
+@media (min-width: 600px) and (max-width: 899px) {
+  .lv2-mf-copy {
+    max-width: 36rem;
+  }
+  .lv2-mf-panel {
+    max-width: none;
+  }
+}
 @media (max-width: 479px) {
   .lv2-manifesto-title {
     font-size: 1.625rem;
@@ -1286,9 +1452,19 @@ body.modal-open:has(main.lv2) {
   width: 100%;
   height: auto;
 }
+/* Stacked: the fold recomposes instead of subtracting (mobile QA
+   2026-08-26 — hiding the mascot left a lone card on dead pink). The card
+   takes the column and a smaller stack tucks under its right edge, using
+   the band's empty space as the counterweight. */
 @media (max-width: 1079px) {
+  .lv2-price-fold {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
   .lv2-price-decor {
-    display: none;
+    width: min(190px, 40vw);
+    align-self: flex-end;
   }
 }
 
@@ -1380,9 +1556,33 @@ body.modal-open:has(main.lv2) {
   color: var(--subtle-text);
 }
 
-/* /pricing rides the same skin: the band grows so the footer stays put. */
+/* /pricing & legal ride the same skin: the band grows so the footer stays
+   put, and the section escapes the viewport's gutters so its content lands
+   on the sitewide grid instead of double-padding (mobile QA 2026-08-26:
+   the stacked gutters inset /pricing 40px vs the nav's 20px and rewrapped
+   the H1 to three ragged lines). The escape also lets section backgrounds
+   (the pricing brand band) run full-bleed. */
 .lv2-viewport--page .lv2s {
   flex: 1;
+  margin-inline: -2.5rem;
+  padding-inline: 2.5rem;
+}
+@media (max-width: 767px) {
+  .lv2-viewport--page .lv2s {
+    margin-inline: -1.25rem;
+    padding-inline: 1.25rem;
+  }
+}
+/* Phones: the /pricing card's two pills stack deliberately — side-by-side
+   was a 1px wrap coincidence at 375 (mobile QA 2026-08-26). */
+@media (max-width: 479px) {
+  .lv2-pricing-page .lv2-button-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .lv2-pricing-page .lv2-button-group .button {
+    width: 100%;
+  }
 }
 
 /* ── Closing CTA band ── */
@@ -1527,11 +1727,13 @@ body.modal-open:has(main.lv2) {
   gap: 0.65rem;
 }
 .lv2-footer-col a {
-  /* inline-block + padding buys a ~36px touch box; the negative margin keeps
-     the column's optical rhythm (same trick as the shared footer). */
+  /* inline-block + padding buys a ~36px touch box IN BOTH AXES — the
+     one-glyph "X" link was a 9px-wide target before the horizontal pass
+     (mobile QA 2026-08-26); the negative margin keeps the column's optical
+     rhythm (same trick as the shared footer). */
   display: inline-block;
-  padding: 0.35rem 0;
-  margin: -0.35rem 0;
+  padding: 0.35rem 0.75rem;
+  margin: -0.35rem -0.75rem;
   font-size: 15px;
   font-weight: 500;
   color: var(--text-on-inverted-surface);
@@ -1608,8 +1810,8 @@ body.modal-open:has(main.lv2) {
 .lv2 .lv2-footer-legal a {
   color: var(--subtle-text-on-inverted-surface);
   text-decoration: none;
-  padding: 0.35rem 0;
-  margin: -0.35rem 0;
+  padding: 0.35rem 0.5rem;
+  margin: -0.35rem -0.5rem;
   transition: color 0.2s ease;
 }
 .lv2 .lv2-footer-legal a:hover {
@@ -1753,6 +1955,40 @@ body.modal-open:has(main.lv2) {
   font-weight: 500;
 }
 
+/* Phones: the booking sheet becomes a full-height takeover (mobile QA
+   2026-08-26) — the fixed 780px native fallback overflowed an 812px
+   viewport, pushing the "Calendar not loading?" hatch below the fold and
+   scrolling the Close button away behind a nested-scroll trap. Pinned to
+   the viewport, zcal's tall layout scrolls inside the frame instead. */
+@media (max-width: 599px) {
+  .lv2-scrim {
+    padding: 0;
+  }
+  .lv2-sheet.is-wide {
+    height: 100vh; /* svh fallback pair, house pattern (.lv2-viewport) */
+    height: 100svh;
+    max-width: none;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem 1rem 0.9rem;
+  }
+  .lv2-sheet.is-wide .lv2-call-title {
+    padding-right: 3rem; /* clear the close button */
+  }
+  .lv2-sheet.is-wide .lv2-zcal-wrap {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+  }
+  .lv2-sheet.is-wide .lv2-zcal-wrap.is-native {
+    height: auto;
+  }
+  .lv2-sheet.is-wide .lv2-zcal-frame {
+    height: 100%;
+  }
+}
+
 /* ── Reduced motion: everything still, everything visible ── */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1857,11 +2093,15 @@ body.modal-open:has(main.lv2) {
 
 /* Nav strip without the 100svh viewport contract */
 .lv2-page-top {
-  padding: 0 2.5rem;
+  /* padding-inline, NOT the shorthand: the fixed-nav compensation earlier in
+     the file sets padding-top on this class at ≤767px — a `padding` shorthand
+     here comes later in source and would silently zero it (review 2026-08-26:
+     the fixed bar covered the careers hero). */
+  padding-inline: 2.5rem;
 }
 @media (max-width: 767px) {
   .lv2-page-top {
-    padding: 0 1.25rem;
+    padding-inline: 1.25rem;
   }
 }
 

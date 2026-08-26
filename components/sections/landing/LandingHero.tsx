@@ -40,10 +40,14 @@ export function LandingHero() {
       ),
       // The H2/CTA column is a keep-out: the wander repels from it and
       // the mobile orbit shrinks to the band above it (impeccable P0 — the
-      // snake parked mid-H2 at the exact "what is this" moment). The H1 is
-      // deliberately NOT covered: beads crossing it fire the reveal, the
-      // hero's signature.
+      // snake parked mid-H2 at the exact "what is this" moment). On desktop
+      // the H1 is deliberately NOT covered: beads crossing it fire the
+      // reveal, the hero's signature. On loop-mode stages (≤1079px) the
+      // keep-out widens to the whole copy block — the lap otherwise parked
+      // pale tail circles on the headline and the cream knockout eroded the
+      // letterforms (mobile QA 2026-08-26).
       keepOut: rightColRef.current ?? undefined,
+      keepOutStacked: contentRef.current ?? undefined,
     });
     // Entrance reveal, report-page pattern: the hidden starting state only
     // exists under html.lv2-anim, so pre-hydration paint and no-JS visitors
