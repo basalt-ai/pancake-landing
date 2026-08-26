@@ -5,6 +5,7 @@ import "./globals.css";
 import "./_styles/components.css";
 import "./_styles/home-ugc.css";
 import { AnalyticsEvents } from "@/components/analytics/AnalyticsEvents";
+import { MetaPixelEvents } from "@/components/analytics/MetaPixelEvents";
 import { PostHogAttribution } from "@/components/analytics/PostHogAttribution";
 import { ProductHuntBadge } from "@/components/shared/ProductHuntBadge";
 import {
@@ -213,6 +214,7 @@ fbq('track', 'PageView');})();`,
             GTM/Meta noscript fallbacks avoids unguarded requests from a
             production deployment's generated Vercel hostname. */}
         {productionVendorTrackingEnabled ? <PostHogAttribution /> : null}
+        {productionVendorTrackingEnabled ? <MetaPixelEvents /> : null}
         <a href="#main-content" className="skip-to-content">
           Skip to main content
         </a>
