@@ -171,13 +171,15 @@ body.modal-open:has(main.lv2) {
 @media (max-width: 767px) {
   .lv2-viewport {
     padding: 0 1.25rem;
-    /* iOS 26's floating tab bar makes 100svh undershoot the real loaded
-       viewport (founder report 2026-08-26: "mobile is less than 100vh") —
-       LandingHero freezes the measured height into --lv2-vh0 at load,
-       re-measured only when the viewport WIDTH changes, so the toolbar
-       collapse (a height-only resize) never reflows the band. Phones only:
-       desktop keeps live svh so window resizes still track. */
-    min-height: var(--lv2-vh0, 100svh);
+    /* iOS 26's floating tab bar makes 100svh undershoot the real screen
+       (founder report 2026-08-26: "mobile is less than 100vh") — LandingHero
+       tracks the largest measured viewport height into --lv2-vh0 (grow-only:
+       Safari settles its chrome to the compact pill AFTER load, so a value
+       frozen at load time is too small — v1 of this fix made the band
+       SMALLER). max() keeps 100svh as the hard floor, so a bad measurement
+       can never undershoot the pre-fix behavior. Phones only: desktop keeps
+       live svh so window resizes still track. */
+    min-height: max(100svh, var(--lv2-vh0, 0px));
   }
 }
 
