@@ -494,10 +494,15 @@ export function mountSnake({ stage, canvas, overlays, keepOut, keepOutStacked }:
   }
 
   // ---------- pointer ----------
-  // Drag steers on every device; releasing hands control back to the orbit/wander.
+  // Drag steers for hovering pointers (mouse/pen); releasing hands control
+  // back to the orbit/wander. TOUCH NEVER STEERS: a finger on the stage is
+  // scrolling, not playing — the chase hijacked the beads mid-scroll on
+  // phones (founder 2026-08-26: "make the snake not responsive to click on
+  // mobile").
   let pointerSuspended = false;
   function onMove(e: PointerEvent) {
     if (pointerSuspended) return;
+    if (e.pointerType === "touch") return;
     const r = stage.getBoundingClientRect();
     const x = e.clientX - r.left,
       y = e.clientY - r.top;
