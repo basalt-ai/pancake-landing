@@ -44,8 +44,7 @@ type MountOpts = {
 };
 
 // ---------- geometry & motion constants (measured on the reference) ----------
-const R = 88.5; //                circle radius — identical at every breakpoint
-const L = R * 0.8; //             arc-length between segment centers
+const R_BASE = 88.5; //           circle radius on desktop/tablet-width stages
 const N = 13; //                  segments
 // ---------- pancake skin (design-system tokens) ----------
 const CREAM = "#FFF7EC"; //       chrome-20
@@ -93,6 +92,14 @@ export function mountSnake({ stage, canvas, overlays, keepOut, keepOutStacked }:
   let W = 0,
     H = 0,
     DPR = 2;
+  // Bead size follows the stage: full-size beads on a phone-width stage
+  // stack into a near-black bloat and the body outruns the orbit lap
+  // (founder 2026-08-26: "snake should have smaller size circles"). Scaled
+  // by width with a 56px floor; L (segment spacing) rides R so the body
+  // shortens with the beads and the lap fits again. Desktop/tablet stages
+  // (≥ ~492px wide) keep the measured R_BASE exactly.
+  let R = R_BASE;
+  let L = R * 0.8;
   let head = { x: 0, y: 0 };
   let heading = Math.PI;
   let speed = 0;
@@ -351,10 +358,14 @@ export function mountSnake({ stage, canvas, overlays, keepOut, keepOutStacked }:
   // ---------- sizing ----------
   function resize() {
     const r = stage.getBoundingClientRect();
-    if (r.width < 2 * R || r.height < 2 * R) return; // hidden/degenerate container: wait for a real rect
+    const rNew = Math.min(R_BASE, Math.max(56, r.width * 0.18));
+    if (r.width < 2 * rNew || r.height < 2 * rNew) return; // hidden/degenerate container: wait for a real rect
     const oldW = W,
       oldH = H,
       wasLoop = loopMode;
+    const rChanged = Math.abs(rNew - R) > 0.5;
+    R = rNew;
+    L = R * 0.8;
     W = r.width;
     H = r.height;
     // Mode first: measureKeepOut() picks its target element off loopMode.
@@ -370,8 +381,9 @@ export function mountSnake({ stage, canvas, overlays, keepOut, keepOutStacked }:
     }
     const rx = W / oldW,
       ry = H / oldH;
-    if (loopMode !== wasLoop || Math.abs(rx - 1) > 0.15 || Math.abs(ry - 1) > 0.15) {
-      // breakpoint-scale jump: a squeezed trail would pile the beads into one dark blob — re-pose instead
+    if (loopMode !== wasLoop || rChanged || Math.abs(rx - 1) > 0.15 || Math.abs(ry - 1) > 0.15) {
+      // breakpoint-scale jump (or a bead-size change): a squeezed trail
+      // would pile the beads into one dark blob — re-pose instead
       seedTrail();
       return;
     }

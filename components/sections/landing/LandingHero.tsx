@@ -32,22 +32,33 @@ export function LandingHero() {
 
   useEffect(() => {
     if (!stageRef.current || !canvasRef.current) return;
-    // Freeze the real loaded viewport height into --lv2-vh0 (used by
-    // .lv2-viewport ≤767px): iOS 26's floating tab bar makes 100svh come up
-    // short of the visible screen, which also shrank the snake's orbit band
-    // into a cramped churn. Set BEFORE mountSnake so the stage measures at
-    // its final height. Width-gated re-measure: the iOS toolbar collapse is
-    // a height-only resize and must not reflow the band mid-scroll.
-    const setVh0 = () =>
-      document.documentElement.style.setProperty("--lv2-vh0", `${window.innerHeight}px`);
-    setVh0();
+    // Track the real viewport height into --lv2-vh0 (used by .lv2-viewport
+    // ≤767px, floored by 100svh via max()): iOS 26's floating tab bar makes
+    // 100svh come up short of the visible screen, which also shrank the
+    // snake's orbit band. GROW-ONLY: Safari settles its chrome to the
+    // compact pill AFTER load, so innerHeight at mount is the expanded-
+    // chrome (small) value — freezing it made the band smaller, not bigger
+    // (founder report). The band may only ever grow; a width/orientation
+    // change re-baselines. The delayed re-check catches a chrome settle
+    // that doesn't fire resize. Set before mountSnake so the stage
+    // measures at (or grows into) its final height.
+    let vh0 = window.innerHeight;
     let lastVw = window.innerWidth;
-    const onVh0Resize = () => {
-      if (window.innerWidth === lastVw) return;
-      lastVw = window.innerWidth;
-      setVh0();
+    const setVh0 = () =>
+      document.documentElement.style.setProperty("--lv2-vh0", `${vh0}px`);
+    setVh0();
+    const measureVh0 = () => {
+      if (window.innerWidth !== lastVw) {
+        lastVw = window.innerWidth;
+        vh0 = window.innerHeight; // orientation/width change: re-baseline
+        setVh0();
+      } else if (window.innerHeight > vh0) {
+        vh0 = window.innerHeight; // chrome settled/collapsed: grow only
+        setVh0();
+      }
     };
-    window.addEventListener("resize", onVh0Resize);
+    window.addEventListener("resize", measureVh0);
+    const vh0Timer = setTimeout(measureVh0, 900);
     const cleanup = mountSnake({
       stage: stageRef.current,
       canvas: canvasRef.current,
@@ -75,7 +86,8 @@ export function LandingHero() {
     return () => {
       cancelAnimationFrame(raf);
       document.documentElement.classList.remove("lv2-anim");
-      window.removeEventListener("resize", onVh0Resize);
+      clearTimeout(vh0Timer);
+      window.removeEventListener("resize", measureVh0);
       document.documentElement.style.removeProperty("--lv2-vh0");
       cleanup();
     };
