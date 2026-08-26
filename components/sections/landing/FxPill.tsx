@@ -42,6 +42,11 @@ function useFxCircle(hostRef: RefObject<HTMLElement>, circleRef: RefObject<HTMLS
     };
 
     const onEnter = (e: PointerEvent) => {
+      // Hover FX is for hovering pointers only: on touch, iOS fires
+      // pointerenter on tap and the flood then sticks (no reliable leave),
+      // leaving the button stained after the finger lifts (founder report
+      // 2026-08-26). Touch gets the OS press feedback instead.
+      if (e.pointerType === "touch") return;
       c.style.transition = "none";
       place(e);
       c.style.background = FILLS[count++ % 3]!;
@@ -51,6 +56,7 @@ function useFxCircle(hostRef: RefObject<HTMLElement>, circleRef: RefObject<HTMLS
     };
 
     const onLeave = (e: PointerEvent) => {
+      if (e.pointerType === "touch") return;
       place(e);
       c.style.transform = "translate(-50%,-50%) scale(0)";
     };

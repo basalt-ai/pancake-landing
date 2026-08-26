@@ -61,10 +61,16 @@ body.modal-open:has(main.lv2) {
   overflow: hidden;
   isolation: isolate;
 }
-/* The landing's pink button doesn't darken — its feedback is the label FX. */
-.lv2 .button:hover {
-  --button-background-color: var(--strong-branded-surface);
-  --button-border-color: var(--strong-branded-surface);
+/* The landing's pink button doesn't darken — its feedback is the label FX.
+   Hover-capable pointers ONLY: iOS applies :hover during a press and keeps
+   it stuck after the tap, which read as a pink contour while holding and a
+   button that never returned to its resting color (founder report
+   2026-08-26). Touch gets the OS press feedback instead. */
+@media (hover: hover) {
+  .lv2 .button:hover {
+    --button-background-color: var(--strong-branded-surface);
+    --button-border-color: var(--strong-branded-surface);
+  }
 }
 /* Secondary = the static landing's white pill with a hairline inset. */
 .lv2 .button[data-variant="outline"] {
@@ -125,11 +131,13 @@ body.modal-open:has(main.lv2) {
   user-select: none;
   -webkit-user-select: none;
 }
-.lv2 .button:hover .lv2-btn-label .l1 {
-  translate: 0 -165%;
-}
-.lv2 .button:hover .lv2-btn-label .l2 {
-  translate: 0 0;
+@media (hover: hover) {
+  .lv2 .button:hover .lv2-btn-label .l1 {
+    translate: 0 -165%;
+  }
+  .lv2 .button:hover .lv2-btn-label .l2 {
+    translate: 0 0;
+  }
 }
 
 /* Inputs: white, hairline inset — same 24px geometry as the buttons so the
@@ -171,15 +179,15 @@ body.modal-open:has(main.lv2) {
 @media (max-width: 767px) {
   .lv2-viewport {
     padding: 0 1.25rem;
-    /* iOS 26's floating tab bar makes 100svh undershoot the real screen
-       (founder report 2026-08-26: "mobile is less than 100vh") — LandingHero
-       tracks the largest measured viewport height into --lv2-vh0 (grow-only:
-       Safari settles its chrome to the compact pill AFTER load, so a value
-       frozen at load time is too small — v1 of this fix made the band
-       SMALLER). max() keeps 100svh as the hard floor, so a bad measurement
-       can never undershoot the pre-fix behavior. Phones only: desktop keeps
-       live svh so window resizes still track. */
-    min-height: max(100svh, var(--lv2-vh0, 0px));
+    /* Full-screen hero on phones: iOS 26's floating tab bar overlays the
+       page, and both 100svh and measured innerHeight undershoot the real
+       screen (founder-verified on device across three iterations,
+       2026-08-26). 100lvh is the large-viewport height — the full screen,
+       constant by definition, so the toolbar expanding/collapsing never
+       reflows the band (the original svh-not-dvh concern). The stage's
+       10vh bottom padding cushions the CTAs above the floating bar. If
+       lvh is unsupported the declaration drops and 100svh above holds. */
+    min-height: 100lvh;
   }
 }
 

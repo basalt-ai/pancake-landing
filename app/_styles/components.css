@@ -52,9 +52,15 @@
    * the per-variant `:hover` rules (0,3,0) win on hover — this default
    * only ever paints the brand (pink) button.
    */
-  .button:hover {
-    --button-background-color: color-mix(in srgb, var(--strong-branded-surface) 88%, var(--text));
-    --button-border-color: color-mix(in srgb, var(--strong-branded-surface) 88%, var(--text));
+  /* Hover-capable pointers only: iOS applies :hover during a press and
+     keeps it stuck after the tap — a pink contour while holding and a
+     button stained until the next tap elsewhere (founder report
+     2026-08-26). Same gate on the per-variant hovers below. */
+  @media (hover: hover) {
+    .button:hover {
+      --button-background-color: color-mix(in srgb, var(--strong-branded-surface) 88%, var(--text));
+      --button-border-color: color-mix(in srgb, var(--strong-branded-surface) 88%, var(--text));
+    }
   }
 
   .button[data-size="sm"] {
@@ -111,26 +117,28 @@
    * consistently; transparent variants (outline, ghost) gain a faint fill
    * instead, since darkening `transparent` does nothing visible.
    */
-  .button[data-variant="subtle"]:hover {
-    --button-background-color: color-mix(in srgb, var(--elevated-surface) 92%, var(--text));
-  }
+  @media (hover: hover) {
+    .button[data-variant="subtle"]:hover {
+      --button-background-color: color-mix(in srgb, var(--elevated-surface) 92%, var(--text));
+    }
 
-  .button[data-variant="alternative"]:hover {
-    --button-background-color: color-mix(in srgb, var(--alt-strong-branded-surface-01) 88%, var(--text));
-    --button-border-color: color-mix(in srgb, var(--alt-strong-branded-surface-01) 88%, var(--text));
-  }
+    .button[data-variant="alternative"]:hover {
+      --button-background-color: color-mix(in srgb, var(--alt-strong-branded-surface-01) 88%, var(--text));
+      --button-border-color: color-mix(in srgb, var(--alt-strong-branded-surface-01) 88%, var(--text));
+    }
 
-  .button[data-variant="outline"]:hover {
-    --button-background-color: var(--alt-surface);
-  }
+    .button[data-variant="outline"]:hover {
+      --button-background-color: var(--alt-surface);
+    }
 
-  .button[data-variant="negative"]:hover {
-    --button-background-color: color-mix(in srgb, var(--negative-surface) 88%, var(--text));
-    --button-border-color: color-mix(in srgb, var(--negative-surface) 88%, var(--text));
-  }
+    .button[data-variant="negative"]:hover {
+      --button-background-color: color-mix(in srgb, var(--negative-surface) 88%, var(--text));
+      --button-border-color: color-mix(in srgb, var(--negative-surface) 88%, var(--text));
+    }
 
-  .button[data-variant="ghost"]:hover {
-    --button-background-color: var(--weak-branded-surface);
+    .button[data-variant="ghost"]:hover {
+      --button-background-color: var(--weak-branded-surface);
+    }
   }
 
   .badge {
