@@ -34,6 +34,13 @@ type MountOpts = {
   /** Copy/CTA block the snake must not park on: the wander steers away from
    *  it, the mobile orbit lap shrinks to the band above it. */
   keepOut?: HTMLElement;
+  /** Wider keep-out used on loop-mode stages (≤1079px / coarse pointer) —
+   *  typically the whole copy block including the H1. At stacked widths the
+   *  lap otherwise sweeps the headline and the tail's pale single circles
+   *  park on it, eroding the cream knockout mid-letter (mobile QA
+   *  2026-08-26). Desktop wander keeps `keepOut` so beads still cross the
+   *  H1 and fire the reveal — the hero's signature. */
+  keepOutStacked?: HTMLElement;
 };
 
 // ---------- geometry & motion constants (measured on the reference) ----------
@@ -52,7 +59,7 @@ const TURN_SLOW = 0.3; //         rad/s amplitude, ~8s-period drift bias
 const KO_PAD = 12; //             keep-out rect inflation, px
 const KO_STEER = 2.2; //          rad/s max repel away from the keep-out
 
-export function mountSnake({ stage, canvas, overlays, keepOut }: MountOpts): () => void {
+export function mountSnake({ stage, canvas, overlays, keepOut, keepOutStacked }: MountOpts): () => void {
   const ctx = canvas.getContext("2d", { alpha: false });
   if (!ctx) return () => {};
   const motionMq = matchMedia("(prefers-reduced-motion: reduce)");
@@ -104,12 +111,14 @@ export function mountSnake({ stage, canvas, overlays, keepOut }: MountOpts): () 
   // Measured from the DOM (never consumes rand() — seeded determinism holds).
   let ko: { x0: number; y0: number; x1: number; y1: number } | null = null;
   function measureKeepOut() {
-    if (!keepOut) {
+    // Loop stages widen the keep-out to the whole copy block (see MountOpts).
+    const el = loopMode && keepOutStacked ? keepOutStacked : keepOut;
+    if (!el) {
       ko = null;
       return;
     }
     const sr = stage.getBoundingClientRect();
-    const kr = keepOut.getBoundingClientRect();
+    const kr = el.getBoundingClientRect();
     ko = {
       x0: kr.left - sr.left - KO_PAD,
       y0: kr.top - sr.top - KO_PAD,
@@ -348,8 +357,9 @@ export function mountSnake({ stage, canvas, overlays, keepOut }: MountOpts): () 
       wasLoop = loopMode;
     W = r.width;
     H = r.height;
-    measureKeepOut();
+    // Mode first: measureKeepOut() picks its target element off loopMode.
     loopMode = isLoopStage();
+    measureKeepOut();
     DPR = Math.max(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(W * DPR);
     canvas.height = Math.round(H * DPR);

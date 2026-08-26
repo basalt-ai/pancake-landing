@@ -124,7 +124,10 @@ function VideoCard({ clip }: { clip: UgcClip }) {
 
       <PlayChip />
 
-      {/* Sound state indicator — CSS swaps the glyph off `data-ugc-sound`. */}
+      {/* Sound state indicator — CSS swaps the glyph off `data-ugc-sound`.
+          Until the visitor's first tap (`data-ugc-consent`), the chip
+          carries a "Tap for sound" label: the bare 32px speaker-off chip
+          never told anyone these clips HAVE audio (mobile QA 2026-08-26). */}
       <span className="home-ugc-card__sound" aria-hidden>
         <svg className="home-ugc-card__sound-off" viewBox="0 0 16 16" aria-hidden focusable="false">
           <path d="M8.5 2.8 4.9 5.6H2.4v4.8h2.5l3.6 2.8z" fill="currentColor" />
@@ -135,6 +138,7 @@ function VideoCard({ clip }: { clip: UgcClip }) {
           <path d="M10.8 5.4c1.5 1.4 1.5 3.8 0 5.2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none" />
           <path d="M12.9 3.6c2.4 2.4 2.4 6.4 0 8.8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none" />
         </svg>
+        <span className="home-ugc-card__sound-hint">Tap for sound</span>
       </span>
 
       {/* Full-card hit target. A <button>, not an <a> — this is a media

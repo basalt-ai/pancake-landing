@@ -179,14 +179,40 @@
     top: var(--spacing-lg);
     right: var(--spacing-lg);
     z-index: 4;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
+    min-height: 32px;
+    padding-inline: 8px;
+    border-radius: 100vw;
+    display: flex;
+    align-items: center;
+    gap: 6px;
     background: color-mix(in srgb, var(--inverted-surface) 55%, transparent);
     color: var(--text-on-inverted-surface);
     pointer-events: none;
+  }
+
+  /* "Tap for sound" rides the chip until the visitor's first tap on the
+     card sets `data-ugc-consent` — then the chip shrinks back to the bare
+     32px speaker (mobile QA 2026-08-26: audio was undiscoverable). Coarse
+     pointers only: "Tap" is touch wording, and the desktop chip stays the
+     deliberate bare speaker. */
+  .home-ugc-card__sound-hint {
+    display: none;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: var(--font-heavy);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  @media (pointer: coarse) {
+    .home-ugc-card__sound-hint {
+      display: inline;
+    }
+  }
+
+  /* 0-2-0: outranks the coarse-pointer reveal at any source position. */
+  [data-ugc-consent="true"] .home-ugc-card__sound-hint {
+    display: none;
   }
 
   /* No `display` on the generic svg rule — its 0-1-1 specificity would

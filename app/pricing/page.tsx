@@ -11,6 +11,7 @@ import { PriceGroups } from "@/components/sections/landing/PriceGroups";
 import { LandingFooter } from "@/components/sections/landing/LandingFooter";
 import { LandingModals } from "@/components/sections/landing/LandingModals";
 import { LandingNav } from "@/components/sections/landing/LandingNav";
+import { PancakeStack } from "@/components/sections/pricing/PancakeStack";
 import { pricingV2 } from "@/lib/copy";
 import "@/app/_styles/landing-v2.css";
 
@@ -56,7 +57,15 @@ export default function PricingPage() {
       />
       <div className="lv2-viewport lv2-viewport--page">
         <LandingNav />
-        <section className="lv2s lv2-pricing-page" aria-labelledby="lv2-pricing-page-title">
+        {/* Same composition as the homepage pricing fold — brand band, card,
+            pancake-stack mascot — so "See full pricing" doesn't land on a
+            barer page than the teaser it came from (mobile QA 2026-08-26).
+            CTA pair runs Book a call → Get started like the nav and the
+            closing band: parallel frames applies to CTA pairs too. */}
+        <section
+          className="lv2s lv2s--brand lv2-pricing-page"
+          aria-labelledby="lv2-pricing-page-title"
+        >
           <div className="lv2-container">
             <header className="lv2-section-header">
               <h1 id="lv2-pricing-page-title" className="lv2-section-title">
@@ -65,29 +74,34 @@ export default function PricingPage() {
               <p className="lv2-section-lede">{pricingV2.blurb}</p>
             </header>
 
-            <div className="lv2-price-card">
-              <p className="lv2-price-figure">
-                <span className="lv2-price-amount">
-                  {pricingV2.currencySymbol}
-                  {pricingV2.monthlyDollars}
-                </span>
-                <span className="lv2-price-cycle">{pricingV2.perMonth}</span>
-              </p>
-              <p className="lv2-price-sub">{pricingV2.access}</p>
-              <PriceGroups />
-              <div className="lv2-button-group">
-                <FxPillLink href="https://app.getpancake.ai" data-analytics-id="app_pricing_page">
-                  Get started
-                </FxPillLink>
-                <FxPill
-                  variant="outline"
-                  data-lv2-open="call"
-                  data-analytics-id="call_pricing_page"
-                >
-                  Book a call
-                </FxPill>
+            <div className="lv2-price-fold">
+              <div className="lv2-price-card">
+                <p className="lv2-price-figure">
+                  <span className="lv2-price-amount">
+                    {pricingV2.currencySymbol}
+                    {pricingV2.monthlyDollars}
+                  </span>
+                  <span className="lv2-price-cycle">{pricingV2.perMonth}</span>
+                </p>
+                <p className="lv2-price-sub">{pricingV2.access}</p>
+                <PriceGroups />
+                <div className="lv2-button-group">
+                  <FxPill
+                    variant="outline"
+                    data-lv2-open="call"
+                    data-analytics-id="call_pricing_page"
+                  >
+                    Book a call
+                  </FxPill>
+                  <FxPillLink href="https://app.getpancake.ai" data-analytics-id="app_pricing_page">
+                    Get started
+                  </FxPillLink>
+                </div>
+                <p className="lv2-price-fine">{pricingV2.fine}</p>
               </div>
-              <p className="lv2-price-fine">{pricingV2.fine}</p>
+              <div className="lv2-price-decor" aria-hidden="true">
+                <PancakeStack count={3} />
+              </div>
             </div>
           </div>
         </section>
