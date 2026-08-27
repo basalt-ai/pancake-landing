@@ -30,6 +30,7 @@ const COLUMNS: { title: string; links: FooterLink[] }[] = [
       { href: "/#why", label: "About" },
       { href: "/careers", label: "Careers" },
       { href: "/blog", label: "Blog" },
+      { href: "https://partners.dub.co/pancake-ai", label: "Affiliate program", external: true },
       { href: "https://zcal.co/i/ZEHl48rv", label: "Book a call", external: true },
       { href: "mailto:hey@pancake.ai", label: "Contact" },
     ],
