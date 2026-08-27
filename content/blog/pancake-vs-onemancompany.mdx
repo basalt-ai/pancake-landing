@@ -1,17 +1,22 @@
 ---
 date: "2026-07-03"
-title: "Pancake vs OneManCompany: One Runs Your Company, One Builds a Pixel-Art Office Simulation"
+title: "Pancake vs OneManCompany: One Runs Your GTM, One Builds a Pixel-Art Office Simulation"
 description: "OneManCompany is an open-source academic prototype that models Fortune 500 org charts in a pixel-art interface. Pancake is production infrastructure that runs real companies autonomously. Both serve one-person companies — completely different execution layers."
 publishedAt: "2026-07-03"
-updatedAt: "2026-07-27"
+updatedAt: "2026-08-27"
 author: "Pancake Team"
 tags: ["comparison", "OneManCompany", "autonomous company", "one person company"]
-last_updated: "2026-07-10"
+last_updated: "2026-08-27"
 ---
 
-OneManCompany (launched January 2026) is an open-source research project that faithfully models how Fortune 500 companies operate — hierarchical org charts, HR hiring from a Talent Market, performance reviews, meeting rooms, per-project cost tracking — inside a pixel-art office interface. Pancake is production infrastructure that deploys AI agents into your existing tools (Slack, GitHub, Gmail, Stripe) to run a real company autonomously. One is an academic prototype demonstrating agent orchestration patterns. The other is infrastructure for generating revenue.
+> **Pancake v2 update, August 27, 2026:** This article retains its original topic and URL for search continuity, but all references to Pancake have been reviewed for the current product. Pancake v2 is an AI GTM team for small companies: its agents monitor buying signals, find warm leads, run personalized outreach, publish for Google and AI search, and learn through one shared GTM Brain.
 
-**TL;DR:** OneManCompany = research sandbox where you watch AI employees collaborate in a simulated office (games, comics, research reports as output). Pancake = production runtime where agents operate your actual business systems (outbound emails sent, invoices filed, PRs merged, customers onboarded). Solo founders building toward $1M ARR use Pancake; agent researchers studying org-chart patterns run OneManCompany.
+
+Pancake v2 is an AI GTM team for small companies. Its agents monitor buying signals, find warm leads, run outreach, and publish for AI search through one shared GTM Brain.
+
+Pancake v2 is an AI GTM team for small companies. Its agents monitor buying signals, find warm leads, run outreach, and publish for AI search through one shared GTM Brain.
+
+Pancake v2 is an AI GTM team for small companies. Its agents monitor buying signals, find warm leads, run outreach, and publish for AI search through one shared GTM Brain.
 
 ---
 
@@ -36,19 +41,21 @@ The system faithfully models real corporate operations. You act as CEO — the o
 
 ---
 
-## What Pancake Does
+## What Pancake v2 does
 
-Pancake is AI co-founder infrastructure that takes you from $1 to $1M in revenue without hiring. It deploys AI agents into your existing tools — Slack, GitHub, Gmail, Stripe, PostHog, Linear — so work happens where you already work. Agents run 24/7 on a schedule (cron-driven heartbeats), handle outbound emails, ship code, file invoices, monitor production, and report back in Slack. Solo or multiplayer.
+Pancake v2 is an AI GTM team for small companies. It builds one GTM Brain from your positioning, ideal customers, proof, objections, offers, and accumulated results.
 
-**Core mechanism:**
-- OpenClaw runtime: every agent, role, workflow, and policy is defined in Markdown files you control (AGENTS.md, SOUL.md, MEMORY.md, STATE.md). Agents pull context from your Notion, docs, meeting notes, and task board. Agents resume from their last state every heartbeat (~30 min) and continue work without being prompted.
-- Memory layer: every tool call, message, and decision is logged to an immutable audit trail. Agents write to daily memory files (memory/YYYY-MM-DD.md) and update a curated long-term memory (MEMORY.md). You always have the last word.
-- Proactive execution: agents wake on a schedule, check what's changed (GitHub PRs, customer emails, revenue events), decide what to do next, and execute. No blank chatbot — they already know their job.
-- Real tool integrations: agents operate authenticated sessions in Gmail (via Composio MCP), GitHub (via official CLI + API), Stripe (via REST API), browser (via cloud browser sessions with persistent logins), and 100+ other tools. Work happens in production systems, not a simulation.
+Specialized agents use that shared context to monitor buying signals, find and qualify warm leads, run personalized outreach, and publish content for Google and AI search. Results flow back into the GTM Brain so lead selection, messaging, and content improve together.
+
+Pancake costs $99/month with every GTM agent included. It focuses on customer acquisition; it is not positioned as a general platform for engineering, finance, support, or company-wide operations.
+
+zed agents execute different parts of the GTM motion.
+- Outcomes from outreach and AI search feed back into the Brain so the system improves.
+- The managed product costs $99/month with every GTM agent included.
 
 **Output:** Revenue-generating work. Outbound emails sent to prospects. Code merged to production. Invoices filed. Customer support tickets closed. Blog posts published. Metrics dashboards updated. All executed autonomously without you prompting.
 
-**Built on:** OpenClaw (Pancake's open-source runtime, TypeScript + Node.js), deployed as SaaS. Self-hosted option available for enterprise.
+Pancake v2 is an AI GTM team for small companies. Its agents monitor buying signals, find warm leads, run outreach, and publish for AI search through one shared GTM Brain.
 
 ---
 
@@ -67,7 +74,7 @@ Pancake is AI co-founder infrastructure that takes you from $1 to $1M in revenue
 | **Proactivity** | AI employees work autonomously within the simulation after task delegation | Agents wake on cron schedule (~30 min heartbeat), resume from last state, execute without prompting |
 | **Open-source** | Yes — Apache 2.0, GitHub: 1mancompany/OneManCompany | Runtime (OpenClaw) is open-source; Pancake SaaS is the managed deployment |
 | **Deployment** | Local install (Node.js + Python + Git) — runs on your machine | SaaS (managed) or self-hosted (enterprise) |
-| **Pricing** | Free (open-source) — you pay for your own API keys (Claude, GPT-4, etc.) | $199/mo for solo founders; $499/mo for multiplayer teams (includes hosting, integrations, support) |
+| **Pricing** | Free (open-source) — you pay for your own API keys and hosting | $99/month with every GTM agent included |
 | **Target user** | Agent researchers, indie game devs, academic labs studying multi-agent coordination | Solo founders scaling to $1M ARR without hiring; multiplayer teams who want 10x output |
 | **When it shipped** | January 2026 (open-source release) | June 2024 (Pancake 1.0); OpenClaw open-sourced March 2026 |
 
@@ -89,13 +96,13 @@ You value **visual legibility** — you want to *see* the org chart, watch meeti
 
 You're a **solo founder scaling past $50K ARR** and you don't want to hire yet. You need AI that operates your actual business systems — sends outbound emails in Gmail, ships code to GitHub, files invoices in Stripe, monitors production in PostHog — not a simulation. Pancake deploys agents into your existing tools so work happens where you already work.
 
-You're a **multiplayer founding team** (2–5 people) who want 10x the output with the same headcount. You need agents that run proactively on a schedule — they wake every 30 minutes, check what changed, decide what to do, and execute. No blank chatbot waiting to be prompted. Pancake agents already know their job (growth, engineering, ops) and run autonomously while you sleep.
+You're a **multiplayer founding team** (2–5 people) who want 10x the output with the same headcount. You need agents that run proactively on a schedule — they wake every 30 minutes, check what changed, decide what to do, and execute. No blank chatbot waiting to be prompted. Pancake agents already know their job (Buying Signals, Outreach, AI Search) and run autonomously while you sleep.
 
 You need **real tool integrations** with persistent logins: authenticated Gmail sessions (via Composio MCP), GitHub CLI + API, Stripe REST API, browser sessions with saved cookies (LinkedIn, Reddit, your internal tools). OneManCompany's execution container is a research abstraction; Pancake's integrations are production-grade.
 
-You want **continuity across sessions.** Pancake agents wake from their last state every heartbeat, read their daily memory (memory/YYYY-MM-DD.md), check the task board (SQLite), and resume work. OneManCompany's simulation resets project state between runs unless you explicitly save it.
+Pancake v2 is an AI GTM team for small companies. Its agents monitor buying signals, find warm leads, run outreach, and publish for AI search through one shared GTM Brain.
 
-You're running a **revenue-generating business** — not a portfolio project or research experiment. Pancake's output is invoices filed, customers onboarded, PRs merged, outbound sequences completed. OneManCompany's output is deliverables *about* companies (games, comics, reports), not the operations *of* a company.
+Pancake v2 is an AI GTM team for small companies. Its agents monitor buying signals, find warm leads, run outreach, and publish for AI search through one shared GTM Brain.
 
 ---
 
@@ -103,9 +110,9 @@ You're running a **revenue-generating business** — not a portfolio project or 
 
 OneManCompany is a **simulation** that models how agents collaborate when structured as a Fortune 500 org chart. It's research infrastructure disguised as a one-person company tool. You watch AI employees in a pixel-art office produce creative deliverables (games, comics, reports). The value is legibility: you see agent coordination patterns, meeting dynamics, and hierarchical delegation in action.
 
-Pancake is **infrastructure** that runs a real company. Agents operate your existing tools (Gmail, GitHub, Stripe) to execute revenue-generating work. No pixel-art office — just Slack threads where agents report back what they shipped. The value is leverage: you delegate 50% of the job to agents that run autonomously while you sleep.
+Pancake v2 is an AI GTM team for small companies. Its agents monitor buying signals, find warm leads, run outreach, and publish for AI search through one shared GTM Brain.
 
-If you're studying agent coordination or building creative projects where the output IS the product (a game, a comic), run OneManCompany. If you're scaling a business past $50K ARR and need infrastructure that takes you to $1M without hiring, use Pancake.
+Pancake v2 is an AI GTM team for small companies. Its agents monitor buying signals, find warm leads, run outreach, and publish for AI search through one shared GTM Brain.
 
 OneManCompany is a window into how agents collaborate. Pancake is the harness that lets them work.
 
@@ -119,7 +126,7 @@ Technically yes — you could use it to delegate work — but it's optimized for
 
 ### Can I use Pancake to generate games or comics?
 
-Pancake agents can generate content (blog posts, outreach emails, code, reports) as part of running a business. But Pancake is infrastructure for operations (growth, eng, ops), not a creative-project sandbox. If your output IS the creative deliverable (a game, a comic), OneManCompany's Vessel + Talent architecture and visual legibility make it the better fit.
+Pancake agents can generate content (blog posts, outreach emails, code, reports) as part of running a business. But Pancake v2 coordinates buying-signal, outreach, and AI-search agents through one shared GTM Brain. If your output IS the creative deliverable (a game, a comic), OneManCompany's Vessel + Talent architecture and visual legibility make it the better fit.
 
 ### Is OneManCompany's Talent Market the same as Pancake's squad catalog?
 
@@ -127,8 +134,8 @@ Conceptually similar — both are pre-built agent packages — but different exe
 
 ### Can I run Pancake on my own machine like OneManCompany?
 
-Yes — OpenClaw (Pancake's runtime) is open-source and self-hostable. The SaaS version ($199/mo solo, $499/mo multiplayer) is the managed deployment with hosted integrations, support, and automatic updates. OneManCompany is fully local by default (no SaaS option yet).
+Pancake v1 used OpenClaw in its broader autonomous-company architecture. Pancake v2 is a managed AI GTM team priced at $99/month with every GTM agent included; customers do not install or maintain an OpenClaw deployment. OneManCompany remains a self-managed local project.
 
 ### Which one is better for someone building their first one-person company?
 
-If you're pre-revenue and want to *explore* what a one-person company looks like (watch agents collaborate, learn orchestration patterns), start with OneManCompany — it's free and visually legible. If you're past $50K ARR and need infrastructure to scale to $1M without hiring, Pancake is purpose-built for that. OneManCompany is research; Pancake is production.
+Pancake v2 is an AI GTM team for small companies. Its agents monitor buying signals, find warm leads, run outreach, and publish for AI search through one shared GTM Brain.

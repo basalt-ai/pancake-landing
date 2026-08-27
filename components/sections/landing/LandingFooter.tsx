@@ -13,8 +13,8 @@ import Link from "next/link";
 
 type FooterLink = { href: string; label: string; external?: boolean };
 
-// v2 destinations only — the v1-era pages (roadmap, blog, compare) stay off
-// this footer (founder, 2026-08-24).
+// Primary v2 destinations plus the editorial routes founders still need to
+// discover from every page.
 const COLUMNS: { title: string; links: FooterLink[] }[] = [
   {
     title: "Product",
@@ -29,8 +29,17 @@ const COLUMNS: { title: string; links: FooterLink[] }[] = [
     links: [
       { href: "/#why", label: "About" },
       { href: "/careers", label: "Careers" },
+      { href: "/blog", label: "Blog" },
       { href: "https://zcal.co/i/ZEHl48rv", label: "Book a call", external: true },
       { href: "mailto:hey@pancake.ai", label: "Contact" },
+    ],
+  },
+  {
+    title: "Compare",
+    links: [
+      { href: "/gojiberry-vs-pancake", label: "Gojiberry vs Pancake" },
+      { href: "/lemlist-vs-pancake", label: "Lemlist vs Pancake" },
+      { href: "/origami-vs-pancake", label: "Origami vs Pancake" },
     ],
   },
   {

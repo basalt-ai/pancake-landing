@@ -28,6 +28,9 @@ const columns: { title: string; links: FooterLink[] }[] = [
   {
     title: "Compare",
     links: [
+      { href: "/gojiberry-vs-pancake", label: "vs Gojiberry" },
+      { href: "/lemlist-vs-pancake", label: "vs Lemlist" },
+      { href: "/origami-vs-pancake", label: "vs Origami" },
       { href: "/viktor-vs-pancake", label: "vs Viktor" },
       { href: "/claude-tag-vs-pancake", label: "vs Claude Tag" },
       { href: "/openclaw-vs-pancake", label: "vs OpenClaw" },
@@ -38,6 +41,7 @@ const columns: { title: string; links: FooterLink[] }[] = [
     title: "Resources",
     links: [
       { href: "/blog", label: "Blog" },
+      { href: "/careers", label: "Careers" },
       { href: "https://zcal.co/i/4mlnC2bQ", label: "Book a meeting" },
       { href: "https://discord.gg/brJ99Up6ym", label: "Discord" },
     ],

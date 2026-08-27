@@ -3,6 +3,6 @@
 export const NAV_LINKS: { href: string; label: string; external?: boolean }[] = [
   { href: "/#how-it-works", label: "How it works" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/careers", label: "Careers" },
+  { href: "/blog", label: "Blog" },
   { href: "https://app.getpancake.ai", label: "Log in", external: true },
 ];

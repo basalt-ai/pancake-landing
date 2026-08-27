@@ -23,6 +23,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: "https://getpancake.ai/blog", lastModified: new Date(), priority: 0.8 },
     { url: "https://getpancake.ai/viktor-vs-pancake", lastModified: new Date(), priority: 0.8 },
     { url: "https://getpancake.ai/claude-tag-vs-pancake", lastModified: new Date(), priority: 0.8 },
+    { url: "https://getpancake.ai/gojiberry-vs-pancake", lastModified: new Date(), priority: 0.8 },
+    { url: "https://getpancake.ai/lemlist-vs-pancake", lastModified: new Date(), priority: 0.8 },
+    { url: "https://getpancake.ai/origami-vs-pancake", lastModified: new Date(), priority: 0.8 },
     { url: "https://getpancake.ai/openclaw-vs-pancake", lastModified: new Date(), priority: 0.8 },
     { url: "https://getpancake.ai/pancake-vs-paperclips", lastModified: new Date(), priority: 0.8 },
     ...getAllPosts().map((post) => ({
