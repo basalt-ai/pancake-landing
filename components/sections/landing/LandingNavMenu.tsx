@@ -7,8 +7,8 @@ import { NAV_LINKS } from "./nav-links";
 
 /**
  * Mobile nav menu — the plum sheet behind the ≤767px menu button (mobile QA
- * 2026-08-26: below the old breakpoint phones had no route to Pricing, How
- * it works, or Log in above a footer ~13 viewports down). Footer-rhyme
+ * 2026-08-26: below the old breakpoint phones had no route to Pricing or How
+ * it works above a footer ~13 viewports down). Footer-rhyme
  * surface: inverted plum, cream links, left-justified. Book a call rides the
  * same data-lv2-open="call" upgrade as the nav pill and reuses its
  * allowlisted cta id — the menu is part of the nav surface, and the
