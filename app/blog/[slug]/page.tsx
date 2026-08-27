@@ -4,7 +4,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { getAllPosts, getPostBySlug } from "@/lib/posts";
 import "../blog.css";
-import { HomeNav } from "@/components/sections/home/HomeNav";
+import "@/app/_styles/landing-v2.css";
+import { LandingNav } from "@/components/sections/landing/LandingNav";
 import { Footer } from "@/components/shared/Footer";
 
 interface Props {
@@ -102,7 +103,9 @@ export default async function BlogPost({ params }: Props) {
         />
       )}
 
-      <HomeNav />
+      <div className="lv2 px-5 md:px-10">
+        <LandingNav />
+      </div>
 
       <article className="mx-auto w-full max-w-3xl flex-1 px-6 py-24">
         {/* Header */}
