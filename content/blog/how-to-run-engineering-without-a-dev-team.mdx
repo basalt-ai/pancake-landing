@@ -3,7 +3,7 @@ date: "2026-07-15"
 title: "How to Run Engineering Without a Dev Team in 2026"
 description: "A practical breakdown of how solo and small founding teams ship, maintain, and scale a product with AI coding agents instead of hiring engineers. What agents can own outright, where a human developer still has to sign off, and the engineering stack that keeps a small team shipping without headcount."
 publishedAt: "2026-07-15"
-updatedAt: "2026-07-27"
+updatedAt: "2026-08-27"
 author: "François de Fitte"
 faq:
   - question: "Can AI coding agents actually replace a development team?"
@@ -16,8 +16,13 @@ faq:
     answer: "Yes, for architecture, security review, and anything with real production risk. An agent can write a correct-looking pull request faster than most engineers, but it doesn't carry the accountability for a decision that shapes the codebase for the next two years, and it can be confidently wrong about a security implication a senior developer would catch immediately. Founders running this model use a fractional CTO or senior contractor for system design, security-sensitive review, and infrastructure decisions, and let agents run the day-to-day feature and bug-fix throughput underneath that foundation."
   - question: "What engineering decisions should never be fully automated?"
     answer: "Database schema changes with migration risk, anything touching authentication or payment processing, infrastructure changes that affect uptime or cost at scale, and any incident with real customer or data impact. Agents should propose changes, run tests, and flag risk clearly, but a human with production context should be the one who approves the deploy on anything in this category. A schema migration merged on an agent's confidence alone is how a manageable technical decision becomes a multi-day incident."
-last_updated: "2026-07-16"
+last_updated: "2026-08-27"
 ---
+
+> **Pancake v2 update, August 27, 2026:** This article retains its original topic and URL for search continuity, but all references to Pancake have been reviewed for the current product. Pancake v2 is an AI GTM team for small companies: its agents monitor buying signals, find warm leads, run personalized outreach, publish for Google and AI search, and learn through one shared GTM Brain.
+
+
+Pancake v2 is an AI GTM team for small companies. Its agents monitor buying signals, find warm leads, run outreach, and publish for AI search through one shared GTM Brain.
 
 Most solo founders either write the product themselves at 2am or avoid a rewrite they know they need because there's no bandwidth to do it safely. The backlog grows, bugs get triaged by whichever one is loudest, and "we'll refactor this properly later" becomes a permanent line in the codebase.
 
@@ -83,7 +88,7 @@ Founders who get this right split the two from the start: agents run the day-to-
 
 ## What this looks like in practice
 
-Pancake runs on Pancake: feature implementation, bug fixes, and routine maintenance for the product go through an agent-run pipeline, with every pull request gated by CI and a review step, and anything touching architecture, auth, or production infrastructure reviewed by a human before it ships. The pattern holds whether you're a solo founder shipping your first feature or a small team managing a growing codebase: agents run the implementation loop, a human with production accountability owns the decisions that are expensive to get wrong.
+Pancake uses its own GTM agents: feature implementation, bug fixes, and routine maintenance for the product go through an agent-run pipeline, with every pull request gated by CI and a review step, and anything touching architecture, auth, or production infrastructure reviewed by a human before it ships. The pattern holds whether you're a solo founder shipping your first feature or a small team managing a growing codebase: agents run the implementation loop, a human with production accountability owns the decisions that are expensive to get wrong.
 
 Solo or multiplayer, the split doesn't change. What changes is throughput, which is exactly the part agents scale without adding engineering headcount that doesn't match your stage yet.
 
