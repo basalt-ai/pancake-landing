@@ -1,0 +1,236 @@
+/* landing-v3/anim.css — Figma motion layer (get_motion_context, 2026-08-28).
+   ONE 20s linear infinite master loop: every animated node in the Figma page
+   belongs to a single 20 000 ms cohort, so all rotations here share the same
+   duration/easing/iteration and stay phase-locked forever.
+
+   ── Composition & spin-direction reasoning ────────────────────────────────
+   Each arc renders as: bbox div (.lp-anim-arc, flex-centered at the Figma
+   post-transform bounds) > pose div (element-sized, the STATIC artboard
+   transform as a matrix() — fitted to <0.01px against the baked paths of the
+   static composite SVGs) > spinner (rotation keyframes) > img (the full-ring
+   vector, preserveAspectRatio=none). Because the spinner sits INSIDE the pose
+   wrapper, the composed transform is Pose · R(δ(t)) with δ(0)=0 → the t=0
+   frame is bit-identical to the static artboard, and Figma's ±360°/20s track
+   sign applies unmodified: increasing tracks (−180→180, −540→−180) = 0→+360deg
+   (.lp-anim-spin--cw), decreasing tracks (540→180, 180→−180) = 0→−360deg
+   (.lp-anim-spin--ccw). On screen the pose determinant flips the apparent
+   direction: hero/ctaRight poses mirror once (det −1) so cw-class arcs turn
+   counter-clockwise there, while pricing/ctaLeft poses are the y-flipped
+   copies (det +1) and turn the opposite way — exactly the counter-rotation a
+   mirrored/flipped Figma copy produces. Adjacent rings always counter-rotate.
+
+   Reduced motion: all animations off → every element sits at its static pose
+   (== the artboard, arc-6 included: its non-animated size below is the settled
+   post-pop size, which equals the artboard export). */
+
+/* ── keyframes ── */
+@keyframes lp-anim-spin-cw {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes lp-anim-spin-ccw {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+/* Arc-6 "pop": each loop starts 50px larger and settles (easeOut = Figma's
+   ease-out = cubic-bezier(0,0,.58,1)) over the first 2.5% (=500ms), then
+   holds. Applied to the ring img itself, which is center-positioned
+   (left/top 50% + translate −50%) so the resize stays symmetric. */
+@keyframes lp-anim-pop {
+  0% {
+    animation-timing-function: cubic-bezier(0, 0, 0.58, 1);
+    height: 2381.047px;
+    width: 2440.574px;
+  }
+  2.5% {
+    height: 2331.047px;
+    width: 2390.574px;
+  }
+  100% {
+    height: 2331.047px;
+    width: 2390.574px;
+  }
+}
+
+/* ── structure ── */
+/* Fixed-px canvases that scale uniformly with their responsive wrappers
+   (scale = wrapper-width / canvas-width; same tan(atan2()) division trick as
+   banner.css, with the same @supports degradation). */
+.lp-anim-canvas {
+  left: 0;
+  position: absolute;
+  top: 0;
+  transform-origin: 0 0;
+}
+@supports not (width: 1cqw) {
+  .lp-anim-canvas {
+    display: none;
+  }
+}
+.lp-anim-canvas--hero {
+  height: 1417px;
+  transform: scale(tan(atan2(100cqw, 1654px)));
+  width: 1654px;
+}
+.lp-anim-canvas--pricing {
+  height: 1039px;
+  transform: scale(tan(atan2(100cqw, 1654px)));
+  width: 1654px;
+}
+.lp-anim-canvas--cta-left {
+  height: 432px;
+  transform: scale(tan(atan2(100cqw, 560px)));
+  width: 560px;
+}
+.lp-anim-canvas--cta-right {
+  height: 432px;
+  transform: scale(tan(atan2(100cqw, 529px)));
+  width: 529px;
+}
+
+/* Pancakes containers (Figma group nodes; they clip their rings). Offsets are
+   canvas-relative, verified against the static composites' baked geometry. */
+.lp-anim-box {
+  overflow: clip;
+  position: absolute;
+}
+.lp-anim-box--hero {
+  height: 1478px;
+  left: -435px;
+  top: -61.65px;
+  width: 2622px;
+}
+.lp-anim-box--pricing {
+  height: 1039px;
+  left: -272px;
+  top: 0;
+  width: 2622px;
+}
+.lp-anim-box--cta-right {
+  height: 2622px;
+  left: 0;
+  top: -1019px;
+  width: 1478px;
+}
+.lp-anim-box--cta-left {
+  height: 2622px;
+  left: -918px;
+  top: -1019px;
+  width: 1478px;
+}
+
+.lp-anim-arc {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  position: absolute;
+}
+.lp-anim-pose {
+  flex: none;
+  position: relative;
+}
+.lp-anim-spin {
+  height: 100%;
+  width: 100%;
+}
+.lp-anim-spin--cw {
+  animation: lp-anim-spin-cw 20s linear infinite;
+}
+.lp-anim-spin--ccw {
+  animation: lp-anim-spin-ccw 20s linear infinite;
+}
+.lp-anim-fill {
+  display: block;
+  height: 100%;
+  max-width: none;
+  width: 100%;
+}
+.lp-anim-fill.lp-anim-pop {
+  animation: lp-anim-pop 20s linear infinite;
+  height: 2331.047px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  translate: -50% -50%;
+  width: 2390.574px;
+}
+
+/* ── banner bubbles ── */
+/* 44 circles in card coordinates (1622×721), each spinning about its own
+   center — +360°/20s like everything else (perfect circles, so the spin is
+   visually near-static: faithful to the Figma prototype). The four
+   phase-offset tracks keep their offsets via negative animation-delay. */
+.lp-anim-bubbles {
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+.lp-anim-bubble {
+  animation: lp-anim-spin-cw 20s linear infinite;
+  border-radius: 50%;
+  position: absolute;
+}
+.lp-anim-bubble--img {
+  border-radius: 0;
+  display: block;
+  max-width: none;
+}
+
+/* ── section wiring (the art wrappers used to be flat <img> composites; the
+   divs keep the exact same classes/geometry, so hero.css/cta.css/pricing.css
+   positioning still applies — these rules only add what an img got for free:
+   intrinsic aspect + the container context for the canvas scale). ── */
+.lp-hero-art {
+  aspect-ratio: 1654 / 1417;
+  container-type: inline-size;
+}
+.lp-price-art {
+  aspect-ratio: 1654 / 1039;
+  container-type: inline-size;
+}
+.lp-cta__art {
+  container-type: inline-size;
+}
+.lp-cta__art--left {
+  aspect-ratio: 560 / 432;
+  width: 560px;
+}
+.lp-cta__art--right {
+  aspect-ratio: 529 / 432;
+  width: 529px;
+}
+/* ≤1024 pricing recomposes the art into flow (pricing.css sets it static);
+   relative keeps it a containing block for the canvas. The CTA slivers scale
+   via cta.css's height (336/224) — width must fall back to the aspect ratio
+   there (this file imports last, so restate the responsive width:auto). */
+@media (max-width: 1024px) {
+  .lp-price .lp-price-art {
+    left: 0;
+    position: relative;
+    top: 0;
+    transform: none;
+  }
+  .lp-cta__art--left,
+  .lp-cta__art--right {
+    width: auto;
+  }
+}
+
+/* ── reduced motion: freeze everything at the static artboard pose ── */
+@media (prefers-reduced-motion: reduce) {
+  .lp-anim-spin--cw,
+  .lp-anim-spin--ccw,
+  .lp-anim-fill.lp-anim-pop,
+  .lp-anim-bubble {
+    animation: none;
+  }
+}

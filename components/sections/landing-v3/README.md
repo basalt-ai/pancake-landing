@@ -39,6 +39,27 @@ without support fall back to plain rounded corners at the same radii.
 Gotcha that bit us: `.lp a { color: inherit }` outranks `.lp-btn` — anchor buttons need the
 `.lp a.lp-btn` color rule or their labels render plum-on-plum (invisible).
 
-## Phase 2 (not in this PR)
+## Motion (shipped 2026-08-28, Figma-exact)
 
-Figma marks the rainbow arcs (hero, banner bubbles, CTA, pricing) as animated (`rotate` keys). The grouped SVG exports preserve layer ids (`fill`, `fill_2`, …) so the arcs can be animated by targeting SVG groups, or re-split from Figma via `get_motion_context` on nodes `4257:4907`, `4420:961`, `4389:4519`, `4257:5273`.
+Extracted with `get_motion_context`: ONE 20 000 ms linear infinite master loop
+rooted at the page frame — every animated node shares the clock, and t=0 equals
+the static artboard (enforced by a pixel-parity gate).
+
+- Rings (`LpPancakes.tsx`, variants hero/pricing/ctaRight/ctaLeft): full-circle
+  vectors (`public/lp/lp-arc-1..6.svg`, mapped by fill color) at their Figma
+  bboxes; static pose as a fitted `matrix()` (mirror + 0.47° shear, fitted to
+  <0.01px against the baked composites); a spinner inside the pose applies the
+  track sign unmodified (0→±360°/20 s). The cream ring "pops" −50px over the
+  first 500 ms of each loop (`lp-anim-pop`, cubic-bezier(0,0,.58,1)) — that is
+  Figma's own keyframe, so raw t=0 differs from the settled artboard by exactly
+  that annulus.
+- Banner bubbles (`LpBubbles.tsx`): 44 circles in card coords spinning about
+  their own centers (near-invisible for true circles — faithful to the
+  prototype; the one irregular blob visibly wobbles), 4 with phase offsets via
+  negative animation-delay.
+- All keyframes in `app/_styles/landing-v3/anim.css`; `prefers-reduced-motion`
+  disables everything (static = artboard). Timing audited via
+  `document.getAnimations()`: 68 animations, all 20000 ms/linear/Infinity.
+- Perf note: transform-only compositor animations; the software-GL headless QA
+  harness caps at ~35 fps (its compositor, not main-thread — static page reads
+  63 fps there). Verify scroll feel on the Vercel preview with a real GPU.

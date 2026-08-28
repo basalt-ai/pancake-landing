@@ -1,4 +1,5 @@
 import { LpFxLink } from "@/components/sections/landing-v3/LpFxButton";
+import { LpPancakes } from "@/components/sections/landing-v3/LpPancakes";
 
 /**
  * Landing v3 — Pricing (Figma node 4257:5083, 1654×890, bg #000).
@@ -40,13 +41,14 @@ export function LpPricing() {
         </LpFxLink>
         <p className="lp-price-note">No credit card needed</p>
       </div>
-      <img
-        className="lp-price-art"
-        src="/lp/lp-pancakes-pricing.svg"
-        alt=""
-        width={1654}
-        height={1039}
-      />
+      {/* Animated pancakes group: 1654×1039 canvas where the old composite img
+          sat (top -0.66px, centered); the 2622×1039 container's left offset
+          within it is -272px (see anim.css .lp-anim-box--pricing). */}
+      <div className="lp-price-art" aria-hidden="true">
+        <div className="lp-anim-canvas lp-anim-canvas--pricing">
+          <LpPancakes variant="pricing" />
+        </div>
+      </div>
     </section>
   );
 }

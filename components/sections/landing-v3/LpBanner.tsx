@@ -1,14 +1,17 @@
+import { LpBubbles } from "@/components/sections/landing-v3/LpBubbles";
+
 /**
  * Section 5 — Banner "Building got 10x easier / Selling didn’t"
  * (Figma 4257:4953, 1654×753 wrapper p-16; card 4420:961 1622×721 #ffbd7a r48).
- * Static art: grouped SVG exports layered union → bubbles → extra bubble → drop,
- * titles above the art. Geometry lives in app/_styles/landing-v3/banner.css.
+ * Art layers: union (bottle + wave) → animated bubbles (LpBubbles, spins on
+ * the 20s master loop) → drop; titles above the art. Geometry lives in
+ * app/_styles/landing-v3/banner.css, bubble motion in anim.css.
  */
 export function LpBanner() {
   return (
     <section id="why" className="lp-banner">
       <div className="lp-banner__card">
-        {/* z bottom→top: union (bottle + wave) → bubbles → extra bubble → drop */}
+        {/* z bottom→top: union (bottle + wave) → bubbles (animated) → drop */}
         <div className="lp-banner__art" aria-hidden="true">
           <div className="lp-banner__canvas">
             <img
@@ -18,20 +21,7 @@ export function LpBanner() {
               height={721}
               className="lp-banner__union"
             />
-            <img
-              src="/lp/lp-banner-bubbles.svg"
-              alt=""
-              width={958}
-              height={671}
-              className="lp-banner__bubbles"
-            />
-            <img
-              src="/lp/lp-banner-bubble-extra.svg"
-              alt=""
-              width={32.86}
-              height={32.86}
-              className="lp-banner__bubble-extra"
-            />
+            <LpBubbles />
             <img
               src="/lp/lp-banner-drop.svg"
               alt=""
