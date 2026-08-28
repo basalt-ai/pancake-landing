@@ -134,16 +134,26 @@
   border: 0;
   border-radius: 12px;
   color: var(--lp-text-on-inverted);
+  /* Figma buttons carry cornerSmoothing 0.75 — superellipse corners */
+  corner-shape: squircle;
   cursor: pointer;
   display: inline-flex;
   font-family: var(--lp-font-fono);
   font-size: 16px;
   font-weight: 600;
+  isolation: isolate; /* stacking context for the circle-fill FX */
   justify-content: center;
   line-height: 1.5;
+  overflow: hidden;
   padding: 12px 20px;
-  transition: background-color 150ms ease;
+  position: relative;
   white-space: nowrap;
+}
+/* Anchor buttons: outrank `.lp a { color: inherit }` (0,1,1) — without this
+   the label inherits section plum and disappears on the plum pill. */
+.lp a.lp-btn,
+.lp .lp-btn {
+  color: var(--lp-text-on-inverted);
 }
 .lp-btn[data-size="sm"] {
   border-radius: 9px;
@@ -155,9 +165,66 @@
   font-size: 24px;
   padding: 18px 30px;
 }
+/* No hover darken — the pill's feedback is the circle-fill + label FX below
+   (same doctrine as landing-v2; touch gets the OS press feedback). */
+
+/* ── pill FX — straight port of landing-v2's .lv2-btn-fx / .lv2-btn-label
+   (components/sections/landing-v3/LpFxButton.tsx drives the circle) ── */
+.lp-btn-fx {
+  border-radius: inherit;
+  corner-shape: inherit;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+}
+.lp-btn-fx .c {
+  border-radius: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform;
+}
+.lp-btn-label {
+  display: inline-block;
+  margin: -0.16em 0;
+  overflow: hidden;
+  padding: 0.16em 0;
+  position: relative;
+  vertical-align: top;
+  z-index: 1;
+}
+.lp-btn-label .l1,
+.lp-btn-label .l2 {
+  display: block;
+  transition: translate 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.lp-btn-label .l2 {
+  /* the arriving label only ever sits on the pastel flood — plum for contrast
+     (v2's pills were light with dark text; v3's are dark with cream text) */
+  color: var(--lp-text);
+  inset: 0.16em 0;
+  position: absolute;
+  translate: 0 165%;
+  user-select: none;
+  -webkit-user-select: none;
+}
 @media (hover: hover) {
-  .lp-btn:hover {
-    background: color-mix(in srgb, var(--lp-inverted-surface) 84%, #ffffff);
+  .lp-btn:hover .lp-btn-label .l1 {
+    translate: 0 -165%;
+  }
+  .lp-btn:hover .lp-btn-label .l2 {
+    translate: 0 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-btn-fx {
+    display: none;
+  }
+  .lp-btn-label .l1,
+  .lp-btn-label .l2 {
+    transition: none;
   }
 }
 
@@ -200,6 +267,40 @@
   background: var(--lp-surface);
   border: 0.4px solid var(--lp-subtle-stroke);
   border-radius: 24px;
+}
+
+/* ── corner language ──
+   Every rectangular surface in the Figma file carries cornerSmoothing
+   (buttons .75, cards .6, testimonials 1.0, mocks .8) — the design is
+   squircles throughout, same convention as the Pancake kit. Capsules and
+   circles (toggles, avatars, bar tips) stay round on purpose. Browsers
+   without corner-shape render plain rounded corners at the same radii. */
+.lp-chip,
+.lp-mockcard,
+.lp-steps__text,
+.lp-steps__media,
+.lp-banner__card,
+.lp-cta__card,
+.lp-tst-card,
+.lp-feat-card,
+.lp-feat-f1-row,
+.lp-feat-f1-row-tinted,
+.lp-feat-f1-tile,
+.lp-feat-f1-role,
+.lp-feat-f1-checkbox-off,
+.lp-feat-f2-post,
+.lp-feat-f2-carda,
+.lp-feat-f2-cardb,
+.lp-feat-f2-chip,
+.lp-feat-f2-approve,
+.lp-feat-f2-revise,
+.lp-feat-f3,
+.lp-feat-f3-article,
+.lp-feat-f3-achip,
+.lp-feat-f4,
+.lp-feat-f4-brain,
+.lp-feat-f4-chip {
+  corner-shape: squircle;
 }
 
 /* Desktop artboard is 1654w; content grids: 1296 (cards), 1136 (steps/separators).

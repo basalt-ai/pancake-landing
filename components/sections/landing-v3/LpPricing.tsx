@@ -1,3 +1,5 @@
+import { LpFxLink } from "@/components/sections/landing-v3/LpFxButton";
+
 /**
  * Landing v3 — Pricing (Figma node 4257:5083, 1654×890, bg #000).
  * The grouped rainbow art (lp-pancakes-pricing.svg, 1654×1039) paints the cream
@@ -33,9 +35,9 @@ export function LpPricing() {
             ))}
           </ul>
         </div>
-        <a className="lp-btn lp-price-cta" data-size="lg" href="https://app.getpancake.ai">
+        <LpFxLink href="https://app.getpancake.ai" size="lg" className="lp-price-cta" data-analytics-id="app_pricing_card">
           Get started
-        </a>
+        </LpFxLink>
         <p className="lp-price-note">No credit card needed</p>
       </div>
       <img

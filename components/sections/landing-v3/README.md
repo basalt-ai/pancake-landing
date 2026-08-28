@@ -31,6 +31,19 @@ All display type (hero headline, every section title, "99 USD") uses **Aeonik Co
 
 Do **not** fake-condense with `transform: scaleX()`.
 
+## Buttons
+
+The four CTAs are `LpFxLink` (`LpFxButton.tsx`) — the landing-v2 pill FX ported onto the
+Figma-exact `.lp-btn` geometry: pointer-anchored circle flood (yellow-30/purple-30/green-20
+cycle) + label slide on hover, touch-guarded, `app_cta_clicked` analytics on the existing
+allow-listed ids (app_nav / app_hero / app_final / app_pricing_card). The resting label is
+cream; the slide-in label is plum for contrast on the pastel flood.
+Every Figma rectangle carries cornerSmoothing (buttons .75, cards .6, testimonials 1.0) —
+`corner-shape: squircle` is applied via the grouped rule in `foundation.css`; browsers
+without support fall back to plain rounded corners at the same radii.
+Gotcha that bit us: `.lp a { color: inherit }` outranks `.lp-btn` — anchor buttons need the
+`.lp a.lp-btn` color rule or their labels render plum-on-plum (invisible).
+
 ## Phase 2 (not in this PR)
 
 Figma marks the rainbow arcs (hero, banner bubbles, CTA, pricing) as animated (`rotate` keys). The grouped SVG exports preserve layer ids (`fill`, `fill_2`, …) so the arcs can be animated by targeting SVG groups, or re-split from Figma via `get_motion_context` on nodes `4257:4907`, `4420:961`, `4389:4519`, `4257:5273`.

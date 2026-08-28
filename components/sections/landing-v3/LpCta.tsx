@@ -1,3 +1,5 @@
+import { LpFxLink } from "@/components/sections/landing-v3/LpFxButton";
+
 /**
  * Landing v3 — Section 7: CTA "Try Pancake now" (Figma node 4389:4492).
  * Cream 1296px card with two pre-clipped rainbow slivers hugging the card
@@ -31,9 +33,9 @@ export function LpCta() {
               Every lead arrives with its conversation attached.
             </p>
           </div>
-          <a className="lp-btn" href="https://app.getpancake.ai">
+          <LpFxLink href="https://app.getpancake.ai" data-analytics-id="app_final">
             Get started
-          </a>
+          </LpFxLink>
         </div>
       </div>
     </section>

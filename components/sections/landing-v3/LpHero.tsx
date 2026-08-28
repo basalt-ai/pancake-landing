@@ -1,3 +1,5 @@
+import { LpFxLink } from "@/components/sections/landing-v3/LpFxButton";
+
 // Landing v3 — Hero (Figma node 4257:4906, 1654×758).
 // The rainbow art is one pre-composited grouped SVG anchored at PAGE top-left
 // (it covers the nav band + hero); the section overflows it above via top:-120px.
@@ -22,9 +24,9 @@ export function LpHero() {
             Pancake’s AI agents monitor buying signals, find warm leads, grow
             your AI search visibility, and learn from every interaction.
           </p>
-          <a className="lp-btn" href="https://app.getpancake.ai">
+          <LpFxLink href="https://app.getpancake.ai" data-analytics-id="app_hero">
             Get started
-          </a>
+          </LpFxLink>
         </div>
       </div>
     </section>

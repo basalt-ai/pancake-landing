@@ -1,3 +1,5 @@
+import { LpFxLink } from "@/components/sections/landing-v3/LpFxButton";
+
 /**
  * Landing v3 — Nav (Figma node 4257:4894, 1654×120).
  * Logo left edge 179px, links dead-center, dark CTA right-anchored at the
@@ -15,9 +17,9 @@ export function LpNav() {
         <a href="/#why">Company</a>
         <a href="/careers">Careers</a>
       </nav>
-      <a className="lp-btn lp-nav-cta" data-size="sm" href="https://app.getpancake.ai">
+      <LpFxLink href="https://app.getpancake.ai" size="sm" className="lp-nav-cta" data-analytics-id="app_nav">
         Get started
-      </a>
+      </LpFxLink>
     </header>
   );
 }
