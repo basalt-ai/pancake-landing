@@ -155,7 +155,13 @@
   width: 100%;
 }
 .lp-anim-fill.lp-anim-pop {
-  animation: lp-anim-pop 20s linear infinite;
+  /* Entrance settle, played ONCE: Figma's export marks the size track
+     `repeat: Infinity` like the rest of the 20s cohort, but replaying it
+     makes the cream ring visibly jump +50px at every loop wrap (founder
+     report 2026-08-28: "at one point it's not fluid and kind of breaks").
+     One iteration + forwards keeps the designed 500ms ease-out settle and
+     makes the loop seamless — the spins wrap at exact ±360°. */
+  animation: lp-anim-pop 20s linear 1 forwards;
   height: 2331.047px;
   left: 50%;
   position: absolute;
