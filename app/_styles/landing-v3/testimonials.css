@@ -90,8 +90,10 @@
 
 .lp-tst-div {
   border-top: 1px solid rgba(44, 0, 42, 0.16);
-  /* zero-height stroke in Figma — cancel flow height */
+  /* zero-height stroke in Figma — cancel flow height; -0.5 centers the ink on
+     the Figma stroke line (center-aligned in Figma) */
   margin-bottom: -1px;
+  transform: translateY(-0.5px);
 }
 
 .lp-tst-meta {

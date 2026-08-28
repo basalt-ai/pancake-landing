@@ -22,6 +22,13 @@
   inset: 0;
   position: absolute;
 }
+/* Legacy engines without container units get the clean yellow card + titles
+   instead of misscaled art */
+@supports not (width: 1cqw) {
+  .lp-banner__canvas {
+    display: none;
+  }
+}
 .lp-banner__canvas {
   height: 721px;
   left: 0;
@@ -37,7 +44,7 @@
 .lp-banner__union {
   height: 721px;
   left: 0;
-  top: 0;
+  top: 0.42px; /* Figma: bottle sits 0.42px into the card */
   width: 965px;
 }
 .lp-banner__bubbles {

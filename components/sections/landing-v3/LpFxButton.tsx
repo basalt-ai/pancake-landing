@@ -49,12 +49,18 @@ function useFxCircle(hostRef: RefObject<HTMLElement>, circleRef: RefObject<HTMLS
       void c.offsetWidth; // commit the repositioned, unscaled circle before animating
       c.style.transition = "";
       c.style.transform = "translate(-50%,-50%) scale(1)";
+      // The label swap is driven by this class, NOT :hover — CSS-only :hover
+      // could slide the plum .l2 onto the still-plum pill with no flood
+      // (stationary-cursor page load, pre-hydration, reduced-motion), leaving
+      // the label invisible (QA audit 2026-08-28).
+      host.classList.add("is-fx");
     };
 
     const onLeave = (e: PointerEvent) => {
       if (e.pointerType === "touch") return;
       place(e);
       c.style.transform = "translate(-50%,-50%) scale(0)";
+      host.classList.remove("is-fx");
     };
 
     host.addEventListener("pointerenter", onEnter);

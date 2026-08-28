@@ -19,10 +19,21 @@
   text-align: center;
   width: 100%;
 }
+/* desktop artboard alignment: our line box centers the title ink 1px right
+   and 1px high of the Figma render (flow-neutral relative nudge) */
+@media (min-width: 1341px) {
+  .lp-feat-headline {
+    left: -1px;
+    position: relative;
+    top: 0.92px;
+  }
+}
 
 .lp-feat-sep {
   border: 0;
-  border-top: 0.5px solid var(--lp-ink-50);
+  /* Chromium paints a 0.5px border as a full-ink 1px line (2x the optical
+     weight of Figma's 0.5px stroke) — emulate it with a 1px line at 55% */
+  border-top: 1px solid color-mix(in srgb, var(--lp-ink-50) 55%, transparent);
   flex: none;
   height: 0;
   /* Figma separators are zero-height strokes — cancel the rendered border's
@@ -48,7 +59,9 @@
   gap: 24px;
   padding-bottom: 64px;
   position: absolute;
-  top: calc(50% - 0.08px);
+  /* +1px vs the geometric center: every text column's ink rendered 1px above
+     the Figma reference rows (measured 2026-08-28) */
+  top: calc(50% + 0.92px);
   transform: translateY(-50%);
   width: 464px;
 }
@@ -84,7 +97,9 @@
   height: 428px;
   left: calc(50% + 9.4px);
   position: absolute;
-  top: calc(50% + 0.5px);
+  /* +0.9px: the whole mock (signals, roles, bubble) rendered 1px above the
+     Figma reference band rows */
+  top: calc(50% + 1.4px);
   transform: translate(-50%, -50%);
   width: 516.8px;
 }
@@ -122,7 +137,8 @@
 }
 .lp-feat-f1-row {
   align-items: center;
-  border-radius: 16px;
+  border-radius: 12.8px;
+  box-shadow: inset 0 0 0 0.4px var(--lp-ink-50);
   display: flex;
   flex: none;
   gap: 12.8px;
@@ -136,7 +152,7 @@
 }
 .lp-feat-f1-tile {
   align-items: center;
-  border-radius: 12px;
+  border-radius: 9.6px;
   display: inline-flex;
   flex: none;
   height: 32px;
@@ -208,6 +224,9 @@
 .lp-feat-f1-chev {
   flex: none;
   height: 12.8px;
+  /* toggle→chevron gap is 6.4 in Figma (not the row's uniform 12.8) — pulls
+     the toggles right to x255.6 rel the f1 root */
+  margin-left: -6.4px;
   width: 12.8px;
 }
 /* row-2 mini bar-chart icon (19.2 box centered in the 32 tile) */
@@ -296,7 +315,8 @@
 }
 .lp-feat-f1-role {
   align-items: center;
-  border-radius: 16px;
+  border-radius: 12.8px;
+  box-shadow: inset 0 0 0 0.4px var(--lp-ink-50);
   display: flex;
   gap: 12.8px;
   padding: 6.4px;
@@ -309,19 +329,19 @@
 }
 .lp-feat-f1-checkbox-off {
   border: 0.8px solid var(--lp-ink-70);
-  border-radius: 6px;
+  border-radius: 4.8px;
   flex: none;
   height: 19.2px;
   width: 19.2px;
 }
-/* hand-drawn annotation (spills left of the mock) */
+/* hand-drawn annotation (spills left of the mock) — the SVG is exported
+   pre-rotated: place it at natural size, unrotated (only the TEXT rotates) */
 .lp-feat-f1-bubble {
-  height: 59.88px;
-  left: -51.99px;
+  height: 42.85px;
+  left: -50px;
   position: absolute;
-  top: 37.62px;
-  transform: rotate(-13.36deg);
-  width: 83.67px;
+  top: 39.6px;
+  width: 75.63px;
 }
 .lp-feat-f1-bubbletext {
   align-items: center;
@@ -371,10 +391,16 @@
   line-height: 1.6;
   text-transform: uppercase;
 }
+/* line box renders 0.64px taller than Figma's — post row must start at y54.2
+   (.lp prefix outranks the `.lp p { margin: 0 }` reset) */
+.lp .lp-feat-f2-eyebrow {
+  margin-bottom: -0.64px;
+}
 .lp-feat-f2-post {
   align-items: center;
   background: var(--lp-ink-tr-5);
   border-radius: 19.2px;
+  box-shadow: inset 0 0 0 0.4px var(--lp-ink-50);
   display: flex;
   gap: 12.8px;
   padding: 12.8px;
@@ -409,6 +435,11 @@
   font-size: 10.667px;
   line-height: 1.6;
 }
+/* with -ago's trim: keeps the post row at Figma's 88.6px so the chips row
+   lands at y162 rel the f2 root */
+.lp .lp-feat-f2-name {
+  margin-bottom: -0.13px;
+}
 .lp-feat-f2-quote {
   color: var(--lp-ink-100);
   font-family: var(--lp-font-cond);
@@ -416,6 +447,9 @@
   font-weight: 500;
   letter-spacing: -0.224px;
   line-height: 1.3;
+  /* flow-neutral: quote ink rendered 1px above the reference rows */
+  position: relative;
+  top: 0.9px;
   white-space: nowrap;
 }
 .lp-feat-f2-ago {
@@ -424,6 +458,9 @@
   line-height: 1.6;
   text-transform: uppercase;
 }
+.lp .lp-feat-f2-ago {
+  margin-top: -0.12px;
+}
 .lp-feat-f2-chips {
   display: flex;
   gap: 6.4px;
@@ -431,6 +468,7 @@
 .lp-feat-f2-chip {
   align-items: center;
   border-radius: 6.4px;
+  box-shadow: inset 0 0 0 0.4px var(--lp-ink-50);
   color: var(--lp-ink-100);
   display: inline-flex;
   flex: none;
@@ -453,20 +491,23 @@
 }
 .lp-feat-f2-cardb {
   border-radius: 21.449px;
-  border-width: 0.447px;
+  /* Figma hairline is 0.447px — as inset shadow so the content box keeps its
+     Figma metrics (a border would round to 1px and eat inner space) */
+  box-shadow: inset 0 0 0 0.447px var(--lp-subtle-stroke);
   display: flex;
   flex-direction: column;
   gap: 21.449px;
-  left: -5.34%;
+  /* UNROTATED geometry (the rotated bounds are x-23.4 w498): box w489.9 at
+     left -19.33 per the dump, +1px right to match the reference render's
+     card-edge pixels; center pinned at Figma's y310.25 rel root with the
+     measured DOM height (245px). */
+  left: -18.33px;
   overflow: clip;
   padding: 21.449px;
   position: absolute;
-  right: -8.25%;
-  /* Figma: center at 50%+95.45 with unrotated h 244.16 → top edge 188.2px.
-     Top-pinned (rotation kept) so extra lines from the substitute display
-     font extend downward only. */
-  top: 188.2px;
+  top: 187.61px;
   transform: rotate(-1.98deg);
+  width: 489.9px;
 }
 .lp-feat-f2-labels {
   color: var(--lp-ink-70);
@@ -527,10 +568,12 @@
 .lp-feat-f3 {
   align-items: center;
   background: var(--lp-card-cream);
-  border-radius: 24px;
+  border-radius: 19.2px; /* Figma dump: cream tile r19.2 (0.8-scale) */
   display: flex;
   flex-direction: column;
-  left: calc(50% + 0.2px);
+  /* +1px vs the 0.2 offset: the reference render draws the whole f3 tile
+     1px further right */
+  left: calc(50% + 1.2px);
   padding: 19.2px;
   position: absolute;
   /* Figma: mock top 131.3px in the 621 zone (h 358, hug) — top-pinned */
@@ -588,15 +631,19 @@
   width: 100%;
 }
 .lp-feat-f3-article {
-  border-radius: 29.184px;
-  border-width: 0.486px;
+  border-radius: 23.35px; /* the exported 29.184 was 1.25x-scaled */
+  /* 0.49px Figma hairline as inset shadow (border would round to 1px and
+     shift the content box) */
+  box-shadow: inset 0 0 0 0.49px var(--lp-subtle-stroke);
   display: flex;
   flex-direction: column;
   gap: 15.565px;
-  left: -45.89px;
+  /* UNROTATED box (rotated bounds x-26.7 w491.8 rel tile): center pinned at
+     Figma's 219.2/277.8 rel tile */
+  left: -43.2px;
   padding: 23.347px;
   position: absolute;
-  top: -5.06px;
+  top: 1.6px;
   transform: rotate(-1.63deg);
   width: 486.4px;
 }
@@ -618,6 +665,14 @@
   letter-spacing: -0.3113px;
   line-height: 1.3;
 }
+/* the 40.5px line box runs ~7px past Figma's text height — the Figma render
+   keeps the natural line-box TOP (title ink at band y376 rel card) and only
+   the bottom is short, so trim the bottom edge alone: a full cap-trim
+   (text-box: trim-both) lifted title/body/chips 10-12px above the reference.
+   Lands the unrotated article height at ≈196.3px. */
+.lp .lp-feat-f3-atitle {
+  margin-bottom: -6.9px;
+}
 .lp-feat-f3-abody {
   color: var(--lp-ink-80);
   font-size: 12.97px;
@@ -630,7 +685,7 @@
 .lp-feat-f3-achip {
   align-items: center;
   background: var(--lp-green-10);
-  border-radius: 9.728px;
+  border-radius: 7.78px; /* the exported 9.728 was 1.25x-scaled */
   color: var(--lp-ink-100);
   display: inline-flex;
   font-size: 12.97px;
@@ -648,7 +703,7 @@
 /* ── feature 4 — campaign performance ── */
 .lp-feat-f4 {
   background: var(--lp-card-cream);
-  border-radius: 24px;
+  border-radius: 19.2px; /* Figma dump: cream tile r19.2 (0.8-scale) */
   display: flex;
   flex-direction: column;
   gap: 19.2px;
@@ -682,6 +737,11 @@
   letter-spacing: -0.224px;
   line-height: 1.3;
 }
+/* header renders 49.4px vs Figma's 48.2 — trim so the graph sits at y86.6,
+   what-worked at y323.4, brain at y421.8 rel the tile */
+.lp .lp-feat-f4-htitle {
+  margin-bottom: -1.2px;
+}
 .lp-feat-f4-graph {
   align-items: center;
   display: flex;
@@ -698,8 +758,10 @@
   display: flex;
   justify-content: space-between;
   /* Figma renders the bars 7px closer to the week labels than the 9.6 gap +
-     1.6lh label box implies (measured on the artboard render) */
-  margin-bottom: -7px;
+     1.6lh label box implies (measured on the artboard render). Split -4/-3
+     with -weeks below: bar bottoms keep their exact position while the week
+     labels drop 3px to the reference ink rows. */
+  margin-bottom: -4px;
   width: 100%;
 }
 .lp-feat-f4-bar {
@@ -733,6 +795,7 @@
 .lp-feat-f4-bar:nth-child(12) { height: 116px; }
 .lp-feat-f4-weeks {
   display: flex;
+  margin-bottom: -3px;
   width: 100%;
 }
 .lp-feat-f4-weeks span {
@@ -748,7 +811,7 @@
   gap: 6.4px;
   left: 18.8px;
   position: absolute;
-  top: 17.6px; /* Figma: cap-trimmed text at top 22.8 — offset compensates line-box ascent */
+  top: 20.2px; /* Figma: cap-trimmed text at top 22.8 — offset compensates line-box ascent */
 }
 .lp-feat-f4-pct {
   color: var(--lp-green-30);
@@ -760,6 +823,7 @@
 }
 .lp-feat-f4-arrowup {
   height: 15.011px;
+  margin-top: 2px; /* arrow ink sat ~4px above the digits' cap line */
   width: 15.011px;
 }
 .lp-feat-f4-vslabel {
@@ -776,7 +840,11 @@
 .lp-feat-f4-worked {
   display: flex;
   flex-direction: column;
-  gap: 6.4px;
+  /* 6.4 in Figma, but its title box is 0.36 taller than ours — widen the gap
+     so the chips land at y42.6 rel the card and brain sits at y421.8 rel tile */
+  gap: 6.76px;
+  /* lands the card at y323.8 and brain at exactly y421.8 rel the tile */
+  margin-top: 0.46px;
   padding: 12.8px;
   width: 100%;
 }

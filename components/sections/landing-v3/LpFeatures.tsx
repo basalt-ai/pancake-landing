@@ -112,7 +112,7 @@ function Feature1() {
             <RoleRow label="Customer success" checked />
             <RoleRow label="Operations" checked={false} />
           </div>
-          <img src="/lp/lp-f1-annotation.svg" alt="" width={84} height={60} className="lp-feat-f1-bubble" />
+          <img src="/lp/lp-f1-annotation.svg" alt="" width={76} height={43} className="lp-feat-f1-bubble" />
           <p className="lp-feat-f1-bubbletext">clay alternatives</p>
         </div>
       </div>

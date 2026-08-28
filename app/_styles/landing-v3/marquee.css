@@ -7,7 +7,9 @@
   align-items: center;
   display: flex;
   justify-content: center;
-  padding: 8px;
+  /* 8 + 89.58 + 8.42 = Figma's integer 106px section — keeps every section
+     below on the artboard grid (audit: 8px/8px left the page 0.42px short) */
+  padding: 8px 8px 8.42px;
 }
 .lp-marquee img {
   flex: none;

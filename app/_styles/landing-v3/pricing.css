@@ -56,6 +56,16 @@
   text-box-edge: cap alphabetic;
   text-box: trim-both cap alphabetic;
 }
+/* Engines without text-box (Firefox <154, Safari 17, older Chromium): emulate
+   the cap trim with margins (half-leading minus cap/descender overshoot for
+   Aeonik Condensed Black 143.34/1.2 — audit-measured) so the price block
+   keeps Figma's height and the CTA below stays clear */
+@supports not (text-box: trim-both cap alphabetic) {
+  .lp-price-amount {
+    margin-top: -36.2px;
+    margin-bottom: -35.5px;
+  }
+}
 .lp-price-per {
   font-family: var(--lp-font-cond);
   font-size: 32px;

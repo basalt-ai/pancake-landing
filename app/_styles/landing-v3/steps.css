@@ -34,6 +34,9 @@
 }
 .lp-steps__title {
   color: var(--lp-text);
+  /* Figma rounds the 57.336*1.2 text box to an integral 69px — keeps the
+     section at exactly 1773px (audit) */
+  line-height: 69px;
   margin: 0;
 }
 
