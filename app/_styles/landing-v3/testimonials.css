@@ -14,6 +14,9 @@
 
 /* heading block (4257:5007): w 1296, pt 128, px 128 on itself */
 .lp-tst-head {
+  /* Figma-exact 196.8px (128 + 68.8 title) — pinned so the rows below sit at
+     the artboard's exact offsets instead of accumulating fractional drift */
+  height: 196.8px;
   max-width: 100%;
   padding: 128px 128px 0;
   width: 1296px;
@@ -27,6 +30,9 @@
 /* full-bleed row container → centers the overflowing row */
 .lp-tst-strip {
   display: flex;
+  /* Figma-exact row band: 32 + 368.1 card + 32 — keeps row 2 on the artboard
+     grid (cards self-stretch inside) */
+  height: 432.1px;
   justify-content: center;
   width: 100%;
 }
@@ -110,11 +116,13 @@
 }
 @media (max-width: 1024px) {
   .lp-tst-head {
+    height: auto;
     padding: 96px 32px 0;
     width: 100%;
   }
   /* recompose: rows become swipeable strips (start-aligned so all cards are reachable) */
   .lp-tst-strip {
+    height: auto;
     justify-content: flex-start;
     overflow-x: auto;
   }

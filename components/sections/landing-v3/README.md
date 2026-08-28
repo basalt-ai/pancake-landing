@@ -20,16 +20,11 @@ The Figma file's variables differ from the old palette on three points, and AGEN
 - `--lp-green-10: #ceead5` (old `#CFF0E1`)
 - page background `#fbf6f1` and the `--lp-ink-tr-*` alpha ramp are new.
 
-## Fonts — IMPORTANT
+## Fonts
 
-All display type (hero headline, every section title, "99 USD") uses **Aeonik Condensed Pro TRIAL** in Figma. The condensed OTFs are **not in the repo and not on the build machine**, so `--lp-font-cond` currently resolves to regular Aeonik (same foundry, wider letterforms). To reach exact metric parity:
+All display type (hero headline, every section title, "99 USD") is **Aeonik Condensed Pro TRIAL** — upright cuts in `app/fonts/aeonik-condensed/` (CoType trial zip, downloaded 2026-08-28 at Tristan's direction), loaded in `app/layout.tsx` as `--font-aeonik-condensed` and consumed via `--lp-font-cond`. Body/labels stay Aeonik Fono; UI-mock labels use Aeonik Medium.
 
-1. Get the `Aeonik Condensed Pro TRIAL` OTFs (Regular, Medium, SemiBold, Black) from the designer.
-2. Drop them in `app/fonts/aeonik-condensed/`.
-3. Add a `localFont` block in `app/layout.tsx` exposing `--font-aeonik-condensed`.
-4. Point `--lp-font-cond` at it in `foundation.css`.
-
-Do **not** fake-condense with `transform: scaleX()`.
+⚠️ All three families are TRIAL-licensed — settle the CoType license before this ships to production.
 
 ## Buttons
 

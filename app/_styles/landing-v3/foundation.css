@@ -94,13 +94,12 @@
   --lp-r-xlg: 32px;
   --lp-r-2xlg: 48px;
 
-  /* fonts.
-     Display face in Figma is "Aeonik Condensed Pro TRIAL" — the OTFs are not in
-     the repo yet. --lp-font-cond intentionally resolves to Aeonik until the
-     condensed files land in app/fonts/aeonik-condensed/ (then swap here + layout). */
+  /* fonts. Display face = Aeonik Condensed Pro TRIAL (CoType trial,
+     downloaded 2026-08-28 at Tristan's direction — license to settle before
+     production), loaded in app/layout.tsx as --font-aeonik-condensed. */
   --lp-font-fono: var(--font-aeonik-fono), ui-monospace, "SF Mono", monospace;
   --lp-font-aeonik: var(--font-aeonik), system-ui, -apple-system, sans-serif;
-  --lp-font-cond: var(--font-aeonik), system-ui, -apple-system, sans-serif;
+  --lp-font-cond: var(--font-aeonik-condensed), var(--font-aeonik), system-ui, -apple-system, sans-serif;
 }
 
 /* ── base ── */
