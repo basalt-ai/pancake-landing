@@ -1,0 +1,35 @@
+/* landing-v3/marquee.css — Logo strip (Figma 4257:4924, 1654×106).
+   One PNG 1654.961×89.58, mix-blend-multiply .43, centered in a p-8 wrapper.
+   The strip bleeds ~0.5px past the 1654 artboard; .lp's overflow-x: clip
+   crops it (full-bleed centered crop on narrower viewports too). */
+
+.lp-marquee {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+}
+.lp-marquee img {
+  flex: none;
+  height: 89.58px;
+  max-width: none;
+  mix-blend-mode: multiply;
+  object-fit: cover;
+  opacity: 0.43;
+  pointer-events: none;
+  width: 1654.961px;
+}
+
+/* Narrower: shrink the strip proportionally (width:auto keeps the PNG's
+   native aspect), still centered + edge-clipped — logos never distort. */
+@media (max-width: 1024px) {
+  .lp-marquee img {
+    height: 64px;
+    width: auto;
+  }
+}
+@media (max-width: 767px) {
+  .lp-marquee img {
+    height: 48px;
+  }
+}

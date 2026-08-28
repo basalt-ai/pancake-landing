@@ -1,0 +1,212 @@
+/* ── Landing v3 foundation ─────────────────────────────────────────────
+   Tokens extracted 1:1 from the Figma variables (collections: core tokens,
+   colors, typography, radii, spacing) + page-specific values observed on the
+   artboard. Values that differ from app/_styles/tokens.css are page-scoped
+   here on purpose (AGENTS.md: Figma is the only source of truth). */
+
+.lp {
+  /* core tokens / brand-colors */
+  --lp-pink-10: #ffd9da;
+  --lp-pink-20: #ffbbc7;
+  --lp-pink-30: #ff7aa0;
+  --lp-pink-40: #e33a6a;
+  --lp-purple-10: #efddf1;
+  --lp-purple-20: #dec3f5;
+  --lp-purple-30: #ba8bff;
+  --lp-purple-40: #8d43fd;
+  --lp-yellow-10: #ffe9d1;
+  --lp-yellow-20: #ffdbb5;
+  --lp-yellow-30: #ffbd7a;
+  --lp-yellow-40: #f38f43;
+  --lp-blue-10: #d9e9ff;
+  --lp-blue-20: #b0cbff;
+  --lp-blue-30: #6a8fff;
+  --lp-blue-40: #4660e7;
+  --lp-green-10: #ceead5;
+  --lp-green-20: #68cea7;
+  --lp-green-30: #037d48;
+  --lp-green-40: #00532f;
+  --lp-orange-10: #ffddbe;
+  --lp-orange-20: #ffa45f;
+  --lp-orange-30: #d43900;
+  --lp-orange-40: #b20000;
+  --lp-red-10: #ffd1c9;
+  --lp-red-20: #ff8080;
+  --lp-red-30: #e5002e;
+  --lp-red-40: #ad001a;
+  --lp-ink-0: #ffffff;
+  --lp-ink-10: #fffbf6;
+  --lp-ink-20: #fff7ec;
+  --lp-ink-30: #f7ede5;
+  --lp-ink-40: #efe4dc;
+  --lp-ink-50: #ddcfcd;
+  --lp-ink-60: #bba8ae;
+  --lp-ink-70: #9a818f;
+  --lp-ink-80: #85687c;
+  --lp-ink-90: #6c4b65;
+  --lp-ink-100: #2c002a;
+  --lp-ink-tr-80: rgba(44, 0, 42, 0.8);
+  --lp-ink-tr-70: rgba(44, 0, 42, 0.7);
+  --lp-ink-tr-60: rgba(44, 0, 42, 0.6);
+  --lp-ink-tr-50: rgba(44, 0, 42, 0.5);
+  --lp-ink-tr-40: rgba(44, 0, 42, 0.4);
+  --lp-ink-tr-20: rgba(44, 0, 42, 0.2);
+  --lp-ink-tr-10: rgba(44, 0, 42, 0.1);
+  --lp-ink-tr-5: rgba(44, 0, 42, 0.05);
+
+  /* semantic (collection "colors") */
+  --lp-text: var(--lp-ink-100);
+  --lp-subtle-text: var(--lp-ink-80);
+  --lp-muted-text: var(--lp-ink-70);
+  --lp-disabled-text: var(--lp-ink-60);
+  --lp-interactive-text: var(--lp-purple-40);
+  --lp-positive-text: var(--lp-green-30);
+  --lp-stroke: var(--lp-ink-50);
+  --lp-subtle-stroke: var(--lp-ink-40);
+  --lp-surface: var(--lp-ink-0);
+  --lp-surface-2: var(--lp-ink-10);
+  --lp-surface-3: var(--lp-ink-20);
+  --lp-inverted-surface: var(--lp-ink-100);
+  --lp-text-on-inverted: var(--lp-ink-20);
+
+  /* page-specific values seen on the artboard (not in the ramps) */
+  --lp-page-bg: #fbf6f1;
+  --lp-card-cream: #fffbf6; /* = ink-10; step cards, CTA card, feature-3/4 tiles */
+
+  /* type scale (collection "text-size") */
+  --lp-text-6xlg: 57.336px;
+  --lp-text-5xlg: 47.784px;
+  --lp-text-4xlg: 39.816px;
+  --lp-text-3xlg: 33.18px;
+  --lp-text-2xlg: 27.648px;
+  --lp-text-xlg: 23.04px;
+  --lp-text-lg: 19.2px;
+  --lp-text-md: 16px;
+  --lp-text-sm: 13.333px;
+  --lp-text-xsm: 11.108px;
+
+  /* radii (collection "radii": 4/8/12/16/24/32/48) + component radii on the artboard */
+  --lp-r-2xsm: 4px;
+  --lp-r-xsm: 8px;
+  --lp-r-sm: 12px;
+  --lp-r-m: 16px;
+  --lp-r-lg: 24px;
+  --lp-r-xlg: 32px;
+  --lp-r-2xlg: 48px;
+
+  /* fonts.
+     Display face in Figma is "Aeonik Condensed Pro TRIAL" — the OTFs are not in
+     the repo yet. --lp-font-cond intentionally resolves to Aeonik until the
+     condensed files land in app/fonts/aeonik-condensed/ (then swap here + layout). */
+  --lp-font-fono: var(--font-aeonik-fono), ui-monospace, "SF Mono", monospace;
+  --lp-font-aeonik: var(--font-aeonik), system-ui, -apple-system, sans-serif;
+  --lp-font-cond: var(--font-aeonik), system-ui, -apple-system, sans-serif;
+}
+
+/* ── base ── */
+.lp {
+  background: var(--lp-page-bg);
+  color: var(--lp-text);
+  font-family: var(--lp-font-fono);
+  font-size: var(--lp-text-md);
+  line-height: 1.5;
+  overflow-x: clip; /* full-bleed art (rainbows, testimonial rows) exceeds the viewport */
+  position: relative;
+}
+.lp img {
+  display: block;
+}
+.lp p {
+  margin: 0;
+}
+.lp a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ── shared recipes ── */
+
+/* Dark pill button — three exact sizes on the artboard:
+   nav (13.333/9×15/r9), hero+cta (16/12×20/r12), pricing (24/18×30/r18). */
+.lp-btn {
+  align-items: center;
+  background: var(--lp-inverted-surface);
+  border: 0;
+  border-radius: 12px;
+  color: var(--lp-text-on-inverted);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--lp-font-fono);
+  font-size: 16px;
+  font-weight: 600;
+  justify-content: center;
+  line-height: 1.5;
+  padding: 12px 20px;
+  transition: background-color 150ms ease;
+  white-space: nowrap;
+}
+.lp-btn[data-size="sm"] {
+  border-radius: 9px;
+  font-size: 13.333px;
+  padding: 9px 15px;
+}
+.lp-btn[data-size="lg"] {
+  border-radius: 18px;
+  font-size: 24px;
+  padding: 18px 30px;
+}
+@media (hover: hover) {
+  .lp-btn:hover {
+    background: color-mix(in srgb, var(--lp-inverted-surface) 84%, #ffffff);
+  }
+}
+
+/* Display type (Aeonik Condensed Pro in Figma — see --lp-font-cond note) */
+.lp-display {
+  font-family: var(--lp-font-cond);
+  font-weight: 600;
+}
+.lp-title-section {
+  /* marketing/title-lg: 57.336 / 1.2 / -1.7201px, Condensed SemiBold */
+  font-family: var(--lp-font-cond);
+  font-size: var(--lp-text-6xlg);
+  font-weight: 600;
+  letter-spacing: -1.7201px;
+  line-height: 1.2;
+}
+.lp-title-card {
+  /* feature/CTA card titles: 48 / 1 / -1.44px, Condensed SemiBold */
+  font-family: var(--lp-font-cond);
+  font-size: 48px;
+  font-weight: 600;
+  letter-spacing: -1.44px;
+  line-height: 1;
+}
+
+/* Small mock-UI chip (features): Fono Medium 10.67, radius 8, px 6.4 py 3.2 */
+.lp-chip {
+  align-items: center;
+  border-radius: 8px;
+  display: inline-flex;
+  font-size: 10.67px;
+  font-weight: 500;
+  line-height: 1.6;
+  padding: 3.2px 6.4px;
+  white-space: nowrap;
+}
+
+/* Mock-UI white card (features): white, hairline stroke, r24 */
+.lp-mockcard {
+  background: var(--lp-surface);
+  border: 0.4px solid var(--lp-subtle-stroke);
+  border-radius: 24px;
+}
+
+/* Desktop artboard is 1654w; content grids: 1296 (cards), 1136 (steps/separators).
+   Sections center fixed-width content; page clips bleed. Breakpoints:
+   ≤1360 scale paddings, ≤1024 recompose, ≤767 stack. */
+.lp-content {
+  margin-inline: auto;
+  max-width: 1296px;
+  width: 100%;
+}

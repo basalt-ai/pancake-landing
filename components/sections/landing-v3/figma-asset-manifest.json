@@ -1,0 +1,164 @@
+{
+ "01-nav.tsx:imgLogo": {
+  "url": "56bd5199-bcca-4f77-a59b-0a9911f4dc02.svg",
+  "file": "lp-nav-logo.svg",
+  "ok": true,
+  "bytes": 4823
+ },
+ "03-marquee.tsx:imgImage7": {
+  "url": "24ec72f4-b579-4b43-8729-a5912df33b3c.png",
+  "file": "lp-logo-strip.png",
+  "ok": true,
+  "bytes": 31323
+ },
+ "07-feature-1.tsx:imgIconDocLines": {
+  "url": "89ccddac-20fc-4136-94ff-587edd8e2684.svg",
+  "file": "lp-f1-icon-doc-lines.svg",
+  "ok": true,
+  "bytes": 2753
+ },
+ "07-feature-1.tsx:imgIconChevronRightLg": {
+  "url": "b68ecde6-7259-46bf-a0ca-41825de34ad9.svg",
+  "file": "lp-f1-chevron.svg",
+  "ok": true,
+  "bytes": 504
+ },
+ "07-feature-1.tsx:imgFrame109": {
+  "url": "6c9721a5-7258-4ce8-a466-1c3617bf99ea.svg",
+  "file": "lp-f1-avatar-purple.svg",
+  "ok": true,
+  "bytes": 1403
+ },
+ "07-feature-1.tsx:imgFrame213": {
+  "url": "d08dca04-9ab3-4b2a-ab01-ec9052ab3a6a.svg",
+  "file": "lp-f1-avatar-green.svg",
+  "ok": true,
+  "bytes": 640
+ },
+ "07-feature-1.tsx:imgIconDocLines1": {
+  "url": "371d7bf5-29c6-4efc-b768-95298755da74.svg",
+  "file": "lp-f1-icon-doc-lines-blue.svg",
+  "ok": true,
+  "bytes": 1508
+ },
+ "07-feature-1.tsx:imgFrame214": {
+  "url": "0ec5d616-e34b-4e55-a833-4dd76915bdaa.svg",
+  "file": "lp-f1-checkbox.svg",
+  "ok": true,
+  "bytes": 584
+ },
+ "07-feature-1.tsx:imgUnion": {
+  "url": "de1e4cf9-c31a-40b8-b946-6ebf650ffc4c.svg",
+  "file": "lp-f1-annotation.svg",
+  "ok": true,
+  "bytes": 993
+ },
+ "08-feature-2.tsx:imgAvatarImg": {
+  "url": "651b3156-6c45-4a33-9a9d-b1503fc14c01.png",
+  "file": "lp-f2-avatar.png",
+  "ok": true,
+  "bytes": 22445
+ },
+ "08-feature-2.tsx:imgVector": {
+  "url": "6f4f6591-40aa-4a26-8d9a-5ab975cac5d0.svg",
+  "file": "lp-f2-linkedin-badge.svg",
+  "ok": true,
+  "bytes": 2642
+ },
+ "08-feature-2.tsx:imgCheck": {
+  "url": "c47ef4b8-75c9-4c24-99c0-343f3f4e6201.svg",
+  "file": "lp-f2-check-sm.svg",
+  "ok": true,
+  "bytes": 502
+ },
+ "08-feature-2.tsx:imgIconEllipsis": {
+  "url": "2556ef05-a3fb-47b1-bb92-4575e5047900.svg",
+  "file": "lp-f2-ellipsis.svg",
+  "ok": true,
+  "bytes": 841
+ },
+ "08-feature-2.tsx:imgCheck1": {
+  "url": "16ea4f70-bf92-4aca-a8ca-3e274d4dac5d.svg",
+  "file": "lp-f2-check-lg.svg",
+  "ok": true,
+  "bytes": 519
+ },
+ "09-feature-3.tsx:imgChatGptLogo1": {
+  "url": "b39dd1a9-ef63-4004-bf4f-334d3b6be637.svg",
+  "file": "lp-f3-chatgpt.svg",
+  "ok": true,
+  "bytes": 2925
+ },
+ "09-feature-3.tsx:imgIconArrowDown": {
+  "url": "bcdfca25-5177-4af4-bd16-f7379be1953f.svg",
+  "file": "lp-f3-arrow-down.svg",
+  "ok": true,
+  "bytes": 871
+ },
+ "09-feature-3.tsx:imgCheck": {
+  "url": "94f0834f-c09e-4798-9a25-227dfc81cdc5.svg",
+  "file": "lp-f3-check.svg",
+  "ok": true,
+  "bytes": 518
+ },
+ "10-feature-4.tsx:imgFill": {
+  "url": "4097c3f3-9bd1-4709-abe6-33de1616beb2.svg",
+  "file": "lp-f4-arrow-up.svg",
+  "ok": true,
+  "bytes": 533
+ },
+ "10-feature-4.tsx:imgFrame225": {
+  "url": "1f813343-03f5-4910-beb6-bc8b981593f1.svg",
+  "file": "lp-f4-brain-icon.svg",
+  "ok": true,
+  "bytes": 1385
+ },
+ "12-testimonials.tsx:imgEllipse22": {
+  "url": "b68c1b8b-3eee-4e2d-86e3-9991b22e0774.png",
+  "file": "lp-t-avatar-1.png",
+  "ok": true,
+  "bytes": 20825
+ },
+ "12-testimonials.tsx:imgEllipse23": {
+  "url": "870ff708-80b2-42fb-9a0a-e23f8ec05168.png",
+  "file": "lp-t-avatar-2.png",
+  "ok": true,
+  "bytes": 17046
+ },
+ "12-testimonials.tsx:imgEllipse24": {
+  "url": "8a03d51c-ee88-4762-af41-dbb3ea2f2ae5.png",
+  "file": "lp-t-avatar-3.png",
+  "ok": true,
+  "bytes": 19772
+ },
+ "12-testimonials.tsx:imgEllipse25": {
+  "url": "6add44d4-da8a-44e2-8d6a-0e16dbcd1326.png",
+  "file": "lp-t-avatar-4.png",
+  "ok": true,
+  "bytes": 17962
+ },
+ "12-testimonials.tsx:imgFrame117": {
+  "url": "d624fa9c-100c-43e9-939f-389bcc79c153.svg",
+  "file": "lp-t-x-logo.svg",
+  "ok": true,
+  "bytes": 498
+ },
+ "12-testimonials.tsx:imgVector269": {
+  "url": "c6519e63-9ff7-429b-a786-18a66c617e03.svg",
+  "file": "lp-t-divider.svg",
+  "ok": true,
+  "bytes": 302
+ },
+ "13-pricing.tsx:imgCheck": {
+  "url": "e625bd76-2c91-489c-8988-30c392152143.svg",
+  "file": "lp-p-check.svg",
+  "ok": true,
+  "bytes": 485
+ },
+ "14-footer.tsx:imgLogo": {
+  "url": "c84c9280-2615-4297-a6d5-268feeb9b02b.svg",
+  "file": "lp-footer-logo.svg",
+  "ok": true,
+  "bytes": 4862
+ }
+}

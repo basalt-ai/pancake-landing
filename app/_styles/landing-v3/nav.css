@@ -1,0 +1,95 @@
+/* landing-v3/nav.css — Nav bar (Figma 4257:4894, 1654×120, layout NONE).
+   Logo/CTA edge margins = max(32px, 50% − 648px) → exactly 179px at 1654
+   (the 1296 content grid's side margin), scaling down fluidly below. */
+
+.lp-nav {
+  height: 120px;
+  overflow: clip;
+  position: relative;
+}
+
+/* Logo: 114.956×56, left edge 179px at 1654, vertically centered */
+.lp-nav-logo {
+  display: block;
+  height: 56px;
+  left: max(32px, calc(50% - 648px));
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 114.956px;
+}
+.lp-nav-logo img {
+  height: 100%;
+  width: 100%;
+}
+
+/* Links: dead-centered, Fono Medium 13.333/1.5, tracking 0.1333, gap 34 */
+.lp-nav-links {
+  align-items: center;
+  display: flex;
+  gap: 34px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+.lp-nav-links a {
+  color: var(--lp-text);
+  font-size: var(--lp-text-sm);
+  font-weight: 500;
+  letter-spacing: 0.1333px;
+  line-height: 1.5;
+  padding-block: 10px; /* 40px tap target, no visual change */
+}
+
+/* CTA: typography/skin from .lp-btn[data-size="sm"]; top 41 = (120−38)/2 */
+.lp-nav-cta {
+  position: absolute;
+  right: max(32px, calc(50% - 648px));
+  top: 41px;
+}
+
+@media (max-width: 1024px) {
+  .lp-nav-links {
+    gap: 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .lp-nav {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    height: auto;
+    padding: 12px 16px;
+  }
+  .lp-nav-logo,
+  .lp-nav-cta {
+    position: static;
+    transform: none;
+  }
+  .lp-nav-logo {
+    height: 44px;
+    margin-right: auto;
+    width: auto;
+  }
+  .lp-nav-logo img {
+    width: auto;
+  }
+  .lp-nav-cta {
+    min-height: 40px;
+  }
+  .lp-nav-links {
+    gap: 8px 24px;
+    justify-content: center;
+    left: auto;
+    order: 3;
+    position: static;
+    top: auto;
+    transform: none;
+    white-space: normal;
+    width: 100%;
+  }
+}

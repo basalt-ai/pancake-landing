@@ -1,0 +1,155 @@
+/* ── Testimonials "Take it from them" (node 4257:5006, 1654×1157) ──
+   Section: flex col, gap 32, items center, p 16. Rows of 4×559 cards + 3×16
+   gaps = 2284 wide → wider than the viewport; centered as flex items so both
+   sides overflow equally (rows 1 and 2 align identically per the reference),
+   clipped by .lp { overflow-x: clip }. */
+
+.lp-tst {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 16px;
+}
+
+/* heading block (4257:5007): w 1296, pt 128, px 128 on itself */
+.lp-tst-head {
+  max-width: 100%;
+  padding: 128px 128px 0;
+  width: 1296px;
+}
+.lp-tst-title {
+  margin: 0;
+  text-align: center;
+  width: 100%;
+}
+
+/* full-bleed row container → centers the overflowing row */
+.lp-tst-strip {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+.lp-tst-row {
+  display: flex;
+  flex: none;
+  gap: 16px;
+  padding-block: 32px;
+  width: max-content;
+}
+
+/* card: 559 wide, white, hairline border, r32, p32, col gap 24 */
+.lp-tst-card {
+  background: var(--lp-surface);
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  border-radius: var(--lp-r-xlg);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow: clip;
+  /* 31px + 1px border = Figma's 32px inset (strokes take no space in Figma) */
+  padding: 31px;
+  width: 559px;
+}
+
+.lp-tst-userrow {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+}
+.lp-tst-avatar {
+  border-radius: 50%;
+}
+.lp-tst-id {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+}
+.lp-tst-name,
+.lp-tst-handle {
+  font-size: var(--lp-text-md);
+  line-height: 1.5;
+}
+
+.lp-tst-body {
+  flex-grow: 1; /* pins divider + meta to the card bottom (cards stretch) */
+  font-size: var(--lp-text-xlg);
+  line-height: 1.4;
+  white-space: pre-wrap; /* keeps the verbatim double spaces */
+}
+.lp-tst-mention {
+  color: #7418ff;
+}
+
+.lp-tst-div {
+  border-top: 1px solid rgba(44, 0, 42, 0.16);
+  /* zero-height stroke in Figma — cancel flow height */
+  margin-bottom: -1px;
+}
+
+.lp-tst-meta {
+  align-items: center;
+  display: flex;
+  font-size: var(--lp-text-md);
+  gap: 16px;
+  line-height: 1.5;
+}
+.lp-tst-spacer {
+  flex: 1;
+}
+.lp-tst-via {
+  color: rgba(44, 0, 42, 0.64);
+}
+
+/* ── responsive ── */
+@media (max-width: 1360px) {
+  .lp-tst-head {
+    padding-inline: 64px;
+  }
+}
+@media (max-width: 1024px) {
+  .lp-tst-head {
+    padding: 96px 32px 0;
+    width: 100%;
+  }
+  /* recompose: rows become swipeable strips (start-aligned so all cards are reachable) */
+  .lp-tst-strip {
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+  .lp-tst-row {
+    padding-inline: 16px;
+  }
+}
+@media (max-width: 767px) {
+  .lp-tst {
+    gap: 16px;
+  }
+  .lp-tst-head {
+    padding: 64px 16px 0;
+  }
+  .lp-tst-title {
+    font-size: var(--lp-text-4xlg);
+    letter-spacing: -1.1946px;
+  }
+  /* stack single-column; drop the duplicate second row */
+  .lp-tst-strip {
+    overflow: visible;
+  }
+  .lp-tst-strip[data-row="2"] {
+    display: none;
+  }
+  .lp-tst-row {
+    flex-direction: column;
+    padding: 16px 0;
+    width: 100%;
+  }
+  .lp-tst-card {
+    width: 100%;
+  }
+  .lp-tst-body {
+    font-size: var(--lp-text-lg);
+    white-space: normal; /* double spaces would break wrapping on narrow columns */
+  }
+}

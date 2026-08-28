@@ -1,27 +1,25 @@
 import type { Metadata } from "next";
 
-import { FinalCta } from "@/components/sections/landing/FinalCta";
-import { HowItWorks } from "@/components/sections/landing/HowItWorks";
-import { LandingFooter } from "@/components/sections/landing/LandingFooter";
-import { LandingHero } from "@/components/sections/landing/LandingHero";
-import { LandingModals } from "@/components/sections/landing/LandingModals";
-import { LandingNav } from "@/components/sections/landing/LandingNav";
-import { LandingPricing } from "@/components/sections/landing/LandingPricing";
-import { LandingTestimonials } from "@/components/sections/landing/LandingTestimonials";
-import { LeadFindingDive } from "@/components/sections/landing/LeadFindingDive";
-import { Manifesto } from "@/components/sections/landing/Manifesto";
+import { LpBanner } from "@/components/sections/landing-v3/LpBanner";
+import { LpCta } from "@/components/sections/landing-v3/LpCta";
+import { LpFeatures } from "@/components/sections/landing-v3/LpFeatures";
+import { LpFooter } from "@/components/sections/landing-v3/LpFooter";
+import { LpHero } from "@/components/sections/landing-v3/LpHero";
+import { LpMarquee } from "@/components/sections/landing-v3/LpMarquee";
+import { LpNav } from "@/components/sections/landing-v3/LpNav";
+import { LpPricing } from "@/components/sections/landing-v3/LpPricing";
+import { LpSteps } from "@/components/sections/landing-v3/LpSteps";
+import { LpTestimonials } from "@/components/sections/landing-v3/LpTestimonials";
 import { pricingV2 } from "@/lib/copy";
-import "@/app/_styles/landing-v2.css";
+import "@/app/_styles/landing-v3.css";
 
 /**
- * The GTM landing (v2) — React port of public/landing-v2.html plus the full
- * page below the hero: how it works (studio motion loops), feature deep-dive,
- * social proof (tweets + UGC reuse), pricing, closing snake CTA, footer.
- * Narrative backbone: greptile.com x synthetic.ai (see pancake-studio
- * briefs/cmo-app/lp-skeleton-review.md).
+ * Landing v3 — 1:1 replication of the Figma "Pancake-Design" desktop artboard
+ * (node 4197-9774, frame "hero" 4257:4893). Static phase: layout, type, color
+ * and art match the artboard exactly; the Figma motion pass lands separately.
  */
 
-// Page-level metadata mirrors the hero (SMB positioning, 2026-08-11);
+// Page-level metadata mirrors the hero (unchanged copy vs v2);
 // the root layout still carries the org-wide defaults.
 export const metadata: Metadata = {
   title: "Pancake — You run your company. We bring you customers.",
@@ -72,24 +70,22 @@ const softwareApplicationJsonLd = {
 
 export default function Home() {
   return (
-    <main id="main-content" className="lv2">
+    <main id="main-content" className="lp">
       {/* SoftwareApplication JSON-LD — homepage only */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationJsonLd) }}
       />
-      <div className="lv2-viewport">
-        <LandingNav />
-        <LandingHero />
-      </div>
-      <HowItWorks />
-      <Manifesto />
-      <LeadFindingDive />
-      <LandingTestimonials />
-      <LandingPricing />
-      <FinalCta />
-      <LandingFooter />
-      <LandingModals />
+      <LpNav />
+      <LpHero />
+      <LpMarquee />
+      <LpSteps />
+      <LpBanner />
+      <LpFeatures />
+      <LpCta />
+      <LpTestimonials />
+      <LpPricing />
+      <LpFooter />
     </main>
   );
 }

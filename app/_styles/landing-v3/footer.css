@@ -1,0 +1,142 @@
+/* ── Landing v3 · Footer (node 4258:253, 1654×515, bg #000) ───────────────────
+   Brand block at frame x259 (= 50% − 568px), logo 239.672×116.755 at block
+   (1.377, 0). Three right-aligned columns, boxes w176 whose RIGHT edges sit at
+   frame x1011/1203/1395 → lefts 50%+8 / 50%+200 / 50%+392. --lp-foot-shift
+   nudges all three left in lockstep when the viewport can't fit x1395 + 24px
+   (kicks in only below ~1184px; 0px at the 1654 reference). */
+
+.lp-foot {
+  background: #000;
+  color: #fff;
+  height: 515px;
+  position: relative;
+}
+.lp-foot-frame {
+  --lp-foot-shift: max(0px, 592px - 50%);
+  height: 100%;
+  margin-inline: auto;
+  position: relative;
+  width: min(1654px, 100%);
+}
+.lp-foot-brand {
+  height: 270.755px;
+  left: max(32px, calc(50% - 568px));
+  position: absolute;
+  top: 104.43px;
+  width: 241.047px;
+}
+.lp-foot-logo {
+  height: 116.755px;
+  left: 1.377px;
+  position: absolute;
+  top: 0;
+  width: 239.672px;
+}
+.lp-foot-lines,
+.lp-foot-legal {
+  font-size: var(--lp-text-sm);
+  left: 0;
+  line-height: 1.5;
+  position: absolute;
+  white-space: nowrap;
+}
+.lp-foot-lines {
+  top: 194.75px;
+}
+.lp-foot-legal {
+  top: 250.75px;
+}
+.lp-foot-col {
+  position: absolute;
+  text-align: right;
+  top: 124.75px;
+  width: 176px;
+}
+.lp-foot-col[data-col="product"] {
+  left: calc(50% + 8px - var(--lp-foot-shift));
+}
+.lp-foot-col[data-col="company"] {
+  left: calc(50% + 200px - var(--lp-foot-shift));
+}
+.lp-foot-col[data-col="social"] {
+  left: calc(50% + 392px - var(--lp-foot-shift));
+}
+.lp-foot-head {
+  font-weight: 600;
+}
+.lp-foot-links {
+  margin-top: 17.43px; /* header box ends at 148.75; links top 166.18 */
+}
+.lp-foot-links a {
+  display: block;
+  margin-bottom: 13px;
+}
+.lp-foot-links a:last-child {
+  margin-bottom: 0;
+}
+
+/* ≤1024: recompose to flow — brand block, then columns as a wrapping row. */
+@media (max-width: 1024px) {
+  .lp-foot {
+    height: auto;
+  }
+  .lp-foot-frame {
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+    height: auto;
+    padding: 64px 48px;
+    width: 100%;
+  }
+  .lp-foot-brand {
+    height: auto;
+    left: auto;
+    position: static;
+    top: auto;
+    width: auto;
+  }
+  .lp-foot-logo,
+  .lp-foot-lines,
+  .lp-foot-legal {
+    position: static;
+  }
+  .lp-foot-lines {
+    margin-top: 32px;
+  }
+  .lp-foot-legal {
+    margin-top: 16px;
+  }
+  .lp-foot-cols {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px 64px;
+  }
+  .lp-foot-col {
+    left: auto;
+    position: static;
+    text-align: left;
+    top: auto;
+  }
+}
+
+/* ≤767: columns stack via wrap; link tap targets ≥40px. */
+@media (max-width: 767px) {
+  .lp-foot-frame {
+    gap: 48px;
+    padding: 56px 24px;
+  }
+  .lp-foot-cols {
+    gap: 40px 48px;
+  }
+  .lp-foot-links {
+    margin-top: 8px;
+  }
+  .lp-foot-links a {
+    margin-bottom: 0;
+    padding-block: 8px;
+  }
+  .lp-foot-legal a {
+    display: inline-block;
+    padding-block: 8px;
+  }
+}

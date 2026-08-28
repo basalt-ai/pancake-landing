@@ -1,0 +1,55 @@
+{
+  "_comment": "Positions of grouped-art SVG exports. Coordinates are relative to the stated anchor. Every exported SVG carries a top backdrop <rect fill='#ECEBE9'> and a page-bg <rect fill='#FBF6F1'> that MUST be stripped before use (script: strip-rects). Exports are render-bounds composites (already clipped to page/card).",
+  "lp-pancakes-hero.svg": {
+    "anchor": "page top-left (behind nav + hero sections)",
+    "x": 0, "y": 0, "w": 1654, "h": 1417,
+    "z": "behind nav/hero text content"
+  },
+  "lp-banner-union.svg": {
+    "anchor": "banner card (1622x721) top-left",
+    "x": 0, "y": 0, "w": 965, "h": 721,
+    "z": "1 (bottom art layer, above card bg #ffbd7a)"
+  },
+  "lp-banner-bubbles.svg": {
+    "anchor": "banner card top-left",
+    "x": 0, "y": 0, "w": 958, "h": 671,
+    "z": "2",
+    "note": "render bounds were x0 y0 957.2x670.4 relative to card"
+  },
+  "lp-banner-bubble-extra.svg": {
+    "anchor": "banner card top-left",
+    "x": 545, "y": 155.42, "w": 32.86, "h": 32.86,
+    "z": "3"
+  },
+  "lp-banner-drop.svg": {
+    "anchor": "banner card top-left",
+    "x": 959, "y": 377, "w": 49.07, "h": 81.5,
+    "z": "4"
+  },
+  "lp-cta-rainbow-right.svg": {
+    "anchor": "CTA card (1296x432, overflow clip) top-left",
+    "x": 767, "y": 0, "w": 529, "h": 432,
+    "z": "behind text"
+  },
+  "lp-cta-rainbow-left.svg": {
+    "anchor": "CTA card top-left",
+    "x": 0, "y": 0, "w": 560, "h": 432,
+    "z": "behind text"
+  },
+  "lp-pancakes-pricing.svg": {
+    "anchor": "pricing section (1654x890, bg #000) top-left",
+    "x": 0, "y": -0.66, "w": 1654, "h": 1039,
+    "z": "behind all pricing content",
+    "note": "extends 148px below the section into the footer band? No: 890-1039+0.66 = -148.3 -> bottom overflows into footer; section must NOT clip? Figma render bounds of section = 1039 tall meaning content spills into footer area. Footer bg is #000 as well; spill is invisible against footer black. Clip to section is safe EXCEPT check the wave bottom edge at y 890 in the screenshot. Safer: overflow visible, z below footer content, footer has no bg gap."
+  },
+  "feature-separators": {
+    "spec": "CSS hairline, width 1136 centered (x 259 in 1654), border-top 0.5px solid #ddcfcd",
+    "abs_y": [4407.58, 5092.58, 5777.58]
+  },
+  "testimonial-divider": {
+    "spec": "CSS border-top 1px solid rgba(44,0,42,0.16), full card inner width"
+  },
+  "step-card-spacer": {
+    "spec": "invisible flexible spacer (Figma: black rect w73 mix-blend-screen) between number and title in step text cards"
+  }
+}

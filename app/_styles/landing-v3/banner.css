@@ -1,0 +1,112 @@
+/* landing-v3/banner.css — section 5 "Building got 10x easier / Selling didn’t"
+   (Figma 4257:4953; card 4420:961). The card is a fixed 1622×721 composition;
+   the art canvas keeps its exact px geometry and scales uniformly with the card
+   (scale = card-width/1622 → exactly 1 at the 1654 artboard). Titles use cqw so
+   they track the art (1cqw = 16.22px at 1622); comments give the artboard px. */
+
+.lp-banner {
+  padding: 16px;
+}
+.lp-banner__card {
+  aspect-ratio: 1622 / 721;
+  background: var(--lp-yellow-30);
+  border-radius: var(--lp-r-2xlg); /* 48 */
+  container-type: inline-size;
+  margin-inline: auto;
+  max-width: 1622px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+.lp-banner__art {
+  inset: 0;
+  position: absolute;
+}
+.lp-banner__canvas {
+  height: 721px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  transform: scale(tan(atan2(100cqw, 1622px))); /* number = card-width / 1622 */
+  transform-origin: 0 0;
+  width: 1622px;
+}
+.lp-banner__canvas img {
+  position: absolute;
+}
+.lp-banner__union {
+  height: 721px;
+  left: 0;
+  top: 0;
+  width: 965px;
+}
+.lp-banner__bubbles {
+  height: 671px;
+  left: 0;
+  top: 0;
+  width: 958px;
+}
+.lp-banner__bubble-extra {
+  height: 32.86px;
+  left: 545px;
+  top: 155.42px;
+  width: 32.86px;
+}
+.lp-banner__drop {
+  height: 81.5px;
+  left: 959px;
+  top: 377px;
+  width: 49.07px;
+}
+
+/* Titles — marketing/title-lg via .lp-title-section (Condensed SemiBold, lh 1.2);
+   size/tracking/position rescaled to cqw so they stay glued to the art. */
+.lp-banner__title {
+  font-size: 3.5349cqw; /* 57.336px */
+  letter-spacing: -0.10605cqw; /* -1.7201px */
+  margin: 0;
+  position: absolute;
+}
+.lp-banner__title--left {
+  color: var(--lp-text-on-inverted); /* #fff7ec on the black bottle */
+  left: 14.9815cqw; /* 243px */
+  top: 17.35019cqw; /* 281.42px */
+  width: 18.8656cqw; /* 306px */
+}
+.lp-banner__title--right {
+  color: var(--lp-text); /* #2c002a on the yellow */
+  left: 66.1529cqw; /* 1073px */
+  top: 19.44636cqw; /* 315.42px */
+  width: 22.68804cqw; /* 368px */
+}
+
+/* ≤767 — recompose: titles stack as flow text (both ink on yellow for contrast),
+   art becomes a full-width strip under them. No interactive targets here. */
+@media (max-width: 767px) {
+  .lp-banner__card {
+    aspect-ratio: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .lp-banner__title {
+    font-size: var(--lp-text-3xlg); /* 33.18 */
+    letter-spacing: -0.9954px;
+    position: static;
+    width: auto;
+  }
+  .lp-banner__title--left {
+    color: var(--lp-text);
+    margin: 40px 24px 0;
+  }
+  .lp-banner__title--right {
+    margin: 8px 24px 0;
+  }
+  .lp-banner__art {
+    aspect-ratio: 1622 / 721;
+    inset: auto;
+    margin-top: 32px;
+    order: 1;
+    position: relative;
+    width: 100%;
+  }
+}
