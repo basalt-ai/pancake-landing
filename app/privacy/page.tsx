@@ -7,7 +7,7 @@ import "@/app/_styles/landing-v2.css";
 export const metadata: Metadata = {
   title: "Privacy Policy — Pancake",
   description:
-    "How Pancake (Basalt AI Inc.) collects, uses, and protects personal data across our website, web app, and Slack integration.",
+    "How Pancake (Basalt AI Inc.) collects, uses, and protects personal data across our website, web app, and integrations.",
   alternates: { canonical: "https://getpancake.ai/privacy" },
 };
 
@@ -21,7 +21,7 @@ export default function PrivacyPolicyPage() {
         <LandingNav />
         <section className="lv2s" aria-labelledby="privacy-heading">
           <article className="lv2-legal">
-            <p className="lv2-legal-updated">Last updated: August 24, 2026</p>
+            <p className="lv2-legal-updated">Last updated: August 27, 2026</p>
             <h1 id="privacy-heading">Privacy Policy</h1>
 
             <p>
@@ -33,10 +33,10 @@ export default function PrivacyPolicyPage() {
                 https://getpancake.ai
               </a>
               ), web application (
-              <a href="https://beta.getpancake.ai" target="_blank" rel="noopener noreferrer">
-                https://beta.getpancake.ai
+              <a href="https://app.getpancake.ai" target="_blank" rel="noopener noreferrer">
+                https://app.getpancake.ai
               </a>
-              ), or third-party integrations such as Slack.
+              ), or integrations such as Slack, ChatGPT, Codex, and Claude.
             </p>
 
             <h2>1. Data We Collect</h2>
@@ -60,6 +60,12 @@ export default function PrivacyPolicyPage() {
                   <li>Messages or content explicitly sent to the Pancake app</li>
                   <li>Metadata associated with Slack interactions (timestamps, event types)</li>
                 </ul>
+              </li>
+              <li>
+                <strong>Agent Connector Data (if applicable):</strong> tool requests from the
+                AI client you connect, the Pancake workspace records needed to answer them, and
+                metadata about the connection. This may include your GTM Brain, business-contact
+                lead records, signal settings, SEO plans, run history, and feedback.
               </li>
             </ul>
 
@@ -279,7 +285,35 @@ export default function PrivacyPolicyPage() {
               , including the Limited Use requirements.
             </p>
 
-            <h2>9. Contact</h2>
+            <h2>9. AI Agent and Connector Integrations</h2>
+            <p>
+              You can connect a supported AI client, such as ChatGPT, Codex, or Claude, to one
+              Pancake workspace. The client sends specific tool requests to Pancake after you
+              sign in, choose the workspace, and approve access.
+            </p>
+            <h3>Data sent to your AI client</h3>
+            <p>
+              Pancake returns only the workspace data needed for the tool you or the client
+              invokes. The client may use that data to answer your prompt. Data sent to the
+              client is then processed under that provider&apos;s own terms and privacy policy.
+              Pancake does not receive your full third-party chat transcript unless the client
+              includes part of it in a tool request.
+            </p>
+            <h3>Connection security and control</h3>
+            <p>
+              Each connection uses OAuth and is limited to the workspace you approve. Access
+              and refresh tokens are stored only as one-way hashes. You can revoke a connection
+              in Pancake under Settings → MCP → Connected clients.
+            </p>
+            <h3>Retention</h3>
+            <p>
+              Pancake keeps non-secret connection metadata while the grant remains active. Any
+              feedback or workspace change made through a connected client is retained like the
+              same change made in the Pancake web app. Pancake does not create a separate copy of
+              your third-party conversation solely because you use the connector.
+            </p>
+
+            <h2>10. Contact</h2>
             <p>For any questions or requests regarding your data, you can contact us at:</p>
             <p>
               <a href="mailto:privacy@pancake.ai">
@@ -287,7 +321,7 @@ export default function PrivacyPolicyPage() {
               </a>
             </p>
 
-            <h2>10. Changes to This Policy</h2>
+            <h2>11. Changes to This Policy</h2>
             <p>
               This policy may be updated at any time. We encourage you to review it regularly.
               Significant changes will be communicated where appropriate.
