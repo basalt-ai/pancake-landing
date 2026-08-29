@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllPosts } from "@/lib/posts";
 import "./blog.css";
-import { HomeNav } from "@/components/sections/home/HomeNav";
+import "@/app/_styles/landing-v2.css";
+import { LandingNav } from "@/components/sections/landing/LandingNav";
 import { Footer } from "@/components/shared/Footer";
 
 export const metadata: Metadata = {
@@ -23,7 +24,9 @@ export default function BlogIndex() {
 
   return (
     <main id="main-content" className="flex min-h-screen flex-col" style={{ backgroundColor: "var(--surface)", color: "var(--text)" }}>
-      <HomeNav />
+      <div className="lv2 px-5 md:px-10">
+        <LandingNav />
+      </div>
 
       <section className="mx-auto w-full max-w-3xl flex-1 px-6 py-24">
         <h1
