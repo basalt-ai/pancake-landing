@@ -1,0 +1,136 @@
+/* ── Landing v3 — Hero (node 4257:4906, 1654×758) ──────────────────────
+   Page bg #fbf6f1 shows through (no own bg). The rainbow art SVG
+   (1654×1417) is anchored at page y0 = nav top → top:-120px here; it
+   stays 1654 centered at every viewport (side-crop below 1654 is the
+   correct behavior — the page clips overflow-x). */
+
+.lp-hero {
+  height: 758px;
+  isolation: isolate;
+  position: relative;
+}
+.lp-hero-art {
+  /* The export includes an invisible page-colored arc reaching y1417 that
+     must not paint over the marquee/steps text below (CSS paints positioned
+     elements above later static siblings; Figma paints document-order).
+     All visible rainbow ink ends by y860 → clip the lower 38.04% (=y878+),
+     proportional so the scaled mobile variants stay correct. */
+  clip-path: inset(0 0 38.04% 0);
+  height: auto;
+  left: 50%;
+  max-width: none;
+  pointer-events: none;
+  position: absolute;
+  top: -120px;
+  transform: translateX(-50%);
+  width: 1654px;
+  z-index: 0;
+}
+
+/* Centered 1654 frame — text positions are exact artboard geometry.
+   translateZ(0): the headline overlaps the six animated ring layers, and
+   WebKit's heuristic overlap-promotion can drop its layer on scroll-return
+   (founder report 2026-08-28: H1 gone after scrolling down and back, only
+   the rainbow left). A stable own layer takes the heuristic out of play. */
+.lp-hero-inner {
+  inset: 0;
+  margin-inline: auto;
+  max-width: 1654px;
+  position: absolute;
+  transform: translateZ(0);
+  z-index: 1;
+}
+.lp-hero-title {
+  bottom: 104.65px;
+  color: var(--lp-text);
+  font-size: 69.014px;
+  left: calc(50% - 240px); /* column center at x 587 → left edge 259 */
+  letter-spacing: -2.0704px;
+  line-height: normal;
+  margin: 0;
+  position: absolute;
+  transform: translateX(-50%);
+  /* Figma column is 656px with exactly two lines (explicit break). Until the
+     Aeonik Condensed OTFs land, regular Aeonik is wider — keep the two lines
+     from wrapping so the bottom-anchored composition matches the artboard. */
+  white-space: nowrap;
+  width: 656px;
+}
+.lp-hero-col {
+  align-items: flex-start;
+  bottom: 120.65px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  left: calc(50% + 384px); /* column center at x 1211 */
+  position: absolute;
+  transform: translateX(-50%);
+}
+.lp-hero-lede {
+  color: var(--lp-text);
+  font-size: var(--lp-text-md);
+  line-height: 1.5;
+  width: 368px;
+}
+
+/* ≤1200: edge-anchor + scale the headline so the columns never crop */
+@media (max-width: 1200px) {
+  .lp-hero-title {
+    font-size: clamp(52px, 5.4vw, 69.014px);
+    left: 48px;
+    letter-spacing: -0.03em;
+    transform: none;
+    width: auto;
+  }
+  .lp-hero-col {
+    left: auto;
+    right: 48px;
+    transform: none;
+  }
+}
+
+/* ≤1024: recompose — single flow column under the scaled rainbow */
+@media (max-width: 1024px) {
+  .lp-hero {
+    height: auto;
+  }
+  .lp-hero-art {
+    top: -11.7vw;
+    width: 161.5vw;
+  }
+  .lp-hero-inner {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: none;
+    padding: 34vw 48px 96px;
+    position: static;
+  }
+  .lp-hero-title,
+  .lp-hero-col {
+    position: static;
+    transform: none;
+  }
+  .lp-hero-title {
+    font-size: clamp(40px, 6.4vw, 62px);
+  }
+}
+
+/* ≤767: phone — tighter gutters, bigger art crop, smaller headline */
+@media (max-width: 767px) {
+  .lp-hero-art {
+    top: -8vw;
+    width: 200vw;
+  }
+  .lp-hero-inner {
+    padding: 40vw 24px 64px;
+  }
+  .lp-hero-title {
+    font-size: clamp(32px, 9vw, 44px);
+  }
+  .lp-hero-lede {
+    max-width: 368px;
+    width: auto;
+  }
+}

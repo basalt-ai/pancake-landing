@@ -1,0 +1,71 @@
+/* landing-v3/marquee.css — Logo strip marquee (Figma 4257:4924, 1654×106).
+   Track = 6 copies of the one-period tile (1424×118 native → 1081.033 CSS px
+   at the 89.58px display height). Scrolls left by exactly one tile per loop
+   (translateX(-100%/6) of the track = one tile width at every breakpoint),
+   so the wrap point is pixel-identical — no visible seam. ~34 CSS px/s.
+   mix-blend multiply .43 sits on the TRACK, not the imgs: the animated
+   transform creates a stacking context that would isolate per-img blending
+   from the page background. Section clips its own overflow. */
+
+.lp-marquee {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  /* 8 + 89.58 + 8.42 = Figma's integer 106px section — keeps every section
+     below on the artboard grid (audit: 8px/8px left the page 0.42px short) */
+  padding: 8px 8px 8.42px;
+}
+.lp-marquee__track {
+  /* desktop tile = 1081.033px → 1081.033 / 32s ≈ 33.8 px/s */
+  animation: lp-marquee-scroll 32s linear infinite;
+  display: flex;
+  flex: none; /* never shrink to the section — %-translate must span 6 tiles */
+  mix-blend-mode: multiply;
+  opacity: 0.43;
+  pointer-events: none;
+  will-change: transform;
+}
+.lp-marquee img {
+  flex: none;
+  height: 89.58px;
+  max-width: none;
+  width: 1081.033px; /* 1424 × (89.58 / 118) — exact native aspect */
+}
+
+/* One tile per loop. 6 = TILE_COUNT in LpMarquee.tsx. */
+@keyframes lp-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-100% / 6));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-marquee__track {
+    animation: none;
+  }
+}
+
+/* Narrower: shrink the strip proportionally (width:auto keeps the PNG's
+   native aspect), still centered + edge-clipped — logos never distort.
+   Durations re-tuned so the speed stays ~34 px/s at the smaller tile. */
+@media (max-width: 1024px) {
+  .lp-marquee__track {
+    animation-duration: 22s; /* tile 772.3px / 22s ≈ 35.1 px/s */
+  }
+  .lp-marquee img {
+    height: 64px;
+    width: auto;
+  }
+}
+@media (max-width: 767px) {
+  .lp-marquee__track {
+    animation-duration: 17s; /* tile 579.3px / 17s ≈ 34.1 px/s */
+  }
+  .lp-marquee img {
+    height: 48px;
+  }
+}

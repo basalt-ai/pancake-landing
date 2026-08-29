@@ -1,0 +1,99 @@
+/* ── Landing v3 / Section 7 — CTA "Try Pancake now" (node 4389:4492) ──
+   Wrapper 1654×624: px 16 / py 96, centers the card.
+   Card "org" 1296×432 (hugs): bg #fffbf6 (--lp-card-cream), r48, px 80 / py 104,
+   overflow clip. Rainbow slivers are pre-clipped composites placed at exact
+   card coords: left 560×432 @ x0 y0; right 529×432 @ x767 y0 (anchored via
+   right:0 — identical at the 1296 desktop width, stays glued when narrower). */
+
+.lp-cta {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  padding: 96px 16px;
+}
+.lp-cta__card {
+  align-items: center;
+  background: var(--lp-card-cream);
+  border-radius: var(--lp-r-2xlg);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 1296px;
+  overflow: hidden;
+  padding: 104px 80px;
+  position: relative;
+  width: 100%;
+}
+.lp-cta__art {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+}
+.lp-cta__art--left {
+  left: 0;
+}
+.lp-cta__art--right {
+  right: 0; /* = x 767 at card width 1296 (767 + 529) */
+}
+.lp-cta__content {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  max-width: 464px;
+  position: relative; /* above the art */
+  text-align: center;
+  /* stable own layer — text overlaps animated rings; WebKit's heuristic
+     overlap-promotion drops such layers on scroll-return (hero.css note) */
+  transform: translateZ(0);
+  width: 100%;
+}
+.lp-cta__text {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+}
+.lp-cta__title {
+  margin: 0;
+  width: 100%;
+}
+.lp-cta__body {
+  font-size: var(--lp-text-md);
+  line-height: 1.5;
+}
+
+/* ── responsive ── */
+@media (max-width: 1360px) {
+  .lp-cta__card {
+    padding: 96px 64px;
+  }
+}
+@media (max-width: 1024px) {
+  .lp-cta {
+    padding: 72px 16px;
+  }
+  .lp-cta__card {
+    padding: 80px 48px;
+  }
+  .lp-cta__art {
+    height: 336px;
+    width: auto;
+  }
+}
+@media (max-width: 767px) {
+  .lp-cta {
+    padding: 56px 16px;
+  }
+  .lp-cta__card {
+    border-radius: var(--lp-r-xlg);
+    padding: 72px 24px;
+  }
+  .lp-cta__art {
+    height: 224px;
+  }
+  .lp-cta__title {
+    font-size: var(--lp-text-4xlg);
+    letter-spacing: -1.194px; /* keeps the -3% ratio of the 48px original */
+  }
+}

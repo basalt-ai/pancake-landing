@@ -1,0 +1,43 @@
+import { LpFxLink } from "@/components/sections/landing-v3/LpFxButton";
+import { LpPancakes } from "@/components/sections/landing-v3/LpPancakes";
+
+/**
+ * Landing v3 — Section 7: CTA "Try Pancake now" (Figma node 4389:4492).
+ * Cream 1296px card with two animated rainbow slivers hugging the card edges
+ * behind a centered 464px text column. Each sliver div sits exactly where the
+ * old pre-clipped composite <img> did (left 560×432 @ card x0 / right 529×432
+ * @ right:0 == x767 at the 1296 width); inside, the 1478×2622 rotated group
+ * container sits at the group's card offset: right (0, -1019), left
+ * (-918, -1019) — sliver-relative. The card's overflow clip crops the rest.
+ */
+export function LpCta() {
+  return (
+    <section className="lp-cta">
+      <div className="lp-cta__card">
+        <div aria-hidden="true" className="lp-cta__art lp-cta__art--left">
+          <div className="lp-anim-canvas lp-anim-canvas--cta-left">
+            <LpPancakes variant="ctaLeft" />
+          </div>
+        </div>
+        <div aria-hidden="true" className="lp-cta__art lp-cta__art--right">
+          <div className="lp-anim-canvas lp-anim-canvas--cta-right">
+            <LpPancakes variant="ctaRight" />
+          </div>
+        </div>
+        <div className="lp-cta__content">
+          <div className="lp-cta__text">
+            <h2 className="lp-title-card lp-cta__title">Try Pancake now</h2>
+            <p className="lp-cta__body">
+              Pancake can’t overspend.
+              <br />
+              Every lead arrives with its conversation attached.
+            </p>
+          </div>
+          <LpFxLink href="https://app.getpancake.ai" data-analytics-id="app_final">
+            Get started
+          </LpFxLink>
+        </div>
+      </div>
+    </section>
+  );
+}

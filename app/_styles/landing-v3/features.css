@@ -1,0 +1,1089 @@
+/* landing-v3/features.css — "How Pancake finds customers" (Figma 4257:4976)
+   Wrapper 1654×2937: flex col gap-32 p-16. Heading pt-128 px-128, centered
+   title. Cards 1296×621 (r48, no bg). Separators 1136w, 0.5px ink-50.
+   Mock UIs are 0.8-scale app UI: exact fractional px throughout. */
+
+.lp-feat {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 16px;
+}
+
+.lp-feat-heading {
+  padding: 128px 128px 0;
+  width: 100%;
+}
+.lp-feat-headline {
+  color: var(--lp-text);
+  text-align: center;
+  width: 100%;
+}
+/* desktop artboard alignment: our line box centers the title ink 1px right
+   and 1px high of the Figma render (flow-neutral relative nudge) */
+@media (min-width: 1341px) {
+  .lp-feat-headline {
+    left: -1px;
+    position: relative;
+    top: 0.92px;
+  }
+}
+
+.lp-feat-sep {
+  border: 0;
+  /* Chromium paints a 0.5px border as a full-ink 1px line (2x the optical
+     weight of Figma's 0.5px stroke) — emulate it with a 1px line at 55% */
+  border-top: 1px solid color-mix(in srgb, var(--lp-ink-50) 55%, transparent);
+  flex: none;
+  height: 0;
+  /* Figma separators are zero-height strokes — cancel the rendered border's
+     flow contribution so feature spacing stays 32+32 exactly */
+  margin: 0 auto -1px;
+  max-width: calc(100% - 32px);
+  width: 1136px;
+}
+
+/* ── card contract ── */
+.lp-feat-card {
+  border-radius: 48px;
+  flex: none;
+  height: 621px;
+  margin-inline: auto;
+  max-width: 100%;
+  position: relative;
+  width: 1296px;
+}
+.lp-feat-text {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-bottom: 64px;
+  position: absolute;
+  /* +1px vs the geometric center: every text column's ink rendered 1px above
+     the Figma reference rows (measured 2026-08-28) */
+  top: calc(50% + 0.92px);
+  transform: translateY(-50%);
+  width: 464px;
+}
+.lp-feat-card[data-side="left"] .lp-feat-text {
+  left: 80px;
+}
+.lp-feat-card[data-side="right"] .lp-feat-text {
+  left: 752px;
+}
+.lp-feat-h {
+  color: var(--lp-text);
+  white-space: pre-line;
+}
+.lp-feat-body {
+  font-size: var(--lp-text-md);
+  line-height: 1.5;
+}
+.lp-feat-mockzone {
+  height: 621px;
+  position: absolute;
+  top: 0.42px;
+  width: 560px;
+}
+.lp-feat-card[data-side="left"] .lp-feat-mockzone {
+  left: 656px;
+}
+.lp-feat-card[data-side="right"] .lp-feat-mockzone {
+  left: 80px;
+}
+
+/* ── feature 1 — Signals / Roles ── */
+.lp-feat-f1 {
+  height: 428px;
+  left: calc(50% + 9.4px);
+  position: absolute;
+  /* +0.9px: the whole mock (signals, roles, bubble) rendered 1px above the
+     Figma reference band rows */
+  top: calc(50% + 1.4px);
+  transform: translate(-50%, -50%);
+  width: 516.8px;
+}
+.lp-feat-f1-signals {
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6.4px;
+  left: 0;
+  padding: 6.4px;
+  position: absolute;
+  top: 0;
+  width: 326.4px;
+}
+.lp-feat-f1-sighead {
+  align-items: baseline;
+  display: flex;
+  gap: 6.4px;
+  padding: 12.8px;
+  white-space: nowrap;
+  width: 100%;
+}
+.lp-feat-f1-sigtitle {
+  color: var(--lp-ink-100);
+  font-family: var(--lp-font-cond);
+  font-size: 22.4px;
+  font-weight: 500;
+  letter-spacing: -0.224px;
+  line-height: 1.3;
+}
+.lp-feat-f1-sigcount {
+  color: var(--lp-ink-70);
+  font-size: 12.8px;
+  line-height: 1.5;
+}
+.lp-feat-f1-row {
+  align-items: center;
+  border-radius: 12.8px;
+  box-shadow: inset 0 0 0 0.4px var(--lp-ink-50);
+  display: flex;
+  flex: none;
+  gap: 12.8px;
+  height: 54.4px;
+  padding: 0 12.8px;
+  position: relative;
+  width: 100%;
+}
+.lp-feat-f1-row-tinted {
+  background: var(--lp-ink-tr-5);
+}
+.lp-feat-f1-tile {
+  align-items: center;
+  border-radius: 9.6px;
+  display: inline-flex;
+  flex: none;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
+}
+.lp-feat-f1-tile-pink {
+  background: #ffd7d9;
+}
+.lp-feat-f1-tile-amber {
+  background: rgba(220, 160, 76, 0.16);
+}
+.lp-feat-f1-tile-blue {
+  background: #e1edff;
+}
+.lp-feat-f1-tile-cream {
+  background: #ffe6c5;
+}
+.lp-feat-f1-docicon {
+  height: 19.2px;
+  width: 19.2px;
+}
+.lp-feat-f1-icon32 {
+  flex: none;
+  height: 32px;
+  width: 32px;
+}
+.lp-feat-f1-avatar {
+  height: 38.4px;
+  left: 10px;
+  position: absolute;
+  top: 7.6px;
+  width: 38.4px;
+}
+.lp-feat-f1-label {
+  color: var(--lp-ink-100);
+  flex: 1;
+  font-family: var(--lp-font-aeonik);
+  font-size: 12.8px;
+  font-weight: 500;
+  line-height: 1.5;
+  min-width: 0;
+  white-space: nowrap;
+}
+.lp-feat-f1-toggle {
+  background: var(--lp-ink-50);
+  border-radius: 9.6px;
+  flex: none;
+  height: 19.2px;
+  position: relative;
+  width: 32px;
+}
+.lp-feat-f1-toggle::after {
+  background: var(--lp-ink-0);
+  border-radius: 50%;
+  content: "";
+  height: 16px;
+  left: 1.6px;
+  position: absolute;
+  top: 1.6px;
+  width: 16px;
+}
+.lp-feat-f1-toggle.is-on {
+  background: var(--lp-green-30);
+}
+.lp-feat-f1-toggle.is-on::after {
+  left: 14.4px;
+}
+.lp-feat-f1-chev {
+  flex: none;
+  height: 12.8px;
+  /* toggle→chevron gap is 6.4 in Figma (not the row's uniform 12.8) — pulls
+     the toggles right to x255.6 rel the f1 root */
+  margin-left: -6.4px;
+  width: 12.8px;
+}
+/* row-2 mini bar-chart icon (19.2 box centered in the 32 tile) */
+.lp-feat-f1-chart {
+  display: block;
+  height: 19.2px;
+  position: relative;
+  width: 19.2px;
+}
+.lp-feat-f1-chart i {
+  border-radius: 1.2px;
+  bottom: auto;
+  display: block;
+  position: absolute;
+  width: 3.2px;
+}
+.lp-feat-f1-bar1 {
+  background: #b74a1c;
+  height: 3.84px;
+  left: 2.24px;
+  top: 12.95px;
+}
+.lp-feat-f1-bar2 {
+  background: #dca04c;
+  height: 7.04px;
+  left: 8px;
+  top: 9.75px;
+}
+.lp-feat-f1-bar3 {
+  background: var(--lp-ink-70);
+  height: 5.76px;
+  left: 13.76px;
+  top: 11.03px;
+}
+.lp-feat-f1-chart b {
+  font-size: 6.4px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
+  position: absolute;
+  transform: translateX(-50%);
+}
+.lp-feat-f1-d1 {
+  color: #dca04c;
+  left: 9.6px;
+  top: 0.79px;
+}
+.lp-feat-f1-d2 {
+  color: var(--lp-ink-70);
+  left: 15.36px;
+  top: 2.07px;
+}
+.lp-feat-f1-d3 {
+  color: #b74a1c;
+  left: 3.84px;
+  top: 3.99px;
+}
+/* Roles card */
+.lp-feat-f1-roles {
+  display: flex;
+  flex-direction: column;
+  gap: 6.4px;
+  height: 210.4px;
+  left: 333.6px;
+  overflow: clip;
+  padding: 9.6px;
+  position: absolute;
+  top: 176px;
+  width: 183.2px;
+}
+.lp-feat-f1-roleshead {
+  align-items: baseline;
+  display: flex;
+  gap: 6.4px;
+  padding: 6.4px;
+  white-space: nowrap;
+  width: 100%;
+}
+.lp-feat-f1-rolestitle {
+  color: var(--lp-ink-100);
+  font-family: var(--lp-font-aeonik);
+  font-size: 18.43px;
+  font-weight: 500;
+  letter-spacing: -0.1843px;
+  line-height: 1.3;
+}
+.lp-feat-f1-role {
+  align-items: center;
+  border-radius: 12.8px;
+  box-shadow: inset 0 0 0 0.4px var(--lp-ink-50);
+  display: flex;
+  gap: 12.8px;
+  padding: 6.4px;
+  width: 100%;
+}
+.lp-feat-f1-checkimg {
+  flex: none;
+  height: 19.2px;
+  width: 19.2px;
+}
+.lp-feat-f1-checkbox-off {
+  border: 0.8px solid var(--lp-ink-70);
+  border-radius: 4.8px;
+  flex: none;
+  height: 19.2px;
+  width: 19.2px;
+}
+/* hand-drawn annotation (spills left of the mock) — the SVG export is
+   UNROTATED (flat bubble + bottom-right tail); Figma tilts the whole group
+   -13.36°. Bubble and text share the same box and the same transform so
+   they rotate around one center and stay registered as a single sticker.
+   The text clears the tail zone (bottom 9.4px) to center in the body. */
+.lp-feat-f1-bubble {
+  height: 42.85px;
+  left: -48px;
+  position: absolute;
+  top: 45.6px;
+  transform: rotate(-13.36deg);
+  width: 75.63px;
+}
+.lp-feat-f1-bubbletext {
+  align-items: center;
+  display: flex;
+  font-size: 8.64px;
+  font-weight: 600;
+  height: 42.85px;
+  justify-content: center;
+  left: -48px;
+  line-height: 1.35;
+  padding: 0 4px 9.4px;
+  position: absolute;
+  text-align: center;
+  top: 45.6px;
+  transform: rotate(-13.36deg);
+  width: 75.63px;
+}
+
+/* popping quips — same annotation language as the clay bubble, one visible
+   at a time on a shared 21s loop (5 slots of 4.2s: 0.2s pop, 3.0s hold,
+   0.25s fade, 0.75s gap). Negative delays stagger the slots. Absolute
+   inside the fixed-size f1 root: zero layout impact. Transform-origin sits
+   on the tail so each quip pops from the row it points at. */
+.lp-feat-f1-quip {
+  align-items: center;
+  animation: lp-feat-f1-quip 21s linear infinite;
+  background: url("/lp/lp-f1-annotation.svg") 50% 50% / 100% 100% no-repeat;
+  display: flex;
+  font-size: 8.64px;
+  font-weight: 600;
+  height: 42.85px;
+  justify-content: center;
+  line-height: 1.35;
+  opacity: 0;
+  padding: 0 4px 9.4px;
+  position: absolute;
+  text-align: center;
+  transform: rotate(var(--quip-tilt, -11deg)) scale(0.9);
+  transform-origin: 62% 88%;
+  width: 75.63px;
+}
+.lp-feat-f1-quip[data-quip="1"] {
+  --quip-tilt: -11deg;
+  animation-delay: -20.7s;
+  left: -55px;
+  top: 106px;
+}
+.lp-feat-f1-quip[data-quip="2"] {
+  --quip-tilt: -14deg;
+  animation-delay: -16.5s;
+  left: -46px;
+  top: 167px;
+}
+.lp-feat-f1-quip[data-quip="3"] {
+  --quip-tilt: -9deg;
+  animation-delay: -12.3s;
+  left: -54px;
+  top: 228px;
+}
+.lp-feat-f1-quip[data-quip="4"] {
+  --quip-tilt: -12.5deg;
+  animation-delay: -8.1s;
+  left: -50px;
+  top: 289px;
+}
+.lp-feat-f1-quip[data-quip="5"] {
+  --quip-tilt: -10deg;
+  animation-delay: -3.9s;
+  left: -57px;
+  top: 349px;
+}
+@keyframes lp-feat-f1-quip {
+  0% {
+    animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+    opacity: 0;
+    transform: rotate(var(--quip-tilt)) scale(0.9);
+  }
+  /* 0.95% = 0.2s pop-in */
+  0.95% {
+    opacity: 1;
+    transform: rotate(var(--quip-tilt)) scale(1);
+  }
+  /* hold until 15.24% = 3.2s */
+  15.24% {
+    animation-timing-function: ease-in;
+    opacity: 1;
+    transform: rotate(var(--quip-tilt)) scale(1);
+  }
+  /* fade out by 16.43% = 3.45s, then stay hidden for the other slots */
+  16.43%,
+  100% {
+    opacity: 0;
+    transform: rotate(var(--quip-tilt)) scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-feat-f1-quip {
+    display: none;
+  }
+}
+
+/* ── feature 2 — campaign / follow-up ── */
+.lp-feat-f2 {
+  height: 429.6px;
+  left: calc(50% - 0.2px);
+  position: absolute;
+  top: calc(50% + 4.5px);
+  transform: translate(-50%, -50%);
+  width: 438.4px;
+}
+.lp-feat-f2-carda {
+  border-radius: 19.2px;
+  display: flex;
+  flex-direction: column;
+  gap: 19.2px;
+  left: 0;
+  overflow: clip;
+  padding: 19.2px;
+  position: absolute;
+  right: 0;
+  /* Figma top edge (rel root) = -0.6px; top-pinned so font-metric drift grows
+     downward instead of shifting the whole card (self-corrects with the
+     condensed OTFs) */
+  top: -0.6px;
+}
+.lp-feat-f2-eyebrow {
+  color: var(--lp-ink-70);
+  font-size: 10.667px;
+  font-weight: 500;
+  letter-spacing: 1.0667px;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+/* line box renders 0.64px taller than Figma's — post row must start at y54.2
+   (.lp prefix outranks the `.lp p { margin: 0 }` reset) */
+.lp .lp-feat-f2-eyebrow {
+  margin-bottom: -0.64px;
+}
+.lp-feat-f2-post {
+  align-items: center;
+  background: var(--lp-ink-tr-5);
+  border-radius: 19.2px;
+  box-shadow: inset 0 0 0 0.4px var(--lp-ink-50);
+  display: flex;
+  gap: 12.8px;
+  padding: 12.8px;
+  width: 100%;
+}
+.lp-feat-f2-avatarbox {
+  display: block;
+  flex: none;
+  height: 38.4px;
+  position: relative;
+  width: 38.4px;
+}
+.lp-feat-f2-avatar {
+  border-radius: 19.2px;
+  height: 38.4px;
+  width: 38.4px;
+}
+.lp-feat-f2-badge {
+  height: 16.146px;
+  left: 26.4px;
+  position: absolute;
+  top: 26px;
+  width: 16.146px;
+}
+.lp-feat-f2-postcol {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.lp-feat-f2-name {
+  color: var(--lp-ink-70);
+  font-size: 10.667px;
+  line-height: 1.6;
+}
+/* with -ago's trim: keeps the post row at Figma's 88.6px so the chips row
+   lands at y162 rel the f2 root */
+.lp .lp-feat-f2-name {
+  margin-bottom: -0.13px;
+}
+.lp-feat-f2-quote {
+  color: var(--lp-ink-100);
+  font-family: var(--lp-font-cond);
+  font-size: 22.4px;
+  font-weight: 500;
+  letter-spacing: -0.224px;
+  line-height: 1.3;
+  /* flow-neutral: quote ink rendered 1px above the reference rows */
+  position: relative;
+  top: 0.9px;
+  white-space: nowrap;
+}
+.lp-feat-f2-ago {
+  color: var(--lp-ink-70);
+  font-size: 10.667px;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+.lp .lp-feat-f2-ago {
+  margin-top: -0.12px;
+}
+.lp-feat-f2-chips {
+  display: flex;
+  gap: 6.4px;
+}
+.lp-feat-f2-chip {
+  align-items: center;
+  border-radius: 6.4px;
+  box-shadow: inset 0 0 0 0.4px var(--lp-ink-50);
+  color: var(--lp-ink-100);
+  display: inline-flex;
+  flex: none;
+  font-size: 10.667px;
+  font-weight: 500;
+  gap: 3.2px;
+  line-height: 1.6;
+  padding: 3.2px 6.4px 3.2px 3.2px;
+  white-space: nowrap;
+}
+.lp-feat-f2-chip-green {
+  background: var(--lp-green-10);
+}
+.lp-feat-f2-chip-pending {
+  background: #f5e5d6;
+}
+.lp-feat-f2-chipicon {
+  height: 16px;
+  width: 16px;
+}
+.lp-feat-f2-cardb {
+  border-radius: 21.449px;
+  /* Figma hairline is 0.447px — as inset shadow so the content box keeps its
+     Figma metrics (a border would round to 1px and eat inner space) */
+  box-shadow: inset 0 0 0 0.447px var(--lp-subtle-stroke);
+  display: flex;
+  flex-direction: column;
+  gap: 21.449px;
+  /* UNROTATED geometry (the rotated bounds are x-23.4 w498): box w489.9 at
+     left -19.33 per the dump, +1px right to match the reference render's
+     card-edge pixels; center pinned at Figma's y310.25 rel root with the
+     measured DOM height (245px). */
+  left: -18.33px;
+  overflow: clip;
+  padding: 21.449px;
+  position: absolute;
+  top: 187.61px;
+  transform: rotate(-1.98deg);
+  width: 489.9px;
+}
+.lp-feat-f2-labels {
+  color: var(--lp-ink-70);
+  display: flex;
+  font-size: 11.916px;
+  font-weight: 500;
+  gap: 7.15px;
+  letter-spacing: 1.1916px;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+.lp-feat-f2-ready {
+  color: var(--lp-green-30);
+}
+.lp-feat-f2-msg {
+  color: var(--lp-ink-100);
+  font-family: var(--lp-font-cond);
+  font-size: 25.024px;
+  font-weight: 500;
+  letter-spacing: -0.2502px;
+  line-height: 1.3;
+}
+.lp-feat-f2-btns {
+  display: flex;
+  gap: 7.15px;
+}
+.lp-feat-f2-approve {
+  align-items: center;
+  background: var(--lp-ink-100);
+  border-radius: 10.725px;
+  color: var(--lp-ink-20);
+  display: inline-flex;
+  font-size: 14.3px;
+  font-weight: 600;
+  gap: 7.15px;
+  line-height: 1.5;
+  padding: 10.725px 17.874px 10.725px 10.725px;
+  white-space: nowrap;
+}
+.lp-feat-f2-checklg {
+  height: 21.449px;
+  width: 21.449px;
+}
+.lp-feat-f2-revise {
+  align-items: center;
+  background: #f5e5d6;
+  border-radius: 10.725px;
+  color: var(--lp-ink-100);
+  display: inline-flex;
+  font-size: 14.3px;
+  font-weight: 500;
+  line-height: 1.5;
+  padding: 10.725px 17.874px;
+  white-space: nowrap;
+}
+
+/* ── feature 3 — query → article ── */
+.lp-feat-f3 {
+  align-items: center;
+  background: var(--lp-card-cream);
+  border-radius: 19.2px; /* Figma dump: cream tile r19.2 (0.8-scale) */
+  display: flex;
+  flex-direction: column;
+  /* +1px vs the 0.2 offset: the reference render draws the whole f3 tile
+     1px further right */
+  left: calc(50% + 1.2px);
+  padding: 19.2px;
+  position: absolute;
+  /* Figma: mock top 131.3px in the 621 zone (h 358, hug) — top-pinned */
+  top: 131.3px;
+  transform: translateX(-50%);
+  width: 438.4px;
+}
+.lp-feat-f3-query {
+  display: flex;
+  flex-direction: column;
+  gap: 12.8px;
+  padding: 19.2px;
+  width: 100%;
+}
+.lp-feat-f3-qhead {
+  align-items: center;
+  display: flex;
+  gap: 6.4px;
+}
+.lp-feat-f3-eyebrow {
+  color: var(--lp-ink-70);
+  font-size: 10.67px;
+  font-weight: 500;
+  letter-spacing: 1.067px;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+.lp-feat-f3-q {
+  color: var(--lp-ink-100);
+  font-family: var(--lp-font-cond);
+  font-size: 19.2px;
+  font-weight: 500;
+  letter-spacing: -0.192px;
+  line-height: 1.3;
+}
+.lp-feat-f3-chips {
+  display: flex;
+  gap: 6.4px;
+}
+.lp-feat-f3-chip-muted {
+  background: var(--lp-ink-tr-10);
+  color: var(--lp-ink-80);
+}
+.lp-feat-f3-chip-gap {
+  background: var(--lp-red-10);
+  color: var(--lp-ink-100);
+}
+.lp-feat-f3-arrow {
+  height: 25.6px;
+  width: 19.2px;
+}
+.lp-feat-f3-holder {
+  height: 160.8px;
+  position: relative;
+  width: 100%;
+}
+.lp-feat-f3-article {
+  border-radius: 23.35px; /* the exported 29.184 was 1.25x-scaled */
+  /* 0.49px Figma hairline as inset shadow (border would round to 1px and
+     shift the content box) */
+  box-shadow: inset 0 0 0 0.49px var(--lp-subtle-stroke);
+  display: flex;
+  flex-direction: column;
+  gap: 15.565px;
+  /* UNROTATED box (rotated bounds x-26.7 w491.8 rel tile): center pinned at
+     Figma's 219.2/277.8 rel tile */
+  left: -43.2px;
+  padding: 23.347px;
+  position: absolute;
+  top: 1.6px;
+  transform: rotate(-1.63deg);
+  width: 486.4px;
+}
+.lp-feat-f3-labels {
+  color: var(--lp-ink-70);
+  display: flex;
+  font-size: 12.97px;
+  font-weight: 500;
+  gap: 7.782px;
+  letter-spacing: 1.297px;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+.lp-feat-f3-atitle {
+  color: var(--lp-ink-100);
+  font-family: var(--lp-font-cond);
+  font-size: 31.13px;
+  font-weight: 500;
+  letter-spacing: -0.3113px;
+  line-height: 1.3;
+}
+/* the 40.5px line box runs ~7px past Figma's text height — the Figma render
+   keeps the natural line-box TOP (title ink at band y376 rel card) and only
+   the bottom is short, so trim the bottom edge alone: a full cap-trim
+   (text-box: trim-both) lifted title/body/chips 10-12px above the reference.
+   Lands the unrotated article height at ≈196.3px. */
+.lp .lp-feat-f3-atitle {
+  margin-bottom: -6.9px;
+}
+.lp-feat-f3-abody {
+  color: var(--lp-ink-80);
+  font-size: 12.97px;
+  line-height: 1.6;
+}
+.lp-feat-f3-achips {
+  display: flex;
+  gap: 7.782px;
+}
+.lp-feat-f3-achip {
+  align-items: center;
+  background: var(--lp-green-10);
+  border-radius: 7.78px; /* the exported 9.728 was 1.25x-scaled */
+  color: var(--lp-ink-100);
+  display: inline-flex;
+  font-size: 12.97px;
+  font-weight: 500;
+  gap: 3.891px;
+  line-height: 1.6;
+  padding: 3.891px 7.782px 3.891px 3.891px;
+  white-space: nowrap;
+}
+.lp-feat-f3-check {
+  height: 19.456px;
+  width: 19.456px;
+}
+
+/* ── feature 4 — campaign performance ── */
+.lp-feat-f4 {
+  background: var(--lp-card-cream);
+  border-radius: 19.2px; /* Figma dump: cream tile r19.2 (0.8-scale) */
+  display: flex;
+  flex-direction: column;
+  gap: 19.2px;
+  left: calc(50% - 0.2px);
+  overflow: clip;
+  padding: 19.2px;
+  position: absolute;
+  /* Figma: mock top 57.7px in the 621 zone (h 506.6, hug) — top-pinned */
+  top: 57.7px;
+  transform: translateX(-50%);
+  width: 438.4px;
+}
+.lp-feat-f4-head {
+  display: flex;
+  flex-direction: column;
+  gap: 3.2px;
+}
+.lp-feat-f4-eyebrow {
+  color: var(--lp-ink-70);
+  font-size: 10.67px;
+  font-weight: 500;
+  letter-spacing: 1.067px;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+.lp-feat-f4-htitle {
+  color: var(--lp-ink-100);
+  font-family: var(--lp-font-cond);
+  font-size: 22.4px;
+  font-weight: 500;
+  letter-spacing: -0.224px;
+  line-height: 1.3;
+}
+/* header renders 49.4px vs Figma's 48.2 — trim so the graph sits at y86.6,
+   what-worked at y323.4, brain at y421.8 rel the tile */
+.lp .lp-feat-f4-htitle {
+  margin-bottom: -1.2px;
+}
+.lp-feat-f4-graph {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 9.6px;
+  height: 217.6px;
+  justify-content: flex-end;
+  padding: 19.2px 19.2px 9.6px;
+  position: relative;
+  width: 100%;
+}
+.lp-feat-f4-bars {
+  align-items: flex-end;
+  display: flex;
+  justify-content: space-between;
+  /* Figma renders the bars 7px closer to the week labels than the 9.6 gap +
+     1.6lh label box implies (measured on the artboard render). Split -4/-3
+     with -weeks below: bar bottoms keep their exact position while the week
+     labels drop 3px to the reference ink rows. */
+  margin-bottom: -4px;
+  width: 100%;
+}
+.lp-feat-f4-bar {
+  border-radius: 3.2px;
+  flex: none;
+  width: 12.8px;
+}
+.lp-feat-f4-bar:nth-child(-n + 3) {
+  background: var(--lp-yellow-30);
+}
+.lp-feat-f4-bar:nth-child(n + 4):nth-child(-n + 6) {
+  background: var(--lp-pink-30);
+}
+.lp-feat-f4-bar:nth-child(n + 7):nth-child(-n + 9) {
+  background: var(--lp-purple-30);
+}
+.lp-feat-f4-bar:nth-child(n + 10) {
+  background: var(--lp-blue-40);
+}
+.lp-feat-f4-bar:nth-child(1) { height: 32px; }
+.lp-feat-f4-bar:nth-child(2) { height: 38.4px; }
+.lp-feat-f4-bar:nth-child(3) { height: 32px; }
+.lp-feat-f4-bar:nth-child(4) { height: 37.6px; }
+.lp-feat-f4-bar:nth-child(5) { height: 54.4px; }
+.lp-feat-f4-bar:nth-child(6) { height: 60.8px; }
+.lp-feat-f4-bar:nth-child(7) { height: 68px; }
+.lp-feat-f4-bar:nth-child(8) { height: 55.2px; }
+.lp-feat-f4-bar:nth-child(9) { height: 80.8px; }
+.lp-feat-f4-bar:nth-child(10) { height: 60.8px; }
+.lp-feat-f4-bar:nth-child(11) { height: 94.4px; }
+.lp-feat-f4-bar:nth-child(12) { height: 116px; }
+.lp-feat-f4-weeks {
+  display: flex;
+  margin-bottom: -3px;
+  width: 100%;
+}
+.lp-feat-f4-weeks span {
+  color: var(--lp-ink-70);
+  flex: 1;
+  font-size: 8.89px;
+  line-height: 1.6;
+  text-align: center;
+}
+.lp-feat-f4-stat {
+  align-items: flex-start;
+  display: flex;
+  gap: 6.4px;
+  left: 18.8px;
+  position: absolute;
+  top: 20.2px; /* Figma: cap-trimmed text at top 22.8 — offset compensates line-box ascent */
+}
+.lp-feat-f4-pct {
+  color: var(--lp-green-30);
+  font-family: var(--lp-font-cond);
+  font-size: 36.86px;
+  font-weight: 500;
+  letter-spacing: -0.3686px;
+  line-height: 1;
+}
+.lp-feat-f4-arrowup {
+  height: 15.011px;
+  margin-top: 2px; /* arrow ink sat ~4px above the digits' cap line */
+  width: 15.011px;
+}
+.lp-feat-f4-vslabel {
+  color: var(--lp-ink-70);
+  font-size: 10.67px;
+  font-weight: 500;
+  left: 19.2px;
+  letter-spacing: 1.067px;
+  line-height: 1.6;
+  position: absolute;
+  text-transform: uppercase;
+  top: 59.2px;
+}
+.lp-feat-f4-worked {
+  display: flex;
+  flex-direction: column;
+  /* 6.4 in Figma, but its title box is 0.36 taller than ours — widen the gap
+     so the chips land at y42.6 rel the card and brain sits at y421.8 rel tile */
+  gap: 6.76px;
+  /* lands the card at y323.8 and brain at exactly y421.8 rel the tile */
+  margin-top: 0.46px;
+  padding: 12.8px;
+  width: 100%;
+}
+.lp-feat-f4-cardtitle {
+  color: var(--lp-ink-100);
+  font-family: var(--lp-font-aeonik);
+  font-size: 15.36px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.lp-feat-f4-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6.4px;
+}
+.lp-feat-f4-chip {
+  background: var(--lp-ink-tr-5);
+  color: var(--lp-ink-100);
+}
+.lp-feat-f4-brain {
+  align-items: flex-start;
+  border-radius: 19.2px;
+  display: flex;
+  gap: 12.8px;
+  height: 65.6px;
+  padding: 12.8px;
+  width: 100%;
+}
+.lp-feat-f4-circle {
+  align-items: center;
+  background: var(--lp-green-20);
+  border-radius: 50%;
+  display: inline-flex;
+  flex: none;
+  height: 38.4px;
+  justify-content: center;
+  width: 38.4px;
+}
+.lp-feat-f4-brainicon {
+  height: 32px;
+  transform: translateY(-0.8px);
+  width: 32px;
+}
+.lp-feat-f4-braincol {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.lp-feat-f4-brainsub {
+  color: var(--lp-ink-100);
+  font-size: 10.67px;
+  line-height: 1.6;
+}
+
+/* ── responsive ──
+   ≤1360: trim heading side paddings. ≤1340 (1296 card + wrapper padding no
+   longer fits): recompose to a static two-column row; mocks keep intrinsic
+   geometry, scaled whole (zoom) at smaller widths — never cropped.
+   ≤767: stack single-column. */
+@media (max-width: 1360px) {
+  .lp-feat-heading {
+    padding: 96px 64px 0;
+  }
+}
+@media (max-width: 1340px) {
+  .lp-feat-card {
+    align-items: center;
+    display: flex;
+    gap: 32px;
+    height: auto;
+    justify-content: center;
+    padding: 32px 24px;
+    width: 100%;
+  }
+  .lp-feat-card[data-side="right"] {
+    flex-direction: row-reverse;
+  }
+  .lp-feat-card[data-side="left"] .lp-feat-text,
+  .lp-feat-card[data-side="right"] .lp-feat-text {
+    flex: 1 1 380px;
+    left: auto;
+    max-width: 464px;
+    padding-bottom: 0;
+    position: static;
+    top: auto;
+    transform: none;
+    width: auto;
+  }
+  .lp-feat-card[data-side="left"] .lp-feat-mockzone,
+  .lp-feat-card[data-side="right"] .lp-feat-mockzone {
+    align-items: center;
+    display: flex;
+    flex: none;
+    height: auto;
+    justify-content: center;
+    left: auto;
+    position: static;
+    top: auto;
+    width: auto;
+  }
+  .lp-feat-f1,
+  .lp-feat-f2,
+  .lp-feat-f3,
+  .lp-feat-f4 {
+    left: auto;
+    position: relative;
+    top: auto;
+    transform: none;
+  }
+}
+@media (max-width: 1180px) {
+  .lp-feat-mockzone {
+    zoom: 0.85;
+  }
+}
+@media (max-width: 1024px) {
+  .lp-feat-heading {
+    padding: 64px 32px 0;
+  }
+  .lp-feat-mockzone {
+    zoom: 0.75;
+  }
+}
+@media (max-width: 767px) {
+  .lp-feat {
+    gap: 24px;
+  }
+  .lp-feat-heading {
+    padding: 48px 16px 0;
+  }
+  .lp-feat-headline {
+    font-size: var(--lp-text-4xlg);
+    letter-spacing: -1.194px;
+  }
+  .lp-feat-card,
+  .lp-feat-card[data-side="right"] {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 24px;
+    padding: 16px 8px;
+  }
+  .lp-feat-h {
+    font-size: var(--lp-text-4xlg);
+    letter-spacing: -1.194px;
+  }
+  .lp-feat-card[data-side="left"] .lp-feat-mockzone,
+  .lp-feat-card[data-side="right"] .lp-feat-mockzone {
+    align-self: center;
+    max-width: 100%;
+  }
+  .lp-feat-mockzone {
+    zoom: 0.6;
+  }
+}

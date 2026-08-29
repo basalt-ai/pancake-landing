@@ -1,0 +1,180 @@
+/* ── Steps — "Pancake Sells it" (Figma 4257:4926, 1654×1773) ──────────────
+   Wrapper p-16 → org: flex col, gap 66, py-128 px-392, overflow clip; rows
+   (656 text + 16 + 464 media = 1136) center in the viewport. Checkerboard via
+   row-reverse on even rows. The flexible spacer inside the text card pushes
+   title+body to the bottom of the 426px card, exactly as in Figma. */
+
+.lp-steps {
+  padding: 16px;
+}
+.lp-steps__org {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 66px;
+  overflow: clip;
+  padding: 128px 392px;
+}
+
+/* heading block */
+.lp-steps__head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 100%;
+  text-align: center;
+  width: 752px;
+}
+.lp-steps__kicker {
+  color: var(--lp-ink-100);
+  font-family: var(--lp-font-cond);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 32px;
+}
+.lp-steps__title {
+  color: var(--lp-text);
+  /* Figma rounds the 57.336*1.2 text box to an integral 69px — keeps the
+     section at exactly 1773px (audit) */
+  line-height: 69px;
+  margin: 0;
+}
+
+/* step rows */
+.lp-steps__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.lp-steps__row {
+  display: flex;
+  gap: 16px;
+}
+.lp-steps__row:nth-child(even) {
+  flex-direction: row-reverse;
+}
+.lp-steps__text {
+  background: var(--lp-card-cream);
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 48px;
+  width: 656px;
+}
+.lp-steps__num {
+  font-size: var(--lp-text-6xlg);
+  line-height: 1.2;
+}
+.lp-steps__row:nth-child(1) .lp-steps__num {
+  color: var(--lp-purple-40);
+}
+.lp-steps__row:nth-child(2) .lp-steps__num {
+  color: var(--lp-pink-40);
+}
+.lp-steps__row:nth-child(3) .lp-steps__num {
+  color: var(--lp-yellow-40);
+}
+.lp-steps__spacer {
+  flex: 1 1 0;
+  min-height: 1px;
+}
+.lp-steps__step-title {
+  color: var(--lp-text);
+  font-size: var(--lp-text-4xlg);
+  letter-spacing: -1.1945px;
+  line-height: 1.2;
+  margin: 0;
+  white-space: pre-line;
+}
+.lp-steps__body {
+  color: var(--lp-text);
+  font-size: var(--lp-text-md);
+  line-height: 1.2;
+  white-space: pre-line;
+}
+.lp-steps__media {
+  background: var(--lp-card-cream);
+  border-radius: 30px;
+  flex: none;
+  height: 426px;
+  overflow: hidden;
+  position: relative;
+  width: 464px;
+}
+/* Studio loop fills the card. Absolute so it can never change the card box
+   (no layout shift, desktop or the aspect-ratio responsive card); cover +
+   center crops the 1080×1080 cream canvas to 464×426 seamlessly. inherit'd
+   radius doubles the overflow clip for Safari video corners. */
+.lp-loop-video {
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  object-position: center;
+  position: absolute;
+  width: 100%;
+}
+
+/* ── responsive ── */
+@media (max-width: 1360px) {
+  .lp-steps__org {
+    padding: 128px 32px;
+  }
+  .lp-steps__list {
+    max-width: 1136px;
+    width: 100%;
+  }
+  .lp-steps__row {
+    width: 100%;
+  }
+  .lp-steps__text {
+    flex: 656 1 0px;
+    min-width: 0;
+    width: auto;
+  }
+  .lp-steps__media {
+    aspect-ratio: 464 / 426;
+    flex: 464 1 0px;
+    height: auto;
+    width: auto;
+  }
+}
+@media (max-width: 1024px) {
+  .lp-steps__org {
+    gap: 56px;
+    padding: 96px 24px;
+  }
+  .lp-steps__text {
+    padding: 40px;
+  }
+}
+@media (max-width: 767px) {
+  .lp-steps__org {
+    gap: 40px;
+    padding: 64px 16px;
+  }
+  .lp-steps__kicker {
+    font-size: 20px;
+    line-height: 28px;
+  }
+  .lp-steps__title {
+    font-size: var(--lp-text-4xlg);
+    letter-spacing: -1.1945px;
+  }
+  .lp-steps__row,
+  .lp-steps__row:nth-child(even) {
+    flex-direction: column;
+  }
+  .lp-steps__text {
+    padding: 32px;
+  }
+  .lp-steps__num {
+    font-size: var(--lp-text-5xlg);
+  }
+  .lp-steps__step-title {
+    font-size: var(--lp-text-2xlg);
+    letter-spacing: -0.8294px;
+  }
+}

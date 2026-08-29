@@ -63,6 +63,25 @@ const aeonikFono = localFont({
   display: "swap",
 });
 
+// Display face of the landing-v3 Figma design (CoType trial, downloaded
+// 2026-08-28 at Tristan's direction). Upright cuts only — the artboard never
+// italicizes the condensed face. Consumed via --lp-font-cond in
+// app/_styles/landing-v3/foundation.css.
+const aeonikCondensed = localFont({
+  src: [
+    { path: "./fonts/aeonik-condensed/AeonikCondensedProTRIAL-Air.otf", weight: "100", style: "normal" },
+    { path: "./fonts/aeonik-condensed/AeonikCondensedProTRIAL-Thin.otf", weight: "200", style: "normal" },
+    { path: "./fonts/aeonik-condensed/AeonikCondensedProTRIAL-Light.otf", weight: "300", style: "normal" },
+    { path: "./fonts/aeonik-condensed/AeonikCondensedProTRIAL-Regular.otf", weight: "400", style: "normal" },
+    { path: "./fonts/aeonik-condensed/AeonikCondensedProTRIAL-Medium.otf", weight: "500", style: "normal" },
+    { path: "./fonts/aeonik-condensed/AeonikCondensedProTRIAL-SemiBold.otf", weight: "600", style: "normal" },
+    { path: "./fonts/aeonik-condensed/AeonikCondensedProTRIAL-Bold.otf", weight: "700", style: "normal" },
+    { path: "./fonts/aeonik-condensed/AeonikCondensedProTRIAL-Black.otf", weight: "900", style: "normal" },
+  ],
+  variable: "--font-aeonik-condensed",
+  display: "swap",
+});
+
 // Canonical host is the apex domain: https://getpancake.ai serves 200 directly,
 // and the www host 308-redirects to it (verified via curl -sI).
 // Every absolute URL below (canonical, og:url, JSON-LD) uses the apex host.
@@ -154,7 +173,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${aeonik.variable} ${aeonikFono.variable} ${lato.variable}`}>
+    <html
+      lang="en"
+      className={`${aeonik.variable} ${aeonikFono.variable} ${aeonikCondensed.variable} ${lato.variable}`}
+    >
       <head>
         <meta
           name="facebook-domain-verification"

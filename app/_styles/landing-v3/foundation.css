@@ -1,0 +1,333 @@
+/* ── Landing v3 foundation ─────────────────────────────────────────────
+   Tokens extracted 1:1 from the Figma variables (collections: core tokens,
+   colors, typography, radii, spacing) + page-specific values observed on the
+   artboard. Values that differ from app/_styles/tokens.css are page-scoped
+   here on purpose (AGENTS.md: Figma is the only source of truth). */
+
+.lp {
+  /* core tokens / brand-colors */
+  --lp-pink-10: #ffd9da;
+  --lp-pink-20: #ffbbc7;
+  --lp-pink-30: #ff7aa0;
+  --lp-pink-40: #e33a6a;
+  --lp-purple-10: #efddf1;
+  --lp-purple-20: #dec3f5;
+  --lp-purple-30: #ba8bff;
+  --lp-purple-40: #8d43fd;
+  --lp-yellow-10: #ffe9d1;
+  --lp-yellow-20: #ffdbb5;
+  --lp-yellow-30: #ffbd7a;
+  --lp-yellow-40: #f38f43;
+  --lp-blue-10: #d9e9ff;
+  --lp-blue-20: #b0cbff;
+  --lp-blue-30: #6a8fff;
+  --lp-blue-40: #4660e7;
+  --lp-green-10: #ceead5;
+  --lp-green-20: #68cea7;
+  --lp-green-30: #037d48;
+  --lp-green-40: #00532f;
+  --lp-orange-10: #ffddbe;
+  --lp-orange-20: #ffa45f;
+  --lp-orange-30: #d43900;
+  --lp-orange-40: #b20000;
+  --lp-red-10: #ffd1c9;
+  --lp-red-20: #ff8080;
+  --lp-red-30: #e5002e;
+  --lp-red-40: #ad001a;
+  --lp-ink-0: #ffffff;
+  --lp-ink-10: #fffbf6;
+  --lp-ink-20: #fff7ec;
+  --lp-ink-30: #f7ede5;
+  --lp-ink-40: #efe4dc;
+  --lp-ink-50: #ddcfcd;
+  --lp-ink-60: #bba8ae;
+  --lp-ink-70: #9a818f;
+  --lp-ink-80: #85687c;
+  --lp-ink-90: #6c4b65;
+  --lp-ink-100: #2c002a;
+  --lp-ink-tr-80: rgba(44, 0, 42, 0.8);
+  --lp-ink-tr-70: rgba(44, 0, 42, 0.7);
+  --lp-ink-tr-60: rgba(44, 0, 42, 0.6);
+  --lp-ink-tr-50: rgba(44, 0, 42, 0.5);
+  --lp-ink-tr-40: rgba(44, 0, 42, 0.4);
+  --lp-ink-tr-20: rgba(44, 0, 42, 0.2);
+  --lp-ink-tr-10: rgba(44, 0, 42, 0.1);
+  --lp-ink-tr-5: rgba(44, 0, 42, 0.05);
+
+  /* semantic (collection "colors") */
+  --lp-text: var(--lp-ink-100);
+  --lp-subtle-text: var(--lp-ink-80);
+  --lp-muted-text: var(--lp-ink-70);
+  --lp-disabled-text: var(--lp-ink-60);
+  --lp-interactive-text: var(--lp-purple-40);
+  --lp-positive-text: var(--lp-green-30);
+  --lp-stroke: var(--lp-ink-50);
+  --lp-subtle-stroke: var(--lp-ink-40);
+  --lp-surface: var(--lp-ink-0);
+  --lp-surface-2: var(--lp-ink-10);
+  --lp-surface-3: var(--lp-ink-20);
+  --lp-inverted-surface: var(--lp-ink-100);
+  --lp-text-on-inverted: var(--lp-ink-20);
+
+  /* page-specific values seen on the artboard (not in the ramps) */
+  --lp-page-bg: #fbf6f1;
+  --lp-card-cream: #fffbf6; /* = ink-10; step cards, CTA card, feature-3/4 tiles */
+
+  /* type scale (collection "text-size") */
+  --lp-text-6xlg: 57.336px;
+  --lp-text-5xlg: 47.784px;
+  --lp-text-4xlg: 39.816px;
+  --lp-text-3xlg: 33.18px;
+  --lp-text-2xlg: 27.648px;
+  --lp-text-xlg: 23.04px;
+  --lp-text-lg: 19.2px;
+  --lp-text-md: 16px;
+  --lp-text-sm: 13.333px;
+  --lp-text-xsm: 11.108px;
+
+  /* radii (collection "radii": 4/8/12/16/24/32/48) + component radii on the artboard */
+  --lp-r-2xsm: 4px;
+  --lp-r-xsm: 8px;
+  --lp-r-sm: 12px;
+  --lp-r-m: 16px;
+  --lp-r-lg: 24px;
+  --lp-r-xlg: 32px;
+  --lp-r-2xlg: 48px;
+
+  /* fonts. Display face = Aeonik Condensed Pro TRIAL (CoType trial,
+     downloaded 2026-08-28 at Tristan's direction — license to settle before
+     production), loaded in app/layout.tsx as --font-aeonik-condensed. */
+  --lp-font-fono: var(--font-aeonik-fono), ui-monospace, "SF Mono", monospace;
+  --lp-font-aeonik: var(--font-aeonik), system-ui, -apple-system, sans-serif;
+  --lp-font-cond: var(--font-aeonik-condensed), var(--font-aeonik), system-ui, -apple-system, sans-serif;
+}
+
+/* ── base ── */
+.lp {
+  background: var(--lp-page-bg);
+  color: var(--lp-text);
+  font-family: var(--lp-font-fono);
+  font-size: var(--lp-text-md);
+  line-height: 1.5;
+  overflow-x: hidden; /* legacy-engine fallback (Safari ≤15) for the clip below */
+  overflow-x: clip; /* full-bleed art (rainbows, testimonial rows) exceeds the viewport */
+  position: relative;
+}
+.lp img {
+  display: block;
+}
+.lp p {
+  margin: 0;
+}
+.lp a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ── shared recipes ── */
+
+/* Dark pill button — three exact sizes on the artboard:
+   nav (13.333/9×15/r9), hero+cta (16/12×20/r12), pricing (24/18×30/r18). */
+.lp-btn {
+  align-items: center;
+  background: var(--lp-inverted-surface);
+  border: 0;
+  border-radius: 12px;
+  color: var(--lp-text-on-inverted);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--lp-font-fono);
+  font-size: 16px;
+  font-weight: 600;
+  isolation: isolate; /* stacking context for the circle-fill FX */
+  justify-content: center;
+  line-height: 1.5;
+  overflow: hidden;
+  padding: 12px 20px;
+  position: relative;
+  white-space: nowrap;
+}
+/* Anchor buttons: outrank `.lp a { color: inherit }` (0,1,1) — without this
+   the label inherits section plum and disappears on the plum pill. */
+.lp a.lp-btn,
+.lp .lp-btn {
+  color: var(--lp-text-on-inverted);
+}
+.lp-btn[data-size="sm"] {
+  border-radius: 9px;
+  font-size: 13.333px;
+  padding: 9px 15px;
+}
+.lp-btn[data-size="lg"] {
+  border-radius: 18px;
+  font-size: 24px;
+  padding: 18px 30px;
+}
+.lp-btn:focus-visible {
+  outline: 2px solid var(--lp-purple-30);
+  outline-offset: -4px;
+}
+
+/* ── Figma-exact button corners ──
+   The artboard buttons are squircles (cornerSmoothing 0.75). CSS
+   `corner-shape` is Chromium-only and a generic superellipse, so on desktop
+   the buttons are clipped with the exact Figma smoothing paths instead —
+   identical in every engine. Paths generated by scripts/squircle-path.mjs
+   (regenerate if a size changes); all "Get started" pills have fixed Figma
+   sizes: sm 110×38 r9 · md 136×48 r12 · lg 203×72 r18.
+   Scoped ≥768px — the ≤767 recompose changes button metrics (audit: no
+   overrides exist between 768 and 1024, so tablets get the exact corners). */
+@media (min-width: 768px) {
+  @supports (clip-path: path("M 0 0 Z")) {
+    .lp-btn {
+      border-radius: 0;
+      clip-path: path("M 115 0 c 8.427 0 12.64 0 15.667 2.022 a 12 12 0 0 1 3.311 3.311 c 2.022 3.027 2.022 7.24 2.022 15.667 L 136 27 c 0 8.427 0 12.64 -2.022 15.667 a 12 12 0 0 1 -3.311 3.311 c -3.027 2.022 -7.24 2.022 -15.667 2.022 L 21 48 c -8.427 0 -12.64 0 -15.667 -2.022 a 12 12 0 0 1 -3.311 -3.311 c -2.022 -3.027 -2.022 -7.24 -2.022 -15.667 L 0 21 c 0 -8.427 0 -12.64 2.022 -15.667 a 12 12 0 0 1 3.311 -3.311 c 3.027 -2.022 7.24 -2.022 15.667 -2.022 Z");
+      height: 48px;
+      width: 136px;
+    }
+    .lp-btn[data-size="sm"] {
+      border-radius: 0;
+      clip-path: path("M 94.25 0 c 6.32 0 9.48 0 11.75 1.517 a 9 9 0 0 1 2.483 2.483 c 1.517 2.27 1.517 5.43 1.517 11.75 L 110 22.25 c 0 6.32 0 9.48 -1.517 11.75 a 9 9 0 0 1 -2.483 2.483 c -2.27 1.517 -5.43 1.517 -11.75 1.517 L 15.75 38 c -6.32 0 -9.48 0 -11.75 -1.517 a 9 9 0 0 1 -2.483 -2.483 c -1.517 -2.27 -1.517 -5.43 -1.517 -11.75 L 0 15.75 c 0 -6.32 0 -9.48 1.517 -11.75 a 9 9 0 0 1 2.483 -2.483 c 2.27 -1.517 5.43 -1.517 11.75 -1.517 Z");
+      height: 38px;
+      width: 110px;
+    }
+    .lp-btn[data-size="lg"] {
+      border-radius: 0;
+      clip-path: path("M 171.5 0 c 12.64 0 18.96 0 23.5 3.034 a 18 18 0 0 1 4.966 4.966 c 3.034 4.54 3.034 10.86 3.034 23.5 L 203 40.5 c 0 12.64 0 18.96 -3.034 23.5 a 18 18 0 0 1 -4.966 4.966 c -4.54 3.034 -10.86 3.034 -23.5 3.034 L 31.5 72 c -12.64 0 -18.96 0 -23.5 -3.034 a 18 18 0 0 1 -4.966 -4.966 c -3.034 -4.54 -3.034 -10.86 -3.034 -23.5 L 0 31.5 c 0 -12.64 0 -18.96 3.034 -23.5 a 18 18 0 0 1 4.966 -4.966 c 4.54 -3.034 10.86 -3.034 23.5 -3.034 Z");
+      height: 72px;
+      width: 203px;
+    }
+  }
+}
+/* No hover darken — the pill's feedback is the circle-fill + label FX below
+   (same doctrine as landing-v2; touch gets the OS press feedback). */
+
+/* ── pill FX — straight port of landing-v2's .lv2-btn-fx / .lv2-btn-label
+   (components/sections/landing-v3/LpFxButton.tsx drives the circle) ── */
+.lp-btn-fx {
+  border-radius: inherit;
+  corner-shape: inherit;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+}
+.lp-btn-fx .c {
+  border-radius: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform;
+}
+.lp-btn-label {
+  display: inline-block;
+  margin: -0.16em 0;
+  overflow: hidden;
+  padding: 0.16em 0;
+  position: relative;
+  vertical-align: top;
+  z-index: 1;
+}
+.lp-btn-label .l1,
+.lp-btn-label .l2 {
+  display: block;
+  transition: translate 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.lp-btn-label .l2 {
+  /* the arriving label only ever sits on the pastel flood — plum for contrast
+     (v2's pills were light with dark text; v3's are dark with cream text) */
+  color: var(--lp-text);
+  inset: 0.16em 0;
+  position: absolute;
+  translate: 0 165%;
+  user-select: none;
+  -webkit-user-select: none;
+}
+/* Label swap keyed to the JS-driven .is-fx class (same source of truth as the
+   flood circle) — :hover alone can fire without the flood (stationary-cursor
+   load, pre-hydration, reduced-motion) and would show plum-on-plum. */
+.lp-btn.is-fx .lp-btn-label .l1 {
+  translate: 0 -165%;
+}
+.lp-btn.is-fx .lp-btn-label .l2 {
+  translate: 0 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-btn-fx {
+    display: none;
+  }
+  .lp-btn-label .l1,
+  .lp-btn-label .l2 {
+    transition: none;
+  }
+  /* no flood → never swap to the plum label */
+  .lp-btn.is-fx .lp-btn-label .l1 {
+    translate: 0;
+  }
+  .lp-btn.is-fx .lp-btn-label .l2 {
+    translate: 0 165%;
+  }
+}
+
+/* Display type (Aeonik Condensed Pro in Figma — see --lp-font-cond note) */
+.lp-display {
+  font-family: var(--lp-font-cond);
+  font-weight: 600;
+}
+.lp-title-section {
+  /* marketing/title-lg: 57.336 / 1.2 / -1.7201px, Condensed SemiBold */
+  font-family: var(--lp-font-cond);
+  font-size: var(--lp-text-6xlg);
+  font-weight: 600;
+  letter-spacing: -1.7201px;
+  line-height: 1.2;
+}
+.lp-title-card {
+  /* feature/CTA card titles: 48 / 1 / -1.44px, Condensed SemiBold */
+  font-family: var(--lp-font-cond);
+  font-size: 48px;
+  font-weight: 600;
+  letter-spacing: -1.44px;
+  line-height: 1;
+}
+
+/* Small mock-UI chip (features): Fono Medium 10.67, r6.4 (0.8-scale), 0.4px hairline */
+.lp-chip {
+  align-items: center;
+  border-radius: 6.4px;
+  box-shadow: inset 0 0 0 0.4px var(--lp-ink-50);
+  display: inline-flex;
+  font-size: 10.67px;
+  font-weight: 500;
+  line-height: 1.6;
+  padding: 3.2px 6.4px;
+  white-space: nowrap;
+}
+
+/* Mock-UI white card (features): white, hairline stroke, r24 */
+.lp-mockcard {
+  background: var(--lp-surface);
+  /* 0.4px hairline as an inset shadow: a border would round up to 1px and eat
+     0.6px of Figma's content box (audit 2026-08-28) */
+  border: 0;
+  border-radius: 19.2px; /* Figma dump: mock cards are 0.8-scale → r19.2, not 24 */
+  box-shadow: inset 0 0 0 0.4px var(--lp-subtle-stroke);
+}
+
+/* ── corner language (audit-corrected 2026-08-28) ──
+   Figma's own renderer draws cornerSmoothing ≤0.6 within ~1.5px of a PLAIN
+   circular radius — measured on the artboard exports. CSS corner-shape:
+   squircle (a generic superellipse) over-smooths visibly AND is Chromium-only,
+   so cards deliberately use plain border-radius: it matches the Figma render
+   in every engine. The only true squircles are the CTA pills (smoothing .75),
+   which carry Figma-exact clip-path geometry above. */
+
+/* Desktop artboard is 1654w; content grids: 1296 (cards), 1136 (steps/separators).
+   Sections center fixed-width content; page clips bleed. Breakpoints:
+   ≤1360 scale paddings, ≤1024 recompose, ≤767 stack. */
+.lp-content {
+  margin-inline: auto;
+  max-width: 1296px;
+  width: 100%;
+}
