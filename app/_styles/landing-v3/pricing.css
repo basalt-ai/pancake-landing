@@ -26,6 +26,9 @@
   height: 100%;
   margin-inline: auto;
   position: relative;
+  /* stable own layer — text overlaps animated rings; WebKit's heuristic
+     overlap-promotion drops such layers on scroll-return (hero.css note) */
+  transform: translateZ(0);
   width: min(1654px, 100%);
   z-index: 1;
 }

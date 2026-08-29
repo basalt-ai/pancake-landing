@@ -6,6 +6,7 @@
 
 .lp-hero {
   height: 758px;
+  isolation: isolate;
   position: relative;
 }
 .lp-hero-art {
@@ -26,12 +27,17 @@
   z-index: 0;
 }
 
-/* Centered 1654 frame — text positions are exact artboard geometry */
+/* Centered 1654 frame — text positions are exact artboard geometry.
+   translateZ(0): the headline overlaps the six animated ring layers, and
+   WebKit's heuristic overlap-promotion can drop its layer on scroll-return
+   (founder report 2026-08-28: H1 gone after scrolling down and back, only
+   the rainbow left). A stable own layer takes the heuristic out of play. */
 .lp-hero-inner {
   inset: 0;
   margin-inline: auto;
   max-width: 1654px;
   position: absolute;
+  transform: translateZ(0);
   z-index: 1;
 }
 .lp-hero-title {

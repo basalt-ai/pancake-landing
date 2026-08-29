@@ -148,6 +148,15 @@
 .lp-anim-spin--ccw {
   animation: lp-anim-spin-ccw 20s linear infinite;
 }
+/* Founder tweak (2026-08-28): the CTA card's two rainbows are exact mirror
+   copies, so mid-animation every frame was a perfect reflection ("le côté
+   parfaitement symétrique … c'est assez bizarre"). A phase offset on the left
+   group keeps the designed motion but desynchronizes the sides so they never
+   mirror-match. Reduced motion still shows the artboard pose. */
+.lp-anim-box--cta-left .lp-anim-spin--cw,
+.lp-anim-box--cta-left .lp-anim-spin--ccw {
+  animation-delay: -7.3s;
+}
 .lp-anim-fill {
   display: block;
   height: 100%;
@@ -171,10 +180,14 @@
 }
 
 /* ── banner bubbles ── */
-/* 44 circles in card coordinates (1622×721), each spinning about its own
-   center — +360°/20s like everything else (perfect circles, so the spin is
-   visually near-static: faithful to the Figma prototype). The four
-   phase-offset tracks keep their offsets via negative animation-delay. */
+/* 44 near-circles in card coordinates (1622×721), each spinning about its
+   own center — +360°/20s like everything else. Verified against Figma's own
+   prototype render (export_video of 4257:4893, measured frame by frame):
+   every bubble stays put over the whole loop — the spin is in place, only
+   the rim wobbles (the shapes are ~1% off circular). The four tracks with
+   absolute-angle offsets (4420:986/991/996/1111) END at each node's static
+   rotation, so relative to the baked pose all 44 run the same +360° from a
+   0° offset: no animation-delay anywhere. */
 .lp-anim-bubbles {
   inset: 0;
   pointer-events: none;

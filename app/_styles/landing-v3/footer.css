@@ -5,10 +5,14 @@
    nudges all three left in lockstep when the viewport can't fit x1395 + 24px
    (kicks in only below ~1184px; 0px at the 1654 reference). */
 
+/* Founder tweak (2026-08-28): content pulled 48px up toward the pricing
+   rings ("rapproche le footer des cercles"), height reduced in step so the
+   space under the links is unchanged. Figma had 515h / brand 104.43 / cols
+   124.75. */
 .lp-foot {
   background: #000;
   color: #fff;
-  height: 515px;
+  height: 467px;
   position: relative;
 }
 .lp-foot-frame {
@@ -22,7 +26,7 @@
   height: 270.755px;
   left: max(32px, calc(50% - 568px));
   position: absolute;
-  top: 104.43px;
+  top: 56.43px;
   width: 241.047px;
 }
 .lp-foot-logo {
@@ -49,7 +53,7 @@
 .lp-foot-col {
   position: absolute;
   text-align: right;
-  top: 124.75px;
+  top: 76.75px;
   width: 176px;
 }
 .lp-foot-col[data-col="product"] {

@@ -114,6 +114,13 @@ function Feature1() {
           </div>
           <img src="/lp/lp-f1-annotation.svg" alt="" width={76} height={43} className="lp-feat-f1-bubble" />
           <p className="lp-feat-f1-bubbletext">clay alternatives</p>
+          {/* popping quips — one visible at a time, each anchored to a
+              different signal row; pure CSS loop, hidden on reduced motion */}
+          <p className="lp-feat-f1-quip" data-quip="1">poaching season</p>
+          <p className="lp-feat-f1-quip" data-quip="2">in the replies</p>
+          <p className="lp-feat-f1-quip" data-quip="3">budget just landed</p>
+          <p className="lp-feat-f1-quip" data-quip="4">someone said your name</p>
+          <p className="lp-feat-f1-quip" data-quip="5">their stack snitches</p>
         </div>
       </div>
     </article>

@@ -1,8 +1,10 @@
-/* ── Testimonials "Take it from them" (node 4257:5006, 1654×1157) ──
-   Section: flex col, gap 32, items center, p 16. Rows of 4×559 cards + 3×16
-   gaps = 2284 wide → wider than the viewport; centered as flex items so both
-   sides overflow equally (rows 1 and 2 align identically per the reference),
-   clipped by .lp { overflow-x: clip }. */
+/* ── Testimonials "Take it from them" (node 4257:5006, marquee rework) ──
+   Section: flex col, gap 32, items center, p 16. Two counter-scrolling strips
+   of 4×559 cards + 16 gaps — row 1 left, row 2 right (same speed). Each track
+   is [set][set] (duplicate aria-hidden) and slides exactly one set width:
+   4×559 + 4×16 = 2300px per 80s loop (≈28.75px/s, linear) → seamless wrap.
+   Strips cancel the section's inline padding so cards clip at the viewport
+   edge; a 2-copy track (4584px) keeps the viewport full up to 2284px wide. */
 
 .lp-tst {
   align-items: center;
@@ -14,7 +16,7 @@
 
 /* heading block (4257:5007): w 1296, pt 128, px 128 on itself */
 .lp-tst-head {
-  /* Figma-exact 196.8px (128 + 68.8 title) — pinned so the rows below sit at
+  /* Figma-exact 196.8px (128 + 68.8 title) — pinned so the strips below sit at
      the artboard's exact offsets instead of accumulating fractional drift */
   height: 196.8px;
   max-width: 100%;
@@ -27,20 +29,48 @@
   width: 100%;
 }
 
-/* full-bleed row container → centers the overflowing row */
+/* full-bleed marquee strip — the -16px margins cancel the section padding so
+   the strip spans and clips at the viewport edge (no blank side gutters, same
+   edge-to-edge look the page-level clip gave the static rows) */
 .lp-tst-strip {
   display: flex;
-  /* Figma-exact row band: 32 + 368.1 card + 32 — keeps row 2 on the artboard
-     grid (cards self-stretch inside) */
-  height: 432.1px;
-  justify-content: center;
-  width: 100%;
+  justify-content: flex-start;
+  margin-inline: -16px;
+  overflow-x: clip;
+  width: calc(100% + 32px);
 }
+
+/* animated track: two 4-card sets with a uniform 16px gap */
+.lp-tst-track {
+  animation: lp-tst-marquee 80s linear infinite;
+  display: flex;
+  gap: 16px;
+  /* 32px outer seams (vs head above / section end below) preserved; 8px inner
+     edges halve the inter-row gap: was 32+32+32 = 96px, now 8+32+8 = 48px */
+  padding-block: 32px 8px;
+  width: max-content;
+  will-change: transform;
+}
+.lp-tst-strip[data-row="2"] .lp-tst-track {
+  /* same keyframes played backwards → scrolls right at the identical speed */
+  animation-direction: reverse;
+  padding-block: 8px 32px;
+}
+@keyframes lp-tst-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* one set width incl. its trailing gap — card 1 of copy 2 lands exactly
+       where card 1 of copy 1 started */
+    transform: translateX(-2300px);
+  }
+}
+
 .lp-tst-row {
   display: flex;
   flex: none;
   gap: 16px;
-  padding-block: 32px;
   width: max-content;
 }
 
@@ -122,16 +152,33 @@
     padding: 96px 32px 0;
     width: 100%;
   }
-  /* recompose: rows become swipeable strips (start-aligned so all cards are reachable) */
+  /* the marquees replace the old swipeable strips: every card passes through
+     the narrower viewport on its own (reduced-motion swipe fallback below) */
+}
+
+/* ── no motion: static single sets, centered like the Figma artboard ── */
+@media (prefers-reduced-motion: reduce) {
+  .lp-tst-track {
+    animation: none;
+  }
+  .lp-tst-row[aria-hidden] {
+    display: none;
+  }
   .lp-tst-strip {
-    height: auto;
+    justify-content: center;
+  }
+}
+/* no motion on tablet: restore the swipeable strip so all cards stay reachable */
+@media (prefers-reduced-motion: reduce) and (min-width: 768px) and (max-width: 1024px) {
+  .lp-tst-strip {
     justify-content: flex-start;
     overflow-x: auto;
   }
-  .lp-tst-row {
+  .lp-tst-track {
     padding-inline: 16px;
   }
 }
+
 @media (max-width: 767px) {
   .lp-tst {
     gap: 16px;
@@ -143,16 +190,26 @@
     font-size: var(--lp-text-4xlg);
     letter-spacing: -1.1946px;
   }
-  /* stack single-column; drop the duplicate second row */
+  /* recompose: stack row 1 single-column; drop row 2 + marquee duplicates */
   .lp-tst-strip {
+    margin-inline: 0;
     overflow: visible;
+    width: 100%;
   }
   .lp-tst-strip[data-row="2"] {
     display: none;
   }
-  .lp-tst-row {
+  .lp-tst-track {
+    animation: none;
     flex-direction: column;
     padding: 16px 0;
+    width: 100%;
+  }
+  .lp-tst-row[aria-hidden] {
+    display: none;
+  }
+  .lp-tst-row {
+    flex-direction: column;
     width: 100%;
   }
   .lp-tst-card {

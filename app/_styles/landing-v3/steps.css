@@ -98,7 +98,23 @@
   border-radius: 30px;
   flex: none;
   height: 426px;
+  overflow: hidden;
+  position: relative;
   width: 464px;
+}
+/* Studio loop fills the card. Absolute so it can never change the card box
+   (no layout shift, desktop or the aspect-ratio responsive card); cover +
+   center crops the 1080×1080 cream canvas to 464×426 seamlessly. inherit'd
+   radius doubles the overflow clip for Safari video corners. */
+.lp-loop-video {
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  object-position: center;
+  position: absolute;
+  width: 100%;
 }
 
 /* ── responsive ── */

@@ -43,6 +43,9 @@
   max-width: 464px;
   position: relative; /* above the art */
   text-align: center;
+  /* stable own layer — text overlaps animated rings; WebKit's heuristic
+     overlap-promotion drops such layers on scroll-return (hero.css note) */
+  transform: translateZ(0);
   width: 100%;
 }
 .lp-cta__text {

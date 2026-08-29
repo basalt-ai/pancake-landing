@@ -334,13 +334,17 @@
   height: 19.2px;
   width: 19.2px;
 }
-/* hand-drawn annotation (spills left of the mock) — the SVG is exported
-   pre-rotated: place it at natural size, unrotated (only the TEXT rotates) */
+/* hand-drawn annotation (spills left of the mock) — the SVG export is
+   UNROTATED (flat bubble + bottom-right tail); Figma tilts the whole group
+   -13.36°. Bubble and text share the same box and the same transform so
+   they rotate around one center and stay registered as a single sticker.
+   The text clears the tail zone (bottom 9.4px) to center in the body. */
 .lp-feat-f1-bubble {
   height: 42.85px;
-  left: -50px;
+  left: -48px;
   position: absolute;
-  top: 39.6px;
+  top: 45.6px;
+  transform: rotate(-13.36deg);
   width: 75.63px;
 }
 .lp-feat-f1-bubbletext {
@@ -348,15 +352,99 @@
   display: flex;
   font-size: 8.64px;
   font-weight: 600;
-  height: 39.98px;
+  height: 42.85px;
   justify-content: center;
-  left: -44.96px;
-  line-height: 1.4;
+  left: -48px;
+  line-height: 1.35;
+  padding: 0 4px 9.4px;
   position: absolute;
   text-align: center;
-  top: 42.07px;
+  top: 45.6px;
   transform: rotate(-13.36deg);
-  width: 67.7px;
+  width: 75.63px;
+}
+
+/* popping quips — same annotation language as the clay bubble, one visible
+   at a time on a shared 21s loop (5 slots of 4.2s: 0.2s pop, 3.0s hold,
+   0.25s fade, 0.75s gap). Negative delays stagger the slots. Absolute
+   inside the fixed-size f1 root: zero layout impact. Transform-origin sits
+   on the tail so each quip pops from the row it points at. */
+.lp-feat-f1-quip {
+  align-items: center;
+  animation: lp-feat-f1-quip 21s linear infinite;
+  background: url("/lp/lp-f1-annotation.svg") 50% 50% / 100% 100% no-repeat;
+  display: flex;
+  font-size: 8.64px;
+  font-weight: 600;
+  height: 42.85px;
+  justify-content: center;
+  line-height: 1.35;
+  opacity: 0;
+  padding: 0 4px 9.4px;
+  position: absolute;
+  text-align: center;
+  transform: rotate(var(--quip-tilt, -11deg)) scale(0.9);
+  transform-origin: 62% 88%;
+  width: 75.63px;
+}
+.lp-feat-f1-quip[data-quip="1"] {
+  --quip-tilt: -11deg;
+  animation-delay: -20.7s;
+  left: -55px;
+  top: 106px;
+}
+.lp-feat-f1-quip[data-quip="2"] {
+  --quip-tilt: -14deg;
+  animation-delay: -16.5s;
+  left: -46px;
+  top: 167px;
+}
+.lp-feat-f1-quip[data-quip="3"] {
+  --quip-tilt: -9deg;
+  animation-delay: -12.3s;
+  left: -54px;
+  top: 228px;
+}
+.lp-feat-f1-quip[data-quip="4"] {
+  --quip-tilt: -12.5deg;
+  animation-delay: -8.1s;
+  left: -50px;
+  top: 289px;
+}
+.lp-feat-f1-quip[data-quip="5"] {
+  --quip-tilt: -10deg;
+  animation-delay: -3.9s;
+  left: -57px;
+  top: 349px;
+}
+@keyframes lp-feat-f1-quip {
+  0% {
+    animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+    opacity: 0;
+    transform: rotate(var(--quip-tilt)) scale(0.9);
+  }
+  /* 0.95% = 0.2s pop-in */
+  0.95% {
+    opacity: 1;
+    transform: rotate(var(--quip-tilt)) scale(1);
+  }
+  /* hold until 15.24% = 3.2s */
+  15.24% {
+    animation-timing-function: ease-in;
+    opacity: 1;
+    transform: rotate(var(--quip-tilt)) scale(1);
+  }
+  /* fade out by 16.43% = 3.45s, then stay hidden for the other slots */
+  16.43%,
+  100% {
+    opacity: 0;
+    transform: rotate(var(--quip-tilt)) scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-feat-f1-quip {
+    display: none;
+  }
 }
 
 /* ── feature 2 — campaign / follow-up ── */

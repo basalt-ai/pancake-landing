@@ -53,13 +53,51 @@ the static artboard (enforced by a pixel-parity gate).
   first 500 ms of each loop (`lp-anim-pop`, cubic-bezier(0,0,.58,1)) — that is
   Figma's own keyframe, so raw t=0 differs from the settled artboard by exactly
   that annulus.
-- Banner bubbles (`LpBubbles.tsx`): 44 circles in card coords spinning about
-  their own centers (near-invisible for true circles — faithful to the
-  prototype; the one irregular blob visibly wobbles), 4 with phase offsets via
-  negative animation-delay.
+- Banner bubbles (`LpBubbles.tsx`): 44 near-circles in card coords spinning
+  about their own centers — VERIFIED against Figma's own prototype render
+  (`export_video` of 4257:4893, measured frame-by-frame): the bubbles do NOT
+  orbit/pour, they shimmer in place. The four tracks with absolute-angle
+  offsets end at each node's static rotation, so all 44 run +360° from a 0°
+  offset — no animation-delay anywhere (earlier delays were a mis-encoding,
+  removed 2026-08-28). The drop and bottle do not animate at all.
+- Cream-ring pop plays ONCE (`20s linear 1 forwards`) — Figma exports it as
+  infinite but replaying it broke the loop wrap (founder report).
+- CTA desync (founder, 2026-08-28): the left CTA group runs at
+  `animation-delay: -7.3s` so the two mirrored rainbows never render as a
+  perfect reflection mid-animation.
 - All keyframes in `app/_styles/landing-v3/anim.css`; `prefers-reduced-motion`
-  disables everything (static = artboard). Timing audited via
-  `document.getAnimations()`: 68 animations, all 20000 ms/linear/Infinity.
+  disables everything (static = artboard). Current census at 1654:
+  66 spins (22 arcs + 44 bubbles) 20 s linear ∞ · 2 one-shot pops · 1 logo
+  marquee (32 s) · 2 tweet marquees (80 s, opposite directions) · 5 signal
+  quips (21 s shared loop).
+- WebKit guard: the hero/CTA/pricing text containers carry
+  `transform: translateZ(0)` (+ `isolation: isolate` on the hero) — Safari's
+  heuristic overlap-promotion dropped the H1's layer on scroll-return over
+  the big animated ring layers.
 - Perf note: transform-only compositor animations; the software-GL headless QA
   harness caps at ~35 fps (its compositor, not main-thread — static page reads
   63 fps there). Verify scroll feel on the Vercel preview with a real GPU.
+
+## Founder overrides of the artboard (2026-08-28)
+
+These intentionally diverge from the static Figma export — don't "fix" them
+back during a fidelity pass:
+
+- Casing: no capitals on common nouns mid-sentence ("Pancake sells it",
+  "While you run your business,", "GTM brain"). Note: the studio mp4s still
+  contain "your Brain" — needs a studio re-render to change.
+- Steps media cards host the pancake-studio loop trio (`LpLoopVideo.tsx`,
+  `/public/how/*.mp4`, cover-fit, IO-paused offscreen).
+- Logo strip scrolls (seamless 1424px-period tile
+  `lp-logo-strip-tile.png`, ~34 px/s leftward, blend moved to the track).
+- Testimonials: two counter-scrolling marquees (~28.75 px/s), 48px between
+  rows (Figma had 96), 8 distinct fictional authors/tweets; phones keep the
+  old single stacked column (row 2 hidden there).
+- Signals card: fixed "clay alternatives" sticker (bubble+text share one
+  rotated box) + 5 popping quips (`.lp-feat-f1-quip`, one at a time, hidden
+  under reduced motion).
+- Footer content sits 48px closer to the pricing rings (height 467, brand
+  top 56.43, cols top 76.75; Figma: 515/104.43/124.75).
+- /careers runs on this design system (`app/careers/page.tsx` +
+  `app/_styles/landing-v3/careers.css`, imported by the page only — not in
+  the landing-v3.css manifest).
