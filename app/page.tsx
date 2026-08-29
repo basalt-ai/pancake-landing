@@ -6,6 +6,7 @@ import { LpFeatures } from "@/components/sections/landing-v3/LpFeatures";
 import { LpFooter } from "@/components/sections/landing-v3/LpFooter";
 import { LpHero } from "@/components/sections/landing-v3/LpHero";
 import { LpMarquee } from "@/components/sections/landing-v3/LpMarquee";
+import { LpModals } from "@/components/sections/landing-v3/LpModals";
 import { LpNav } from "@/components/sections/landing-v3/LpNav";
 import { LpPricing } from "@/components/sections/landing-v3/LpPricing";
 import { LpSteps } from "@/components/sections/landing-v3/LpSteps";
@@ -86,6 +87,7 @@ export default function Home() {
       <LpTestimonials />
       <LpPricing />
       <LpFooter />
+      <LpModals />
     </main>
   );
 }

@@ -62,6 +62,14 @@
   font-size: var(--lp-text-md);
   line-height: 1.5;
 }
+/* Book a call (outline) + Get started, side by side — v2's final-CTA pairing */
+.lp-cta__btns {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
 
 /* ── responsive ── */
 @media (max-width: 1360px) {
