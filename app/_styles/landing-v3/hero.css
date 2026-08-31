@@ -16,6 +16,18 @@
   height: clamp(640px, calc(var(--lp-svh, 100svh) - 120px), 758px);
   isolation: isolate;
   position: relative;
+  /* Post-settle glide (founder: "je veux du fluide 100%, comme le snake") —
+     the frozen measure keeps drags reflow-free, and when it lands the new
+     height EASES in instead of snapping. Same curve on the ladder's scale
+     and art-lift below. */
+  transition: height 450ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-hero,
+  .lp-hero-inner,
+  .lp-hero-art {
+    transition: none;
+  }
 }
 .lp-hero-art {
   /* The export includes an invisible page-colored arc reaching y1417 that
@@ -31,14 +43,25 @@
   position: absolute;
   top: -120px;
   transform: translateX(-50%);
-  /* Wide monitors: prototype-literal (founder pick, 2026-08-31) — the
-     artboard renders at exactly 100%, centered; screens wider than 1654
-     show cream margins, same as the Figma prototype's min-zoom view.
-     (Zooming read as "descend trop bas"; extending the rings naturally
-     exposed their crescent tips — both rejected. A wider artboard from
-     the designer is the only true fix.) */
-  width: 1654px;
+  transition: top 450ms cubic-bezier(0.22, 1, 0.36, 1);
+  width: max(1654px, 100vw);
   z-index: 0;
+}
+/* Wide monitors (founder, final direction 2026-08-31: "prolonge l'arc",
+   no margins): the scene stretches HORIZONTALLY ONLY past 1654 —
+   band heights stay exactly the artboard's (uniform zoom read as
+   "descend trop bas") and no crescent tips appear (natural ring
+   continuation exposed them). scaleX is a pure compositor transform, so
+   resizing in this range never reflows — fluid by construction. The px
+   clip pins the ink cutoff at the artboard's absolute y878 regardless of
+   the wider box's height. At exactly 1654 both rules are identity. */
+@media (min-width: 1655px) {
+  .lp-hero-art {
+    clip-path: inset(0 0 calc(100% - 878.13px) 0);
+  }
+  .lp-hero-art .lp-anim-canvas--hero {
+    transform: scaleX(tan(atan2(100cqw, 1654px)));
+  }
 }
 
 /* Centered 1654 frame — text positions are exact artboard geometry.
@@ -52,6 +75,7 @@
   max-width: 1654px;
   position: absolute;
   transform: translateZ(0);
+  transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
   z-index: 1;
 }
 .lp-hero-title {
