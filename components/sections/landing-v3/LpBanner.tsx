@@ -64,12 +64,17 @@ export function LpBanner() {
               height={721}
               className="lp-banner__union"
             />
+            {/* Collar: the designer's banner revision ("Section versions"
+                org 4389:11973, founder-flagged 2026-08-31) replaces the old
+                collar baked in the union (excised from the svg) with a slim
+                33×94 r7 rect at (930, 305). */}
+            <div className="lp-banner__collar" aria-hidden="true" />
             <LpBubbles />
             <img
               src="/lp/lp-banner-drop.svg"
               alt=""
-              width={49.07}
-              height={81.5}
+              width={40.2}
+              height={88.21}
               className="lp-banner__drop"
             />
             </div>

@@ -64,10 +64,23 @@
   width: 32.86px;
 }
 .lp-banner__drop {
-  height: 81.5px;
+  /* revised drop (Vector 290, org 4389:11973): hangs from the collar
+     bottom instead of its right side */
+  height: 88.21px;
   left: 959px;
-  top: 377px;
-  width: 49.07px;
+  top: 387.79px;
+  width: 40.2px;
+}
+.lp-banner__collar {
+  background: #000;
+  border-radius: 7px;
+  height: 94px;
+  /* rendered bounds in the revised card are 926–962: 4px wider left than
+     the node box, overlapping the neck so the junction is sealed */
+  left: 926px;
+  position: absolute;
+  top: 305px;
+  width: 37px;
 }
 
 /* Titles — marketing/title-lg via .lp-title-section (Condensed SemiBold, lh 1.2);
@@ -166,7 +179,8 @@
   }
   /* .lp prefix: must outrank foundation's `.lp img { display: block }` */
   .lp .lp-banner__union,
-  .lp .lp-banner__drop {
+  .lp .lp-banner__drop,
+  .lp .lp-banner__collar {
     display: none; /* mobile art is the recolored bottle/dome above */
   }
   /* Bubble canvas: rotate 90° cw, uniform scale 0.625·(cardW/370), then
