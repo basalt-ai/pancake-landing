@@ -23,12 +23,13 @@
   position: absolute;
   top: -120px;
   transform: translateX(-50%);
-  /* ≥1654 viewports: scale the whole composition with the screen so the
-     arc bleeds edge-to-edge (founder 2026-08-31: cream margins flanked the
-     rainbow on wide monitors — the artboard is 1654-fixed; at exactly 1654
-     this resolves to the artboard geometry, so the pixel gate is
-     untouched). */
-  width: max(1654px, 100vw);
+  /* Wide monitors: prototype-literal (founder pick, 2026-08-31) — the
+     artboard renders at exactly 100%, centered; screens wider than 1654
+     show cream margins, same as the Figma prototype's min-zoom view.
+     (Zooming read as "descend trop bas"; extending the rings naturally
+     exposed their crescent tips — both rejected. A wider artboard from
+     the designer is the only true fix.) */
+  width: 1654px;
   z-index: 0;
 }
 
