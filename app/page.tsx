@@ -5,7 +5,6 @@ import { LpCta } from "@/components/sections/landing-v3/LpCta";
 import { LpFeatures } from "@/components/sections/landing-v3/LpFeatures";
 import { LpFooter } from "@/components/sections/landing-v3/LpFooter";
 import { LpHero } from "@/components/sections/landing-v3/LpHero";
-import { LpMarquee } from "@/components/sections/landing-v3/LpMarquee";
 import { LpModals } from "@/components/sections/landing-v3/LpModals";
 import { LpNav } from "@/components/sections/landing-v3/LpNav";
 import { LpPricing } from "@/components/sections/landing-v3/LpPricing";
@@ -83,10 +82,9 @@ export default function Home() {
       />
       <LpNav />
       <LpHero />
-      {/* Logo strip: V1 partner wordmarks as interim content, founder
-          2026-08-31 ("reprends les logos de la V1 en attendant qu'on mette
-          les nouveaux") — swap LOGOS in LpMarquee when the new set lands. */}
-      <LpMarquee />
+      {/* Logo strip stays unmounted: the V1 set reads as powered-by, not
+          customers (founder 2026-08-31). LpMarquee + marquee.css + the V1
+          wordmark wiring stay for the day real customer logos land. */}
       <LpSteps />
       <LpBanner />
       <LpFeatures />

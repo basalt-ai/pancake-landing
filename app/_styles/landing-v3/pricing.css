@@ -8,7 +8,11 @@
 
 .lp-price {
   background: #000;
-  height: 890px;
+  /* 53.81vw = 890/1654: past the artboard width the section grows with the
+     art (width: max(1654px,100%)) so the wave's cut edge stays in the
+     black-on-black spill zone instead of slicing strands mid-curve (sweep
+     2026-08-31, ≥1440). Exactly 890px at 1654 — gate untouched. */
+  height: max(890px, 53.81vw);
   overflow: clip;
   position: relative;
 }

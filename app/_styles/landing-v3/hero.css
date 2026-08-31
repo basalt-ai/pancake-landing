@@ -23,7 +23,12 @@
   position: absolute;
   top: -120px;
   transform: translateX(-50%);
-  width: 1654px;
+  /* ≥1654 viewports: scale the whole composition with the screen so the
+     arc bleeds edge-to-edge (founder 2026-08-31: cream margins flanked the
+     rainbow on wide monitors — the artboard is 1654-fixed; at exactly 1654
+     this resolves to the artboard geometry, so the pixel gate is
+     untouched). */
+  width: max(1654px, 100vw);
   z-index: 0;
 }
 
