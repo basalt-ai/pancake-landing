@@ -46,10 +46,11 @@
   position: absolute;
 }
 .lp-banner__union {
+  /* composite bottle+collar+drop (lp-banner-bottle.svg, 1010×721) */
   height: 721px;
   left: 0;
   top: 0.42px; /* Figma: bottle sits 0.42px into the card */
-  width: 965px;
+  width: 1010px;
 }
 .lp-banner__bubbles {
   height: 671px;
@@ -62,39 +63,6 @@
   left: 545px;
   top: 155.42px;
   width: 32.86px;
-}
-.lp-banner__drop {
-  /* revised drop (Vector 290, org 4389:11973): hangs from the collar
-     bottom instead of its right side */
-  height: 88.21px;
-  left: 959px;
-  top: 387.79px;
-  width: 40.2px;
-}
-.lp-banner__collar {
-  background: #000;
-  border-radius: 7px;
-  height: 94px;
-  /* rendered bounds in the revised card are 926–962: 4px wider left than
-     the node box, overlapping the neck so the junction is sealed */
-  left: 926px;
-  position: absolute;
-  top: 305px;
-  width: 37px;
-}
-/* Square-edged bridge behind the junction: the union's neck was cut flush at
-   x924 (y309.08–392.88, flat edges), so the collar's r7 left corners exposed
-   orange notches there (founder 2026-08-31 "wtf it's not the same"). The
-   bridge spans x918–942 at exactly the neck's cross-section — flush with its
-   top/bottom edges, hiding the rounded corners inside black. */
-.lp-banner__collar::before {
-  background: #000;
-  bottom: 6.12px;
-  content: "";
-  left: -8px;
-  position: absolute;
-  right: 21px;
-  top: 4.08px;
 }
 
 /* Titles — marketing/title-lg via .lp-title-section (Condensed SemiBold, lh 1.2);
@@ -192,9 +160,7 @@
     width: 14.297%; /* 52.9 */
   }
   /* .lp prefix: must outrank foundation's `.lp img { display: block }` */
-  .lp .lp-banner__union,
-  .lp .lp-banner__drop,
-  .lp .lp-banner__collar {
+  .lp .lp-banner__union {
     display: none; /* mobile art is the recolored bottle/dome above */
   }
   /* Bubble canvas: rotate 90° cw, uniform scale 0.625·(cardW/370), then
