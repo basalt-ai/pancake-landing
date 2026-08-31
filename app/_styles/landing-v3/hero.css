@@ -171,9 +171,12 @@
     gap: 23px;
   }
   .lp-hero-title {
-    /* 8.846vw = 35.559px at the 402 artboard; floor keeps the two nowrap
-       lines inside a 375 viewport (line 2 is 332px at full size). */
-    font-size: clamp(33px, 8.846vw, 35.559px);
+    /* 8.846vw = 35.559px at the 402 artboard; the 30px floor keeps line 2
+       ("We bring you customers", 332px at full size) inside a 320 viewport
+       with the 32px gutter (sweep 2026-08-31: the 33px floor clipped the
+       trailing "s" below ~340px). em tracking so it scales with the clamp. */
+    font-size: clamp(30px, 8.846vw, 35.559px);
+    letter-spacing: -0.03em;
   }
   .lp-hero-lede {
     max-width: 368px;

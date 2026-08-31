@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 
 import { LpBanner } from "@/components/sections/landing-v3/LpBanner";
 import { LpCta } from "@/components/sections/landing-v3/LpCta";
 import { LpFeatures } from "@/components/sections/landing-v3/LpFeatures";
 import { LpFooter } from "@/components/sections/landing-v3/LpFooter";
 import { LpHero } from "@/components/sections/landing-v3/LpHero";
+import { LpMarquee } from "@/components/sections/landing-v3/LpMarquee";
 import { LpModals } from "@/components/sections/landing-v3/LpModals";
 import { LpNav } from "@/components/sections/landing-v3/LpNav";
 import { LpPricing } from "@/components/sections/landing-v3/LpPricing";
@@ -21,6 +22,10 @@ import "@/app/_styles/landing-v3.css";
 
 // Page-level metadata mirrors the hero (unchanged copy vs v2);
 // the root layout still carries the org-wide defaults.
+
+/* Status-bar zone matches the lp cream (Dynamic Island fix, 2026-08-31) */
+export const viewport: Viewport = { themeColor: "#fbf6f1" };
+
 export const metadata: Metadata = {
   title: "Pancake — You run your company. We bring you customers.",
   description:
@@ -78,10 +83,10 @@ export default function Home() {
       />
       <LpNav />
       <LpHero />
-      {/* Logo strip (LpMarquee) pulled for now — placeholder tech logos,
-          founder 2026-08-31 ("vire les logos pour le moment"). Component +
-          marquee.css + /lp/lp-logo-strip-tile.png stay for the day real
-          customer logos land. */}
+      {/* Logo strip: V1 partner wordmarks as interim content, founder
+          2026-08-31 ("reprends les logos de la V1 en attendant qu'on mette
+          les nouveaux") — swap LOGOS in LpMarquee when the new set lands. */}
+      <LpMarquee />
       <LpSteps />
       <LpBanner />
       <LpFeatures />

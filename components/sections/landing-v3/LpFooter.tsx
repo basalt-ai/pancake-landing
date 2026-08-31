@@ -83,6 +83,13 @@ export function LpFooter() {
             </div>
           ))}
         </nav>
+        {/* ≤767 only (CSS-gated): compact meta line replacing lines + legal. */}
+        <p className="lp-foot-line">
+          {"2026 Pancake · San Francisco, CA · "}
+          <a href="/privacy">Privacy</a>
+          {" · "}
+          <a href="/terms">Terms</a>
+        </p>
       </div>
     </footer>
   );

@@ -22,6 +22,10 @@
   inset: 0;
   position: absolute;
 }
+/* Inert pass-through wrapper; ≤767 it becomes the bottle-shaped clip frame */
+.lp-banner__bubblebox {
+  display: contents;
+}
 /* Legacy engines without container units get the clean yellow card + titles
    instead of misscaled art */
 @supports not (width: 1cqw) {
@@ -170,6 +174,19 @@
   .lp-banner__canvas {
     transform: translate(109.649cqw, -29.487cqw) rotate(90deg)
       scale(tan(atan2(100cqw, 592px))); /* 592 = 370 / 0.625 */
+  }
+  /* Clip frame: same box as .lp-banner__m-bottle (card top-left, 370:490),
+     so the canvas transform above keeps its anchor; the objectBoundingBox
+     clip (LpBanner.tsx svg) confines every bubble to the bottle silhouette
+     (founder 2026-08-31: bubbles were drifting out on the left). */
+  .lp-banner__bubblebox {
+    aspect-ratio: 370 / 490;
+    clip-path: url(#lp-bottle-clip);
+    display: block;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
   }
   .lp-banner__br {
     display: inline; /* Figma line break: "Building got" / "10x easier." */

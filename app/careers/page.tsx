@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 
 import { LpFooter } from "@/components/sections/landing-v3/LpFooter";
 import { LpFxLink } from "@/components/sections/landing-v3/LpFxButton";
@@ -15,6 +15,10 @@ import "@/app/_styles/landing-v3/careers.css";
  * postings exist. careers.css is imported here (not in the landing-v3.css
  * manifest) so the homepage bundle doesn't carry it.
  */
+
+
+/* Status-bar zone matches the lp cream (Dynamic Island fix, 2026-08-31) */
+export const viewport: Viewport = { themeColor: "#fbf6f1" };
 
 export const metadata: Metadata = {
   title: "Careers — Pancake",

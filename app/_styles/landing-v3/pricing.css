@@ -108,7 +108,11 @@
 }
 
 /* ≤1024: recompose to flow — cream section, art becomes a full-width flow image
-   at the bottom whose black lower edge hands off to the black footer. */
+   at the bottom. The wave SVG is transparent below its outermost arc, so the
+   art wrapper gets a black ground: the canvas's cream top paints over it,
+   the band's underside reads black exactly like the desktop composition, and
+   that black hands off seamlessly to the black footer (the wrapper's bottom
+   edge is a black-on-black cut). */
 @media (max-width: 1024px) {
   .lp-price {
     background: #fbf6f1;
@@ -148,19 +152,26 @@
   .lp-price-cta {
     margin-top: 48px;
   }
-  .lp-price-note {
+  /* 0,2,0 — outranks foundation's `.lp p { margin: 0 }` (0,1,1), which
+     silently zeroed a plain .lp-price-note margin */
+  .lp-price .lp-price-note {
     margin-top: 16px;
   }
   .lp-price-art {
+    background: #000;
     height: auto;
-    margin-top: 48px;
+    margin-top: 32px;
     position: static;
     transform: none;
     width: 100%;
   }
 }
 
-/* ≤767: single column, scaled type; CTA stays ≥40px tall. */
+/* ≤767: single column, scaled type; CTA stays ≥40px tall. The price block's
+   internal gap and the list's extra offset scale down with the 96px type so
+   amount + per + checklist read as one composed block; the CTA stretches
+   full-width (block-level flex — the squircle clip is ≥768-only, so the pill
+   keeps its fluid metrics) and the art tucks 16px under the note. */
 @media (max-width: 767px) {
   .lp-price-frame {
     padding: 64px 24px 0;
@@ -179,12 +190,23 @@
   .lp-price-body {
     gap: 32px;
   }
+  .lp-price-price {
+    gap: 20px;
+  }
+  .lp-price-list {
+    margin-top: 0;
+  }
   .lp-price-cta.lp-btn[data-size="lg"] {
     border-radius: 14px;
+    display: flex;
     font-size: 20px;
     padding: 14px 26px;
+    width: 100%;
+  }
+  .lp-price .lp-price-note {
+    margin-top: 12px;
   }
   .lp-price-art {
-    margin-top: 40px;
+    margin-top: 16px;
   }
 }

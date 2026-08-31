@@ -38,9 +38,25 @@ export function LpBanner() {
             fill="#4660E7"
           />
         </svg>
+        {/* Reusable clip: the mobile bottle silhouette in objectBoundingBox
+            units (÷370, ÷490) — referenced by .lp-banner__bubblebox ≤767 so
+            bubbles can't drift outside the bottle (founder report
+            2026-08-31). Bare 0×0 svg: display:none would break the
+            reference in WebKit. */}
+        <svg aria-hidden="true" width="0" height="0" style={{ position: "absolute" }}>
+          <clipPath id="lp-bottle-clip" clipPathUnits="objectBoundingBox">
+            <path
+              transform="scale(0.0027027, 0.00204082)"
+              d="M211.467 426.93C211.467 367.767 276.282 337.36 312.609 288.181C343.527 246.325 370 210.487 370 128.052L370 -413.999L8.68577e-05 -414L-2.36939e-05 128.052C-2.72972e-05 210.487 26.4729 246.325 57.3909 288.181C93.7181 337.36 168.302 367.767 168.302 426.93L168.302 427.033C168.302 431.012 168.318 436.69 168.336 443.112C168.379 458.863 168.436 479.09 168.302 489.703L211.467 489.703C211.334 479.09 211.39 458.862 211.434 443.112C211.452 436.689 211.467 431.011 211.467 427.033L211.467 426.93Z"
+            />
+          </clipPath>
+        </svg>
         {/* z bottom→top: union (bottle + wave) → bubbles (animated) → drop */}
         <div className="lp-banner__art" aria-hidden="true">
-          <div className="lp-banner__canvas">
+          {/* display:contents everywhere except ≤767, where it becomes the
+              bottle-shaped clip frame for the bubble canvas */}
+          <div className="lp-banner__bubblebox">
+            <div className="lp-banner__canvas">
             <img
               src="/lp/lp-banner-union.svg"
               alt=""
@@ -56,6 +72,7 @@ export function LpBanner() {
               height={81.5}
               className="lp-banner__drop"
             />
+            </div>
           </div>
         </div>
         {/* mobile-only overlays: static orange dot + the bottle-neck lip cap */}
