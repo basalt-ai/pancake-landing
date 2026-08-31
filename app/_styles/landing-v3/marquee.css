@@ -61,11 +61,17 @@
     width: auto;
   }
 }
+/* Phones: Figma mobile artboard node 4389:8321 (402×50.29) — strip 42.67px
+   tall inside 3.81px padding (the desktop 106px section scaled ×0.4763).
+   Width stays auto (native aspect) → tile 1424 × (42.67/118) = 514.99px. */
 @media (max-width: 767px) {
+  .lp-marquee {
+    padding: 3.81px;
+  }
   .lp-marquee__track {
-    animation-duration: 17s; /* tile 579.3px / 17s ≈ 34.1 px/s */
+    animation-duration: 15s; /* tile 514.99px / 15s ≈ 34.3 px/s */
   }
   .lp-marquee img {
-    height: 48px;
+    height: 42.67px;
   }
 }

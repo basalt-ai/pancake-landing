@@ -202,7 +202,8 @@
   .lp-tst-track {
     animation: none;
     flex-direction: column;
-    padding: 16px 0;
+    gap: 24px; /* mobile artboard stacks cards with breathing room (steps use 48) */
+    padding: 24px 0 16px;
     width: 100%;
   }
   .lp-tst-row[aria-hidden] {
@@ -210,6 +211,7 @@
   }
   .lp-tst-row {
     flex-direction: column;
+    gap: 24px;
     width: 100%;
   }
   .lp-tst-card {
@@ -218,5 +220,22 @@
   .lp-tst-body {
     font-size: var(--lp-text-lg);
     white-space: normal; /* double spaces would break wrapping on narrow columns */
+  }
+  /* meta row: at card widths ≤ ~370 the md stats overflow and wrap INSIDE each
+     span ("47" over "replies") — drop to sm, forbid intra-span wraps, and let
+     "via X" fall to its own right-aligned line when even sm can't fit (375) */
+  .lp-tst-meta {
+    flex-wrap: wrap;
+    font-size: var(--lp-text-sm);
+    gap: 8px 12px;
+  }
+  .lp-tst-meta > span {
+    white-space: nowrap;
+  }
+  .lp-tst-spacer {
+    display: none;
+  }
+  .lp-tst-via {
+    margin-left: auto;
   }
 }

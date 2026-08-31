@@ -72,6 +72,20 @@
   line-height: 1.5;
   width: 368px;
 }
+/* Button row (Figma mobile 4389:8177: horizontal, gap 8). On desktop only
+   "Get started" is visible, so the wrapper is layout-neutral there. */
+.lp-hero-btns {
+  display: flex;
+  gap: 8px;
+}
+/* "Book a call" is a mobile-only addition — the desktop hero stays exactly
+   one CTA. hero.css imports after foundation.css, so this outranks
+   `.lp-btn { display: inline-flex }` at equal specificity. */
+@media (min-width: 768px) {
+  .lp-hero-call {
+    display: none;
+  }
+}
 
 /* ≤1200: edge-anchor + scale the headline so the columns never crop */
 @media (max-width: 1200px) {
@@ -117,17 +131,49 @@
   }
 }
 
-/* ≤767: phone — tighter gutters, bigger art crop, smaller headline */
+/* ≤767: phone — Figma mobile artboard 4389:8164 (402 wide, device chrome
+   0–64 excluded → page y = artboard y − 64; nav flows 104px above the hero).
+   Art frame 4389:8165 (x−436 y110 w1274 h635) holds the arcs group
+   (4389:8166) which is NOT a plain scale of the desktop group (4257:4908):
+   child-vector ratio 1040.9224/2622.1116 = 0.39698 uniform scale, and the
+   linear parts differ by M_m·M_d⁻¹ = R(15°)·flipX (mobile det −1: mirrored
+   across a 97.5° axis; its −15° bbox is a square inflated ×(cos15+sin15) =
+   1.2247, which is why the naive bbox ratio 0.48619 over-scaled). The rings'
+   COMMON CENTER is preserved — desktop canvas (875.785, 1456.5) of 1654×1417
+   → mobile artboard (201, 747.41): dead on viewport-center x. So: canvas
+   width 1654×0.39698 = 656.6px = 163.33vw; ring center at hero-relative
+   (201, 747.41−64−104 = 579.41px) → top = 579.41 − 1456.5×0.39698 = 1.2px =
+   0.3vw, margin-left = (201 − 875.785×0.39698)px − (50vw − width/2) =
+   −146.66px + 127.30px = −4.82vw; plus rotate(15°)∘flipX about the ring
+   center appended to the canvas fit-scale (conjugated translate pair keeps
+   transform-origin 0 0). Mirroring reverses the apparent spin — inherent to
+   the artboard's mirrored art. Text frame 4389:8173: x32 w338 y415 →
+   hero-relative 415−168 = 247px = 61.44vw padding-top; vertical gap 23;
+   headline Condensed SemiBold 35.559/−3% (2 lines h82); lede 16/1.5
+   full-width; buttons 48px row, gap 8 (Get started 136×48 + tinted Book a
+   call 134×48, both r12). Marquee at y751.6 → 64px bottom padding. */
 @media (max-width: 767px) {
   .lp-hero-art {
-    top: -8vw;
-    width: 200vw;
+    margin-left: -4.82vw;
+    top: 0.3vw;
+    width: 163.33vw;
+  }
+  .lp-hero-art .lp-anim-canvas--hero {
+    transform: scale(tan(atan2(100cqw, 1654px)))
+      translate(875.785px, 1456.5px) rotate(15deg) scaleX(-1)
+      translate(-875.785px, -1456.5px);
   }
   .lp-hero-inner {
-    padding: 40vw 24px 64px;
+    gap: 23px;
+    padding: 61.44vw 32px 64px;
+  }
+  .lp-hero-col {
+    gap: 23px;
   }
   .lp-hero-title {
-    font-size: clamp(32px, 9vw, 44px);
+    /* 8.846vw = 35.559px at the 402 artboard; floor keeps the two nowrap
+       lines inside a 375 viewport (line 2 is 332px at full size). */
+    font-size: clamp(33px, 8.846vw, 35.559px);
   }
   .lp-hero-lede {
     max-width: 368px;

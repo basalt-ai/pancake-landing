@@ -150,31 +150,85 @@
     padding: 40px;
   }
 }
+/* Mobile — Figma artboard 4389:8164, frame 4389:8215 "Frame 186" (its overlap
+   twin 4389:8187 is a byte-identical duplicate). Org: pad 16, gap 48, text-only
+   step cards 370 wide — the artboard's 370×240 media area is an EMPTY
+   rgba(0,0,0,.04) placeholder, and the loop videos are desktop/tablet only, so
+   the media card is display:none here (IO-paused, so hidden is cheap). Kicker
+   falls back to the base 24px/32px — exactly the artboard values. Numeral keeps
+   the desktop 57.336/1.2 (Figma: 120% → 69px box) and per-step colors. Figma
+   keeps a 1px spacer between numeral and title (16+1+16 = 33px visual gap) —
+   the flex spacer collapses to exactly that. That spacer node is a 73×1 black
+   RECTANGLE in the file, but Figma's own renderer draws nothing there (checked
+   in both the artboard export and an isolated card render) — so no visible
+   hairline here either. */
 @media (max-width: 767px) {
-  .lp-steps__org {
-    gap: 40px;
-    padding: 64px 16px;
+  /* The artboard's section frame is the full 402px with a single 16px inset —
+     the desktop wrapper p-16 + org padding would double it (cards 338 instead
+     of 370, extra line-wraps in titles/bodies). Org carries the only inset. */
+  .lp-steps {
+    /* artboard: marquee frame ends y801.9, steps frame starts y860 → 58px */
+    padding: 58px 0 0;
   }
-  .lp-steps__kicker {
-    font-size: 20px;
-    line-height: 28px;
+  .lp-steps__org {
+    gap: 48px;
+    padding: 16px;
   }
   .lp-steps__title {
-    font-size: var(--lp-text-4xlg);
-    letter-spacing: -1.1945px;
+    /* 35.559 / auto(41px) / -3% (Figma text "Pancake Sells it") */
+    font-size: 35.559px;
+    letter-spacing: -1.0668px;
+    line-height: 41px;
   }
+  .lp-steps__list {
+    gap: 48px;
+  }
+  /* Artboard step = ONE cream card (r30): 370×240 media slot on top, text
+     below (QA 2026-08-31: the grey slots in the artboard are media
+     placeholders — they host the studio loops, per the founder's standing
+     directive that the loop trio lives in the step cards). */
   .lp-steps__row,
   .lp-steps__row:nth-child(even) {
+    background: var(--lp-card-cream);
+    border-radius: 30px;
     flex-direction: column;
+    gap: 0;
+    overflow: hidden;
   }
   .lp-steps__text {
+    background: none;
+    border-radius: 0;
+    flex: none;
     padding: 32px;
+    width: 100%;
   }
-  .lp-steps__num {
-    font-size: var(--lp-text-5xlg);
+  .lp-steps__spacer {
+    flex: none;
+    height: 1px;
   }
   .lp-steps__step-title {
-    font-size: var(--lp-text-2xlg);
-    letter-spacing: -0.8294px;
+    /* 35.559 / auto(41px per line: 123px over 3 lines) / -3% */
+    font-size: 35.559px;
+    letter-spacing: -1.0668px;
+    line-height: 41px;
+  }
+  /* The artboard's step-1 body flows continuously (4 lines at 306px) — the
+     copy string's "\n" after "living plan." is a desktop-only break, so let
+     pre-line collapse to normal here without touching the copy. Titles keep
+     pre-line: their explicit breaks match the artboard's 3-line stacks. */
+  .lp-steps__body {
+    white-space: normal;
+  }
+  .lp-steps__media {
+    /* artboard placeholder tone shows until the video's first paint;
+       flex:none beats ≤1360's basis-0 (zero height in the column) */
+    aspect-ratio: 370 / 240;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 0;
+    display: block;
+    flex: none;
+    height: auto;
+    order: -1;
+    width: 100%;
   }
 }

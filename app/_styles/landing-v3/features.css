@@ -1057,33 +1057,107 @@
   }
 }
 @media (max-width: 767px) {
+  /* Mobile artboard (Figma 4389:8164, section 4389:8287): section pad 24,
+     gap 32; blocks 354w h575 = text 173 + 16 + mock holder 351×386. Mocks
+     are exactly 0.625× the desktop CSS mocks (0.5× raw app UI). */
   .lp-feat {
-    gap: 24px;
+    gap: 32px;
+    padding: 0 24px 24px;
   }
+  /* the mobile artboard closes the section with a 4th separator (4389:8319) */
+  .lp-feat::after {
+    border-top: 1px solid color-mix(in srgb, var(--lp-ink-50) 55%, transparent);
+    content: "";
+    height: 0;
+    width: 100%;
+  }
+  /* heading (4389:8371): 154 below the banner frame, 306w box centered,
+     35.559/41/-3%; 12 pb + 32 gap = 44 to the section frame's first block */
   .lp-feat-heading {
-    padding: 48px 16px 0;
+    padding: 154px 0 12px;
   }
   .lp-feat-headline {
-    font-size: var(--lp-text-4xlg);
-    letter-spacing: -1.194px;
+    font-size: 35.559px;
+    letter-spacing: -1.067px;
+    line-height: 41px;
+    margin-inline: auto;
+    max-width: 306px;
   }
+  /* block: the artboard's text frame opens with an invisible 1px spacer
+     (73×1 rect, not rendered) + 16 gap — title ink starts at y17 */
   .lp-feat-card,
   .lp-feat-card[data-side="right"] {
-    align-items: flex-start;
+    align-items: stretch;
     flex-direction: column;
-    gap: 24px;
-    padding: 16px 8px;
+    gap: 16px;
+    padding: 17px 0 0;
+  }
+  .lp-feat-card[data-side="left"] .lp-feat-text,
+  .lp-feat-card[data-side="right"] .lp-feat-text {
+    flex: none;
+    gap: 16px;
+    max-width: none;
   }
   .lp-feat-h {
-    font-size: var(--lp-text-4xlg);
-    letter-spacing: -1.194px;
+    font-size: 28px;
+    letter-spacing: -0.84px;
+    line-height: 32px;
+    /* the artboard sets every title on two lines; the f2/f4 strings have no
+       \n and fit 354 in one — cap the box between the measured widths of
+       their line-1 (218.6px) and line-1+next-word (276.8px) */
+    max-width: 260px;
   }
+  .lp-feat-body {
+    line-height: 1.2;
+  }
+  /* f1's copy string carries a desktop "\n" after "Pancake" — the mobile
+     artboard wraps "Tell Pancake what / to watch". Collapse the break and
+     size the box so the break lands after "what" (measured live below). */
+  .lp-feat-card:first-of-type .lp-feat-h {
+    /* "Tell Pancake what" measures 190px, "…what to" 217px — 204 forces the
+       artboard's break after "what" */
+    max-width: 204px;
+    white-space: normal;
+  }
+  /* Each block renders 1px taller than the artboard (body line-box 77 vs 76);
+     shave the pitch back to the artboard's 639 (ink-row scan: 0/+1/+2/+3). */
+  .lp-feat-card:nth-of-type(n + 2) {
+    margin-top: -1px;
+  }
+  /* mock zone = the artboard's 351×386 holder: fixed-height band, mock
+     top-pinned at its per-feature offset. Pre-zoom units (÷0.625):
+     386 → 617.6; offsets 59/61/80.5/84 → 94.4/97.6/128.8/134.4. f4 paints
+     14.5px past the band, as in the artboard (no clip). */
   .lp-feat-card[data-side="left"] .lp-feat-mockzone,
   .lp-feat-card[data-side="right"] .lp-feat-mockzone {
+    align-items: flex-start;
     align-self: center;
-    max-width: 100%;
+    height: 617.6px;
+    max-width: none;
   }
   .lp-feat-mockzone {
-    zoom: 0.6;
+    zoom: 0.625;
+  }
+  .lp-feat-f1 {
+    /* artboard keeps the desktop mock's +6px (rendered) center offset */
+    left: 9.4px;
+    margin-top: 94.4px;
+  }
+  .lp-feat-f2 {
+    margin-top: 97.6px;
+  }
+  .lp-feat-f3 {
+    margin-top: 128.8px;
+  }
+  .lp-feat-f4 {
+    margin-top: 134.4px;
+  }
+  /* full-width separators (354 at 402) — incl. the closing ::after */
+  .lp-feat-sep {
+    max-width: 100%;
+  }
+  /* desktop delight only — no room next to the 0.625-scale signals mock */
+  .lp-feat-f1-quip {
+    display: none;
   }
 }
