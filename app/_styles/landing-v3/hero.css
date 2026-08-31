@@ -86,6 +86,36 @@
   line-height: 1.5;
   width: 368px;
 }
+
+/* Degradation ladder for short windows (founder recording 2026-08-31: below
+   the 640 compression floor the headline clipped or vanished). The hero
+   keeps tracking the window and the text block scales down about its
+   bottom-center — headline + CTA stay above the fold at ANY height; the arc
+   just crops shorter. MUST live after the .lp-hero-inner base rule: its
+   unconditional translateZ(0) would override these at equal specificity.
+   Tiers flip on live viewport height (discrete, no per-frame reflow); the
+   height itself uses the frozen measure. */
+@media (min-width: 1025px) and (max-height: 759px) {
+  .lp-hero {
+    height: max(500px, calc(var(--lp-svh, 100svh) - 120px));
+  }
+  .lp-hero-inner {
+    transform: scale(0.84) translateZ(0);
+    transform-origin: 50% 100%;
+  }
+}
+@media (min-width: 1025px) and (max-height: 639px) {
+  .lp-hero {
+    height: max(380px, calc(var(--lp-svh, 100svh) - 120px));
+  }
+  .lp-hero-inner {
+    transform: scale(0.66) translateZ(0);
+  }
+  /* lift the arc so the shrunken text keeps clearance under it */
+  .lp-hero-art {
+    top: -180px;
+  }
+}
 /* Button row (Figma mobile 4389:8177: horizontal, gap 8). On desktop only
    "Get started" is visible, so the wrapper is layout-neutral there. */
 .lp-hero-btns {

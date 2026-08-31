@@ -23,7 +23,7 @@ export function LpViewportVar() {
     let t: ReturnType<typeof setTimeout> | undefined;
     const onResize = () => {
       clearTimeout(t);
-      t = setTimeout(apply, 250);
+      t = setTimeout(apply, 150);
     };
     window.addEventListener("resize", onResize);
     window.addEventListener("orientationchange", onResize);
