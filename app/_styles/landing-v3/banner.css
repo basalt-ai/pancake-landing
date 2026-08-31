@@ -46,11 +46,18 @@
   position: absolute;
 }
 .lp-banner__union {
-  /* composite bottle+collar+drop (lp-banner-bottle.svg, 1010×721) */
   height: 721px;
   left: 0;
   top: 0.42px; /* Figma: bottle sits 0.42px into the card */
-  width: 1010px;
+  width: 965px;
+}
+.lp-banner__drop {
+  /* renders before the union in the DOM → behind the bottle (founder
+     2026-08-31); geometry is the artboard's exact box */
+  height: 81.5px;
+  left: 959px;
+  top: 377px;
+  width: 49.07px;
 }
 .lp-banner__bubbles {
   height: 671px;
@@ -160,7 +167,8 @@
     width: 14.297%; /* 52.9 */
   }
   /* .lp prefix: must outrank foundation's `.lp img { display: block }` */
-  .lp .lp-banner__union {
+  .lp .lp-banner__union,
+  .lp .lp-banner__drop {
     display: none; /* mobile art is the recolored bottle/dome above */
   }
   /* Bubble canvas: rotate 90° cw, uniform scale 0.625·(cardW/370), then

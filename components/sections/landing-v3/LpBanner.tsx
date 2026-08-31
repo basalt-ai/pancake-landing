@@ -57,15 +57,21 @@ export function LpBanner() {
               bottle-shaped clip frame for the bubble canvas */}
           <div className="lp-banner__bubblebox">
             <div className="lp-banner__canvas">
-            {/* ONE composite asset: bottle + collar + drop, merged per the
-                designer's revision ("Section versions" org 4389:11973) — a
-                single vector so the drop is JOINED to the bottle at every
-                scale (founder 2026-08-31: separate collar/drop layers opened
-                hairline seams at scaled widths). */}
+            {/* The production artboard composition, one founder-directed
+                change (2026-08-31): the drop renders FIRST so it passes
+                BEHIND the black bottle — its top tucks under the collar and
+                the bulb emerges below. */}
             <img
-              src="/lp/lp-banner-bottle.svg"
+              src="/lp/lp-banner-drop.svg"
               alt=""
-              width={1010}
+              width={49.07}
+              height={81.5}
+              className="lp-banner__drop"
+            />
+            <img
+              src="/lp/lp-banner-union.svg"
+              alt=""
+              width={965}
               height={721}
               className="lp-banner__union"
             />
