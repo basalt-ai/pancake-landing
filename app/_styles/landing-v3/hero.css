@@ -5,7 +5,12 @@
    correct behavior — the page clips overflow-x). */
 
 .lp-hero {
-  height: 758px;
+  /* Artboard height 758, compressing on short windows so the bottom-anchored
+     headline + CTA stay above the fold (founder 2026-08-31: text cut at the
+     viewport bottom on a short laptop window). 100svh − 120px nav; the 640
+     floor keeps the text clear of the arc's lower tails (the artboard has
+     ~100px of cream slack there). ≥878px-tall windows: exactly 758. */
+  height: clamp(640px, calc(100svh - 120px), 758px);
   isolation: isolate;
   position: relative;
 }
