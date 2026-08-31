@@ -89,19 +89,67 @@
     width: auto;
   }
 }
+/* ── Mobile artboard (4389:8372 "org", 370×744): the rainbow art moves to
+   horizontal bands hugging the TOP and BOTTOM card edges. The bands are the
+   SAME two animated canvases rotated 90° — the Figma mobile bands are two
+   copies of the desktop CTA ring group rotated 90°cw (bottom at card
+   (−1126, 224), top its y-flip at (−1126, 524)), and both map onto the
+   existing ctaLeft/ctaRight canvases as PURE rotations (verified against
+   Figma absolute boxes: purple edge card-y 81.2 ↔ predicted 81.18, blue 26.8
+   ↔ 26.69, band start 581.6 exact — ctaLeft's baked 33.81px mirror offset
+   cancels in the top-band mapping). Wrapper widths are % of the card
+   (= 560/370 and 529/370) so the cqw canvas scale k = cardW/370 tracks the
+   artboard at every viewport; translate %s are of the wrapper's own box:
+   left  = top band:    translate(477k, −36k) rotate(90°) → 477/560, −36/432
+   right = bottom band: translate(477k, −88k after bottom-anchor) rotate(90°)
+                        → 477/529, −88/432 (= absolute-matrix solve
+                        W = M_figma·L_canvas⁻¹, exact for every arc)
+   Title stays the base .lp-title-card 48/1/−1.44 (the artboard keeps it);
+   content inset = artboard x30/y224; buttons stack (artboard shows a single
+   centered column). Specificity 0,2,0 beats anim.css's later-imported ≤1024
+   width:auto/aspect-ratio resets (0,1,0). */
 @media (max-width: 767px) {
   .lp-cta {
     padding: 56px 16px;
   }
   .lp-cta__card {
     border-radius: var(--lp-r-xlg);
-    padding: 72px 24px;
+    padding: 224px 30px;
   }
-  .lp-cta__art {
-    height: 224px;
+  .lp-cta__card .lp-cta__art--left {
+    aspect-ratio: 560 / 432;
+    height: auto;
+    left: 0;
+    max-width: 560px; /* cap k at 1 — wide phones keep 224px text inset clear */
+    top: 0;
+    transform: translate(85.1786%, -8.3333%) rotate(90deg);
+    transform-origin: 0 0;
+    width: 151.3514%;
   }
+  .lp-cta__card .lp-cta__art--right {
+    aspect-ratio: 529 / 432;
+    bottom: 0;
+    height: auto;
+    left: 0;
+    max-width: 529px;
+    right: auto;
+    top: auto;
+    transform: translate(90.1701%, -20.3704%) rotate(90deg);
+    transform-origin: 0 0;
+    width: 142.973%;
+  }
+  /* Artboard title wraps "Try Pancake" / "now" (text box 310, h96); our font
+     rasterizes narrower and would fit one line — force the designed break. */
   .lp-cta__title {
-    font-size: var(--lp-text-4xlg);
-    letter-spacing: -1.194px; /* keeps the -3% ratio of the 48px original */
+    margin-inline: auto;
+    max-width: 280px;
+  }
+  .lp-cta__btns {
+    flex-direction: column;
+  }
+  /* Artboard mobile CTA (4389:8372) shows a single centered "Get started" —
+     Book a call lives in the hero + nav menu on phones. */
+  .lp-cta__btns .lp-btn--outline {
+    display: none;
   }
 }

@@ -87,33 +87,115 @@
   width: 22.68804cqw; /* 368px */
 }
 
-/* ≤767 — recompose: titles stack as flow text (both ink on yellow for contrast),
-   art becomes a full-width strip under them. No interactive targets here. */
+/* Mobile-only nodes (m-dome/m-bottle/m-dot/m-lip/body/br) exist for the ≤767
+   composition only — dead on desktop/tablet. */
+.lp-banner__m-dome,
+.lp-banner__m-bottle,
+.lp-banner__m-dot,
+.lp-banner__m-lip,
+.lp-banner__body,
+.lp-banner__br {
+  display: none;
+}
+
+/* ≤767 — Figma mobile artboard (4389:8243; card 4389:8244 370×808 #fffbf6 r32,
+   clips). Tall cream card: slim BLUE bottle (redrawn mobile vector 4389:8246,
+   bbox 370×903.7 at y-414, visible part exported as 370×490) pours straight
+   down into an orange dome (4389:8245, bbox -209.8,418 792×786); neck lip cap
+   4389:8283 (162.7,487.1 52.9×13.9 r3.59); static orange dot 4389:8280
+   (273.6,271.1 ⌀16.9). Titles: Condensed SemiBold 35.559/auto(≈1.15)/-3%,
+   centered in the 32px-inset column — white 4389:8284 at y93 on the bottle,
+   ink 4389:8285 at y538 on the dome. Body 4389:8286: Fono 16/150% at 48,601
+   w274. The desktop union/drop imgs are hidden and the bubble canvas is reused
+   rotated 90° cw + scaled 0.625 (Figma places the same cloud at 0.6247 of
+   desktop scale), anchored so the desktop neck mouth (965,351.5) lands on the
+   mobile neck mouth (186,494): translate = (405.7, -109.1)px at card 370 —
+   the purple cluster pours down the neck exactly like node 4389:8247.
+   Positions are % of the aspect-locked card (370×808 basis); type in cqw. */
 @media (max-width: 767px) {
+  .lp-banner {
+    padding: 24px 16px; /* Frame 226: 24 vertical, 16 sides */
+  }
   .lp-banner__card {
-    aspect-ratio: auto;
-    display: flex;
-    flex-direction: column;
+    aspect-ratio: 370 / 808;
+    background: var(--lp-ink-10);
+    border-radius: var(--lp-r-xlg); /* 32 */
+  }
+  .lp-banner__m-dome {
+    display: block;
+    height: 48.267%; /* 390 (dome clipped by card bottom; export is 387 —
+                        stretched ~1% via preserveAspectRatio=none to seal
+                        the bottom edge) */
+    left: 0;
+    position: absolute;
+    top: 51.733%; /* 418 */
+    width: 100%;
+  }
+  .lp-banner__m-bottle {
+    display: block;
+    height: auto; /* 490 via the 370:490 viewBox */
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+  .lp-banner__m-dot {
+    aspect-ratio: 1;
+    background: var(--lp-yellow-30);
+    border-radius: 50%;
+    display: block;
+    left: 73.946%; /* 273.6 */
+    position: absolute;
+    top: 33.552%; /* 271.1 */
+    width: 4.568%; /* 16.9 */
+  }
+  .lp-banner__m-lip {
+    aspect-ratio: 52.9 / 13.9;
+    background: var(--lp-blue-40);
+    border-radius: 3.59px;
+    border-radius: 0.971cqw; /* 3.59 */
+    display: block;
+    left: 43.973%; /* 162.7 */
+    position: absolute;
+    top: 60.285%; /* 487.1 */
+    width: 14.297%; /* 52.9 */
+  }
+  /* .lp prefix: must outrank foundation's `.lp img { display: block }` */
+  .lp .lp-banner__union,
+  .lp .lp-banner__drop {
+    display: none; /* mobile art is the recolored bottle/dome above */
+  }
+  /* Bubble canvas: rotate 90° cw, uniform scale 0.625·(cardW/370), then
+     translate — bubbles keep spinning about their own centers untouched. */
+  .lp-banner__canvas {
+    transform: translate(109.649cqw, -29.487cqw) rotate(90deg)
+      scale(tan(atan2(100cqw, 592px))); /* 592 = 370 / 0.625 */
+  }
+  .lp-banner__br {
+    display: inline; /* Figma line break: "Building got" / "10x easier." */
   }
   .lp-banner__title {
-    font-size: var(--lp-text-3xlg); /* 33.18 */
-    letter-spacing: -0.9954px;
-    position: static;
-    width: auto;
+    font-size: 9.6105cqw; /* 35.559 */
+    left: 8.649%; /* 32 */
+    letter-spacing: -0.03em; /* -3% */
+    line-height: 1.15; /* Figma auto: 41px per line */
+    text-align: center;
+    width: 82.703%; /* 306 */
   }
   .lp-banner__title--left {
-    color: var(--lp-text);
-    margin: 40px 24px 0;
+    top: 11.51%; /* 93 */
   }
   .lp-banner__title--right {
-    margin: 8px 24px 0;
+    top: 66.584%; /* 538 */
   }
-  .lp-banner__art {
-    aspect-ratio: 1622 / 721;
-    inset: auto;
-    margin-top: 32px;
-    order: 1;
-    position: relative;
-    width: 100%;
+  .lp-banner__body {
+    display: block;
+    font-size: 4.3243cqw; /* 16 */
+    left: 12.973%; /* 48 */
+    line-height: 1.5;
+    margin: 0;
+    position: absolute;
+    top: 74.381%; /* 601 */
+    width: 74.054%; /* 274 */
   }
 }

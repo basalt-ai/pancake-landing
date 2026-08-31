@@ -56,40 +56,137 @@
   }
 }
 
+/* ── Mobile (Figma node 4389:8182, 402×88 at y80 — 16px below page top) ──
+   Logo: the same 114.956×56 instance at x32, vertically centered. Burger:
+   three 2px plum lines, 23.88 wide, centers 6.65 apart, right edge 28.44
+   from the frame (44px tap target → nav right pad 28.44 − 10.06 = 18.38).
+   No text links, no pill in the bar — both live in the LpNavMenu sheet. */
 @media (max-width: 767px) {
   .lp-nav {
     align-items: center;
+    box-sizing: border-box;
     display: flex;
-    flex-wrap: wrap;
-    gap: 12px 16px;
-    height: auto;
-    padding: 12px 16px;
-  }
-  .lp-nav-logo,
-  .lp-nav-cta {
-    position: static;
-    transform: none;
+    height: 104px;
+    justify-content: space-between;
+    padding: 16px 18.38px 0 32px;
   }
   .lp-nav-logo {
-    height: 44px;
-    margin-right: auto;
-    width: auto;
-  }
-  .lp-nav-logo img {
-    width: auto;
-  }
-  .lp-nav-cta {
-    min-height: 40px;
-  }
-  .lp-nav-links {
-    gap: 8px 24px;
-    justify-content: center;
-    left: auto;
-    order: 3;
     position: static;
-    top: auto;
     transform: none;
-    white-space: normal;
-    width: 100%;
   }
+  .lp-nav-links,
+  .lp-nav-cta {
+    display: none;
+  }
+}
+
+/* ── Mobile menu — burger + inverted-plum sheet (open state is not on the
+   artboard; kit-consistent, same contract as v2's LandingNavMenu) ── */
+
+.lp-nav-menu-btn {
+  display: none;
+}
+@media (max-width: 767px) {
+  .lp .lp-nav-menu-btn {
+    background: transparent;
+    border: 0;
+    border-radius: 9px;
+    color: var(--lp-text);
+    cursor: pointer;
+    display: grid;
+    height: 44px;
+    padding: 0;
+    place-items: center;
+    width: 44px;
+  }
+  .lp .lp-nav-menu-btn:focus-visible {
+    outline: 2px solid var(--lp-purple-30);
+    outline-offset: -2px;
+  }
+}
+
+.lp-nav-menu {
+  background: var(--lp-inverted-surface);
+  color: var(--lp-text-on-inverted);
+  display: none;
+  flex-direction: column;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 16px 18.38px 32px 32px;
+  position: fixed;
+  z-index: 40; /* under the call dialog's scrim (50) — the menu closes first anyway */
+}
+.lp-nav-menu.is-open {
+  display: flex;
+}
+/* Head mirrors the bar: 88px row, close button where the burger sat. */
+.lp-nav-menu-head {
+  align-items: center;
+  display: flex;
+  flex: none;
+  height: 88px;
+  justify-content: flex-end;
+}
+.lp .lp-nav-menu-close {
+  background: color-mix(in srgb, var(--lp-text-on-inverted) 10%, transparent);
+  border: 0;
+  border-radius: 50%;
+  color: var(--lp-text-on-inverted);
+  cursor: pointer;
+  display: grid;
+  font: inherit;
+  font-size: 18px;
+  height: 44px;
+  line-height: 1;
+  place-items: center;
+  width: 44px;
+}
+.lp .lp-nav-menu-close:focus-visible {
+  outline: 2px solid var(--lp-text-on-inverted);
+  outline-offset: 2px;
+}
+/* Links: display face like the section titles, cream, left-justified,
+   ≥44px tap rows. Same labels/hrefs as the desktop bar. */
+.lp-nav-menu nav {
+  display: flex;
+  flex-direction: column;
+  margin-top: 24px;
+}
+.lp .lp-nav-menu nav a {
+  color: var(--lp-text-on-inverted);
+  font-family: var(--lp-font-cond);
+  font-size: var(--lp-text-4xlg);
+  font-weight: 600;
+  letter-spacing: -1.19px;
+  line-height: 1.2;
+  padding: 8px 0;
+}
+.lp .lp-nav-menu nav a:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid var(--lp-text-on-inverted);
+  outline-offset: 3px;
+}
+.lp-nav-menu-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+/* Pill skins inverted for the plum sheet: filled = cream ground/plum label,
+   outline = cream hairline/cream label. The FX flood (pastel + plum .l2)
+   reads on both, though touch never triggers it. */
+.lp .lp-nav-menu .lp-btn {
+  background: var(--lp-text-on-inverted);
+  color: var(--lp-text);
+}
+.lp .lp-nav-menu .lp-btn--outline {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--lp-text-on-inverted);
+  color: var(--lp-text-on-inverted);
+}
+
+/* Scoped scroll lock — same belt-and-braces shape as body.modal-open. */
+body.menu-open:has(main.lp) {
+  overflow: hidden;
 }

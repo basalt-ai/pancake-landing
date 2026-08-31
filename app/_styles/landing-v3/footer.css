@@ -123,7 +123,8 @@
   }
 }
 
-/* ≤767: columns stack via wrap; link tap targets ≥40px. */
+/* ≤767: columns stack via wrap; link tap targets ≥44px
+   (col links: 24px line + 2×10; legal links: 20px line + 2×12). */
 @media (max-width: 767px) {
   .lp-foot-frame {
     gap: 48px;
@@ -137,10 +138,10 @@
   }
   .lp-foot-links a {
     margin-bottom: 0;
-    padding-block: 8px;
+    padding-block: 10px;
   }
   .lp-foot-legal a {
     display: inline-block;
-    padding-block: 8px;
+    padding-block: 12px;
   }
 }

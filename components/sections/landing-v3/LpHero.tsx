@@ -1,4 +1,4 @@
-import { LpFxLink } from "@/components/sections/landing-v3/LpFxButton";
+import { LpFxLink, LpFxPill } from "@/components/sections/landing-v3/LpFxButton";
 import { LpPancakes } from "@/components/sections/landing-v3/LpPancakes";
 
 // Landing v3 — Hero (Figma node 4257:4906, 1654×758).
@@ -27,9 +27,22 @@ export function LpHero() {
             Pancake’s AI agents monitor buying signals, find warm leads, grow
             your AI search visibility, and learn from every interaction.
           </p>
-          <LpFxLink href="https://app.getpancake.ai" data-analytics-id="app_hero">
-            Get started
-          </LpFxLink>
+          <div className="lp-hero-btns">
+            <LpFxLink href="https://app.getpancake.ai" data-analytics-id="app_hero">
+              Get started
+            </LpFxLink>
+            {/* Mobile-only twin (Figma mobile 4389:8180) — opens the zcal
+                booking sheet via LpModals' data-lv2-open contract; analytics
+                fire there off the allow-listed call_hero id. Hidden ≥768
+                (desktop hero has only Get started). */}
+            <LpFxPill
+              className="lp-btn--tinted lp-hero-call"
+              data-lv2-open="call"
+              data-analytics-id="call_hero"
+            >
+              Book a call
+            </LpFxPill>
+          </div>
         </div>
       </div>
     </section>
