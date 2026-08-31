@@ -5,7 +5,6 @@ import { LpCta } from "@/components/sections/landing-v3/LpCta";
 import { LpFeatures } from "@/components/sections/landing-v3/LpFeatures";
 import { LpFooter } from "@/components/sections/landing-v3/LpFooter";
 import { LpHero } from "@/components/sections/landing-v3/LpHero";
-import { LpMarquee } from "@/components/sections/landing-v3/LpMarquee";
 import { LpModals } from "@/components/sections/landing-v3/LpModals";
 import { LpNav } from "@/components/sections/landing-v3/LpNav";
 import { LpPricing } from "@/components/sections/landing-v3/LpPricing";
@@ -79,7 +78,10 @@ export default function Home() {
       />
       <LpNav />
       <LpHero />
-      <LpMarquee />
+      {/* Logo strip (LpMarquee) pulled for now — placeholder tech logos,
+          founder 2026-08-31 ("vire les logos pour le moment"). Component +
+          marquee.css + /lp/lp-logo-strip-tile.png stay for the day real
+          customer logos land. */}
       <LpSteps />
       <LpBanner />
       <LpFeatures />
