@@ -10,7 +10,10 @@
      viewport bottom on a short laptop window). 100svh − 120px nav; the 640
      floor keeps the text clear of the arc's lower tails (the artboard has
      ~100px of cream slack there). ≥878px-tall windows: exactly 758. */
-  height: clamp(640px, calc(100svh - 120px), 758px);
+  /* --lp-svh = frozen viewport height (LpViewportVar: mount + settled
+     resizes only) so live drags don't reflow the page every frame;
+     pre-hydration falls back to live 100svh. */
+  height: clamp(640px, calc(var(--lp-svh, 100svh) - 120px), 758px);
   isolation: isolate;
   position: relative;
 }

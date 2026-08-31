@@ -1,5 +1,6 @@
 import { LpFxLink, LpFxPill } from "@/components/sections/landing-v3/LpFxButton";
 import { LpPancakes } from "@/components/sections/landing-v3/LpPancakes";
+import { LpViewportVar } from "@/components/sections/landing-v3/LpViewportVar";
 
 // Landing v3 — Hero (Figma node 4257:4906, 1654×758).
 // The rainbow art (animated per-arc pancakes group, anim.css) lives in a
@@ -11,6 +12,7 @@ import { LpPancakes } from "@/components/sections/landing-v3/LpPancakes";
 export function LpHero() {
   return (
     <section className="lp-hero" aria-labelledby="lp-hero-title">
+      <LpViewportVar />
       <div className="lp-hero-art" aria-hidden="true">
         <div className="lp-anim-canvas lp-anim-canvas--hero">
           <LpPancakes variant="hero" />
