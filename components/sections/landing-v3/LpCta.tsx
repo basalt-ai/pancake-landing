@@ -1,4 +1,4 @@
-import { LpFxLink } from "@/components/sections/landing-v3/LpFxButton";
+import { LpFxLink, LpFxPill } from "@/components/sections/landing-v3/LpFxButton";
 import { LpPancakes } from "@/components/sections/landing-v3/LpPancakes";
 
 /**
@@ -33,9 +33,21 @@ export function LpCta() {
               Every lead arrives with its conversation attached.
             </p>
           </div>
-          <LpFxLink href="https://app.getpancake.ai" data-analytics-id="app_final">
-            Get started
-          </LpFxLink>
+          <div className="lp-cta__btns">
+            {/* the v2 demo button, ported as-is (founder, 2026-08-28): opens
+                the zcal booking sheet (LpModals) via the data-lv2-open
+                contract; scheduler analytics fire in the modal off call_final */}
+            <LpFxPill
+              className="lp-btn--outline"
+              data-lv2-open="call"
+              data-analytics-id="call_final"
+            >
+              Book a call
+            </LpFxPill>
+            <LpFxLink href="https://app.getpancake.ai" data-analytics-id="app_final">
+              Get started
+            </LpFxLink>
+          </div>
         </div>
       </div>
     </section>

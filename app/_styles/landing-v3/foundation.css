@@ -167,6 +167,15 @@
   outline: 2px solid var(--lp-purple-30);
   outline-offset: -4px;
 }
+/* Outline twin — the "Book a call" demo pill ported from v2 (founder,
+   2026-08-28): transparent ground, plum label, 1px plum hairline via inset
+   shadow (Figma strokes take no flow space). Both labels are plum here (the
+   flood is pastel), so the FX recipe works unchanged. */
+.lp .lp-btn--outline {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--lp-inverted-surface);
+  color: var(--lp-text);
+}
 
 /* ── Figma-exact button corners ──
    The artboard buttons are squircles (cornerSmoothing 0.75). CSS
@@ -196,6 +205,16 @@
       clip-path: path("M 171.5 0 c 12.64 0 18.96 0 23.5 3.034 a 18 18 0 0 1 4.966 4.966 c 3.034 4.54 3.034 10.86 3.034 23.5 L 203 40.5 c 0 12.64 0 18.96 -3.034 23.5 a 18 18 0 0 1 -4.966 4.966 c -4.54 3.034 -10.86 3.034 -23.5 3.034 L 31.5 72 c -12.64 0 -18.96 0 -23.5 -3.034 a 18 18 0 0 1 -4.966 -4.966 c -3.034 -4.54 -3.034 -10.86 -3.034 -23.5 L 0 31.5 c 0 -12.64 0 -18.96 3.034 -23.5 a 18 18 0 0 1 4.966 -4.966 c 4.54 -3.034 10.86 -3.034 23.5 -3.034 Z");
       height: 72px;
       width: 203px;
+    }
+    /* The outline pill keeps plain round corners: the clip-path would cut the
+       inset-shadow hairline away at the curves, and Figma renders smoothing
+       ≤0.8 within ~1.5px of plain round anyway (QA 2026-08-28). Same fixed
+       md box as its filled twin ("Book a call" = 11 mono chars = 136px). */
+    .lp .lp-btn--outline {
+      border-radius: 12px;
+      clip-path: none;
+      height: 48px;
+      width: 136px;
     }
   }
 }

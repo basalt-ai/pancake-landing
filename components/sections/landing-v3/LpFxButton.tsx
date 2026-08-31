@@ -10,7 +10,9 @@ import { isAppCtaId, pushAcquisitionEvent } from "@/lib/analytics/data-layer";
  * the pointer to flood the pill while the label slides up (l1 exits, l2
  * arrives), retracting toward the exit point on leave. Geometry stays the
  * Figma-exact `.lp-btn`; the FX layers are pure overlays.
- * All four landing CTAs are real navigations, so only the anchor twin exists.
+ * LpFxLink is the anchor twin (real navigations); LpFxPill is the button twin
+ * for in-page triggers (the "Book a call" dialog opener — its analytics fire
+ * in LpModals, keyed off data-analytics-id, so no wiring here).
  */
 
 const FILLS = [
@@ -115,5 +117,39 @@ export function LpFxLink({
         </span>
       </span>
     </a>
+  );
+}
+
+export function LpFxPill({
+  size,
+  className,
+  children,
+  ...rest
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  size?: "sm" | "lg";
+  children: string;
+}) {
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const circleRef = useRef<HTMLSpanElement>(null);
+  useFxCircle(btnRef, circleRef);
+
+  return (
+    <button
+      type="button"
+      {...rest}
+      ref={btnRef}
+      className={className ? `lp-btn ${className}` : "lp-btn"}
+      data-size={size}
+    >
+      <span className="lp-btn-fx" aria-hidden="true">
+        <span ref={circleRef} className="c" />
+      </span>
+      <span className="lp-btn-label">
+        <span className="l1">{children}</span>
+        <span className="l2" aria-hidden="true">
+          {children}
+        </span>
+      </span>
+    </button>
   );
 }
