@@ -42,7 +42,7 @@
 
 /* animated track: two 4-card sets with a uniform 16px gap */
 .lp-tst-track {
-  animation: lp-tst-marquee 80s linear infinite;
+  animation: lp-tst-marquee 160s linear infinite; /* 4600px/160s = 28.75px/s */
   display: flex;
   gap: 16px;
   /* 32px outer seams (vs head above / section end below) preserved; 8px inner
@@ -63,7 +63,7 @@
   to {
     /* one set width incl. its trailing gap — card 1 of copy 2 lands exactly
        where card 1 of copy 1 started */
-    transform: translateX(-2300px);
+    transform: translateX(-4600px); /* one 8-card set */
   }
 }
 

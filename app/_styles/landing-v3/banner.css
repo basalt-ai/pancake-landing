@@ -99,6 +99,7 @@
 .lp-banner__m-bottle,
 .lp-banner__m-dot,
 .lp-banner__m-lip,
+.lp-banner__m-bubble,
 .lp-banner__body,
 .lp-banner__br {
   display: none;
@@ -124,7 +125,9 @@
   }
   .lp-banner__card {
     aspect-ratio: 370 / 808;
-    background: var(--lp-ink-10);
+    /* founder 2026-08-31: desktop colors in vertical format — yellow card,
+       black bottle (was cream card + blue bottle per the mobile artboard) */
+    background: var(--lp-yellow-30);
     border-radius: var(--lp-r-xlg); /* 32 */
   }
   .lp-banner__m-dome {
@@ -157,7 +160,7 @@
   }
   .lp-banner__m-lip {
     aspect-ratio: 52.9 / 13.9;
-    background: var(--lp-blue-40);
+    background: #000; /* lip follows the black bottle (founder recolor) */
     border-radius: 3.59px;
     border-radius: 0.971cqw; /* 3.59 */
     display: block;
@@ -166,16 +169,18 @@
     top: 60.285%; /* 487.1 */
     width: 14.297%; /* 52.9 */
   }
-  /* .lp prefix: must outrank foundation's `.lp img { display: block }` */
-  .lp .lp-banner__union,
-  .lp .lp-banner__drop {
-    display: none; /* mobile art is the recolored bottle/dome above */
-  }
-  /* Bubble canvas: rotate 90° cw, uniform scale 0.625·(cardW/370), then
-     translate — bubbles keep spinning about their own centers untouched. */
+  /* The whole desktop canvas (union + drop + spinning bubbles) is replaced
+     on phones by the m-bottle vector and the artboard-native m-bubbles
+     (founder 2026-08-31: the transformed desktop cloud could not match the
+     mobile artboard's bubble constellation) — also frees the GPU layers. */
   .lp-banner__canvas {
-    transform: translate(109.649cqw, -29.487cqw) rotate(90deg)
-      scale(tan(atan2(100cqw, 592px))); /* 592 = 370 / 0.625 */
+    display: none;
+  }
+  .lp-banner__m-bubble {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: block;
+    position: absolute;
   }
   /* Clip frame: same box as .lp-banner__m-bottle (card top-left, 370:490),
      so the canvas transform above keeps its anchor; the objectBoundingBox

@@ -151,14 +151,13 @@ export function LpTestimonials() {
           Take it from them
         </h2>
       </div>
-      {[ROW_1, ROW_2].map((cards, i) => (
+      {/* ONE row (founder 2026-08-31): all 8 tweets in a single marquee.
+          Set = 8×(559+16) = 4600px ≥ any supported viewport, so two copies
+          cover every width; the keyframe translates exactly one set. */}
+      {[[...ROW_1, ...ROW_2]].map((cards, i) => (
         <div className="lp-tst-strip" data-row={i + 1} key={i}>
           <div className="lp-tst-track">
-            {/* three copies: one 2292px set + gap covers viewports past the
-                set width (sweep 2026-08-31: two copies exposed up to ~284px
-                of bare edge at 2560 for ~9s per loop); the keyframe still
-                translates exactly one set, so the wrap stays seamless. */}
-            {(["set", "dupe", "dupe2"] as const).map((copy) => (
+            {(["set", "dupe"] as const).map((copy) => (
               <div
                 aria-hidden={copy === "set" ? undefined : true}
                 className="lp-tst-row"
