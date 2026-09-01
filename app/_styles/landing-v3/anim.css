@@ -274,6 +274,33 @@
   will-change: auto;
 }
 
+/* ── phones: canvas-rendered hero rotation (LpArcCanvas.tsx) ─────────────
+   One canvas over the art box replaces six 2390×2331 animated layers. The
+   [data-lp-arc-canvas] attribute lands only after the canvas drew its first
+   frame — until then (and whenever the component bails: reduced motion,
+   context loss, pre-hydration) the static DOM artboard below stays the
+   render, so there is never a blank hero. */
+.lp-arc-canvas {
+  display: none;
+}
+@media (max-width: 767px) {
+  .lp-arc-canvas {
+    height: 100%;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 0;
+  }
+  .lp-hero-art[data-lp-arc-canvas] .lp-arc-canvas {
+    display: block;
+  }
+  .lp-hero-art[data-lp-arc-canvas] .lp-anim-box--hero {
+    visibility: hidden;
+  }
+}
+
 /* ── phones: hold the 20s cohort at the artboard pose ─────────────────────
    Founder's iPhone 17 Pro still killed WebContent after the off-stage freeze
    (2026-09-01, round 2): the six hero arcs alone are 2390×2331 rotating img
