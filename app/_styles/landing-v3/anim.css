@@ -175,7 +175,11 @@
    a fraction of the desktop cost). */
 @media (min-width: 768px) {
   .lp-cta__art .lp-anim-spin--cw,
-  .lp-cta__art .lp-anim-spin--ccw {
+  .lp-cta__art .lp-anim-spin--ccw,
+  /* pricing too (founder 2026-09-01: "fige l'arc-en-ciel avant le footer")
+     — same doctrine, t0 == the artboard; mobile keeps its animated rings */
+  .lp-price-art .lp-anim-spin--cw,
+  .lp-price-art .lp-anim-spin--ccw {
     animation: none;
   }
 }
