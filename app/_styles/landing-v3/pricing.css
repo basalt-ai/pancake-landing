@@ -1,7 +1,8 @@
 /* ── Landing v3 · Pricing (node 4257:5083, 1654×890, bg #000) ─────────────────
    lp-pancakes-pricing.svg (1654×1039) sits at section x0 y-0.66 and paints the
    cream top + rainbow wave; the 148px spill past y890 is black-on-black against
-   the footer → the section clips it. Content coords are frame-anchored:
+   the footer → the section x-clips it and lets y spill (see .lp-price).
+   Content coords are frame-anchored:
    x259 = calc(50% − 568px), x835 = calc(50% + 8px) — both the frame and the art
    are center-anchored, so text↔art registration holds at any viewport ≥1025px
    (≤1360 the side paddings scale down through the same calc()s). */
@@ -13,8 +14,22 @@
      black-on-black spill zone instead of slicing strands mid-curve (sweep
      2026-08-31, ≥1440). Exactly 890px at 1654 — gate untouched. */
   height: max(890px, 53.81vw);
-  overflow: clip;
+  /* No own clip: the rotating yellow ring dips up to ~15 canvas px below the
+     y890 crop line once per loop (max rotational extent 904.6 vs the settled
+     889.1 the crop was fitted to), and any y-clip here slices that dip into a
+     flat horizontal cut mid-strand (founder report 2026-08-31, pricing
+     ≥2000px — the dip is scale-invariant, it happens at every width; and
+     Blink clips BOTH axes for `overflow: clip visible` on this subtree, so
+     the mixed value can't express "x only"). The art's lateral spill below
+     1654px viewports is already contained by main.lp { overflow-x: clip }.
+     The freed dip paints over the footer's identical #000 via z-index below;
+     nothing else in the art crosses y890 (next-largest ring maxes at 880.2,
+     cream pop included maxes 817.6). */
+  overflow: visible;
   position: relative;
+  /* paint above the footer (positioned, DOM-later) so the freed dip isn't
+     overdrawn by the footer background; nav (40) and modals stay above */
+  z-index: 1;
 }
 .lp-price-art {
   height: auto;

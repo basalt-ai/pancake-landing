@@ -122,9 +122,19 @@ html:has(main.lp) {
 .lp-feat,
 .lp-cta,
 .lp-tst,
-.lp-price {
+.lp-price-art {
   content-visibility: auto;
 }
+/* .lp-price-art, not .lp-price: content-visibility's paint containment
+   clips every descendant at the element box no matter what overflow says,
+   and the pricing section's box cuts the rotating rings flat — the yellow
+   ring dips ~15 canvas px below the section's y890 crop line once per loop
+   (the founder's flat-cut-mid-strand report, 2026-08-31). The art box
+   (aspect 1654:1039) contains the full ring extent with ~134 canvas px to
+   spare, and the art subtree holds the six huge composited spin layers that
+   motivated this block — the section's remaining content is one static text
+   frame. The art's size is width+aspect-ratio-driven, so it needs no
+   contain-intrinsic-size while skipped. */
 @media (min-width: 768px) {
   .lp-banner {
     contain-intrinsic-size: auto 753px;
@@ -137,9 +147,6 @@ html:has(main.lp) {
   }
   .lp-tst {
     contain-intrinsic-size: auto 670px;
-  }
-  .lp-price {
-    contain-intrinsic-size: auto 890px;
   }
 }
 @media (max-width: 767px) {
@@ -158,9 +165,6 @@ html:has(main.lp) {
   }
   .lp-tst {
     contain-intrinsic-size: auto 450px;
-  }
-  .lp-price {
-    contain-intrinsic-size: auto 940px;
   }
 }
 .lp {
