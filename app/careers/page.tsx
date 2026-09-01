@@ -230,12 +230,10 @@ export default function CareersPage() {
               <h2 id="careers-note-heading" className="lp-crs-note__title lp-display">
                 Don&rsquo;t see your role?
               </h2>
+              {/* One line (founder 2026-09-01) — the button next door already
+                  says "Send a note", so the lede drops the duplicate ask. */}
               <p className="lp-crs-lede">
-                We&rsquo;re always interested in exceptional people. Send a note to{" "}
-                <a className="lp-crs-mail" href={`mailto:${APPLY_EMAIL}`}>
-                  {APPLY_EMAIL}
-                </a>
-                .
+                We&rsquo;re always interested in exceptional people.
               </p>
             </div>
             {/* No data-analytics-id: mailto isn't an allow-listed app CTA — must not

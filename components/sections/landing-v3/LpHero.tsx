@@ -33,10 +33,10 @@ export function LpHero() {
             <LpFxLink href="https://app.getpancake.ai" data-analytics-id="app_hero">
               Get started
             </LpFxLink>
-            {/* Mobile-only twin (Figma mobile 4389:8180) — opens the zcal
-                booking sheet via LpModals' data-lv2-open contract; analytics
-                fire there off the allow-listed call_hero id. Hidden ≥768
-                (desktop hero has only Get started). */}
+            {/* Opens the zcal booking sheet via LpModals' data-lv2-open
+                contract; analytics fire there off the allow-listed call_hero
+                id. All widths (founder 2026-09-01) — the desktop artboard
+                draws one CTA, deliberately overridden. */}
             <LpFxPill
               className="lp-btn--tinted lp-hero-call"
               data-lv2-open="call"

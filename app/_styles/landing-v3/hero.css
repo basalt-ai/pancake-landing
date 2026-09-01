@@ -144,19 +144,13 @@
     top: -180px;
   }
 }
-/* Button row (Figma mobile 4389:8177: horizontal, gap 8). On desktop only
-   "Get started" is visible, so the wrapper is layout-neutral there. */
+/* Button row (Figma mobile 4389:8177: horizontal, gap 8). "Book a call"
+   shows at EVERY width (founder 2026-09-01: it was hidden ≥768 for desktop-
+   artboard fidelity — the desktop frame draws one CTA — and he wants it
+   back). 136 + 8 + ~134 = ~278px sits inside the 368px column. */
 .lp-hero-btns {
   display: flex;
   gap: 8px;
-}
-/* "Book a call" is a mobile-only addition — the desktop hero stays exactly
-   one CTA. hero.css imports after foundation.css, so this outranks
-   `.lp-btn { display: inline-flex }` at equal specificity. */
-@media (min-width: 768px) {
-  .lp-hero-call {
-    display: none;
-  }
 }
 
 /* ≤1200: edge-anchor + scale the headline so the columns never crop */
