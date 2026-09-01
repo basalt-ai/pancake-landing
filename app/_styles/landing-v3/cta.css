@@ -148,8 +148,9 @@
     flex-direction: column;
   }
   /* Artboard mobile CTA (4389:8372) shows a single centered "Get started" —
-     Book a call lives in the hero + nav menu on phones. */
-  .lp-cta__btns .lp-btn--outline {
+     Book a call lives in the hero + nav menu on phones. (The button wears
+     .lp-btn--tinted since 2026-09-01, matching the hero.) */
+  .lp-cta__btns .lp-btn--tinted {
     display: none;
   }
 }

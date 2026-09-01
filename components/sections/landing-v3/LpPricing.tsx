@@ -46,6 +46,13 @@ export function LpPricing() {
           within it is -272px (see anim.css .lp-anim-box--pricing). */}
       <div className="lp-price-art" aria-hidden="true">
         <div className="lp-anim-canvas lp-anim-canvas--pricing">
+          {/* black floor UNDER the rings: the outermost black disc rotates,
+              and at loop phases ~2-3s its edge lifts and exposed the cream
+              section bg as a full-width flash above the footer (founder
+              2026-09-01, "bande blanche"). In Figma the same lift lands on
+              the artboard's black footer — invisible; this floor recreates
+              that backing. Canvas coords, painted before (under) the arcs. */}
+          <div className="lp-price-blackfloor" />
           <LpPancakes variant="pricing" />
         </div>
       </div>

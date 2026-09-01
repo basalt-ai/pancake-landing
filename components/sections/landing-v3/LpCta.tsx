@@ -34,11 +34,13 @@ export function LpCta() {
             </p>
           </div>
           <div className="lp-cta__btns">
-            {/* the v2 demo button, ported as-is (founder, 2026-08-28): opens
-                the zcal booking sheet (LpModals) via the data-lv2-open
-                contract; scheduler analytics fire in the modal off call_final */}
+            {/* opens the zcal booking sheet (LpModals) via the data-lv2-open
+                contract; scheduler analytics fire in the modal off call_final.
+                Tinted skin — same as the hero's Book a call (founder
+                2026-09-01: "bouton book a call différent que dans hero");
+                the outline variant is retired here. */}
             <LpFxPill
-              className="lp-btn--outline"
+              className="lp-btn--tinted"
               data-lv2-open="call"
               data-analytics-id="call_final"
             >

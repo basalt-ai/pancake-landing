@@ -229,3 +229,16 @@
     margin-top: 16px;
   }
 }
+
+/* Black floor under the rotating rings (see LpPricing.tsx) — canvas coords,
+   spans the full clip box width; y760 sits below every designed cream/band
+   position across the loop (phase-swept) while the black disc normally
+   covers it entirely. */
+.lp-price-blackfloor {
+  background: #000;
+  height: 279px;
+  left: -272px;
+  position: absolute;
+  top: 760px;
+  width: 2622px;
+}
