@@ -154,6 +154,31 @@
 .lp-anim-spin--ccw {
   animation: lp-anim-spin-ccw 20s linear infinite;
 }
+/* NO will-change on the spinners — tried 2026-09-01 as a Safari tile-lag
+   guard and it BROKE the CTA outright on real GPUs: pinning promotes each
+   ring disc into a ~5200-device-px texture (10 of them in the CTA alone),
+   past common Mac texture limits, and Safari renders garbage (founder:
+   "c'est complètement cassé ce CTA" — on the very preview carrying it).
+   Layer persistence is provided by the animations themselves: a PAUSED CSS
+   animation still counts as active, so the off-stage pause freeze below
+   keeps layers alive without pinning any oversized texture. */
+
+/* Desktop CTA slivers are STATIC at the artboard pose (founder 2026-09-01,
+   third strike: "toujours glitchy ça rame ce CTA" — ON-stage the section
+   is ten rotating ~2600px ring discs for two 560-wide slivers; no freeze
+   helps the section being looked at, and real Macs ground under it while
+   hero/pricing — six discs each — were the long-proven baseline). t0 is
+   bit-identical to the artboard, so the slivers show the exact designed
+   composition. If motion returns here it must be a canvas renderer (one
+   sliver-sized buffer per side), not CSS layers. Phones keep their own
+   cohort (the mobile CTA bands re-animated earlier today are 0.4-scale —
+   a fraction of the desktop cost). */
+@media (min-width: 768px) {
+  .lp-cta__art .lp-anim-spin--cw,
+  .lp-cta__art .lp-anim-spin--ccw {
+    animation: none;
+  }
+}
 /* Founder tweak (2026-08-28): the CTA card's two rainbows are exact mirror
    copies, so mid-animation every frame was a perfect reflection ("le côté
    parfaitement symétrique … c'est assez bizarre"). A phase offset on the left
@@ -251,27 +276,46 @@
 }
 
 /* ── off-stage freeze (LpAnimFreeze.tsx) ──────────────────────────────────
-   iPhone Safari killed WebContent while scrolling the page ("A problem
-   repeatedly occurred", founder 17 Pro report 2026-08-31): every animated
-   cohort on the page — 6 hero arcs, 44 bubbles, pricing/CTA arcs, ring flow,
-   9200px testimonial tracks — held live composited GPU surfaces at once.
-   LpAnimFreeze stamps data-lp-offstage on section roots further than 1.5
-   viewports away; dropping animation-name (and the big tracks' will-change)
-   lets WebKit decompose those layers and free the memory. The frozen pose ==
-   the static artboard (same contract as reduced-motion). On re-entry the
-   component restores each member IN PHASE via a negative animation-delay
-   computed on the shared page clock, so the phase-locked cohorts never
-   visibly desync — all flips happen far off-screen. */
-[data-lp-offstage] .lp-anim-spin--cw,
-[data-lp-offstage] .lp-anim-spin--ccw,
-[data-lp-offstage] .lp-anim-bubble,
-[data-lp-offstage] .lp-feat-ringfx i {
-  animation-name: none;
+   Two mechanisms for one goal — sections >0.75 viewport away stop costing
+   GPU per frame — because the two platforms fail differently:
+
+   PHONES must RELEASE memory (iPhone killed WebContent under the standing
+   layer budget, 2026-08-31): animation-name:none decomposes the layers and
+   frees them; the frozen pose is the static artboard, and LpAnimFreeze
+   restores phase via negative animation-delay on re-entry.
+
+   DESKTOP must NOT churn layers (decompose/recompose is what produced
+   Safari's frozen-rainbow flashes, square tiles, and the CTA hover glitch
+   meltdown on weaker Macs — screen recording, 2026-09-01): the spinners'
+   will-change keeps every backing store alive, and freezing is merely
+   animation-play-state:paused — the compositor stops ticking ~20 big
+   rotating layers page-wide (only the ~1 viewport near the user animates),
+   and resume simply continues from the paused pose: no restart, no repaint,
+   no visible seam. Cross-section phase drifts, but sections are never
+   co-visible with each other's rings; within a section the members pause
+   and resume together, so the designed counter-rotation stays locked. */
+@media (max-width: 767px) {
+  [data-lp-offstage] .lp-anim-spin--cw,
+  [data-lp-offstage] .lp-anim-spin--ccw,
+  [data-lp-offstage] .lp-anim-bubble,
+  [data-lp-offstage] .lp-feat-ringfx i {
+    animation-name: none;
+  }
+  [data-lp-offstage] .lp-tst-track,
+  [data-lp-offstage] .lp-marquee__track {
+    animation-name: none;
+    will-change: auto;
+  }
 }
-[data-lp-offstage] .lp-tst-track,
-[data-lp-offstage] .lp-marquee__track {
-  animation-name: none;
-  will-change: auto;
+@media (min-width: 768px) {
+  [data-lp-offstage] .lp-anim-spin--cw,
+  [data-lp-offstage] .lp-anim-spin--ccw,
+  [data-lp-offstage] .lp-anim-bubble,
+  [data-lp-offstage] .lp-feat-ringfx i,
+  [data-lp-offstage] .lp-tst-track,
+  [data-lp-offstage] .lp-marquee__track {
+    animation-play-state: paused;
+  }
 }
 
 /* ── phones: canvas-rendered hero rotation (LpArcCanvas.tsx) ─────────────

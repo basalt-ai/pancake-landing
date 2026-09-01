@@ -44,6 +44,10 @@ export function LpPricing() {
       {/* Animated pancakes group: 1654×1039 canvas where the old composite img
           sat (top -0.66px, centered); the 2622×1039 container's left offset
           within it is -272px (see anim.css .lp-anim-box--pricing). */}
+      {/* NOTE: no opaque backing may live in this canvas — the art overlaps
+          the footer by design (arcs sweep over its black), so anything
+          opaque here covers the footer's logo (learned 2026-09-01: a black
+          "floor" div blanked the Pancake logo). */}
       <div className="lp-price-art" aria-hidden="true">
         <div className="lp-anim-canvas lp-anim-canvas--pricing">
           <LpPancakes variant="pricing" />
