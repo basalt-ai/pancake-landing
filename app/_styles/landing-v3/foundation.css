@@ -115,14 +115,34 @@ html:has(main.lp) {
    on iPhone; not reproducible in desktop engines, which have the VRAM).
    Frees the GPU budget for whichever section is on screen. Safari 18+ /
    Chromium; older engines ignore the properties (harmless). */
-@media (max-width: 767px) {
-  .lp-banner,
-  .lp-feat,
-  .lp-cta,
-  .lp-tst,
-  .lp-price {
-    content-visibility: auto;
+/* All widths since 2026-08-31: desktop Safari also evicts composited
+   layers (H1 vanish recurrence) — skipping offscreen sections frees the
+   budget everywhere. Estimates per breakpoint below. */
+.lp-banner,
+.lp-feat,
+.lp-cta,
+.lp-tst,
+.lp-price {
+  content-visibility: auto;
+}
+@media (min-width: 768px) {
+  .lp-banner {
+    contain-intrinsic-size: auto 753px;
   }
+  .lp-feat {
+    contain-intrinsic-size: auto 2969px;
+  }
+  .lp-cta {
+    contain-intrinsic-size: auto 624px;
+  }
+  .lp-tst {
+    contain-intrinsic-size: auto 670px;
+  }
+  .lp-price {
+    contain-intrinsic-size: auto 890px;
+  }
+}
+@media (max-width: 767px) {
   /* Per-section estimates within ~2% of the rendered heights at 393 (sweep
      2026-08-31: a flat 1000px was −1824px off for .lp-feat → scrollbar
      jumps and anchor overshoot; `auto` pins the real size after first
