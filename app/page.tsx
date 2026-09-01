@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 
 import { LpBanner } from "@/components/sections/landing-v3/LpBanner";
 import { LpCta } from "@/components/sections/landing-v3/LpCta";
 import { LpFeatures } from "@/components/sections/landing-v3/LpFeatures";
+import { LpFitVars } from "@/components/sections/landing-v3/LpFitVars";
 import { LpFooter } from "@/components/sections/landing-v3/LpFooter";
 import { LpHero } from "@/components/sections/landing-v3/LpHero";
 import { LpModals } from "@/components/sections/landing-v3/LpModals";
@@ -21,8 +22,15 @@ import "@/app/_styles/landing-v3.css";
 
 // Page-level metadata mirrors the hero (unchanged copy vs v2);
 // the root layout still carries the org-wide defaults.
+
+/* Status-bar zone matches the lp cream (Dynamic Island fix, 2026-08-31) */
+export const viewport: Viewport = { themeColor: "#fbf6f1" };
+
 export const metadata: Metadata = {
-  title: "Pancake — You run your company. We bring you customers.",
+  /* Tab shows just the brand (founder 2026-08-31: "I just want to see
+     Pancake next to the favicon"); og:title below keeps the value prop
+     for link previews. */
+  title: "Pancake",
   description:
     "Pancake’s AI agents monitor buying signals, find warm leads, grow your AI search visibility, and learn from every interaction.",
   alternates: { canonical: "https://getpancake.ai" },
@@ -76,12 +84,14 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationJsonLd) }}
       />
+      {/* Serves every section's art canvas — the --lp-fit scale var
+          (iOS WebKit cqw-in-trig workaround, see LpFitVars.tsx) */}
+      <LpFitVars />
       <LpNav />
       <LpHero />
-      {/* Logo strip (LpMarquee) pulled for now — placeholder tech logos,
-          founder 2026-08-31 ("vire les logos pour le moment"). Component +
-          marquee.css + /lp/lp-logo-strip-tile.png stay for the day real
-          customer logos land. */}
+      {/* Logo strip stays unmounted: the V1 set reads as powered-by, not
+          customers (founder 2026-08-31). LpMarquee + marquee.css + the V1
+          wordmark wiring stay for the day real customer logos land. */}
       <LpSteps />
       <LpBanner />
       <LpFeatures />

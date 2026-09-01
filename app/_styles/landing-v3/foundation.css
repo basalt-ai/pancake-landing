@@ -103,9 +103,78 @@
 }
 
 /* ── base ── */
+/* iOS Safari letterboxes the status-bar zone with the page's root
+   background — cream, not white, behind the Dynamic Island (founder
+   2026-08-31). :has-gated so other routes keep their own chrome. */
+html:has(main.lp) {
+  background: #fbf6f1;
+}
+/* Phones: skip rendering (and compositing) of offscreen art sections —
+   real-device Safari drops/freezes composited animation layers under GPU
+   memory pressure (founder 2026-08-31: frozen rainbow + missing CTA band
+   on iPhone; not reproducible in desktop engines, which have the VRAM).
+   Frees the GPU budget for whichever section is on screen. Safari 18+ /
+   Chromium; older engines ignore the properties (harmless). */
+/* All widths since 2026-08-31: desktop Safari also evicts composited
+   layers (H1 vanish recurrence) — skipping offscreen sections frees the
+   budget everywhere. Estimates per breakpoint below. */
+.lp-banner,
+.lp-feat,
+.lp-cta,
+.lp-tst,
+.lp-price-art {
+  content-visibility: auto;
+}
+/* .lp-price-art, not .lp-price: content-visibility's paint containment
+   clips every descendant at the element box no matter what overflow says,
+   and the pricing section's box cuts the rotating rings flat — the yellow
+   ring dips ~15 canvas px below the section's y890 crop line once per loop
+   (the founder's flat-cut-mid-strand report, 2026-08-31). The art box
+   (aspect 1654:1039) contains the full ring extent with ~134 canvas px to
+   spare, and the art subtree holds the six huge composited spin layers that
+   motivated this block — the section's remaining content is one static text
+   frame. The art's size is width+aspect-ratio-driven, so it needs no
+   contain-intrinsic-size while skipped. */
+@media (min-width: 768px) {
+  .lp-banner {
+    contain-intrinsic-size: auto 753px;
+  }
+  .lp-feat {
+    contain-intrinsic-size: auto 2969px;
+  }
+  .lp-cta {
+    contain-intrinsic-size: auto 624px;
+  }
+  .lp-tst {
+    contain-intrinsic-size: auto 670px;
+  }
+}
+@media (max-width: 767px) {
+  /* Per-section estimates within ~2% of the rendered heights at 393 (sweep
+     2026-08-31: a flat 1000px was −1824px off for .lp-feat → scrollbar
+     jumps and anchor overshoot; `auto` pins the real size after first
+     render). */
+  .lp-banner {
+    contain-intrinsic-size: auto 840px;
+  }
+  .lp-feat {
+    contain-intrinsic-size: auto 2890px; /* rev2 band is taller */
+  }
+  .lp-cta {
+    contain-intrinsic-size: auto 860px;
+  }
+  .lp-tst {
+    contain-intrinsic-size: auto 450px;
+  }
+}
 .lp {
   background: var(--lp-page-bg);
   color: var(--lp-text);
+  /* iOS Safari auto-inflates text in wide containers (text-size-adjust),
+     blowing mock copy past its baked gradient frames and pushing the f4
+     chips off-screen (simulator audit 2026-08-31) — pin it. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   font-family: var(--lp-font-fono);
   font-size: var(--lp-text-md);
   line-height: 1.5;

@@ -5,9 +5,29 @@
    correct behavior — the page clips overflow-x). */
 
 .lp-hero {
-  height: 758px;
+  /* Artboard height 758, compressing on short windows so the bottom-anchored
+     headline + CTA stay above the fold (founder 2026-08-31: text cut at the
+     viewport bottom on a short laptop window). 100svh − 120px nav; the 640
+     floor keeps the text clear of the arc's lower tails (the artboard has
+     ~100px of cream slack there). ≥878px-tall windows: exactly 758. */
+  /* --lp-svh = frozen viewport height (LpViewportVar: mount + settled
+     resizes only) so live drags don't reflow the page every frame;
+     pre-hydration falls back to live 100svh. */
+  height: clamp(640px, calc(var(--lp-svh, 100svh) - 120px), 758px);
   isolation: isolate;
   position: relative;
+  /* Post-settle glide (founder: "je veux du fluide 100%, comme le snake") —
+     the frozen measure keeps drags reflow-free, and when it lands the new
+     height EASES in instead of snapping. Same curve on the ladder's scale
+     and art-lift below. */
+  transition: height 450ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-hero,
+  .lp-hero-inner,
+  .lp-hero-art {
+    transition: none;
+  }
 }
 .lp-hero-art {
   /* The export includes an invisible page-colored arc reaching y1417 that
@@ -23,8 +43,25 @@
   position: absolute;
   top: -120px;
   transform: translateX(-50%);
-  width: 1654px;
+  transition: top 450ms cubic-bezier(0.22, 1, 0.36, 1);
+  width: max(1654px, 100vw);
   z-index: 0;
+}
+/* Wide monitors (founder, final direction 2026-08-31: "prolonge l'arc",
+   no margins): the scene stretches HORIZONTALLY ONLY past 1654 —
+   band heights stay exactly the artboard's (uniform zoom read as
+   "descend trop bas") and no crescent tips appear (natural ring
+   continuation exposed them). scaleX is a pure compositor transform, so
+   resizing in this range never reflows — fluid by construction. The px
+   clip pins the ink cutoff at the artboard's absolute y878 regardless of
+   the wider box's height. At exactly 1654 both rules are identity. */
+@media (min-width: 1655px) {
+  .lp-hero-art {
+    clip-path: inset(0 0 calc(100% - 878.13px) 0);
+  }
+  .lp-hero-art .lp-anim-canvas--hero {
+    transform: scaleX(var(--lp-fit, tan(atan2(100cqw, 1654px))));
+  }
 }
 
 /* Centered 1654 frame — text positions are exact artboard geometry.
@@ -38,6 +75,11 @@
   max-width: 1654px;
   position: absolute;
   transform: translateZ(0);
+  transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
+  /* will-change: the strongest layer-retention hint WebKit honors — the
+     translateZ pin alone stopped surviving Safari's eviction once the
+     page's layer count grew (founder recurrence 2026-08-31) */
+  will-change: transform;
   z-index: 1;
 }
 .lp-hero-title {
@@ -71,6 +113,36 @@
   font-size: var(--lp-text-md);
   line-height: 1.5;
   width: 368px;
+}
+
+/* Degradation ladder for short windows (founder recording 2026-08-31: below
+   the 640 compression floor the headline clipped or vanished). The hero
+   keeps tracking the window and the text block scales down about its
+   bottom-center — headline + CTA stay above the fold at ANY height; the arc
+   just crops shorter. MUST live after the .lp-hero-inner base rule: its
+   unconditional translateZ(0) would override these at equal specificity.
+   Tiers flip on live viewport height (discrete, no per-frame reflow); the
+   height itself uses the frozen measure. */
+@media (min-width: 1025px) and (max-height: 759px) {
+  .lp-hero {
+    height: max(500px, calc(var(--lp-svh, 100svh) - 120px));
+  }
+  .lp-hero-inner {
+    transform: scale(0.84) translateZ(0);
+    transform-origin: 50% 100%;
+  }
+}
+@media (min-width: 1025px) and (max-height: 639px) {
+  .lp-hero {
+    height: max(380px, calc(var(--lp-svh, 100svh) - 120px));
+  }
+  .lp-hero-inner {
+    transform: scale(0.66) translateZ(0);
+  }
+  /* lift the arc so the shrunken text keeps clearance under it */
+  .lp-hero-art {
+    top: -180px;
+  }
 }
 /* Button row (Figma mobile 4389:8177: horizontal, gap 8). On desktop only
    "Get started" is visible, so the wrapper is layout-neutral there. */
@@ -159,7 +231,7 @@
     width: 163.33vw;
   }
   .lp-hero-art .lp-anim-canvas--hero {
-    transform: scale(tan(atan2(100cqw, 1654px)))
+    transform: scale(var(--lp-fit, tan(atan2(100cqw, 1654px))))
       translate(875.785px, 1456.5px) rotate(15deg) scaleX(-1)
       translate(-875.785px, -1456.5px);
   }
@@ -171,9 +243,12 @@
     gap: 23px;
   }
   .lp-hero-title {
-    /* 8.846vw = 35.559px at the 402 artboard; floor keeps the two nowrap
-       lines inside a 375 viewport (line 2 is 332px at full size). */
-    font-size: clamp(33px, 8.846vw, 35.559px);
+    /* 8.846vw = 35.559px at the 402 artboard; the 30px floor keeps line 2
+       ("We bring you customers", 332px at full size) inside a 320 viewport
+       with the 32px gutter (sweep 2026-08-31: the 33px floor clipped the
+       trailing "s" below ~340px). em tracking so it scales with the clamp. */
+    font-size: clamp(30px, 8.846vw, 35.559px);
+    letter-spacing: -0.03em;
   }
   .lp-hero-lede {
     max-width: 368px;

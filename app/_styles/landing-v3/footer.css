@@ -78,6 +78,11 @@
 .lp-foot-links a:last-child {
   margin-bottom: 0;
 }
+/* Mobile-only single meta line ("2026 Pancake · San Francisco, CA · Privacy ·
+   Terms") — hidden at ≥768 where the brand block carries lines + legal. */
+.lp-foot-line {
+  display: none;
+}
 
 /* ≤1024: recompose to flow — brand block, then columns as a wrapping row. */
 @media (max-width: 1024px) {
@@ -123,25 +128,67 @@
   }
 }
 
-/* ≤767: columns stack via wrap; link tap targets ≥44px
-   (col links: 24px line + 2×10; legal links: 20px line + 2×12). */
+/* ≤767: compact recompose (2026-08-31, "très long à scroller") — logo row
+   (140px), Product + Company side by side, Social as a wrapped row, then one
+   muted meta line replacing the brand lines + legal. Every link keeps a 44px
+   effective tap target: col/social links 24px line + 2×10px padding-block;
+   meta links pad to 44px but cancel it with negative margins so the line
+   stays visually tight. */
 @media (max-width: 767px) {
   .lp-foot-frame {
-    gap: 48px;
-    padding: 56px 24px;
+    gap: 24px;
+    padding: 40px 24px 20px;
+  }
+  .lp-foot-logo {
+    height: auto;
+    width: 140px;
+  }
+  .lp-foot-lines,
+  .lp-foot-legal {
+    display: none;
   }
   .lp-foot-cols {
-    gap: 40px 48px;
+    display: grid;
+    gap: 20px 16px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .lp-foot-col {
+    width: auto; /* desktop's fixed 176px overflows a 320px grid cell */
+  }
+  .lp-foot-col[data-col="social"] {
+    grid-column: 1 / -1;
+  }
+  .lp-foot-head {
+    color: var(--lp-ink-60);
+    font-size: var(--lp-text-sm);
   }
   .lp-foot-links {
-    margin-top: 8px;
+    margin-top: 2px;
   }
   .lp-foot-links a {
     margin-bottom: 0;
     padding-block: 10px;
   }
-  .lp-foot-legal a {
+  /* Social: compact wrapped row. Negative left margin re-aligns the first
+     item's text with the 24px gutter; min-width keeps "X" tappable. */
+  .lp-foot-col[data-col="social"] .lp-foot-links {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -12px;
+  }
+  .lp-foot-col[data-col="social"] .lp-foot-links a {
+    min-width: 44px;
+    padding-inline: 12px;
+  }
+  .lp-foot-line {
+    color: var(--lp-ink-60);
+    display: block;
+    font-size: var(--lp-text-sm);
+    line-height: 1.5;
+  }
+  .lp-foot-line a {
     display: inline-block;
-    padding-block: 12px;
+    margin: -12px -6px;
+    padding: 12px 6px;
   }
 }

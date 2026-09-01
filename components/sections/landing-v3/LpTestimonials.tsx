@@ -6,6 +6,9 @@ import type { ReactNode } from "react";
 // Each strip's track holds its 4-card set twice (duplicate aria-hidden) and
 // slides exactly one set width (2300px) per loop, so the wrap is seamless.
 // Double spaces in the row-1 bodies are verbatim from Figma (pre-wrap).
+// ≤767 the strips are display:none and .lp-tst-carousel below takes over: all
+// 8 tweets once (no marquee duplicates) in a horizontal scroll-snap carousel
+// (founder 2026-08-31: smaller cards, horizontal swipe instead of tall stack).
 
 type Card = {
   avatar: string;
@@ -125,7 +128,7 @@ function TestimonialCard({ card }: { card: Card }) {
           <p className="lp-tst-name">{card.name}</p>
           <p className="lp-tst-handle">{`${card.handle} · ${card.time}`}</p>
         </div>
-        <img alt="" height={48} src="/lp/lp-t-x-logo.svg" width={48} />
+        <img alt="" className="lp-tst-x" height={48} src="/lp/lp-t-x-logo.svg" width={48} />
       </div>
       <p className="lp-tst-body">{card.body}</p>
       <div className="lp-tst-div" />
@@ -148,14 +151,17 @@ export function LpTestimonials() {
           Take it from them
         </h2>
       </div>
-      {[ROW_1, ROW_2].map((cards, i) => (
+      {/* ONE row (founder 2026-08-31): all 8 tweets in a single marquee.
+          Set = 8×(559+16) = 4600px ≥ any supported viewport, so two copies
+          cover every width; the keyframe translates exactly one set. */}
+      {[[...ROW_1, ...ROW_2]].map((cards, i) => (
         <div className="lp-tst-strip" data-row={i + 1} key={i}>
           <div className="lp-tst-track">
-            {([false, true] as const).map((dupe) => (
+            {(["set", "dupe"] as const).map((copy) => (
               <div
-                aria-hidden={dupe || undefined}
+                aria-hidden={copy === "set" ? undefined : true}
                 className="lp-tst-row"
-                key={dupe ? "dupe" : "set"}
+                key={copy}
               >
                 {cards.map((card, j) => (
                   <TestimonialCard card={card} key={j} />
@@ -165,6 +171,17 @@ export function LpTestimonials() {
           </div>
         </div>
       ))}
+      {/* phone carousel: the 8 originals once, user-swiped (display:none ≥768) */}
+      <div
+        aria-label="Posts about Pancake"
+        className="lp-tst-carousel"
+        role="region"
+        tabIndex={0}
+      >
+        {[...ROW_1, ...ROW_2].map((card, j) => (
+          <TestimonialCard card={card} key={j} />
+        ))}
+      </div>
     </section>
   );
 }

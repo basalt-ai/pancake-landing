@@ -1,16 +1,35 @@
 /* ── Landing v3 · Pricing (node 4257:5083, 1654×890, bg #000) ─────────────────
    lp-pancakes-pricing.svg (1654×1039) sits at section x0 y-0.66 and paints the
    cream top + rainbow wave; the 148px spill past y890 is black-on-black against
-   the footer → the section clips it. Content coords are frame-anchored:
+   the footer → the section x-clips it and lets y spill (see .lp-price).
+   Content coords are frame-anchored:
    x259 = calc(50% − 568px), x835 = calc(50% + 8px) — both the frame and the art
    are center-anchored, so text↔art registration holds at any viewport ≥1025px
    (≤1360 the side paddings scale down through the same calc()s). */
 
 .lp-price {
   background: #000;
-  height: 890px;
-  overflow: clip;
+  /* 53.81vw = 890/1654: past the artboard width the section grows with the
+     art (width: max(1654px,100%)) so the wave's cut edge stays in the
+     black-on-black spill zone instead of slicing strands mid-curve (sweep
+     2026-08-31, ≥1440). Exactly 890px at 1654 — gate untouched. */
+  height: max(890px, 53.81vw);
+  /* No own clip: the rotating yellow ring dips up to ~15 canvas px below the
+     y890 crop line once per loop (max rotational extent 904.6 vs the settled
+     889.1 the crop was fitted to), and any y-clip here slices that dip into a
+     flat horizontal cut mid-strand (founder report 2026-08-31, pricing
+     ≥2000px — the dip is scale-invariant, it happens at every width; and
+     Blink clips BOTH axes for `overflow: clip visible` on this subtree, so
+     the mixed value can't express "x only"). The art's lateral spill below
+     1654px viewports is already contained by main.lp { overflow-x: clip }.
+     The freed dip paints over the footer's identical #000 via z-index below;
+     nothing else in the art crosses y890 (next-largest ring maxes at 880.2,
+     cream pop included maxes 817.6). */
+  overflow: visible;
   position: relative;
+  /* paint above the footer (positioned, DOM-later) so the freed dip isn't
+     overdrawn by the footer background; nav (40) and modals stay above */
+  z-index: 1;
 }
 .lp-price-art {
   height: auto;
@@ -108,7 +127,11 @@
 }
 
 /* ≤1024: recompose to flow — cream section, art becomes a full-width flow image
-   at the bottom whose black lower edge hands off to the black footer. */
+   at the bottom. The wave SVG is transparent below its outermost arc, so the
+   art wrapper gets a black ground: the canvas's cream top paints over it,
+   the band's underside reads black exactly like the desktop composition, and
+   that black hands off seamlessly to the black footer (the wrapper's bottom
+   edge is a black-on-black cut). */
 @media (max-width: 1024px) {
   .lp-price {
     background: #fbf6f1;
@@ -148,19 +171,26 @@
   .lp-price-cta {
     margin-top: 48px;
   }
-  .lp-price-note {
+  /* 0,2,0 — outranks foundation's `.lp p { margin: 0 }` (0,1,1), which
+     silently zeroed a plain .lp-price-note margin */
+  .lp-price .lp-price-note {
     margin-top: 16px;
   }
   .lp-price-art {
+    background: #000;
     height: auto;
-    margin-top: 48px;
+    margin-top: 32px;
     position: static;
     transform: none;
     width: 100%;
   }
 }
 
-/* ≤767: single column, scaled type; CTA stays ≥40px tall. */
+/* ≤767: single column, scaled type; CTA stays ≥40px tall. The price block's
+   internal gap and the list's extra offset scale down with the 96px type so
+   amount + per + checklist read as one composed block; the CTA stretches
+   full-width (block-level flex — the squircle clip is ≥768-only, so the pill
+   keeps its fluid metrics) and the art tucks 16px under the note. */
 @media (max-width: 767px) {
   .lp-price-frame {
     padding: 64px 24px 0;
@@ -179,12 +209,23 @@
   .lp-price-body {
     gap: 32px;
   }
+  .lp-price-price {
+    gap: 20px;
+  }
+  .lp-price-list {
+    margin-top: 0;
+  }
   .lp-price-cta.lp-btn[data-size="lg"] {
     border-radius: 14px;
+    display: flex;
     font-size: 20px;
     padding: 14px 26px;
+    width: 100%;
+  }
+  .lp-price .lp-price-note {
+    margin-top: 12px;
   }
   .lp-price-art {
-    margin-top: 40px;
+    margin-top: 16px;
   }
 }

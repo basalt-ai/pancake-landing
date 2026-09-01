@@ -328,3 +328,22 @@
     overflow-wrap: anywhere; /* the mailto address on narrow phones */
   }
 }
+
+/* ── phone tap targets (sweep 2026-08-31: member links 36px, fact chips
+   34px, the mailto 19px — all under the 44px floor). Padding + negative
+   margins grow the hit area without moving the rendered text. ── */
+@media (max-width: 767px) {
+  .lp .lp-crs-member__link {
+    margin-bottom: -12px;
+    padding-block: 16px 12px;
+  }
+  a.lp-crs-fact {
+    margin-block: -7px;
+    padding-block: 12px;
+  }
+  .lp-crs-note__text a {
+    display: inline-block;
+    margin-block: -12px;
+    padding-block: 12px;
+  }
+}

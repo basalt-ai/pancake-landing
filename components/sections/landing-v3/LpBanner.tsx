@@ -35,12 +35,39 @@ export function LpBanner() {
             fillRule="evenodd"
             clipRule="evenodd"
             d="M211.467 426.93C211.467 367.767 276.282 337.36 312.609 288.181C343.527 246.325 370 210.487 370 128.052L370 -413.999L8.68577e-05 -414L-2.36939e-05 128.052C-2.72972e-05 210.487 26.4729 246.325 57.3909 288.181C93.7181 337.36 168.302 367.767 168.302 426.93L168.302 427.033C168.302 431.012 168.318 436.69 168.336 443.112C168.379 458.863 168.436 479.09 168.302 489.703L211.467 489.703C211.334 479.09 211.39 458.862 211.434 443.112C211.452 436.689 211.467 431.011 211.467 427.033L211.467 426.93Z"
-            fill="#4660E7"
+            fill="#000000"
           />
+        </svg>
+        {/* Reusable clip: the mobile bottle silhouette in objectBoundingBox
+            units (÷370, ÷490) — referenced by .lp-banner__bubblebox ≤767 so
+            bubbles can't drift outside the bottle (founder report
+            2026-08-31). Bare 0×0 svg: display:none would break the
+            reference in WebKit. */}
+        <svg aria-hidden="true" width="0" height="0" style={{ position: "absolute" }}>
+          <clipPath id="lp-bottle-clip" clipPathUnits="objectBoundingBox">
+            <path
+              transform="scale(0.0027027, 0.00204082)"
+              d="M211.467 426.93C211.467 367.767 276.282 337.36 312.609 288.181C343.527 246.325 370 210.487 370 128.052L370 -413.999L8.68577e-05 -414L-2.36939e-05 128.052C-2.72972e-05 210.487 26.4729 246.325 57.3909 288.181C93.7181 337.36 168.302 367.767 168.302 426.93L168.302 427.033C168.302 431.012 168.318 436.69 168.336 443.112C168.379 458.863 168.436 479.09 168.302 489.703L211.467 489.703C211.334 479.09 211.39 458.862 211.434 443.112C211.452 436.689 211.467 431.011 211.467 427.033L211.467 426.93Z"
+            />
+          </clipPath>
         </svg>
         {/* z bottom→top: union (bottle + wave) → bubbles (animated) → drop */}
         <div className="lp-banner__art" aria-hidden="true">
-          <div className="lp-banner__canvas">
+          {/* display:contents everywhere except ≤767, where it becomes the
+              bottle-shaped clip frame for the bubble canvas */}
+          <div className="lp-banner__bubblebox">
+            <div className="lp-banner__canvas">
+            {/* The production artboard composition, one founder-directed
+                change (2026-08-31): the drop renders FIRST so it passes
+                BEHIND the black bottle — its top tucks under the collar and
+                the bulb emerges below. */}
+            <img
+              src="/lp/lp-banner-drop.svg"
+              alt=""
+              width={49.07}
+              height={81.5}
+              className="lp-banner__drop"
+            />
             <img
               src="/lp/lp-banner-union.svg"
               alt=""
@@ -49,13 +76,48 @@ export function LpBanner() {
               className="lp-banner__union"
             />
             <LpBubbles />
-            <img
-              src="/lp/lp-banner-drop.svg"
-              alt=""
-              width={49.07}
-              height={81.5}
-              className="lp-banner__drop"
-            />
+            </div>
+        {/* Mobile-native bubbles: the mobile artboard's own 31 circles
+            (group 4389:8247, card coords ÷370/÷490 → %), replacing the
+            transformed desktop canvas whose cloud geometry could not match
+            the artboard (founder 2026-08-31: positions must be exact).
+            Static divs — the desktop bubbles' own-center spin is visually
+            null for circles. Clipped by the parent bubblebox. */}
+        {[
+          { left: "88.892%", top: "30.816%", width: "4.541%", background: "var(--lp-yellow-30)" },
+          { left: "37.162%", top: "66.0%", width: "5.676%", background: "var(--lp-pink-30)" },
+          { left: "45.649%", top: "67.061%", width: "2.892%", background: "var(--lp-pink-30)" },
+          { left: "49.486%", top: "77.735%", width: "6.135%", background: "var(--lp-pink-30)" },
+          { left: "51.027%", top: "89.571%", width: "6.135%", background: "var(--lp-purple-30)" },
+          { left: "42.865%", top: "71.776%", width: "4.162%", background: "var(--lp-pink-30)" },
+          { left: "47.027%", top: "76.49%", width: "1.676%", background: "var(--lp-pink-30)" },
+          { left: "53.811%", top: "62.449%", width: "1.676%", background: "var(--lp-pink-30)" },
+          { left: "50.892%", top: "94.286%", width: "1.676%", background: "var(--lp-purple-30)" },
+          { left: "46.73%", top: "81.51%", width: "2.784%", background: "var(--lp-purple-30)" },
+          { left: "87.459%", top: "-22.694%", width: "2.838%", background: "var(--lp-green-20)" },
+          { left: "60.135%", top: "68.102%", width: "3.946%", background: "var(--lp-pink-30)" },
+          { left: "54.73%", top: "66.0%", width: "3.946%", background: "var(--lp-pink-30)" },
+          { left: "37.892%", top: "49.245%", width: "3.973%", background: "var(--lp-yellow-30)" },
+          { left: "13.459%", top: "23.388%", width: "3.054%", background: "var(--lp-yellow-30)" },
+          { left: "7.108%", top: "30.082%", width: "4.0%", background: "var(--lp-yellow-30)" },
+          { left: "7.081%", top: "11.755%", width: "4.054%", background: "var(--lp-green-20)" },
+          { left: "46.784%", top: "87.98%", width: "4.243%", background: "var(--lp-purple-30)" },
+          { left: "47.27%", top: "91.878%", width: "2.919%", background: "var(--lp-purple-30)" },
+          { left: "52.541%", top: "96.061%", width: "2.919%", background: "var(--lp-purple-30)" },
+          { left: "49.703%", top: "82.878%", width: "6.459%", background: "var(--lp-purple-30)" },
+          { left: "86.189%", top: "47.163%", width: "2.73%", background: "var(--lp-yellow-30)" },
+          { left: "85.676%", top: "6.531%", width: "3.27%", background: "var(--lp-green-20)" },
+          { left: "92.703%", top: "21.286%", width: "1.486%", background: "var(--lp-yellow-30)" },
+          { left: "51.081%", top: "71.551%", width: "7.297%", background: "var(--lp-pink-30)" },
+          { left: "15.622%", top: "49.878%", width: "6.0%", background: "var(--lp-yellow-30)" },
+          { left: "46.297%", top: "95.857%", width: "4.757%", background: "var(--lp-purple-30)" },
+          { left: "61.324%", top: "59.612%", width: "6.081%", background: "var(--lp-yellow-30)" },
+          { left: "61.784%", top: "53.184%", width: "2.919%", background: "var(--lp-yellow-30)" },
+          { left: "34.27%", top: "60.878%", width: "2.919%", background: "var(--lp-yellow-30)" },
+          { left: "23.676%", top: "60.551%", width: "4.892%", background: "var(--lp-pink-30)" },
+        ].map((s, i) => (
+          <span className="lp-banner__m-bubble" key={i} style={s} />
+        ))}
           </div>
         </div>
         {/* mobile-only overlays: static orange dot + the bottle-neck lip cap */}

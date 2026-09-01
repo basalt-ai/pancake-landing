@@ -1,7 +1,9 @@
-/* landing-v3/features.css — "How Pancake finds customers" (Figma 4257:4976)
-   Wrapper 1654×2937: flex col gap-32 p-16. Heading pt-128 px-128, centered
-   title. Cards 1296×621 (r48, no bg). Separators 1136w, 0.5px ink-50.
-   Mock UIs are 0.8-scale app UI: exact fractional px throughout. */
+/* landing-v3/features.css — "How Pancake finds customers" (Figma 4257:4976,
+   rev2 artboard 2026-08-31). Wrapper 1654×2969: flex col gap-32 p-16 —
+   +32 vs rev1: a 4th separator closes the section. Heading pt-128 px-128,
+   centered title. Cards 1296×621 (r48, no bg). Separators 1136w, 0.5px
+   ink-50. Mock UIs are 0.9-scale app UI in rev2 (f2/f3/f4 rebuilt): exact
+   fractional px throughout; f1 keeps its rev1 0.8-scale mock unchanged. */
 
 .lp-feat {
   display: flex;
@@ -75,6 +77,20 @@
   color: var(--lp-text);
   white-space: pre-line;
 }
+/* rev2: pink tag above the f1 title (Figma 4526:3450 — 75×24, r6, Fono
+   Medium 13.33 / +4% tracking) */
+.lp-feat-tag {
+  align-self: flex-start;
+  background: var(--lp-pink-30);
+  border-radius: 6px;
+  color: var(--lp-ink-100);
+  font-size: 13.33px;
+  font-weight: 500;
+  letter-spacing: 0.533px;
+  line-height: 1.5;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
 .lp-feat-body {
   font-size: var(--lp-text-md);
   line-height: 1.5;
@@ -146,9 +162,6 @@
   padding: 0 12.8px;
   position: relative;
   width: 100%;
-}
-.lp-feat-f1-row-tinted {
-  background: var(--lp-ink-tr-5);
 }
 .lp-feat-f1-tile {
   align-items: center;
@@ -364,81 +377,607 @@
   width: 75.63px;
 }
 
-/* popping quips — same annotation language as the clay bubble, one visible
-   at a time on a shared 21s loop (5 slots of 4.2s: 0.2s pop, 3.0s hold,
-   0.25s fade, 0.75s gap). Negative delays stagger the slots. Absolute
-   inside the fixed-size f1 root: zero layout impact. Transform-origin sits
-   on the tail so each quip pops from the row it points at. */
+/* ── f1 choreography — one 11.2s master loop, acts every 2.6s ──
+   Act k (t0 = 0.25 / 2.85 / 5.45 / 8.05s): quip slaps in at its row (0.26s:
+   scale .6 → 1.07 overshoot → settle), the row's toggle snaps on at t0+0.5
+   (0.22s) and STAYS on; the quip holds ~1.75s and fades at t0+2.0 — the
+   next act's slap lands 0.6s after that fade starts, so the card never
+   idles. Act 3 is the payoff: the moment the Companies-hiring toggle
+   lights, the Roles panel — hidden since loop start — springs open from its
+   signals-card side showing "0 selected", then Sales → Marketing →
+   Customer success get checked one by one (bouncy pops, 0.35s stagger) with
+   the header counting 1 → 2 → 3 as each lands (Operations stays unchecked).
+   Last 0.7s: toggles, panel, and checks quietly reset.
+   Acts → rows: 1 Keyword mentions, 2 Competitor engagement, 3 Companies
+   hiring, 4 Technologies used.
+
+   Mechanics: every animation runs 11.2s linear infinite with delay 0 — each
+   element's OWN keyframes place its events on the shared clock, so all
+   animations are phase-identical (currentTime is the master clock).
+   RESTING state (reduced motion, or animations cancelled) is the exact
+   artboard: clay sticker at its left spot, 4 toggles on, Roles panel open
+   with its 3 checks, quips opacity-0 — EXCEPT the hiring row's tint, a
+   deliberate founder override (2026-08-31): white at rest like its
+   siblings, tinted only while act 3 plays. Everything animated lives inside the
+   no-preference media block below; ≤767 stays fully static (quips are
+   display:none there and the block is scoped ≥768). */
+
+/* quips — every act reuses the clay sticker's ARTBOARD geometry relative to
+   its row's toggle: the artboard sticker sits at (-304, -39.5) from the
+   Keyword toggle's top-left corner (box left -48/top 45.6 vs toggle
+   x256/y85.1), tilted -13.36° about its center, tail bottom-right pointing
+   down-right into the row line that leads to the toggle. Each quip applies
+   that exact offset to its own toggle (all toggles share x256 → left -48,
+   top = toggle.y − 39.5), so act 1's settled quip lands pixel-on the static
+   sticker's spot. Absolute inside the fixed-size f1 root: zero layout
+   impact. Resting opacity 0. */
 .lp-feat-f1-quip {
+  --quip-tilt: -13.36deg;
   align-items: center;
-  animation: lp-feat-f1-quip 21s linear infinite;
-  background: url("/lp/lp-f1-annotation.svg") 50% 50% / 100% 100% no-repeat;
   display: flex;
   font-size: 8.64px;
   font-weight: 600;
   height: 42.85px;
   justify-content: center;
+  left: -48px;
   line-height: 1.35;
   opacity: 0;
   padding: 0 4px 9.4px;
   position: absolute;
   text-align: center;
-  transform: rotate(var(--quip-tilt, -11deg)) scale(0.9);
-  transform-origin: 62% 88%;
+  transform: rotate(var(--quip-tilt)) scale(0.6);
   width: 75.63px;
 }
+.lp-feat-f1-quip::before {
+  background: url("/lp/lp-f1-annotation.svg") 50% 50% / 100% 100% no-repeat;
+  content: "";
+  inset: 0;
+  position: absolute;
+  /* behind the quip's text — safe: the parent's transform makes a stacking
+     context, so -1 can't drop below the cards painted earlier */
+  z-index: -1;
+}
+/* toggle tops rel f1: 85.1 / 145.9 / 267.4 / 389.0 → top = toggle.y − 39.5 */
 .lp-feat-f1-quip[data-quip="1"] {
-  --quip-tilt: -11deg;
-  animation-delay: -20.7s;
-  left: -55px;
-  top: 106px;
+  top: 45.6px;
 }
 .lp-feat-f1-quip[data-quip="2"] {
-  --quip-tilt: -14deg;
-  animation-delay: -16.5s;
-  left: -46px;
-  top: 167px;
+  top: 106.4px;
 }
 .lp-feat-f1-quip[data-quip="3"] {
-  --quip-tilt: -9deg;
-  animation-delay: -12.3s;
-  left: -54px;
-  top: 228px;
+  top: 227.9px;
 }
 .lp-feat-f1-quip[data-quip="4"] {
-  --quip-tilt: -12.5deg;
-  animation-delay: -8.1s;
-  left: -50px;
-  top: 289px;
+  top: 349.5px;
 }
-.lp-feat-f1-quip[data-quip="5"] {
-  --quip-tilt: -10deg;
-  animation-delay: -3.9s;
-  left: -57px;
-  top: 349px;
+
+/* counting Roles header — the rest DOM is the artboard's "3 selected" (a
+   bare inline span: renders exactly as the old text node). The 0/1/2
+   overlays are animation-only layers stacked on the same baseline (base
+   opacity 0); keyframed hard cuts count them up as the checks land. */
+.lp-feat-f1-rolecount {
+  position: relative;
 }
-@keyframes lp-feat-f1-quip {
-  0% {
-    animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
-    opacity: 0;
-    transform: rotate(var(--quip-tilt)) scale(0.9);
+.lp-feat-f1-rc-alt {
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+}
+
+/* choreography check stack — the empty outline under an animated check img
+   is animation-only (base opacity 0): at rest the img alone renders, exactly
+   the artboard. The img is position:relative so it paints above the
+   absolutely-positioned outline. */
+.lp-feat-f1-checkwrap {
+  display: inline-flex;
+  flex: none;
+  height: 19.2px;
+  position: relative;
+  width: 19.2px;
+}
+.lp-feat-f1-checkwrap .lp-feat-f1-checkbox-off {
+  inset: 0;
+  opacity: 0;
+  position: absolute;
+}
+.lp-feat-f1-checkwrap .lp-feat-f1-checkimg {
+  position: relative;
+}
+
+@media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
+  /* the always-on clay sticker retires while the choreography runs — its
+     copy IS act 1. Keyframed (not static) so cancelling animations restores
+     the artboard render. */
+  .lp-feat-f1-bubble,
+  .lp-feat-f1-bubbletext {
+    animation: lp-feat-f1-sticker-off 11.2s linear infinite;
   }
-  /* 0.95% = 0.2s pop-in */
-  0.95% {
-    opacity: 1;
-    transform: rotate(var(--quip-tilt)) scale(1);
+  .lp-feat-f1-quip[data-quip="1"] {
+    animation: lp-feat-f1-quip1 11.2s linear infinite;
   }
-  /* hold until 15.24% = 3.2s */
-  15.24% {
-    animation-timing-function: ease-in;
-    opacity: 1;
-    transform: rotate(var(--quip-tilt)) scale(1);
+  .lp-feat-f1-quip[data-quip="2"] {
+    animation: lp-feat-f1-quip2 11.2s linear infinite;
   }
-  /* fade out by 16.43% = 3.45s, then stay hidden for the other slots */
-  16.43%,
-  100% {
-    opacity: 0;
-    transform: rotate(var(--quip-tilt)) scale(1);
+  .lp-feat-f1-quip[data-quip="3"] {
+    animation: lp-feat-f1-quip3 11.2s linear infinite;
+  }
+  .lp-feat-f1-quip[data-quip="4"] {
+    animation: lp-feat-f1-quip4 11.2s linear infinite;
+  }
+  /* animations outrank the .is-on declarations, so the same markup renders
+     the artboard toggle when the loop is off */
+  .lp-feat-f1-row[data-act="1"] .lp-feat-f1-toggle {
+    animation: lp-feat-f1-track1 11.2s linear infinite;
+  }
+  .lp-feat-f1-row[data-act="1"] .lp-feat-f1-toggle::after {
+    animation: lp-feat-f1-knob1 11.2s linear infinite;
+  }
+  .lp-feat-f1-row[data-act="2"] .lp-feat-f1-toggle {
+    animation: lp-feat-f1-track2 11.2s linear infinite;
+  }
+  .lp-feat-f1-row[data-act="2"] .lp-feat-f1-toggle::after {
+    animation: lp-feat-f1-knob2 11.2s linear infinite;
+  }
+  /* the hiring row tints only while its act plays (founder 2026-08-31: the
+     artboard's static tint reads as a stuck hover — highlight the row from
+     the toggle snap through the Roles sequence, white again once act 4
+     takes over) */
+  .lp-feat-f1-row[data-act="3"] {
+    animation: lp-feat-f1-rowtint3 11.2s linear infinite;
+  }
+  .lp-feat-f1-row[data-act="3"] .lp-feat-f1-toggle {
+    animation: lp-feat-f1-track3 11.2s linear infinite;
+  }
+  .lp-feat-f1-row[data-act="3"] .lp-feat-f1-toggle::after {
+    animation: lp-feat-f1-knob3 11.2s linear infinite;
+  }
+  .lp-feat-f1-row[data-act="4"] .lp-feat-f1-toggle {
+    animation: lp-feat-f1-track4 11.2s linear infinite;
+  }
+  .lp-feat-f1-row[data-act="4"] .lp-feat-f1-toggle::after {
+    animation: lp-feat-f1-knob4 11.2s linear infinite;
+  }
+  /* Roles panel springs open from its signals-card side the moment the
+     hiring toggle lights (origin x0, at the hiring row's height) */
+  .lp-feat-f1-roles {
+    animation: lp-feat-f1-roles-in 11.2s linear infinite;
+    transform-origin: 0% 48%;
+  }
+  /* empty outlines under the animated checks — visible for the whole loop
+     (the landed check img covers them) */
+  .lp-feat-f1-checkwrap .lp-feat-f1-checkbox-off {
+    animation: lp-feat-f1-outline-on 11.2s linear infinite;
+  }
+  .lp-feat-f1-checkimg[data-pop="s"] {
+    animation: lp-feat-f1-check-s 11.2s linear infinite;
+  }
+  .lp-feat-f1-checkimg[data-pop="m"] {
+    animation: lp-feat-f1-check-m 11.2s linear infinite;
+  }
+  .lp-feat-f1-checkimg[data-pop="cs"] {
+    animation: lp-feat-f1-check-cs 11.2s linear infinite;
+  }
+  /* counting header — exactly one layer visible at a time; hard cuts at
+     each check's landing moment */
+  .lp-feat-f1-rolecount [data-rc="3"] {
+    animation: lp-feat-f1-rc3 11.2s linear infinite;
+  }
+  .lp-feat-f1-rolecount [data-rc="0"] {
+    animation: lp-feat-f1-rc0 11.2s linear infinite;
+  }
+  .lp-feat-f1-rolecount [data-rc="1"] {
+    animation: lp-feat-f1-rc1 11.2s linear infinite;
+  }
+  .lp-feat-f1-rolecount [data-rc="2"] {
+    animation: lp-feat-f1-rc2 11.2s linear infinite;
+  }
+
+  @keyframes lp-feat-f1-sticker-off {
+    0%,
+    100% {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  /* quip k: sticker-slap pop — t0: scale .6 tilted 5° short → t0+0.15:
+     1.07 overshoot 1.5° past → t0+0.26: settled; hold; fade t0+2.0→t0+2.25.
+     t0 = 0.25 / 2.85 / 5.45 / 8.05s. 1% = 0.112s. */
+  @keyframes lp-feat-f1-quip1 {
+    0%,
+    2.2321% {
+      animation-timing-function: cubic-bezier(0.16, 0.84, 0.44, 1);
+      opacity: 0;
+      transform: rotate(calc(var(--quip-tilt) - 5deg)) scale(0.6);
+    }
+    3.5714% {
+      animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+      opacity: 1;
+      transform: rotate(calc(var(--quip-tilt) + 1.5deg)) scale(1.07);
+    }
+    4.5536%,
+    20.0893% {
+      animation-timing-function: ease-in;
+      opacity: 1;
+      transform: rotate(var(--quip-tilt)) scale(1);
+    }
+    22.3214%,
+    100% {
+      opacity: 0;
+      transform: rotate(var(--quip-tilt)) scale(1);
+    }
+  }
+  @keyframes lp-feat-f1-quip2 {
+    0%,
+    25.4464% {
+      animation-timing-function: cubic-bezier(0.16, 0.84, 0.44, 1);
+      opacity: 0;
+      transform: rotate(calc(var(--quip-tilt) - 5deg)) scale(0.6);
+    }
+    26.7857% {
+      animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+      opacity: 1;
+      transform: rotate(calc(var(--quip-tilt) + 1.5deg)) scale(1.07);
+    }
+    27.7679%,
+    43.3036% {
+      animation-timing-function: ease-in;
+      opacity: 1;
+      transform: rotate(var(--quip-tilt)) scale(1);
+    }
+    45.5357%,
+    100% {
+      opacity: 0;
+      transform: rotate(var(--quip-tilt)) scale(1);
+    }
+  }
+  @keyframes lp-feat-f1-quip3 {
+    0%,
+    48.6607% {
+      animation-timing-function: cubic-bezier(0.16, 0.84, 0.44, 1);
+      opacity: 0;
+      transform: rotate(calc(var(--quip-tilt) - 5deg)) scale(0.6);
+    }
+    50% {
+      animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+      opacity: 1;
+      transform: rotate(calc(var(--quip-tilt) + 1.5deg)) scale(1.07);
+    }
+    50.9821%,
+    66.5179% {
+      animation-timing-function: ease-in;
+      opacity: 1;
+      transform: rotate(var(--quip-tilt)) scale(1);
+    }
+    68.75%,
+    100% {
+      opacity: 0;
+      transform: rotate(var(--quip-tilt)) scale(1);
+    }
+  }
+  @keyframes lp-feat-f1-quip4 {
+    0%,
+    71.875% {
+      animation-timing-function: cubic-bezier(0.16, 0.84, 0.44, 1);
+      opacity: 0;
+      transform: rotate(calc(var(--quip-tilt) - 5deg)) scale(0.6);
+    }
+    73.2143% {
+      animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+      opacity: 1;
+      transform: rotate(calc(var(--quip-tilt) + 1.5deg)) scale(1.07);
+    }
+    74.1964%,
+    89.7321% {
+      animation-timing-function: ease-in;
+      opacity: 1;
+      transform: rotate(var(--quip-tilt)) scale(1);
+    }
+    91.9643%,
+    100% {
+      opacity: 0;
+      transform: rotate(var(--quip-tilt)) scale(1);
+    }
+  }
+
+  /* toggle k: off until t0+0.5, snaps on over 0.22s, holds green, resets
+     quietly 10.5→10.9s */
+  @keyframes lp-feat-f1-track1 {
+    0%,
+    6.6964% {
+      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      background: var(--lp-ink-50);
+    }
+    8.6607%,
+    93.75% {
+      animation-timing-function: ease;
+      background: var(--lp-green-30);
+    }
+    97.3214%,
+    100% {
+      background: var(--lp-ink-50);
+    }
+  }
+  @keyframes lp-feat-f1-knob1 {
+    0%,
+    6.6964% {
+      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      left: 1.6px;
+    }
+    8.6607%,
+    93.75% {
+      animation-timing-function: ease;
+      left: 14.4px;
+    }
+    97.3214%,
+    100% {
+      left: 1.6px;
+    }
+  }
+  @keyframes lp-feat-f1-track2 {
+    0%,
+    29.9107% {
+      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      background: var(--lp-ink-50);
+    }
+    31.875%,
+    93.75% {
+      animation-timing-function: ease;
+      background: var(--lp-green-30);
+    }
+    97.3214%,
+    100% {
+      background: var(--lp-ink-50);
+    }
+  }
+  @keyframes lp-feat-f1-knob2 {
+    0%,
+    29.9107% {
+      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      left: 1.6px;
+    }
+    31.875%,
+    93.75% {
+      animation-timing-function: ease;
+      left: 14.4px;
+    }
+    97.3214%,
+    100% {
+      left: 1.6px;
+    }
+  }
+  /* row highlight rides the same clock: in with the toggle snap (53.125%),
+     held through the Roles checks, released as act 4 opens (71.875%) */
+  @keyframes lp-feat-f1-rowtint3 {
+    0%,
+    53.125% {
+      background-color: rgba(44, 0, 42, 0);
+    }
+    55.0893%,
+    71.875% {
+      background-color: var(--lp-ink-tr-5);
+    }
+    74.5536%,
+    100% {
+      background-color: rgba(44, 0, 42, 0);
+    }
+  }
+  @keyframes lp-feat-f1-track3 {
+    0%,
+    53.125% {
+      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      background: var(--lp-ink-50);
+    }
+    55.0893%,
+    93.75% {
+      animation-timing-function: ease;
+      background: var(--lp-green-30);
+    }
+    97.3214%,
+    100% {
+      background: var(--lp-ink-50);
+    }
+  }
+  @keyframes lp-feat-f1-knob3 {
+    0%,
+    53.125% {
+      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      left: 1.6px;
+    }
+    55.0893%,
+    93.75% {
+      animation-timing-function: ease;
+      left: 14.4px;
+    }
+    97.3214%,
+    100% {
+      left: 1.6px;
+    }
+  }
+  @keyframes lp-feat-f1-track4 {
+    0%,
+    76.3393% {
+      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      background: var(--lp-ink-50);
+    }
+    78.3036%,
+    93.75% {
+      animation-timing-function: ease;
+      background: var(--lp-green-30);
+    }
+    97.3214%,
+    100% {
+      background: var(--lp-ink-50);
+    }
+  }
+  @keyframes lp-feat-f1-knob4 {
+    0%,
+    76.3393% {
+      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      left: 1.6px;
+    }
+    78.3036%,
+    93.75% {
+      animation-timing-function: ease;
+      left: 14.4px;
+    }
+    97.3214%,
+    100% {
+      left: 1.6px;
+    }
+  }
+
+  /* act-3 payoff chain — hiring toggle lands 6.17s: the Roles panel springs
+     open 6.15→6.5s (scale .5→1.06→1 from its left edge, a consequence of
+     the toggle) reading "0 selected", then the checks land in order: Sales
+     6.6→6.85, Marketing 6.95→7.2, Customer success 7.3→7.55, the header
+     counting with them. Panel and checks fade back with the toggle wrap
+     (10.5→10.9s). */
+  @keyframes lp-feat-f1-roles-in {
+    0%,
+    54.9107% {
+      animation-timing-function: cubic-bezier(0.16, 0.84, 0.44, 1);
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    56.6964% {
+      animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+      opacity: 1;
+      transform: scale(1.06);
+    }
+    58.0357%,
+    93.75% {
+      animation-timing-function: ease;
+      opacity: 1;
+      transform: scale(1);
+    }
+    97.3214%,
+    100% {
+      opacity: 0;
+      transform: scale(0.94);
+    }
+  }
+  @keyframes lp-feat-f1-outline-on {
+    0%,
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes lp-feat-f1-check-s {
+    0%,
+    58.9286% {
+      animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+      opacity: 0;
+      transform: scale(0.3);
+    }
+    61.1607%,
+    93.75% {
+      animation-timing-function: ease;
+      opacity: 1;
+      transform: scale(1);
+    }
+    97.3214%,
+    100% {
+      opacity: 0;
+      transform: scale(1);
+    }
+  }
+  @keyframes lp-feat-f1-check-m {
+    0%,
+    62.0536% {
+      animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+      opacity: 0;
+      transform: scale(0.3);
+    }
+    64.2857%,
+    93.75% {
+      animation-timing-function: ease;
+      opacity: 1;
+      transform: scale(1);
+    }
+    97.3214%,
+    100% {
+      opacity: 0;
+      transform: scale(1);
+    }
+  }
+  @keyframes lp-feat-f1-check-cs {
+    0%,
+    65.1786% {
+      animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+      opacity: 0;
+      transform: scale(0.3);
+    }
+    67.4107%,
+    93.75% {
+      animation-timing-function: ease;
+      opacity: 1;
+      transform: scale(1);
+    }
+    97.3214%,
+    100% {
+      opacity: 0;
+      transform: scale(1);
+    }
+  }
+
+  /* counting header — hard cuts (0.05% ≈ 5.6ms) at each check's landing:
+     "0 selected" from panel-open, then 1 / 2 / 3 as S / M / CS land. The
+     rest-DOM "3 selected" is hidden for the rest of the loop; at the seam
+     the panel itself is opacity-0, so its 100%→0% flip is invisible. */
+  @keyframes lp-feat-f1-rc3 {
+    0%,
+    67.3607% {
+      opacity: 0;
+    }
+    67.4107%,
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes lp-feat-f1-rc0 {
+    0%,
+    54.8607% {
+      opacity: 0;
+    }
+    54.9107%,
+    61.1107% {
+      opacity: 1;
+    }
+    61.1607%,
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes lp-feat-f1-rc1 {
+    0%,
+    61.1107% {
+      opacity: 0;
+    }
+    61.1607%,
+    64.2357% {
+      opacity: 1;
+    }
+    64.2857%,
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes lp-feat-f1-rc2 {
+    0%,
+    64.2357% {
+      opacity: 0;
+    }
+    64.2857%,
+    67.3607% {
+      opacity: 1;
+    }
+    67.4107%,
+    100% {
+      opacity: 0;
+    }
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -447,415 +986,369 @@
   }
 }
 
-/* ── feature 2 — campaign / follow-up ── */
+/* ── feature 2 (rev2) — LinkedIn x-post + rainbow draft card ──
+   Root = the mock's tight bounds in the 560×621 zone: x78.85 (ring left)
+   → 483.85, y76.09 (post top) → 547.89 (ring bottom). All children carry
+   Figma-exact offsets relative to it. */
 .lp-feat-f2 {
-  height: 429.6px;
-  left: calc(50% - 0.2px);
+  height: 471.8px;
+  left: 78.85px;
   position: absolute;
-  top: calc(50% + 4.5px);
-  transform: translate(-50%, -50%);
-  width: 438.4px;
+  top: 76.09px;
+  width: 405px;
 }
-.lp-feat-f2-carda {
-  border-radius: 19.2px;
-  display: flex;
-  flex-direction: column;
-  gap: 19.2px;
-  left: 0;
-  overflow: clip;
-  padding: 19.2px;
-  position: absolute;
-  right: 0;
-  /* Figma top edge (rel root) = -0.6px; top-pinned so font-metric drift grows
-     downward instead of shifting the whole card (self-corrects with the
-     condensed OTFs) */
-  top: -0.6px;
-}
-.lp-feat-f2-eyebrow {
-  color: var(--lp-ink-70);
-  font-size: 10.667px;
-  font-weight: 500;
-  letter-spacing: 1.0667px;
-  line-height: 1.6;
-  text-transform: uppercase;
-}
-/* line box renders 0.64px taller than Figma's — post row must start at y54.2
-   (.lp prefix outranks the `.lp p { margin: 0 }` reset) */
-.lp .lp-feat-f2-eyebrow {
-  margin-bottom: -0.64px;
-}
+/* LinkedIn pastiche (Figma sets Inter — not loaded by the app; stack falls
+   back to SF/Segoe, the closest metrics. Palette is LinkedIn's, page-scoped
+   literals on purpose). Icon layer (globe, action row, reaction bubbles) is
+   one baked SVG at the card's own 364×171 coordinates. */
 .lp-feat-f2-post {
-  align-items: center;
-  background: var(--lp-ink-tr-5);
-  border-radius: 19.2px;
-  box-shadow: inset 0 0 0 0.4px var(--lp-ink-50);
-  display: flex;
-  gap: 12.8px;
-  padding: 12.8px;
-  width: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 14.4px;
+  box-shadow: inset 0 0 0 0.9px #e8e6e3;
+  height: 170.4px;
+  left: 19.46px;
+  position: absolute;
+  top: 0;
+  width: 363.6px;
 }
-.lp-feat-f2-avatarbox {
-  display: block;
-  flex: none;
-  height: 38.4px;
-  position: relative;
-  width: 38.4px;
+/* descendants too — the legacy `* { font-family: var(--font-body) }` in the
+   global sheet outranks inheritance, so the card's own declaration alone
+   never reaches the text nodes */
+.lp-feat-f2-post,
+.lp-feat-f2-post * {
+  font-family: "Inter", "SF Pro Text", -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+.lp-feat-f2-posticons {
+  height: 171px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 364px;
 }
 .lp-feat-f2-avatar {
-  border-radius: 19.2px;
-  height: 38.4px;
-  width: 38.4px;
-}
-.lp-feat-f2-badge {
-  height: 16.146px;
-  left: 26.4px;
+  border-radius: 50%;
+  height: 43.2px;
+  left: 14.4px;
   position: absolute;
-  top: 26px;
-  width: 16.146px;
+  top: 14.6px;
+  width: 43.2px;
 }
-.lp-feat-f2-postcol {
+.lp-feat-f2-meta {
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  gap: 1.8px;
+  left: 68.4px;
+  position: absolute;
+  top: 14.4px;
+  white-space: nowrap;
 }
+/* letter-spacings below carry a fallback-font compensation (+0.25…0.5px vs
+   Figma's Inter values) — the system fallback runs ~5% narrower than Inter
+   at these sizes (measured vs the artboard render 2026-08-31). Remove the
+   extra tracking if real Inter ever gets loaded. */
 .lp-feat-f2-name {
-  color: var(--lp-ink-70);
-  font-size: 10.667px;
-  line-height: 1.6;
+  color: #191919;
+  font-size: 12.6px;
+  font-weight: 700;
+  letter-spacing: 0.27px;
+  line-height: 15px;
 }
-/* with -ago's trim: keeps the post row at Figma's 88.6px so the chips row
-   lands at y162 rel the f2 root */
-.lp .lp-feat-f2-name {
-  margin-bottom: -0.13px;
+.lp-feat-f2-degree {
+  color: #666666;
+  font-size: 10.8px;
+  font-weight: 400;
+  letter-spacing: 0;
+  margin-left: 3.6px;
 }
-.lp-feat-f2-quote {
-  color: var(--lp-ink-100);
-  font-family: var(--lp-font-cond);
-  font-size: 22.4px;
-  font-weight: 500;
-  letter-spacing: -0.224px;
-  line-height: 1.3;
-  /* flow-neutral: quote ink rendered 1px above the reference rows */
-  position: relative;
-  top: 0.9px;
+.lp-feat-f2-headline {
+  color: #666666;
+  font-size: 10.8px;
+  letter-spacing: 0.33px;
+  line-height: 13px;
+}
+.lp-feat-f2-time {
+  color: #666666;
+  font-size: 9.9px;
+  line-height: 12px;
+}
+.lp-feat-f2-body {
+  color: #191919;
+  font-size: 18.9px;
+  left: 14.4px;
+  letter-spacing: 0.31px; /* Figma -0.19; +0.5 fallback compensation */
+  line-height: 26px;
+  position: absolute;
+  top: 68.8px;
   white-space: nowrap;
 }
-.lp-feat-f2-ago {
-  color: var(--lp-ink-70);
-  font-size: 10.667px;
-  line-height: 1.6;
-  text-transform: uppercase;
-}
-.lp .lp-feat-f2-ago {
-  margin-top: -0.12px;
-}
-.lp-feat-f2-chips {
+.lp-feat-f2-skel {
   display: flex;
-  gap: 6.4px;
+  gap: 7.2px;
+  left: 14.4px;
+  position: absolute;
+  top: 109.2px;
 }
-.lp-feat-f2-chip {
-  align-items: center;
-  border-radius: 6.4px;
-  box-shadow: inset 0 0 0 0.4px var(--lp-ink-50);
-  color: var(--lp-ink-100);
-  display: inline-flex;
-  flex: none;
-  font-size: 10.667px;
-  font-weight: 500;
-  gap: 3.2px;
-  line-height: 1.6;
-  padding: 3.2px 6.4px 3.2px 3.2px;
-  white-space: nowrap;
+.lp-feat-f2-skelgrp {
+  display: flex;
+  gap: 1.8px;
 }
-.lp-feat-f2-chip-green {
-  background: var(--lp-green-10);
+.lp-feat-f2-skelgrp i {
+  background: rgba(10, 102, 194, 0.16);
+  border-radius: 2.7px;
+  display: block;
+  height: 14.4px;
 }
-.lp-feat-f2-chip-pending {
-  background: #f5e5d6;
+.lp-feat-f2-count {
+  color: #191919;
+  font-size: 10.8px;
+  font-weight: 700;
+  line-height: 13px;
+  position: absolute;
+  top: 142.31px;
 }
-.lp-feat-f2-chipicon {
-  height: 16px;
-  width: 16px;
+/* rainbow ring — baked export of Figma's 4 offset outside-stroke rects
+   (fill-less, 7.2w, purple/orange/blue/pink) + their white r46.8 base */
+.lp-feat-f2-ring {
+  height: 284px;
+  left: 0;
+  position: absolute;
+  top: 187.8px;
+  width: 405px;
 }
-.lp-feat-f2-cardb {
-  border-radius: 21.449px;
-  /* Figma hairline is 0.447px — as inset shadow so the content box keeps its
-     Figma metrics (a border would round to 1px and eat inner space) */
-  box-shadow: inset 0 0 0 0.447px var(--lp-subtle-stroke);
+.lp-feat-f2-draft {
+  background: var(--lp-surface);
+  border-radius: 25.2px;
+  /* the frame's 0.4px hairline is invisible in the Figma render (white on
+     the ring's white base) but Chromium paints a visible arc — omit it */
   display: flex;
   flex-direction: column;
-  gap: 21.449px;
-  /* UNROTATED geometry (the rotated bounds are x-23.4 w498): box w489.9 at
-     left -19.33 per the dump, +1px right to match the reference render's
-     card-edge pixels; center pinned at Figma's y310.25 rel root with the
-     measured DOM height (245px). */
-  left: -18.33px;
-  overflow: clip;
-  padding: 21.449px;
+  gap: 19.3px;
+  height: 255.22px;
+  left: 13.15px;
+  padding: 19.3px;
   position: absolute;
-  top: 187.61px;
-  transform: rotate(-1.98deg);
-  width: 489.9px;
+  top: 202.3px;
+  width: 376px;
 }
-.lp-feat-f2-labels {
-  color: var(--lp-ink-70);
-  display: flex;
-  font-size: 11.916px;
-  font-weight: 500;
-  gap: 7.15px;
-  letter-spacing: 1.1916px;
-  line-height: 1.6;
-  text-transform: uppercase;
-}
-.lp-feat-f2-ready {
+.lp-feat-f2-eyebrow {
   color: var(--lp-green-30);
+  font-size: 10.72px;
+  font-weight: 500;
+  letter-spacing: 1.072px;
+  line-height: 1.5;
+  text-transform: uppercase;
 }
 .lp-feat-f2-msg {
   color: var(--lp-ink-100);
   font-family: var(--lp-font-cond);
-  font-size: 25.024px;
+  font-size: 22.52px;
   font-weight: 500;
-  letter-spacing: -0.2502px;
+  letter-spacing: -0.2252px;
   line-height: 1.3;
 }
-.lp-feat-f2-btns {
-  display: flex;
-  gap: 7.15px;
-}
-.lp-feat-f2-approve {
+.lp-feat-f2-send {
   align-items: center;
   background: var(--lp-ink-100);
-  border-radius: 10.725px;
+  border-radius: 14.4px;
   color: var(--lp-ink-20);
-  display: inline-flex;
-  font-size: 14.3px;
+  display: flex;
+  flex: none;
+  font-size: 14.4px;
   font-weight: 600;
-  gap: 7.15px;
+  height: 46px;
+  justify-content: center;
   line-height: 1.5;
-  padding: 10.725px 17.874px 10.725px 10.725px;
-  white-space: nowrap;
-}
-.lp-feat-f2-checklg {
-  height: 21.449px;
-  width: 21.449px;
-}
-.lp-feat-f2-revise {
-  align-items: center;
-  background: #f5e5d6;
-  border-radius: 10.725px;
-  color: var(--lp-ink-100);
-  display: inline-flex;
-  font-size: 14.3px;
-  font-weight: 500;
-  line-height: 1.5;
-  padding: 10.725px 17.874px;
-  white-space: nowrap;
+  /* pin to the card's bottom padding — absorbs the ~1px line-box drift of
+     the 4-line message above */
+  margin-top: auto;
+  width: 100%;
 }
 
-/* ── feature 3 — query → article ── */
+/* ── feature 3 (rev2) — AI-answers collage ──
+   Root = tight bounds of the collage in the 560×621 zone: x20.92 (spiral
+   left) → 596.08 (gemini right, spills 36px past the zone — the page clips
+   bleed), y27.9 (claude top) → 538.5 (card bottom). ChatGPT spiral sits
+   BEHIND the chat card; Gemini star and Claude asterisk sit above it.
+   The rotated logos are baked exports (rotation pre-applied). */
 .lp-feat-f3 {
-  align-items: center;
-  background: var(--lp-card-cream);
-  border-radius: 19.2px; /* Figma dump: cream tile r19.2 (0.8-scale) */
-  display: flex;
-  flex-direction: column;
-  /* +1px vs the 0.2 offset: the reference render draws the whole f3 tile
-     1px further right */
-  left: calc(50% + 1.2px);
-  padding: 19.2px;
+  height: 510.6px;
+  left: 20.92px;
   position: absolute;
-  /* Figma: mock top 131.3px in the 621 zone (h 358, hug) — top-pinned */
-  top: 131.3px;
-  transform: translateX(-50%);
-  width: 438.4px;
+  top: 27.9px;
+  width: 575.16px;
 }
-.lp-feat-f3-query {
-  display: flex;
-  flex-direction: column;
-  gap: 12.8px;
-  padding: 19.2px;
-  width: 100%;
-}
-.lp-feat-f3-qhead {
-  align-items: center;
-  display: flex;
-  gap: 6.4px;
-}
-.lp-feat-f3-eyebrow {
-  color: var(--lp-ink-70);
-  font-size: 10.67px;
-  font-weight: 500;
-  letter-spacing: 1.067px;
-  line-height: 1.6;
-  text-transform: uppercase;
-}
-.lp-feat-f3-q {
-  color: var(--lp-ink-100);
-  font-family: var(--lp-font-cond);
-  font-size: 19.2px;
-  font-weight: 500;
-  letter-spacing: -0.192px;
-  line-height: 1.3;
-}
-.lp-feat-f3-chips {
-  display: flex;
-  gap: 6.4px;
-}
-.lp-feat-f3-chip-muted {
-  background: var(--lp-ink-tr-10);
-  color: var(--lp-ink-80);
-}
-.lp-feat-f3-chip-gap {
-  background: var(--lp-red-10);
-  color: var(--lp-ink-100);
-}
-.lp-feat-f3-arrow {
-  height: 25.6px;
-  width: 19.2px;
-}
-.lp-feat-f3-holder {
-  height: 160.8px;
-  position: relative;
-  width: 100%;
-}
-.lp-feat-f3-article {
-  border-radius: 23.35px; /* the exported 29.184 was 1.25x-scaled */
-  /* 0.49px Figma hairline as inset shadow (border would round to 1px and
-     shift the content box) */
-  box-shadow: inset 0 0 0 0.49px var(--lp-subtle-stroke);
-  display: flex;
-  flex-direction: column;
-  gap: 15.565px;
-  /* UNROTATED box (rotated bounds x-26.7 w491.8 rel tile): center pinned at
-     Figma's 219.2/277.8 rel tile */
-  left: -43.2px;
-  padding: 23.347px;
+.lp-feat-f3-chatgpt {
+  height: 140.81px;
+  left: 0;
   position: absolute;
-  top: 1.6px;
-  transform: rotate(-1.63deg);
-  width: 486.4px;
+  top: 225.8px;
+  width: 140.81px;
 }
-.lp-feat-f3-labels {
-  color: var(--lp-ink-70);
-  display: flex;
-  font-size: 12.97px;
-  font-weight: 500;
-  gap: 7.782px;
-  letter-spacing: 1.297px;
-  line-height: 1.6;
-  text-transform: uppercase;
+.lp-feat-f3-card {
+  background: var(--lp-surface);
+  border-radius: 25.6px;
+  /* 0.4px Figma hairline as inset shadow (a border would round to 1px) */
+  box-shadow: inset 0 0 0 0.4px var(--lp-ink-50);
+  height: 456px;
+  left: 101.08px;
+  position: absolute;
+  top: 54.6px;
+  width: 316px;
 }
-.lp-feat-f3-atitle {
-  color: var(--lp-ink-100);
-  font-family: var(--lp-font-cond);
-  font-size: 31.13px;
-  font-weight: 500;
-  letter-spacing: -0.3113px;
-  line-height: 1.3;
+.lp-feat-f3-gemini {
+  height: 240.5px;
+  left: 334.66px;
+  position: absolute;
+  top: 101.13px;
+  width: 240.5px;
 }
-/* the 40.5px line box runs ~7px past Figma's text height — the Figma render
-   keeps the natural line-box TOP (title ink at band y376 rel card) and only
-   the bottom is short, so trim the bottom edge alone: a full cap-trim
-   (text-box: trim-both) lifted title/body/chips 10-12px above the reference.
-   Lands the unrotated article height at ≈196.3px. */
-.lp .lp-feat-f3-atitle {
-  margin-bottom: -6.9px;
+.lp-feat-f3-claude {
+  height: 109.21px;
+  left: 39.48px;
+  position: absolute;
+  top: 0;
+  width: 109.21px;
 }
-.lp-feat-f3-abody {
+.lp-feat-f3-bubble {
+  background: var(--lp-blue-40);
+  border-radius: 16px;
+  color: var(--lp-ink-0);
+  padding: 8px 12.8px;
+  position: absolute;
+  right: 32.4px;
+  top: 32.4px;
+  width: 190.88px;
+}
+.lp-feat-f3-bubble p {
+  font-size: 12.8px;
+  line-height: 1.5;
+}
+.lp-feat-f3-resp {
+  left: 32.4px;
+  position: absolute;
+  top: 137.6px;
+  width: 225.6px;
+}
+.lp-feat-f3-thought {
   color: var(--lp-ink-80);
-  font-size: 12.97px;
-  line-height: 1.6;
+  font-size: 12.8px;
+  line-height: 1.5;
 }
-.lp-feat-f3-achips {
-  display: flex;
-  gap: 7.782px;
-}
-.lp-feat-f3-achip {
-  align-items: center;
-  background: var(--lp-green-10);
-  border-radius: 7.78px; /* the exported 9.728 was 1.25x-scaled */
+.lp-feat-f3-answer {
   color: var(--lp-ink-100);
-  display: inline-flex;
-  font-size: 12.97px;
-  font-weight: 500;
-  gap: 3.891px;
-  line-height: 1.6;
-  padding: 3.891px 7.782px 3.891px 3.891px;
+  font-size: 12.8px;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+/* 6.4 below "Thought for 1s" (outranks the `.lp p { margin: 0 }` reset) */
+.lp .lp-feat-f3-answer {
+  margin-top: 6.4px;
+}
+/* the DeRox highlight chip — flow-neutral: padding cancelled by negative
+   margins so the inline advance matches Figma's separate backdrop rect
+   (49.78×21.69 behind a 19.2px line) */
+.lp-feat-f3-mark {
+  background: var(--lp-yellow-30);
+  border-radius: 6.4px;
+  font-weight: 700;
+  margin: -1.25px -3.6px;
+  padding: 1.25px 3.6px;
+}
+.lp-feat-f3-composer {
+  background: var(--lp-ink-20);
+  border-radius: 19.2px;
+  box-shadow: inset 0 0 0 0.4px var(--lp-ink-50);
+  height: 38.4px;
+  left: 32.4px;
+  position: absolute;
+  top: 385.2px;
+  width: 251.2px;
+}
+.lp-feat-f3-compicons {
+  height: 38.4px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 251.2px;
+}
+.lp-feat-f3-ask {
+  color: var(--lp-ink-60);
+  font-size: 12.8px;
+  left: 38.4px;
+  line-height: 15px;
+  position: absolute;
+  top: 11.7px;
   white-space: nowrap;
 }
-.lp-feat-f3-check {
-  height: 19.456px;
-  width: 19.456px;
-}
 
-/* ── feature 4 — campaign performance ── */
+/* ── feature 4 (rev2) — campaign performance, restyled ──
+   Cream tile and header are gone: three bordered white cards float on the
+   page bg, "Brain updated" carries the rainbow ring. Root = tight bounds:
+   x41.89 (ring left) → 516.89, y76.5 (graph top) → 559.5 (ring bottom). */
 .lp-feat-f4 {
-  background: var(--lp-card-cream);
-  border-radius: 19.2px; /* Figma dump: cream tile r19.2 (0.8-scale) */
-  display: flex;
-  flex-direction: column;
-  gap: 19.2px;
-  left: calc(50% - 0.2px);
-  overflow: clip;
-  padding: 19.2px;
+  height: 483px;
+  left: 41.89px;
   position: absolute;
-  /* Figma: mock top 57.7px in the 621 zone (h 506.6, hug) — top-pinned */
-  top: 57.7px;
-  transform: translateX(-50%);
-  width: 438.4px;
-}
-.lp-feat-f4-head {
-  display: flex;
-  flex-direction: column;
-  gap: 3.2px;
-}
-.lp-feat-f4-eyebrow {
-  color: var(--lp-ink-70);
-  font-size: 10.67px;
-  font-weight: 500;
-  letter-spacing: 1.067px;
-  line-height: 1.6;
-  text-transform: uppercase;
-}
-.lp-feat-f4-htitle {
-  color: var(--lp-ink-100);
-  font-family: var(--lp-font-cond);
-  font-size: 22.4px;
-  font-weight: 500;
-  letter-spacing: -0.224px;
-  line-height: 1.3;
-}
-/* header renders 49.4px vs Figma's 48.2 — trim so the graph sits at y86.6,
-   what-worked at y323.4, brain at y421.8 rel the tile */
-.lp .lp-feat-f4-htitle {
-  margin-bottom: -1.2px;
+  top: 76.5px;
+  width: 475px;
 }
 .lp-feat-f4-graph {
-  align-items: center;
+  background: var(--lp-surface);
+  border-radius: 21.6px;
+  /* 0.45px Figma hairline as inset shadow (a border would round to 1px) */
+  box-shadow: inset 0 0 0 0.45px var(--lp-subtle-stroke);
+  height: 244.8px;
+  left: 12.91px;
+  position: absolute;
+  top: 0;
+  width: 450px;
+}
+.lp-feat-f4-stat {
+  align-items: flex-start;
   display: flex;
-  flex-direction: column;
-  gap: 9.6px;
-  height: 217.6px;
-  justify-content: flex-end;
-  padding: 19.2px 19.2px 9.6px;
-  position: relative;
-  width: 100%;
+  gap: 7.2px;
+  left: 21.6px;
+  position: absolute;
+  top: 26.1px;
+}
+.lp-feat-f4-pct {
+  color: var(--lp-green-30);
+  font-family: var(--lp-font-cond);
+  font-size: 41.47px;
+  font-weight: 500;
+  letter-spacing: -0.4147px;
+  /* Figma cap-trims the box to 29px — the 29px line box centers the glyph
+     on the same rows */
+  line-height: 29px;
+}
+.lp-feat-f4-arrowup {
+  height: 16.89px;
+  width: 16.89px;
+}
+.lp-feat-f4-vslabel {
+  color: var(--lp-ink-70);
+  font-size: 12px;
+  font-weight: 500;
+  left: 22.05px;
+  letter-spacing: 1.2px;
+  line-height: 1.5;
+  position: absolute;
+  text-transform: uppercase;
+  top: 67.05px;
 }
 .lp-feat-f4-bars {
   align-items: flex-end;
+  bottom: 38.05px;
   display: flex;
   justify-content: space-between;
-  /* Figma renders the bars 7px closer to the week labels than the 9.6 gap +
-     1.6lh label box implies (measured on the artboard render). Split -4/-3
-     with -weeks below: bar bottoms keep their exact position while the week
-     labels drop 3px to the reference ink rows. */
-  margin-bottom: -4px;
-  width: 100%;
+  left: 22.05px;
+  position: absolute;
+  width: 405.9px;
 }
 .lp-feat-f4-bar {
-  border-radius: 3.2px;
+  border-radius: 3.6px;
   flex: none;
-  width: 12.8px;
+  width: 14.4px;
 }
 .lp-feat-f4-bar:nth-child(-n + 3) {
   background: var(--lp-yellow-30);
@@ -869,121 +1362,91 @@
 .lp-feat-f4-bar:nth-child(n + 10) {
   background: var(--lp-blue-40);
 }
-.lp-feat-f4-bar:nth-child(1) { height: 32px; }
-.lp-feat-f4-bar:nth-child(2) { height: 38.4px; }
-.lp-feat-f4-bar:nth-child(3) { height: 32px; }
-.lp-feat-f4-bar:nth-child(4) { height: 37.6px; }
-.lp-feat-f4-bar:nth-child(5) { height: 54.4px; }
-.lp-feat-f4-bar:nth-child(6) { height: 60.8px; }
-.lp-feat-f4-bar:nth-child(7) { height: 68px; }
-.lp-feat-f4-bar:nth-child(8) { height: 55.2px; }
-.lp-feat-f4-bar:nth-child(9) { height: 80.8px; }
-.lp-feat-f4-bar:nth-child(10) { height: 60.8px; }
-.lp-feat-f4-bar:nth-child(11) { height: 94.4px; }
-.lp-feat-f4-bar:nth-child(12) { height: 116px; }
+.lp-feat-f4-bar:nth-child(1) { height: 36px; }
+.lp-feat-f4-bar:nth-child(2) { height: 43.2px; }
+.lp-feat-f4-bar:nth-child(3) { height: 36px; }
+.lp-feat-f4-bar:nth-child(4) { height: 42.3px; }
+.lp-feat-f4-bar:nth-child(5) { height: 61.2px; }
+.lp-feat-f4-bar:nth-child(6) { height: 68.4px; }
+.lp-feat-f4-bar:nth-child(7) { height: 76.5px; }
+.lp-feat-f4-bar:nth-child(8) { height: 62.1px; }
+.lp-feat-f4-bar:nth-child(9) { height: 90.9px; }
+.lp-feat-f4-bar:nth-child(10) { height: 68.4px; }
+.lp-feat-f4-bar:nth-child(11) { height: 106.2px; }
+.lp-feat-f4-bar:nth-child(12) { height: 130.5px; }
 .lp-feat-f4-weeks {
   display: flex;
-  margin-bottom: -3px;
-  width: 100%;
+  left: 22.05px;
+  position: absolute;
+  top: 217.55px;
+  width: 405.9px;
 }
 .lp-feat-f4-weeks span {
   color: var(--lp-ink-70);
   flex: 1;
-  font-size: 8.89px;
+  font-size: 10px;
   line-height: 1.6;
   text-align: center;
 }
-.lp-feat-f4-stat {
-  align-items: flex-start;
-  display: flex;
-  gap: 6.4px;
-  left: 18.8px;
-  position: absolute;
-  top: 20.2px; /* Figma: cap-trimmed text at top 22.8 — offset compensates line-box ascent */
-}
-.lp-feat-f4-pct {
-  color: var(--lp-green-30);
-  font-family: var(--lp-font-cond);
-  font-size: 36.86px;
-  font-weight: 500;
-  letter-spacing: -0.3686px;
-  line-height: 1;
-}
-.lp-feat-f4-arrowup {
-  height: 15.011px;
-  margin-top: 2px; /* arrow ink sat ~4px above the digits' cap line */
-  width: 15.011px;
-}
-.lp-feat-f4-vslabel {
-  color: var(--lp-ink-70);
-  font-size: 10.67px;
-  font-weight: 500;
-  left: 19.2px;
-  letter-spacing: 1.067px;
-  line-height: 1.6;
-  position: absolute;
-  text-transform: uppercase;
-  top: 59.2px;
-}
 .lp-feat-f4-worked {
-  display: flex;
-  flex-direction: column;
-  /* 6.4 in Figma, but its title box is 0.36 taller than ours — widen the gap
-     so the chips land at y42.6 rel the card and brain sits at y421.8 rel tile */
-  gap: 6.76px;
-  /* lands the card at y323.8 and brain at exactly y421.8 rel the tile */
-  margin-top: 0.46px;
-  padding: 12.8px;
-  width: 100%;
+  background: var(--lp-surface);
+  border-radius: 21.6px;
+  box-shadow: inset 0 0 0 0.45px var(--lp-subtle-stroke);
+  height: 92.1px;
+  left: 12.91px;
+  padding: 14.85px;
+  position: absolute;
+  top: 266.4px;
+  width: 450px;
 }
 .lp-feat-f4-cardtitle {
   color: var(--lp-ink-100);
-  font-family: var(--lp-font-aeonik);
-  font-size: 15.36px;
+  font-family: var(--lp-font-cond);
+  font-size: 22.52px;
   font-weight: 500;
-  line-height: 1.5;
+  letter-spacing: -0.2252px;
+  line-height: 1.3;
 }
 .lp-feat-f4-chips {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6.4px;
+  gap: 7.2px;
+  margin-top: 7.2px;
 }
 .lp-feat-f4-chip {
   background: var(--lp-ink-tr-5);
+  border-radius: 7.2px;
+  box-shadow: inset 0 0 0 0.45px var(--lp-ink-50);
   color: var(--lp-ink-100);
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.6;
+  padding: 3.6px 7.2px;
+  white-space: nowrap;
+}
+/* rainbow ring — same baked-export construction as f2's */
+.lp-feat-f4-ring {
+  height: 105px;
+  left: 0;
+  position: absolute;
+  top: 378px;
+  width: 475px;
 }
 .lp-feat-f4-brain {
-  align-items: flex-start;
-  border-radius: 19.2px;
-  display: flex;
-  gap: 12.8px;
-  height: 65.6px;
-  padding: 12.8px;
-  width: 100%;
-}
-.lp-feat-f4-circle {
-  align-items: center;
-  background: var(--lp-green-20);
-  border-radius: 50%;
-  display: inline-flex;
-  flex: none;
-  height: 38.4px;
-  justify-content: center;
-  width: 38.4px;
-}
-.lp-feat-f4-brainicon {
-  height: 32px;
-  transform: translateY(-0.8px);
-  width: 32px;
-}
-.lp-feat-f4-braincol {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
+  background: var(--lp-surface);
+  border-radius: 21.6px;
+  /* hairline omitted — invisible in the Figma render (white on the ring's
+     white base), Chromium would paint a visible arc */
+  height: 73.8px;
+  left: 12.01px;
+  padding: 12.9px 14.4px;
+  position: absolute;
+  top: 394.2px;
+  width: 450.9px;
 }
 .lp-feat-f4-brainsub {
   color: var(--lp-ink-100);
-  font-size: 10.67px;
+  font-size: 12px;
   line-height: 1.6;
 }
 
@@ -1064,13 +1527,8 @@
     gap: 32px;
     padding: 0 24px 24px;
   }
-  /* the mobile artboard closes the section with a 4th separator (4389:8319) */
-  .lp-feat::after {
-    border-top: 1px solid color-mix(in srgb, var(--lp-ink-50) 55%, transparent);
-    content: "";
-    height: 0;
-    width: 100%;
-  }
+  /* the 4th separator is a real <hr> since rev2 (desktop artboard 4526:3448
+     closes the section too) — no ::after needed */
   /* heading (4389:8371): 154 below the banner frame, 306w box centered,
      35.559/41/-3%; 12 pb + 32 gap = 44 to the section frame's first block */
   .lp-feat-heading {
@@ -1124,33 +1582,58 @@
   .lp-feat-card:nth-of-type(n + 2) {
     margin-top: -1px;
   }
-  /* mock zone = the artboard's 351×386 holder: fixed-height band, mock
-     top-pinned at its per-feature offset. Pre-zoom units (÷0.625):
-     386 → 617.6; offsets 59/61/80.5/84 → 94.4/97.6/128.8/134.4. f4 paints
-     14.5px past the band, as in the artboard (no clip). */
+  /* Mock band = the artboard's 386px holder. The mocks used to shrink with
+     `zoom: 0.625`, which RELAYOUTS text at the reduced size — iOS WebKit
+     wraps that text taller than desktop engines and the mocks burst their
+     frames (founder simulator audit 2026-08-31: f2 message under the ring,
+     f3 answer past the card, f4 ring around the title only). transform:
+     scale() instead: each mock keeps its fixed DESKTOP layout metrics (text
+     wraps exactly like the desktop render by construction, on every engine)
+     and scales as pixels. The zone owns the RENDERED band height; top /
+     margin-left below are rendered px (desktop × 0.625), margin-left =
+     -(desktop width × 0.625)/2 centers the scaled box (transform-origin
+     0 0 keeps layout top-left = visual top-left). The mobile artboard
+     (4389:8164) predates the rev2 mocks — f2/f3/f4 offsets center the new
+     mock heights (471.8/510.6/483) in the band; f1 keeps its artboard 59. */
   .lp-feat-card[data-side="left"] .lp-feat-mockzone,
   .lp-feat-card[data-side="right"] .lp-feat-mockzone {
-    align-items: flex-start;
-    align-self: center;
-    height: 617.6px;
+    align-self: stretch;
+    display: block;
+    height: 386px;
     max-width: none;
+    position: relative;
+    /* neutralize the ≤1180/≤1024 tablet zooms — mobile scaling is the
+       transform below only (iOS relayouts zoomed text) */
+    zoom: 1;
   }
-  .lp-feat-mockzone {
-    zoom: 0.625;
+  .lp-feat-f1,
+  .lp-feat-f2,
+  .lp-feat-f3,
+  .lp-feat-f4 {
+    left: 50%;
+    position: absolute;
+    transform: scale(0.625);
+    transform-origin: 0 0;
   }
   .lp-feat-f1 {
-    /* artboard keeps the desktop mock's +6px (rendered) center offset */
-    left: 9.4px;
-    margin-top: 94.4px;
+    /* 516.8 desktop → 323 rendered; +5.9 keeps the artboard's rendered
+       center offset (was +9.4 pre-zoom) */
+    margin-left: -155.6px;
+    top: 59px;
   }
   .lp-feat-f2 {
-    margin-top: 97.6px;
+    margin-left: -126.6px; /* 405 → 253.1 rendered */
+    top: 45.6px;
   }
   .lp-feat-f3 {
-    margin-top: 128.8px;
+    /* 575.16 → 359.5 rendered — bleeds ~7px per side past the 345 content
+       column, stays well inside the 393 viewport (page clips bleed) */
+    margin-left: -179.7px;
+    top: 33.4px;
   }
   .lp-feat-f4 {
-    margin-top: 134.4px;
+    margin-left: -148.4px; /* 475 → 296.9 rendered */
+    top: 42.1px;
   }
   /* full-width separators (354 at 402) — incl. the closing ::after */
   .lp-feat-sep {
@@ -1159,5 +1642,127 @@
   /* desktop delight only — no room next to the 0.625-scale signals mock */
   .lp-feat-f1-quip {
     display: none;
+  }
+}
+
+/* ── ring flow — the rainbow mechanism on the gradient rings (founder
+   2026-08-31: "not a glow — the same mechanism as the arc-en-ciel adapted
+   to the contour", then "pixel aligné avec le figma"). The baked ring is
+   four solid-color hand-drawn squiggles (purple/orange/blue/pink) weaving
+   around the border. Each squiggle becomes its own MASK (lp-*-ring-p1..4)
+   over a spinning 4-color palette wheel on the arcs' 20s linear cohort, so
+   every frame keeps the designer's exact stroke geometry while the four
+   colors chase each other along the contour. Wheels are phase-aligned so
+   each squiggle wears its own designed color at the top at rest, and the
+   baked img stays underneath as the reduced-motion / no-mask fallback. ── */
+.lp-feat-ringfx {
+  display: none;
+  pointer-events: none;
+  position: absolute;
+}
+.lp-feat-f2-ringfx {
+  height: 284px;
+  left: 0;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  top: 187.8px;
+  width: 405px;
+}
+.lp-feat-f4-ringfx {
+  height: 105px;
+  left: 0;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  top: 378px;
+  width: 475px;
+}
+.lp-feat-f2-ringfx.lp-feat-ringfx--p1 {
+  -webkit-mask-image: url("/lp/lp-f2-ring-p1.svg");
+  mask-image: url("/lp/lp-f2-ring-p1.svg");
+}
+.lp-feat-f2-ringfx.lp-feat-ringfx--p2 {
+  -webkit-mask-image: url("/lp/lp-f2-ring-p2.svg");
+  mask-image: url("/lp/lp-f2-ring-p2.svg");
+}
+.lp-feat-f2-ringfx.lp-feat-ringfx--p3 {
+  -webkit-mask-image: url("/lp/lp-f2-ring-p3.svg");
+  mask-image: url("/lp/lp-f2-ring-p3.svg");
+}
+.lp-feat-f2-ringfx.lp-feat-ringfx--p4 {
+  -webkit-mask-image: url("/lp/lp-f2-ring-p4.svg");
+  mask-image: url("/lp/lp-f2-ring-p4.svg");
+}
+.lp-feat-f4-ringfx.lp-feat-ringfx--p1 {
+  -webkit-mask-image: url("/lp/lp-f4-ring-p1.svg");
+  mask-image: url("/lp/lp-f4-ring-p1.svg");
+}
+.lp-feat-f4-ringfx.lp-feat-ringfx--p2 {
+  -webkit-mask-image: url("/lp/lp-f4-ring-p2.svg");
+  mask-image: url("/lp/lp-f4-ring-p2.svg");
+}
+.lp-feat-f4-ringfx.lp-feat-ringfx--p3 {
+  -webkit-mask-image: url("/lp/lp-f4-ring-p3.svg");
+  mask-image: url("/lp/lp-f4-ring-p3.svg");
+}
+.lp-feat-f4-ringfx.lp-feat-ringfx--p4 {
+  -webkit-mask-image: url("/lp/lp-f4-ring-p4.svg");
+  mask-image: url("/lp/lp-f4-ring-p4.svg");
+}
+.lp-feat-ringfx i {
+  animation: lp-feat-ringspin 20s linear infinite;
+  display: block;
+  height: 640px;
+  left: 50%;
+  margin: -320px 0 0 -320px;
+  position: absolute;
+  top: 50%;
+  width: 640px;
+}
+/* per-squiggle wheel: its own designed color around ~80% of the turn, and
+   one shared 70° traveling wave where every squiggle rolls one palette step
+   (purple→orange→blue→pink→purple) — outside the wave the ring is exactly
+   the artboard, inside it stays a four-color weave */
+.lp-feat-ringfx--p1 i {
+  background: conic-gradient(
+    from 0deg,
+    #ba8bff 0deg 290deg,
+    #ffbd7a 315deg 335deg,
+    #ba8bff 360deg
+  );
+}
+.lp-feat-ringfx--p2 i {
+  background: conic-gradient(
+    from 0deg,
+    #ffbd7a 0deg 290deg,
+    #6ebbff 315deg 335deg,
+    #ffbd7a 360deg
+  );
+}
+.lp-feat-ringfx--p3 i {
+  background: conic-gradient(
+    from 0deg,
+    #6ebbff 0deg 290deg,
+    #ff7aa0 315deg 335deg,
+    #6ebbff 360deg
+  );
+}
+.lp-feat-ringfx--p4 i {
+  background: conic-gradient(
+    from 0deg,
+    #ff7aa0 0deg 290deg,
+    #ba8bff 315deg 335deg,
+    #ff7aa0 360deg
+  );
+}
+@keyframes lp-feat-ringspin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (mask-image: url("")) or (-webkit-mask-image: url("")) {
+    .lp-feat-ringfx {
+      display: block;
+    }
   }
 }

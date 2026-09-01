@@ -42,7 +42,7 @@
 
 /* animated track: two 4-card sets with a uniform 16px gap */
 .lp-tst-track {
-  animation: lp-tst-marquee 80s linear infinite;
+  animation: lp-tst-marquee 160s linear infinite; /* 4600px/160s = 28.75px/s */
   display: flex;
   gap: 16px;
   /* 32px outer seams (vs head above / section end below) preserved; 8px inner
@@ -63,7 +63,7 @@
   to {
     /* one set width incl. its trailing gap — card 1 of copy 2 lands exactly
        where card 1 of copy 1 started */
-    transform: translateX(-2300px);
+    transform: translateX(-4600px); /* one 8-card set */
   }
 }
 
@@ -140,6 +140,11 @@
   color: rgba(44, 0, 42, 0.64);
 }
 
+/* phone-only swipe carousel (all 8 tweets once) — inert DOM at ≥768 */
+.lp-tst-carousel {
+  display: none;
+}
+
 /* ── responsive ── */
 @media (max-width: 1360px) {
   .lp-tst-head {
@@ -190,44 +195,68 @@
     font-size: var(--lp-text-4xlg);
     letter-spacing: -1.1946px;
   }
-  /* recompose: stack row 1 single-column; drop row 2 + marquee duplicates */
+  /* the marquee strips (16 cards incl. aria-hidden duplicates) are replaced
+     wholesale by the swipe carousel — the 8 originals render exactly once */
   .lp-tst-strip {
-    margin-inline: 0;
-    overflow: visible;
-    width: 100%;
-  }
-  .lp-tst-strip[data-row="2"] {
     display: none;
   }
-  .lp-tst-track {
-    animation: none;
-    flex-direction: column;
-    gap: 24px; /* mobile artboard stacks cards with breathing room (steps use 48) */
-    padding: 24px 0 16px;
-    width: 100%;
+
+  /* swipe carousel: full-bleed scroller (cancels the section's 16px padding so
+     neighbors reach the viewport edge), pure CSS scroll-snap — no JS, nothing
+     auto-scrolls. Center snapping self-clamps at the ends: cards 1 and 8 rest
+     on the 16px interior gutter (= page gutter), every middle card centers
+     with ~25px of each neighbor peeking at 375. Page never scrolls
+     horizontally: overflow lives on this element only. */
+  .lp-tst-carousel {
+    -webkit-overflow-scrolling: touch;
+    align-items: stretch; /* equal card heights (kit rule) */
+    display: flex;
+    gap: 12px;
+    margin-inline: -16px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding: 24px 16px 16px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    width: calc(100% + 32px);
   }
-  .lp-tst-row[aria-hidden] {
+  .lp-tst-carousel::-webkit-scrollbar {
     display: none;
   }
-  .lp-tst-row {
-    flex-direction: column;
-    gap: 24px;
-    width: 100%;
-  }
+
+  /* compact card: 300px (80% of a 375 viewport; capped for ≤320 screens),
+     insets 32→20 (19+1 border), radius 32→24, interior gap 24→16 */
   .lp-tst-card {
-    width: 100%;
+    border-radius: var(--lp-r-lg);
+    flex: none;
+    gap: 16px;
+    padding: 19px;
+    scroll-snap-align: center;
+    width: min(300px, calc(100vw - 64px));
+  }
+  .lp-tst-userrow {
+    gap: 12px;
+  }
+  .lp-tst-avatar,
+  .lp-tst-x {
+    height: 40px;
+    width: 40px;
+  }
+  .lp-tst-name,
+  .lp-tst-handle {
+    font-size: var(--lp-text-sm);
   }
   .lp-tst-body {
-    font-size: var(--lp-text-lg);
+    font-size: var(--lp-text-sm); /* 13.333px — smallest readable body size */
+    line-height: 1.5;
     white-space: normal; /* double spaces would break wrapping on narrow columns */
   }
-  /* meta row: at card widths ≤ ~370 the md stats overflow and wrap INSIDE each
-     span ("47" over "replies") — drop to sm, forbid intra-span wraps, and let
-     "via X" fall to its own right-aligned line when even sm can't fit (375) */
+  /* meta: xsm + intra-span nowrap keeps all four stats + "via X" on one clean
+     line inside the 262px content width (flex-wrap kept as a safety net only) */
   .lp-tst-meta {
     flex-wrap: wrap;
-    font-size: var(--lp-text-sm);
-    gap: 8px 12px;
+    font-size: var(--lp-text-xsm);
+    gap: 8px 10px;
   }
   .lp-tst-meta > span {
     white-space: nowrap;

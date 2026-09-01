@@ -1,45 +1,53 @@
 /* landing-v3/marquee.css — Logo strip marquee (Figma 4257:4924, 1654×106).
-   Track = 6 copies of the one-period tile (1424×118 native → 1081.033 CSS px
-   at the 89.58px display height). Scrolls left by exactly one tile per loop
-   (translateX(-100%/6) of the track = one tile width at every breakpoint),
-   so the wrap point is pixel-identical — no visible seam. ~34 CSS px/s.
-   mix-blend multiply .43 sits on the TRACK, not the imgs: the animated
-   transform creates a stacking context that would isolate per-img blending
-   from the page background. Section clips its own overflow. */
+   Track = 4 identical copies of the V1 partner-wordmark sequence (LpMarquee).
+   Sequence width at desktop scale: Σ rounded logo widths (1069px) + 8 gaps
+   × 64px = exactly 1581px. Scrolling left by translateX(-100% / 4) of the
+   track = one sequence at every breakpoint (widths, heights, and gaps all
+   scale by --lp-marquee-scale), so the wrap point is pixel-identical — no
+   visible seam. Speed ~34 CSS px/s: 1581 / 46.5s desktop, 753.03 / 22.15s
+   on phones. mix-blend multiply .43 sits on the TRACK, not the imgs: the
+   animated transform creates a stacking context that would isolate per-img
+   blending from the page background. Section clips its own overflow. */
 
 .lp-marquee {
-  align-items: center;
-  display: flex;
-  justify-content: center;
+  --lp-marquee-scale: 1;
   overflow: hidden;
   /* 8 + 89.58 + 8.42 = Figma's integer 106px section — keeps every section
      below on the artboard grid (audit: 8px/8px left the page 0.42px short) */
   padding: 8px 8px 8.42px;
 }
 .lp-marquee__track {
-  /* desktop tile = 1081.033px → 1081.033 / 32s ≈ 33.8 px/s */
-  animation: lp-marquee-scroll 32s linear infinite;
+  align-items: center; /* logos 22–34px, vertically centered in the band */
+  /* one sequence (1581px) per loop / 46.5s = 34.0 px/s */
+  animation: lp-marquee-scroll 46.5s linear infinite;
   display: flex;
-  flex: none; /* never shrink to the section — %-translate must span 6 tiles */
+  height: 89.58px; /* band interior — section lands on Figma's 106px */
   mix-blend-mode: multiply;
   opacity: 0.43;
   pointer-events: none;
+  width: max-content; /* size to the copies — %-translate spans all 4 */
   will-change: transform;
 }
-.lp-marquee img {
+.lp-marquee__seq {
+  align-items: center;
+  display: flex;
   flex: none;
-  height: 89.58px;
+}
+.lp-marquee__seq img {
+  flex: none;
+  /* Gap lives on every img (trailing one included), so each sequence copy
+     spans logos + 8 gaps and copies butt together with the same rhythm. */
+  margin-right: calc(var(--lp-marquee-scale) * 64px);
   max-width: none;
-  width: 1081.033px; /* 1424 × (89.58 / 118) — exact native aspect */
 }
 
-/* One tile per loop. 6 = TILE_COUNT in LpMarquee.tsx. */
+/* One sequence per loop. 4 = COPY_COUNT in LpMarquee.tsx. */
 @keyframes lp-marquee-scroll {
   from {
     transform: translateX(0);
   }
   to {
-    transform: translateX(calc(-100% / 6));
+    transform: translateX(calc(-100% / 4));
   }
 }
 
@@ -49,29 +57,17 @@
   }
 }
 
-/* Narrower: shrink the strip proportionally (width:auto keeps the PNG's
-   native aspect), still centered + edge-clipped — logos never distort.
-   Durations re-tuned so the speed stays ~34 px/s at the smaller tile. */
-@media (max-width: 1024px) {
-  .lp-marquee__track {
-    animation-duration: 22s; /* tile 772.3px / 22s ≈ 35.1 px/s */
-  }
-  .lp-marquee img {
-    height: 64px;
-    width: auto;
-  }
-}
-/* Phones: Figma mobile artboard node 4389:8321 (402×50.29) — strip 42.67px
-   tall inside 3.81px padding (the desktop 106px section scaled ×0.4763).
-   Width stays auto (native aspect) → tile 1424 × (42.67/118) = 514.99px. */
+/* Phones: Figma mobile artboard node 4389:8321 (402×50.29) — the desktop
+   106px section scaled ×0.4763: band 42.67px inside 3.81px padding, logo
+   sizes + gaps scale via --lp-marquee-scale. */
 @media (max-width: 767px) {
   .lp-marquee {
+    --lp-marquee-scale: 0.4763;
     padding: 3.81px;
   }
   .lp-marquee__track {
-    animation-duration: 15s; /* tile 514.99px / 15s ≈ 34.3 px/s */
-  }
-  .lp-marquee img {
+    /* sequence 1581 × 0.4763 = 753.03px / 22.15s = 34.0 px/s */
+    animation-duration: 22.15s;
     height: 42.67px;
   }
 }

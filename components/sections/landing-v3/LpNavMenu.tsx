@@ -133,8 +133,8 @@ export function LpNavMenu() {
           <a href="/#why" onClick={close}>
             Company
           </a>
-          <a href="/careers" onClick={close}>
-            Careers
+          <a href="/blog" onClick={close}>
+            Blog
           </a>
         </nav>
         <div className="lp-nav-menu-ctas">

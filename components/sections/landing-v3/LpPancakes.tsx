@@ -22,7 +22,17 @@
  *                    the pose so the Figma track sign applies unmodified
  *   svg            → the ring vector (== public/lp/lp-arc-N.svg content)
  *                    inlined at 100% with preserveAspectRatio="none"
- *                    (canvas dims == element dims; see RingAsset.d)
+ *                    (canvas dims == element dims; see RingAsset.d) and
+ *                    overflow visible (like the lp-arc-N.svg files declare):
+ *                    each export viewBox is TANGENT to the ring ink on all
+ *                    four edges, so the default svg viewport clip shaves the
+ *                    anti-aliased edge row at the four tangency spots; the
+ *                    shaved spots rotate with the ring and read as flat
+ *                    ~100px cuts on a band's underside whenever one sweeps
+ *                    through the visible slice (founder report 2026-08-31,
+ *                    pricing at ≥2000px). overflow:visible restores the
+ *                    composite artboard's un-clipped edges; the real clip
+ *                    stays .lp-anim-box (the Figma group clip).
  *
  * Geometry source: scratchpad anim/arc-geometry.json (bboxes relative to each
  * pancakes container, Figma node ids in comments) + fitted pose matrices.
@@ -206,10 +216,14 @@ export function LpPancakes({ variant }: { variant: Variant }) {
               style={{ height: ring.ih, transform: pose(ring.s), width: ring.iw }}
             >
               <div className={`lp-anim-spin lp-anim-spin--${arc.spin}`}>
+                {/* overflow visible: the viewBox is tangent to the ink — the
+                    default svg clip would shave the AA edge row (flat cuts on
+                    the bands at wide viewports). See the header comment. */}
                 <svg
                   className={arc.pop ? "lp-anim-fill lp-anim-pop" : "lp-anim-fill"}
                   fill="none"
                   preserveAspectRatio="none"
+                  style={{ overflow: "visible" }}
                   viewBox={`0 0 ${ring.iw} ${ring.ih}`}
                   xmlns="http://www.w3.org/2000/svg"
                 >
