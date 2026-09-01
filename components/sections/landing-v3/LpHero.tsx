@@ -1,4 +1,3 @@
-import { LpArcCanvas } from "@/components/sections/landing-v3/LpArcCanvas";
 import { LpFxLink, LpFxPill } from "@/components/sections/landing-v3/LpFxButton";
 import { LpPancakes } from "@/components/sections/landing-v3/LpPancakes";
 import { LpViewportVar } from "@/components/sections/landing-v3/LpViewportVar";
@@ -14,13 +13,16 @@ export function LpHero() {
   return (
     <section className="lp-hero" aria-labelledby="lp-hero-title">
       <LpViewportVar />
+      {/* phones show the STATIC artboard pose (anim.css ≤767 block) — the
+          canvas-rotation attempt (LpArcCanvas, PR #260) was pulled 2026-09-01:
+          rotating the rings inside the narrow mirrored mobile window swept
+          ring tails over the headline and resize races warped the bands
+          (founder: "carré bizarre / recouvre le You / moins fin"). A rework
+          must reproduce the DOM's exact clip chain before it returns. */}
       <div className="lp-hero-art" aria-hidden="true">
         <div className="lp-anim-canvas lp-anim-canvas--hero">
           <LpPancakes variant="hero" />
         </div>
-        {/* phones: the rotation lives here (one canvas) while the DOM rings
-            above hold the static artboard pose — see LpArcCanvas.tsx */}
-        <LpArcCanvas />
       </div>
       <div className="lp-hero-inner">
         <h1 id="lp-hero-title" className="lp-hero-title lp-display">
