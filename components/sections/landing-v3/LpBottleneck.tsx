@@ -12,12 +12,24 @@ import type { AnimationItem } from "lottie-web";
  * corners and the headings stay in HTML: the card's r48 + overflow:hidden
  * clip this, and LpBanner's titles/body render above.
  *
+ * Two founder-reported glitches shaped this structure (2026-09-01):
+ * - "la bouteille apparaît après quelques millisecondes": the card's CSS
+ *   background paints instantly but the player needs an import + a JSON
+ *   fetch. A POSTER of the intro's frame 0 (rendered from the Lottie
+ *   itself, public/lp/lp-bottleneck-poster-*.png) ships in the SSR markup
+ *   and hides only once the player has painted its own first frame
+ *   ([data-live] on the holder).
+ * - "après la première goutte la bouteille blink un coup": destroying the
+ *   intro player and creating the loop player left empty frames. Now the
+ *   loop player is DOUBLE-BUFFERED: created on a second host while the
+ *   intro plays, pre-rendered at its first frame (== the intro's last),
+ *   and the handoff is a visibility swap of two identical frames.
+ *
  * Budget discipline (post-OOM doctrine): pure-vector files (~77KB each),
- * CANVAS renderer only (one canvas, no 46-layer SVG DOM), lottie-web's
- * canvas-only build dynamically imported the first time the banner comes
- * within a viewport of the screen — zero cost to initial load. The player
- * pauses off-stage and when the tab hides; reduced-motion renders the
- * settled intro pose once and never plays.
+ * CANVAS renderer only, lottie-web's canvas-only build dynamically imported
+ * the first time the banner comes within a viewport of the screen. Players
+ * pause off-stage and on tab hide; reduced-motion never boots the player at
+ * all — the poster is the render.
  */
 
 const SRC = {
@@ -26,75 +38,105 @@ const SRC = {
 } as const;
 
 export function LpBottleneck() {
-  const hostRef = useRef<HTMLDivElement>(null);
+  const holderRef = useRef<HTMLDivElement>(null);
+  const hostARef = useRef<HTMLDivElement>(null);
+  const hostBRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const host = hostRef.current;
-    if (!host) return;
+    const holder = holderRef.current;
+    const hostA = hostARef.current;
+    const hostB = hostBRef.current;
+    if (!holder || !hostA || !hostB) return;
     const phone = matchMedia("(max-width: 767px)");
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
 
-    let anim: AnimationItem | null = null;
     let lottie: typeof import("lottie-web").default | null = null;
+    let intro: AnimationItem | null = null;
+    let loop: AnimationItem | null = null;
+    let active: "intro" | "loop" = "intro";
     let disposed = false;
     let loading = false;
     let onStage = false;
-    let phase: "intro" | "loop" = "intro";
 
-    const destroy = () => {
-      anim?.destroy();
-      anim = null;
-      host.replaceChildren();
+    const teardown = () => {
+      intro?.destroy();
+      loop?.destroy();
+      intro = loop = null;
+      active = "intro";
+      hostA.replaceChildren();
+      hostB.replaceChildren();
+      hostA.style.visibility = "";
+      hostB.style.visibility = "hidden";
+      holder.removeAttribute("data-live");
     };
 
-    const create = (which: "intro" | "loop") => {
+    const create = () => {
       if (disposed || !lottie) return;
-      destroy();
-      phase = which;
-      const src = SRC[phone.matches ? "v" : "h"][which];
-      anim = lottie.loadAnimation({
-        container: host,
-        renderer: "canvas",
-        loop: which === "loop",
-        // lottie drives its own start (a play() raced ahead of the renderer
-        // and no-opped — chromium repro 2026-09-01); sync() only PAUSES
-        autoplay: !reduced.matches,
-        path: src,
+      teardown();
+      const src = SRC[phone.matches ? "v" : "h"];
+      const settings = {
+        renderer: "canvas" as const,
         rendererSettings: {
-          // fill the card box, center-crop the ~3% mobile ratio difference
           preserveAspectRatio: "xMidYMid slice",
           clearCanvas: true,
           dpr: Math.min(window.devicePixelRatio || 1, 2),
         },
+      };
+      intro = lottie.loadAnimation({
+        ...settings,
+        container: hostA,
+        loop: false,
+        autoplay: true,
+        path: src.intro,
       });
-      if (which === "intro" && !reduced.matches) {
-        anim.addEventListener("complete", () => create("loop"));
-      }
-      anim.addEventListener("DOMLoaded", () => {
-        if (disposed || !anim) return;
-        if (reduced.matches) {
-          // settled pose (== the loop's resting state), drawn once
-          anim.goToAndStop(Math.max(0, anim.totalFrames - 1), true);
-          return;
-        }
+      // the loop pre-renders NOW, hidden, at its first frame — which is the
+      // intro's last — so the 5.5s handoff swaps two identical frames
+      loop = lottie.loadAnimation({
+        ...settings,
+        container: hostB,
+        loop: true,
+        autoplay: false,
+        path: src.loop,
+      });
+      loop.addEventListener("DOMLoaded", () => {
+        if (!disposed) loop?.goToAndStop(0, true);
+      });
+      intro.addEventListener("enterFrame", function reveal() {
+        // first painted player frame — retire the poster
+        holder.setAttribute("data-live", "");
+        intro?.removeEventListener("enterFrame", reveal);
+      });
+      intro.addEventListener("complete", () => {
+        if (disposed || !loop) return;
+        hostB.style.visibility = "";
+        active = "loop";
         sync();
+        // two frames of overlap (identical content), then retire the intro
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => {
+            hostA.style.visibility = "hidden";
+            intro?.destroy();
+            intro = null;
+          }),
+        );
       });
+      sync();
     };
 
     const sync = () => {
-      if (!anim || reduced.matches) return;
+      const anim = active === "intro" ? intro : loop;
+      if (!anim) return;
       if (onStage && !document.hidden) anim.play();
       else anim.pause();
     };
 
     const boot = () => {
-      if (loading || lottie || disposed) return;
+      if (loading || lottie || disposed || reduced.matches) return;
       loading = true;
-      // canvas-only build — no SVG/HTML renderers in the bundle
       import("lottie-web/build/player/lottie_canvas").then((m) => {
         if (disposed) return;
         lottie = (m.default ?? m) as typeof import("lottie-web").default;
-        create("intro");
+        create();
       });
     };
 
@@ -106,18 +148,21 @@ export function LpBottleneck() {
       },
       { rootMargin: "100% 0%" },
     );
-    io.observe(host);
+    io.observe(holder);
 
-    // breakpoint flip = other orientation's files; restart from the loop
-    // resting state rather than replaying the intro mid-visit
     const onMedia = () => {
-      if (!lottie) return;
-      create(phase === "intro" ? "intro" : "loop");
+      if (reduced.matches) {
+        teardown(); // poster (correct orientation via <picture>) is the render
+        return;
+      }
+      if (lottie) create();
+      else boot();
     };
     const onVisibility = () => sync();
     phone.addEventListener("change", onMedia);
     reduced.addEventListener("change", onMedia);
     document.addEventListener("visibilitychange", onVisibility);
+    hostB.style.visibility = "hidden";
 
     return () => {
       disposed = true;
@@ -125,9 +170,20 @@ export function LpBottleneck() {
       phone.removeEventListener("change", onMedia);
       reduced.removeEventListener("change", onMedia);
       document.removeEventListener("visibilitychange", onVisibility);
-      destroy();
+      teardown();
     };
   }, []);
 
-  return <div ref={hostRef} className="lp-banner__lottie" aria-hidden="true" />;
+  return (
+    <div ref={holderRef} className="lp-banner__lottie" aria-hidden="true">
+      {/* frame-0 poster, in the SSR markup: the bottle is there the instant
+          the card is — the player replaces it only once it has painted */}
+      <picture className="lp-banner__poster">
+        <source media="(max-width: 767px)" srcSet="/lp/lp-bottleneck-poster-v.png" />
+        <img src="/lp/lp-bottleneck-poster-h.png" alt="" />
+      </picture>
+      <div ref={hostARef} className="lp-banner__lottie-host" />
+      <div ref={hostBRef} className="lp-banner__lottie-host" />
+    </div>
+  );
 }

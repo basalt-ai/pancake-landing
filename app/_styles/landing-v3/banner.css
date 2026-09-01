@@ -25,10 +25,28 @@
   inset: 0;
   position: absolute;
 }
+.lp-banner__lottie-host {
+  inset: 0;
+  position: absolute;
+}
 .lp-banner__lottie canvas {
   display: block;
   height: 100%;
   width: 100%;
+}
+/* frame-0 poster: present from SSR so the bottle appears WITH the yellow
+   card (founder 2026-09-01); [data-live] lands once the player painted */
+.lp-banner__poster,
+.lp-banner__poster img {
+  display: block;
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  position: absolute;
+  width: 100%;
+}
+.lp-banner__lottie[data-live] .lp-banner__poster {
+  display: none;
 }
 .lp-banner__art {
   inset: 0;
