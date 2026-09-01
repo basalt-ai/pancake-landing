@@ -274,6 +274,23 @@
   will-change: auto;
 }
 
+/* ── phones: hold the 20s cohort at the artboard pose ─────────────────────
+   Founder's iPhone 17 Pro still killed WebContent after the off-stage freeze
+   (2026-09-01, round 2): the six hero arcs alone are 2390×2331 rotating img
+   layers — the biggest standing GPU allocation on the page, alive the moment
+   the page opens. Until the mobile rotation is rebuilt as a small canvas
+   (one visible-crop buffer instead of six full-ring layers), phones show the
+   static artboard pose — identical to the reduced-motion contract, and the
+   pop's settled size is the base size. Desktop is untouched. */
+@media (max-width: 767px) {
+  .lp-anim-spin--cw,
+  .lp-anim-spin--ccw,
+  .lp-anim-fill.lp-anim-pop,
+  .lp-anim-bubble {
+    animation: none;
+  }
+}
+
 /* ── reduced motion: freeze everything at the static artboard pose ── */
 @media (prefers-reduced-motion: reduce) {
   .lp-anim-spin--cw,

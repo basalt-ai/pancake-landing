@@ -25,24 +25,22 @@ const lato = Lato({
   display: "swap",
 });
 
+/* Font diet (iPhone OOM round 2, 2026-09-01): only the cuts CSS actually
+   references ship — a weight census across app/_styles found 400/500/600/
+   700/900 uprights plus italic at body weights (get-started's <em>, four
+   components.css rules). The dropped Air/Thin/Light cuts and display-weight
+   italics were 15 preloaded OTFs decoding on every phone visit for zero
+   rendered glyphs. Files stay in app/fonts/ — re-declare here if a new
+   design needs one. */
 const aeonik = localFont({
   src: [
-    { path: "./fonts/aeonik/AeonikTRIAL-Air.otf", weight: "100", style: "normal" },
-    { path: "./fonts/aeonik/AeonikTRIAL-AirItalic.otf", weight: "100", style: "italic" },
-    { path: "./fonts/aeonik/AeonikTRIAL-Thin.otf", weight: "200", style: "normal" },
-    { path: "./fonts/aeonik/AeonikTRIAL-ThinItalic.otf", weight: "200", style: "italic" },
-    { path: "./fonts/aeonik/AeonikTRIAL-Light.otf", weight: "300", style: "normal" },
-    { path: "./fonts/aeonik/AeonikTRIAL-LightItalic.otf", weight: "300", style: "italic" },
     { path: "./fonts/aeonik/AeonikTRIAL-Regular.otf", weight: "400", style: "normal" },
     { path: "./fonts/aeonik/AeonikTRIAL-RegularItalic.otf", weight: "400", style: "italic" },
     { path: "./fonts/aeonik/AeonikTRIAL-Medium.otf", weight: "500", style: "normal" },
     { path: "./fonts/aeonik/AeonikTRIAL-MediumItalic.otf", weight: "500", style: "italic" },
     { path: "./fonts/aeonik/AeonikTRIAL-SemiBold.otf", weight: "600", style: "normal" },
-    { path: "./fonts/aeonik/AeonikTRIAL-SemiBoldItalic.otf", weight: "600", style: "italic" },
     { path: "./fonts/aeonik/AeonikTRIAL-Bold.otf", weight: "700", style: "normal" },
-    { path: "./fonts/aeonik/AeonikTRIAL-BoldItalic.otf", weight: "700", style: "italic" },
     { path: "./fonts/aeonik/AeonikTRIAL-Black.otf", weight: "900", style: "normal" },
-    { path: "./fonts/aeonik/AeonikTRIAL-BlackItalic.otf", weight: "900", style: "italic" },
   ],
   variable: "--font-aeonik",
   display: "swap",
@@ -50,9 +48,6 @@ const aeonik = localFont({
 
 const aeonikFono = localFont({
   src: [
-    { path: "./fonts/aeonik-fono/AeonikFonoTRIAL-Air.otf", weight: "100", style: "normal" },
-    { path: "./fonts/aeonik-fono/AeonikFonoTRIAL-Thin.otf", weight: "200", style: "normal" },
-    { path: "./fonts/aeonik-fono/AeonikFonoTRIAL-Light.otf", weight: "300", style: "normal" },
     { path: "./fonts/aeonik-fono/AeonikFonoTRIAL-Regular.otf", weight: "400", style: "normal" },
     { path: "./fonts/aeonik-fono/AeonikFonoTRIAL-Medium.otf", weight: "500", style: "normal" },
     { path: "./fonts/aeonik-fono/AeonikFonoTRIAL-SemiBold.otf", weight: "600", style: "normal" },
@@ -69,9 +64,6 @@ const aeonikFono = localFont({
 // app/_styles/landing-v3/foundation.css.
 const aeonikCondensed = localFont({
   src: [
-    { path: "./fonts/aeonik-condensed/AeonikCondensedProTRIAL-Air.otf", weight: "100", style: "normal" },
-    { path: "./fonts/aeonik-condensed/AeonikCondensedProTRIAL-Thin.otf", weight: "200", style: "normal" },
-    { path: "./fonts/aeonik-condensed/AeonikCondensedProTRIAL-Light.otf", weight: "300", style: "normal" },
     { path: "./fonts/aeonik-condensed/AeonikCondensedProTRIAL-Regular.otf", weight: "400", style: "normal" },
     { path: "./fonts/aeonik-condensed/AeonikCondensedProTRIAL-Medium.otf", weight: "500", style: "normal" },
     { path: "./fonts/aeonik-condensed/AeonikCondensedProTRIAL-SemiBold.otf", weight: "600", style: "normal" },
