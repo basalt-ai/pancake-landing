@@ -18,6 +18,18 @@
   position: relative;
   width: 100%;
 }
+/* Designer's bottleneck Lottie (LpBottleneck.tsx) — fills the card under the
+   HTML titles; the card's r48 + overflow:hidden are the rounded corners the
+   designer asked to keep in HTML. */
+.lp-banner__lottie {
+  inset: 0;
+  position: absolute;
+}
+.lp-banner__lottie canvas {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
 .lp-banner__art {
   inset: 0;
   position: absolute;
