@@ -60,7 +60,7 @@
     clip-path: inset(0 0 calc(100% - 878.13px) 0);
   }
   .lp-hero-art .lp-anim-canvas--hero {
-    transform: scaleX(tan(atan2(100cqw, 1654px)));
+    transform: scaleX(var(--lp-fit, tan(atan2(100cqw, 1654px))));
   }
 }
 
@@ -231,7 +231,7 @@
     width: 163.33vw;
   }
   .lp-hero-art .lp-anim-canvas--hero {
-    transform: scale(tan(atan2(100cqw, 1654px)))
+    transform: scale(var(--lp-fit, tan(atan2(100cqw, 1654px))))
       translate(875.785px, 1456.5px) rotate(15deg) scaleX(-1)
       translate(-875.785px, -1456.5px);
   }

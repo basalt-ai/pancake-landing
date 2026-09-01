@@ -1397,36 +1397,58 @@
   .lp-feat-card:nth-of-type(n + 2) {
     margin-top: -1px;
   }
-  /* mock zone = the rev1 mobile artboard's 351×386 holder: fixed-height
-     band (386 ÷ 0.625 = 617.6), mock top-pinned per feature. The mobile
-     artboard (4389:8164) predates the rev2 desktop mocks — the f2/f3/f4
-     offsets below center the NEW mock heights (471.8/510.6/483) in the
-     band instead of the stale artboard offsets; f1 keeps its artboard
-     94.4. f3 spills ~7px per side past the 345 content column (575.16 ×
-     0.625 = 359.5) — stays well inside the viewport, no clip. */
+  /* Mock band = the artboard's 386px holder. The mocks used to shrink with
+     `zoom: 0.625`, which RELAYOUTS text at the reduced size — iOS WebKit
+     wraps that text taller than desktop engines and the mocks burst their
+     frames (founder simulator audit 2026-08-31: f2 message under the ring,
+     f3 answer past the card, f4 ring around the title only). transform:
+     scale() instead: each mock keeps its fixed DESKTOP layout metrics (text
+     wraps exactly like the desktop render by construction, on every engine)
+     and scales as pixels. The zone owns the RENDERED band height; top /
+     margin-left below are rendered px (desktop × 0.625), margin-left =
+     -(desktop width × 0.625)/2 centers the scaled box (transform-origin
+     0 0 keeps layout top-left = visual top-left). The mobile artboard
+     (4389:8164) predates the rev2 mocks — f2/f3/f4 offsets center the new
+     mock heights (471.8/510.6/483) in the band; f1 keeps its artboard 59. */
   .lp-feat-card[data-side="left"] .lp-feat-mockzone,
   .lp-feat-card[data-side="right"] .lp-feat-mockzone {
-    align-items: flex-start;
-    align-self: center;
-    height: 617.6px;
+    align-self: stretch;
+    display: block;
+    height: 386px;
     max-width: none;
+    position: relative;
+    /* neutralize the ≤1180/≤1024 tablet zooms — mobile scaling is the
+       transform below only (iOS relayouts zoomed text) */
+    zoom: 1;
   }
-  .lp-feat-mockzone {
-    zoom: 0.625;
+  .lp-feat-f1,
+  .lp-feat-f2,
+  .lp-feat-f3,
+  .lp-feat-f4 {
+    left: 50%;
+    position: absolute;
+    transform: scale(0.625);
+    transform-origin: 0 0;
   }
   .lp-feat-f1 {
-    /* artboard keeps the desktop mock's +6px (rendered) center offset */
-    left: 9.4px;
-    margin-top: 94.4px;
+    /* 516.8 desktop → 323 rendered; +5.9 keeps the artboard's rendered
+       center offset (was +9.4 pre-zoom) */
+    margin-left: -155.6px;
+    top: 59px;
   }
   .lp-feat-f2 {
-    margin-top: 72.9px;
+    margin-left: -126.6px; /* 405 → 253.1 rendered */
+    top: 45.6px;
   }
   .lp-feat-f3 {
-    margin-top: 53.5px;
+    /* 575.16 → 359.5 rendered — bleeds ~7px per side past the 345 content
+       column, stays well inside the 393 viewport (page clips bleed) */
+    margin-left: -179.7px;
+    top: 33.4px;
   }
   .lp-feat-f4 {
-    margin-top: 67.3px;
+    margin-left: -148.4px; /* 475 → 296.9 rendered */
+    top: 42.1px;
   }
   /* full-width separators (354 at 402) — incl. the closing ::after */
   .lp-feat-sep {

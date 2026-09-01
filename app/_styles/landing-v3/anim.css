@@ -62,8 +62,14 @@
 
 /* ── structure ── */
 /* Fixed-px canvases that scale uniformly with their responsive wrappers
-   (scale = wrapper-width / canvas-width; same tan(atan2()) division trick as
-   banner.css, with the same @supports degradation). */
+   (scale = wrapper-width / canvas-width). The unitless --lp-fit var is fed
+   by LpFitVars.tsx (ResizeObserver on each wrapper) because iOS WebKit
+   mis-resolves container units inside trig functions — tan(atan2(100cqw,
+   1654px)) computed 0.701 instead of 0.121 for a 200px container (iOS 18.7
+   simulator diagnostic, 2026-08-31), hurling the mobile hero rainbow
+   off-screen. The trig expression stays as the var's fallback: correct
+   engines render identically pre-hydration; iOS gets one wrong first frame
+   that self-corrects at mount. Same @supports degradation as banner.css. */
 .lp-anim-canvas {
   left: 0;
   position: absolute;
@@ -77,22 +83,22 @@
 }
 .lp-anim-canvas--hero {
   height: 1417px;
-  transform: scale(tan(atan2(100cqw, 1654px)));
+  transform: scale(var(--lp-fit, tan(atan2(100cqw, 1654px))));
   width: 1654px;
 }
 .lp-anim-canvas--pricing {
   height: 1039px;
-  transform: scale(tan(atan2(100cqw, 1654px)));
+  transform: scale(var(--lp-fit, tan(atan2(100cqw, 1654px))));
   width: 1654px;
 }
 .lp-anim-canvas--cta-left {
   height: 432px;
-  transform: scale(tan(atan2(100cqw, 560px)));
+  transform: scale(var(--lp-fit, tan(atan2(100cqw, 560px))));
   width: 560px;
 }
 .lp-anim-canvas--cta-right {
   height: 432px;
-  transform: scale(tan(atan2(100cqw, 529px)));
+  transform: scale(var(--lp-fit, tan(atan2(100cqw, 529px))));
   width: 529px;
 }
 

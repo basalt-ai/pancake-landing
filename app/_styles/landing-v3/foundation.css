@@ -170,6 +170,11 @@ html:has(main.lp) {
 .lp {
   background: var(--lp-page-bg);
   color: var(--lp-text);
+  /* iOS Safari auto-inflates text in wide containers (text-size-adjust),
+     blowing mock copy past its baked gradient frames and pushing the f4
+     chips off-screen (simulator audit 2026-08-31) — pin it. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   font-family: var(--lp-font-fono);
   font-size: var(--lp-text-md);
   line-height: 1.5;

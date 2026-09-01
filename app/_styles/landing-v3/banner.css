@@ -38,7 +38,9 @@
   left: 0;
   position: absolute;
   top: 0;
-  transform: scale(tan(atan2(100cqw, 1622px))); /* number = card-width / 1622 */
+  /* number = card-width / 1622; --lp-fit fed by LpFitVars.tsx (iOS WebKit
+     mis-resolves cqw inside trig — the expression stays as fallback only) */
+  transform: scale(var(--lp-fit, tan(atan2(100cqw, 1622px))));
   transform-origin: 0 0;
   width: 1622px;
 }

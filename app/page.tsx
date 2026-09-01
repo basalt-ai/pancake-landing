@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { LpBanner } from "@/components/sections/landing-v3/LpBanner";
 import { LpCta } from "@/components/sections/landing-v3/LpCta";
 import { LpFeatures } from "@/components/sections/landing-v3/LpFeatures";
+import { LpFitVars } from "@/components/sections/landing-v3/LpFitVars";
 import { LpFooter } from "@/components/sections/landing-v3/LpFooter";
 import { LpHero } from "@/components/sections/landing-v3/LpHero";
 import { LpModals } from "@/components/sections/landing-v3/LpModals";
@@ -83,6 +84,9 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationJsonLd) }}
       />
+      {/* Serves every section's art canvas — the --lp-fit scale var
+          (iOS WebKit cqw-in-trig workaround, see LpFitVars.tsx) */}
+      <LpFitVars />
       <LpNav />
       <LpHero />
       {/* Logo strip stays unmounted: the V1 set reads as powered-by, not
