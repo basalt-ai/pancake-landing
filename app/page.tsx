@@ -26,7 +26,10 @@ import "@/app/_styles/landing-v3.css";
 export const viewport: Viewport = { themeColor: "#fbf6f1" };
 
 export const metadata: Metadata = {
-  title: "Pancake — You run your company. We bring you customers.",
+  /* Tab shows just the brand (founder 2026-08-31: "I just want to see
+     Pancake next to the favicon"); og:title below keeps the value prop
+     for link previews. */
+  title: "Pancake",
   description:
     "Pancake’s AI agents monitor buying signals, find warm leads, grow your AI search visibility, and learn from every interaction.",
   alternates: { canonical: "https://getpancake.ai" },
