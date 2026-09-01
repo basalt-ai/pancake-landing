@@ -163,9 +163,6 @@
   position: relative;
   width: 100%;
 }
-.lp-feat-f1-row-tinted {
-  background: var(--lp-ink-tr-5);
-}
 .lp-feat-f1-tile {
   align-items: center;
   border-radius: 9.6px;
@@ -399,7 +396,9 @@
    animations are phase-identical (currentTime is the master clock).
    RESTING state (reduced motion, or animations cancelled) is the exact
    artboard: clay sticker at its left spot, 4 toggles on, Roles panel open
-   with its 3 checks, quips opacity-0. Everything animated lives inside the
+   with its 3 checks, quips opacity-0 — EXCEPT the hiring row's tint, a
+   deliberate founder override (2026-08-31): white at rest like its
+   siblings, tinted only while act 3 plays. Everything animated lives inside the
    no-preference media block below; ≤767 stays fully static (quips are
    display:none there and the block is scoped ≥768). */
 
@@ -520,6 +519,13 @@
   }
   .lp-feat-f1-row[data-act="2"] .lp-feat-f1-toggle::after {
     animation: lp-feat-f1-knob2 11.2s linear infinite;
+  }
+  /* the hiring row tints only while its act plays (founder 2026-08-31: the
+     artboard's static tint reads as a stuck hover — highlight the row from
+     the toggle snap through the Roles sequence, white again once act 4
+     takes over) */
+  .lp-feat-f1-row[data-act="3"] {
+    animation: lp-feat-f1-rowtint3 11.2s linear infinite;
   }
   .lp-feat-f1-row[data-act="3"] .lp-feat-f1-toggle {
     animation: lp-feat-f1-track3 11.2s linear infinite;
@@ -740,6 +746,22 @@
     97.3214%,
     100% {
       left: 1.6px;
+    }
+  }
+  /* row highlight rides the same clock: in with the toggle snap (53.125%),
+     held through the Roles checks, released as act 4 opens (71.875%) */
+  @keyframes lp-feat-f1-rowtint3 {
+    0%,
+    53.125% {
+      background-color: rgba(44, 0, 42, 0);
+    }
+    55.0893%,
+    71.875% {
+      background-color: var(--lp-ink-tr-5);
+    }
+    74.5536%,
+    100% {
+      background-color: rgba(44, 0, 42, 0);
     }
   }
   @keyframes lp-feat-f1-track3 {

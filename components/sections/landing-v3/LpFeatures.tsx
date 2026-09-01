@@ -25,19 +25,17 @@ function FeatureText({ title, body, tag }: { title: string; body: string; tag?: 
 function SignalRow({
   label,
   on,
-  tinted,
   act,
   children,
 }: {
   label: string;
   on: boolean;
-  tinted?: boolean;
   /** choreography act (1-4) — toggles of tagged rows animate on desktop */
   act?: 1 | 2 | 3 | 4;
   children: ReactNode;
 }) {
   return (
-    <div className={"lp-feat-f1-row" + (tinted ? " lp-feat-f1-row-tinted" : "")} data-act={act}>
+    <div className="lp-feat-f1-row" data-act={act}>
       {children}
       <p className="lp-feat-f1-label">{label}</p>
       <span className={"lp-feat-f1-toggle" + (on ? " is-on" : "")} />
@@ -111,7 +109,7 @@ function Feature1() {
             <SignalRow label="Industry expert engagement" on={false}>
               <img src="/lp/lp-f1-avatar-green.svg" alt="" width={32} height={32} className="lp-feat-f1-icon32" />
             </SignalRow>
-            <SignalRow label="Companies hiring" on tinted act={3}>
+            <SignalRow label="Companies hiring" on act={3}>
               <span className="lp-feat-f1-tile lp-feat-f1-tile-blue">
                 <img src="/lp/lp-f1-icon-doc-lines-blue.svg" alt="" width={19} height={19} className="lp-feat-f1-docicon" />
               </span>
