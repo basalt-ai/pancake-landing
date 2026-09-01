@@ -144,19 +144,13 @@
     top: -180px;
   }
 }
-/* Button row (Figma mobile 4389:8177: horizontal, gap 8). On desktop only
-   "Get started" is visible, so the wrapper is layout-neutral there. */
+/* Button row (Figma mobile 4389:8177: horizontal, gap 8). "Book a call"
+   shows at EVERY width (founder 2026-09-01: it was hidden ≥768 for desktop-
+   artboard fidelity — the desktop frame draws one CTA — and he wants it
+   back). 136 + 8 + ~134 = ~278px sits inside the 368px column. */
 .lp-hero-btns {
   display: flex;
   gap: 8px;
-}
-/* "Book a call" is a mobile-only addition — the desktop hero stays exactly
-   one CTA. hero.css imports after foundation.css, so this outranks
-   `.lp-btn { display: inline-flex }` at equal specificity. */
-@media (min-width: 768px) {
-  .lp-hero-call {
-    display: none;
-  }
 }
 
 /* ≤1200: edge-anchor + scale the headline so the columns never crop */
@@ -225,6 +219,25 @@
    full-width; buttons 48px row, gap 8 (Get started 136×48 + tinted Book a
    call 134×48, both r12). Marquee at y751.6 → 64px bottom padding. */
 @media (max-width: 767px) {
+  /* Tall phones (founder iPhone 17 Pro report, 2026-08-31: "tu n'utilises
+     pas la hauteur maximale de l'écran"): the artboard composition is
+     width-proportional, so on a 19.5:9 screen it left dead cream under the
+     CTAs. Same doctrine as the desktop hero: fill the first screen
+     (frozen svh − the 104px mobile nav) and bottom-anchor the text block —
+     the arc keeps its artboard position at the top, the extra height opens
+     between arc and headline, and the CTAs land a constant 64px above the
+     fold on every device. On short phones the min-height is inert and the
+     artboard flow is unchanged. */
+  .lp-hero {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(var(--lp-svh, 100svh) - 104px);
+    transition: min-height 450ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .lp-hero-inner {
+    flex: 1;
+    justify-content: flex-end;
+  }
   .lp-hero-art {
     margin-left: -4.82vw;
     top: 0.3vw;
@@ -253,5 +266,12 @@
   .lp-hero-lede {
     max-width: 368px;
     width: auto;
+  }
+  /* the top-of-file reduced-motion block predates this rule in the cascade —
+     restate it so the min-height glide stays off there too */
+  @media (prefers-reduced-motion: reduce) {
+    .lp-hero {
+      transition: none;
+    }
   }
 }

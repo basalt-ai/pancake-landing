@@ -15,6 +15,11 @@
     -moz-tab-size: 4;
     tab-size: 4;
     line-height: 1.15;
+    /* iOS Safari paints the safe areas (Dynamic Island band, overscroll)
+       with the ROOT element's background, not body's — without this the
+       cream page sat under a pure-white status-bar band (founder iPhone
+       17 Pro report, 2026-08-31). */
+    background-color: var(--surface);
   }
 
   body {

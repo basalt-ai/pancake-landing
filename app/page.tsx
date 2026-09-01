@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
+import { LpAnimFreeze } from "@/components/sections/landing-v3/LpAnimFreeze";
 import { LpBanner } from "@/components/sections/landing-v3/LpBanner";
 import { LpCta } from "@/components/sections/landing-v3/LpCta";
 import { LpFeatures } from "@/components/sections/landing-v3/LpFeatures";
@@ -87,6 +88,9 @@ export default function Home() {
       {/* Serves every section's art canvas — the --lp-fit scale var
           (iOS WebKit cqw-in-trig workaround, see LpFitVars.tsx) */}
       <LpFitVars />
+      {/* Frees off-screen sections' animation GPU surfaces — the iPhone
+          WebContent OOM guard (see LpAnimFreeze.tsx) */}
+      <LpAnimFreeze />
       <LpNav />
       <LpHero />
       {/* Logo strip stays unmounted: the V1 set reads as powered-by, not

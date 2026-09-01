@@ -230,6 +230,9 @@ export default function CareersPage() {
               <h2 id="careers-note-heading" className="lp-crs-note__title lp-display">
                 Don&rsquo;t see your role?
               </h2>
+              {/* Founder 2026-09-01: keep the full sentence but on ONE line —
+                  the wrap came from the text column's width, fixed in
+                  careers.css, not by trimming copy. */}
               <p className="lp-crs-lede">
                 We&rsquo;re always interested in exceptional people. Send a note to{" "}
                 <a className="lp-crs-mail" href={`mailto:${APPLY_EMAIL}`}>
