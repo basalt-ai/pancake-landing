@@ -167,6 +167,15 @@ html:has(main.lp) {
     contain-intrinsic-size: auto 450px;
   }
 }
+/* iOS Safari paints the status-bar / Dynamic-Island band with the BODY's
+   computed background — html's background and theme-color are both ignored
+   (iPhone 17 Pro device test, 2026-09-01: band sampled pure #fff while body
+   carried the site-wide --surface white under the lp cream). On lp pages the
+   body itself must wear the cream so the island band matches the page.
+   Literal value = --lp-page-bg (the var lives on .lp, out of body's reach). */
+body:has(main.lp) {
+  background-color: #fbf6f1;
+}
 .lp {
   background: var(--lp-page-bg);
   color: var(--lp-text);
