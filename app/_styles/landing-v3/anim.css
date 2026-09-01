@@ -154,6 +154,19 @@
 .lp-anim-spin--ccw {
   animation: lp-anim-spin-ccw 20s linear infinite;
 }
+/* Safari tile-lag guard (founder 2026-09-01: the pricing rainbow "blink et
+   se distord" — WebKit rasterizes huge rotating layers in lazy ~512px tiles,
+   and during scroll + rotation the missing/stale tiles show as straight-edge
+   slices that flicker; reproduced in WebKit, incl. a stale tile duplicating
+   list text). will-change pins a full backing store per spinner so tiles
+   never lag. DESKTOP ONLY: on phones it would pin exactly the memory the
+   off-stage freeze exists to release. */
+@media (min-width: 768px) {
+  .lp-anim-spin--cw,
+  .lp-anim-spin--ccw {
+    will-change: transform;
+  }
+}
 /* Founder tweak (2026-08-28): the CTA card's two rainbows are exact mirror
    copies, so mid-animation every frame was a perfect reflection ("le côté
    parfaitement symétrique … c'est assez bizarre"). A phase offset on the left
