@@ -301,19 +301,18 @@
   }
 }
 
-/* ── phones: hold the 20s cohort at the artboard pose ─────────────────────
-   Founder's iPhone 17 Pro still killed WebContent after the off-stage freeze
-   (2026-09-01, round 2): the six hero arcs alone are 2390×2331 rotating img
-   layers — the biggest standing GPU allocation on the page, alive the moment
-   the page opens. Until the mobile rotation is rebuilt as a small canvas
-   (one visible-crop buffer instead of six full-ring layers), phones show the
-   static artboard pose — identical to the reduced-motion contract, and the
-   pop's settled size is the base size. Desktop is untouched. */
+/* ── phones: the HERO holds the artboard pose — its rotation is LpArcCanvas
+   (one visible-crop canvas instead of six 2390×2331 composited layers, the
+   allocation that killed WebContent 2026-09-01). The pricing and CTA
+   cohorts RUN on phones again (founder, same day: "réanime les arcs du
+   final CTA et du footer maintenant qu'on a déchargé les GPU") — the budget
+   holds because the banner's 44 CSS bubbles are gone (Lottie), the feature
+   rings are desktop-only, and LpAnimFreeze bounds the live cohort to the
+   sections near the viewport, resuming them in phase. */
 @media (max-width: 767px) {
-  .lp-anim-spin--cw,
-  .lp-anim-spin--ccw,
-  .lp-anim-fill.lp-anim-pop,
-  .lp-anim-bubble {
+  .lp-hero-art .lp-anim-spin--cw,
+  .lp-hero-art .lp-anim-spin--ccw,
+  .lp-hero-art .lp-anim-fill.lp-anim-pop {
     animation: none;
   }
 }

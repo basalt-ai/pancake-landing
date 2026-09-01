@@ -43,47 +43,72 @@ export function LpAnimFreeze() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     if (typeof IntersectionObserver === "undefined") return;
+    // PHONES ONLY (founder 2026-09-01: "l'animation de l'arc-en-ciel break
+    // complètement" — on desktop a fast scroll-back outran the observer and
+    // showed the arcs frozen at the artboard pose before they resumed).
+    // The OOM this system exists for is an iPhone budget; Macs ran the
+    // always-on cohort for weeks without issue. On phones the ≤767 static
+    // block already holds arcs/bubbles, so freezing effectively manages the
+    // testimonial tracks — the one big animated surface left there.
+    const phone = window.matchMedia("(max-width: 767px)");
     const t0 = performance.now();
     // Designed timing per member, captured from computed style before the
     // first freeze ever overrides animation-delay inline.
     const timing = new WeakMap<Element, { delay: number; duration: number }>();
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          const stage = entry.target as HTMLElement;
-          const members = stage.querySelectorAll<HTMLElement>(MEMBERS);
-          if (entry.isIntersecting) {
-            members.forEach((m) => {
-              const t = timing.get(m);
-              if (!t || !t.duration) return; // first pass: nothing was frozen
-              const elapsed = (performance.now() - t0) / 1000;
-              m.style.animationDelay = `${t.delay - (elapsed % t.duration)}s`;
-            });
-            stage.removeAttribute("data-lp-offstage");
-          } else {
-            members.forEach((m) => {
-              if (timing.has(m)) return;
-              const cs = getComputedStyle(m);
-              timing.set(m, {
-                delay: parseFloat(cs.animationDelay) || 0,
-                duration: parseFloat(cs.animationDuration) || 0,
-              });
-            });
-            stage.setAttribute("data-lp-offstage", "");
-          }
-        }
-      },
-      // 0.75 viewport of slack above and below — flips stay off-screen at
-      // normal scroll speeds while roughly halving the peak count of live
-      // sections vs the original 150% (OOM round 2, 2026-09-01). A hard
-      // flick may catch a section at its artboard pose for a beat; that
-      // beats the WebContent kill it prevents.
-      { rootMargin: "75% 0%" },
-    );
+    const thaw = (stage: HTMLElement) => {
+      stage.querySelectorAll<HTMLElement>(MEMBERS).forEach((m) => {
+        const t = timing.get(m);
+        if (!t || !t.duration) return; // never frozen — nothing to rephase
+        const elapsed = (performance.now() - t0) / 1000;
+        m.style.animationDelay = `${t.delay - (elapsed % t.duration)}s`;
+      });
+      stage.removeAttribute("data-lp-offstage");
+    };
 
-    document.querySelectorAll(STAGES).forEach((s) => observer.observe(s));
-    return () => observer.disconnect();
+    let observer: IntersectionObserver | null = null;
+    const setEnabled = (on: boolean) => {
+      if (on && !observer) {
+        observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              const stage = entry.target as HTMLElement;
+              if (entry.isIntersecting) {
+                thaw(stage);
+              } else {
+                stage.querySelectorAll<HTMLElement>(MEMBERS).forEach((m) => {
+                  if (timing.has(m)) return;
+                  const cs = getComputedStyle(m);
+                  timing.set(m, {
+                    delay: parseFloat(cs.animationDelay) || 0,
+                    duration: parseFloat(cs.animationDuration) || 0,
+                  });
+                });
+                stage.setAttribute("data-lp-offstage", "");
+              }
+            }
+          },
+          // 0.75 viewport of slack above and below (OOM round 2)
+          { rootMargin: "75% 0%" },
+        );
+        document.querySelectorAll(STAGES).forEach((s) => observer!.observe(s));
+      } else if (!on && observer) {
+        observer.disconnect();
+        observer = null;
+        // everything frozen resumes in phase — desktop runs the full cohort
+        document
+          .querySelectorAll<HTMLElement>("[data-lp-offstage]")
+          .forEach(thaw);
+      }
+    };
+
+    setEnabled(phone.matches);
+    const onMedia = () => setEnabled(phone.matches);
+    phone.addEventListener("change", onMedia);
+    return () => {
+      phone.removeEventListener("change", onMedia);
+      setEnabled(false);
+    };
   }, []);
   return null;
 }
