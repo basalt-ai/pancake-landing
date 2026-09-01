@@ -44,15 +44,12 @@ export function LpPricing() {
       {/* Animated pancakes group: 1654×1039 canvas where the old composite img
           sat (top -0.66px, centered); the 2622×1039 container's left offset
           within it is -272px (see anim.css .lp-anim-box--pricing). */}
+      {/* NOTE: no opaque backing may live in this canvas — the art overlaps
+          the footer by design (arcs sweep over its black), so anything
+          opaque here covers the footer's logo (learned 2026-09-01: a black
+          "floor" div blanked the Pancake logo). */}
       <div className="lp-price-art" aria-hidden="true">
         <div className="lp-anim-canvas lp-anim-canvas--pricing">
-          {/* black floor UNDER the rings: the outermost black disc rotates,
-              and at loop phases ~2-3s its edge lifts and exposed the cream
-              section bg as a full-width flash above the footer (founder
-              2026-09-01, "bande blanche"). In Figma the same lift lands on
-              the artboard's black footer — invisible; this floor recreates
-              that backing. Canvas coords, painted before (under) the arcs. */}
-          <div className="lp-price-blackfloor" />
           <LpPancakes variant="pricing" />
         </div>
       </div>
