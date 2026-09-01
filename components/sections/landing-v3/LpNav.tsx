@@ -18,7 +18,7 @@ export function LpNav() {
       <nav className="lp-nav-links" aria-label="Primary">
         <a href="/#how-it-works">Product</a>
         <a href="/#why">Company</a>
-        <a href="/careers">Careers</a>
+        <a href="/blog">Blog</a>
       </nav>
       <LpFxLink href="https://app.getpancake.ai" size="sm" className="lp-nav-cta" data-analytics-id="app_nav">
         Get started
