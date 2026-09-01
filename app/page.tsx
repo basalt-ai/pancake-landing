@@ -31,13 +31,14 @@ import "@/app/_styles/landing-v3.css";
 export const viewport: Viewport = { themeColor: "#fbf6f1" };
 
 export const metadata: Metadata = {
-  /* SERP revert (founder 2026-09-01: Google titled the site "Pancake's AI"
-     and showed the artboard lede as the snippet — "REMETS LE H2 D'AVANT").
-     The bare "Pancake" title (#256 tab request) was too weak: Google rewrote
-     it from the description's opening words. Title + descriptions below are
-     the pre-v3 strings, identical to the root layout's. Known tradeoff: the
-     browser tab shows the full title again — flagged to the founder. */
-  title: "Pancake: The AI employee that does the work for you",
+  /* Tab title is EXACTLY "Pancake" — founder decision, twice (2026-08-31
+     "just Pancake next to the favicon"; 2026-09-01 "arrête de remettre qqch
+     après Pancake"). NON-NEGOTIABLE — never append a descriptor here again.
+     Google-title risk is managed by the description below (the pre-v3 copy;
+     the old "Pancake's AI agents…" opener that Google lifted into the SERP
+     title is gone) + the WebSite JSON-LD site name. og/twitter titles carry
+     the descriptive value for link previews. */
+  title: "Pancake",
   description:
     "Pancake connects to your tools and does the work for you. Autonomously. One AI coworker in Slack, a whole team of agents behind it. $49/month, no tiers.",
   alternates: { canonical: "https://getpancake.ai" },

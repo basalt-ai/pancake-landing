@@ -1,5 +1,6 @@
 import { LpFxLink } from "@/components/sections/landing-v3/LpFxButton";
 import { LpNavMenu } from "@/components/sections/landing-v3/LpNavMenu";
+import { LpNavScroll } from "@/components/sections/landing-v3/LpNavScroll";
 
 /**
  * Landing v3 — Nav (Figma node 4257:4894, 1654×120).
@@ -24,6 +25,7 @@ export function LpNav() {
         Get started
       </LpFxLink>
       <LpNavMenu />
+      <LpNavScroll />
     </header>
   );
 }

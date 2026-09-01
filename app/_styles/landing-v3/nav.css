@@ -2,10 +2,59 @@
    Logo/CTA edge margins = max(32px, 50% − 648px) → exactly 179px at 1654
    (the 1296 content grid's side margin), scaling down fluidly below. */
 
+/* Sticky bar (founder 2026-09-01, "comme Linear.app"): position:sticky keeps
+   the artboard's layout slot (hero min-height math and the art's −120px
+   anchor are untouched), and at the very top of the page the bar is
+   transparent — pixel-identical to the artboard. Once scrolled (LpNavScroll
+   stamps .is-scrolled past 8px) it turns translucent cream with a hairline.
+   Blur is DESKTOP-ONLY: a permanently on-screen backdrop-filter on phones is
+   exactly the standing GPU load class that killed WebContent (2026-09-01) —
+   mobile gets near-opaque cream instead, visually equivalent on this page.
+   z-index 30 sits above all sections, under the menu sheet (40) / modal (50). */
 .lp-nav {
   height: 120px;
   overflow: clip;
-  position: relative;
+  position: sticky;
+  top: 0;
+  transition:
+    background-color 0.25s ease,
+    box-shadow 0.25s ease,
+    height 0.25s ease,
+    padding 0.25s ease;
+  z-index: 30;
+}
+/* Scrolled = the compact chrome (founder 2026-09-01: "réduis le bandeau"):
+   the bar compresses 120→72 (104→64 on phones) with the logo scaling to
+   match. At the very top the artboard heights return — resting layout,
+   hero anchors and min-height math never move. */
+.lp-nav.is-scrolled {
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  background-color: rgba(251, 246, 241, 0.85);
+  box-shadow: 0 1px 0 rgba(44, 0, 42, 0.08);
+  height: 72px;
+}
+.lp-nav-logo {
+  transition: transform 0.25s ease;
+}
+.lp-nav.is-scrolled .lp-nav-logo {
+  transform: translateY(-50%) scale(0.79);
+  transform-origin: left center;
+}
+@media (max-width: 767px) {
+  .lp-nav.is-scrolled {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: rgba(251, 246, 241, 0.96);
+    /* second shadow = a solid cream slab extending above the bar: iOS lets
+       page content ghost through the status-bar / Dynamic-Island zone, which
+       sits ABOVE the sticky bar's box — the slab makes bar + island band one
+       continuous chrome while scrolled. Own-element shadows are not cut by
+       the bar's overflow: clip (that clips children only). */
+    box-shadow:
+      0 1px 0 rgba(44, 0, 42, 0.08),
+      0 -120px 0 rgba(251, 246, 241, 0.96);
+  }
 }
 
 /* Logo: 114.956×56, left edge 179px at 1654, vertically centered */
@@ -43,11 +92,13 @@
   padding-block: 10px; /* 40px tap target, no visual change */
 }
 
-/* CTA: typography/skin from .lp-btn[data-size="sm"]; top 41 = (120−38)/2 */
+/* CTA: typography/skin from .lp-btn[data-size="sm"]; centered in the bar —
+   calc(50% − 19px) == the artboard's top 41 at 120 tall, and keeps the pill
+   centered when the scrolled bar compresses to 72. */
 .lp-nav-cta {
   position: absolute;
   right: max(32px, calc(50% - 648px));
-  top: 41px;
+  top: calc(50% - 19px);
 }
 
 @media (max-width: 1024px) {
@@ -66,17 +117,34 @@
     align-items: center;
     box-sizing: border-box;
     display: flex;
+    gap: 12px;
     height: 104px;
-    justify-content: space-between;
+    justify-content: flex-start;
     padding: 16px 18.38px 0 32px;
   }
   .lp-nav-logo {
     position: static;
     transform: none;
   }
-  .lp-nav-links,
-  .lp-nav-cta {
+  .lp-nav-links {
     display: none;
+  }
+  /* "Get started" rides in the bar itself (founder 2026-09-01: "mets le
+     bouton Get started dans ce bandeau") — the mobile artboard drew only
+     logo + burger; founder override. Same sm pill + app_nav id as desktop;
+     the burger-sheet copy stays for the menu path. */
+  .lp-nav-cta {
+    display: inline-flex;
+    margin-left: auto;
+    position: static;
+  }
+  .lp-nav.is-scrolled {
+    height: 64px;
+    padding-top: 0;
+  }
+  .lp-nav.is-scrolled .lp-nav-logo {
+    transform: scale(0.79);
+    transform-origin: left center;
   }
 }
 
