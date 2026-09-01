@@ -1,3 +1,4 @@
+import { LpArcCanvas } from "@/components/sections/landing-v3/LpArcCanvas";
 import { LpFxLink, LpFxPill } from "@/components/sections/landing-v3/LpFxButton";
 import { LpPancakes } from "@/components/sections/landing-v3/LpPancakes";
 import { LpViewportVar } from "@/components/sections/landing-v3/LpViewportVar";
@@ -17,6 +18,9 @@ export function LpHero() {
         <div className="lp-anim-canvas lp-anim-canvas--hero">
           <LpPancakes variant="hero" />
         </div>
+        {/* phones: the rotation lives here (one canvas) while the DOM rings
+            above hold the static artboard pose — see LpArcCanvas.tsx */}
+        <LpArcCanvas />
       </div>
       <div className="lp-hero-inner">
         <h1 id="lp-hero-title" className="lp-hero-title lp-display">

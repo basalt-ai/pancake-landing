@@ -2,10 +2,45 @@
    Logo/CTA edge margins = max(32px, 50% − 648px) → exactly 179px at 1654
    (the 1296 content grid's side margin), scaling down fluidly below. */
 
+/* Sticky bar (founder 2026-09-01, "comme Linear.app"): position:sticky keeps
+   the artboard's layout slot (hero min-height math and the art's −120px
+   anchor are untouched), and at the very top of the page the bar is
+   transparent — pixel-identical to the artboard. Once scrolled (LpNavScroll
+   stamps .is-scrolled past 8px) it turns translucent cream with a hairline.
+   Blur is DESKTOP-ONLY: a permanently on-screen backdrop-filter on phones is
+   exactly the standing GPU load class that killed WebContent (2026-09-01) —
+   mobile gets near-opaque cream instead, visually equivalent on this page.
+   z-index 30 sits above all sections, under the menu sheet (40) / modal (50). */
 .lp-nav {
   height: 120px;
   overflow: clip;
-  position: relative;
+  position: sticky;
+  top: 0;
+  transition:
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
+  z-index: 30;
+}
+.lp-nav.is-scrolled {
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  background-color: rgba(251, 246, 241, 0.85);
+  box-shadow: 0 1px 0 rgba(44, 0, 42, 0.08);
+}
+@media (max-width: 767px) {
+  .lp-nav.is-scrolled {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: rgba(251, 246, 241, 0.96);
+    /* second shadow = a solid cream slab extending above the bar: iOS lets
+       page content ghost through the status-bar / Dynamic-Island zone, which
+       sits ABOVE the sticky bar's box — the slab makes bar + island band one
+       continuous chrome while scrolled. Own-element shadows are not cut by
+       the bar's overflow: clip (that clips children only). */
+    box-shadow:
+      0 1px 0 rgba(44, 0, 42, 0.08),
+      0 -120px 0 rgba(251, 246, 241, 0.96);
+  }
 }
 
 /* Logo: 114.956×56, left edge 179px at 1654, vertically centered */
