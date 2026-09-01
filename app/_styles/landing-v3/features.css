@@ -1711,12 +1711,17 @@
 .lp-feat-ringfx i {
   animation: lp-feat-ringspin 20s linear infinite;
   display: block;
-  height: 640px;
+  /* 520 disc radius 260 covers both masked boxes through the full turn
+     (half-diagonals: f2 √(405²+284²)/2 = 247.4, f4 √(475²+105²)/2 = 243.2)
+     with margin; was 640 — the smaller composited layer is part of the
+     iPhone WebContent OOM budget fix (2026-08-31). Colors are angular, so
+     the disc size never changes a rendered pixel. */
+  height: 520px;
   left: 50%;
-  margin: -320px 0 0 -320px;
+  margin: -260px 0 0 -260px;
   position: absolute;
   top: 50%;
-  width: 640px;
+  width: 520px;
 }
 /* per-squiggle wheel: its own designed color around ~80% of the turn, and
    one shared 70° traveling wave where every squiggle rolls one palette step
@@ -1759,7 +1764,12 @@
     transform: rotate(360deg);
   }
 }
-@media (prefers-reduced-motion: no-preference) {
+/* Desktop-only: 8 masked spinning conic layers are real GPU-memory load, and
+   phones run them inside the 0.625-scaled mocks where the traveling wave is
+   barely legible anyway. iPhone Safari killed WebContent on scroll ("A
+   problem repeatedly occurred", founder 17 Pro report 2026-08-31) — ≤767px
+   keeps the baked ring img, which IS the exact artboard. */
+@media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
   @supports (mask-image: url("")) or (-webkit-mask-image: url("")) {
     .lp-feat-ringfx {
       display: block;
