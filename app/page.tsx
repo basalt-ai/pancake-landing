@@ -24,31 +24,37 @@ import "@/app/_styles/landing-v3.css";
 // Page-level metadata mirrors the hero (unchanged copy vs v2);
 // the root layout still carries the org-wide defaults.
 
-/* Status-bar zone matches the lp cream (Dynamic Island fix, 2026-08-31) */
+/* NOTE: iOS Safari ignores themeColor for the Dynamic-Island band — the band
+   is painted with the BODY's background (body:has(main.lp) in foundation.css,
+   device-tested 2026-09-01). viewport-fit=cover is a portrait no-op there too
+   (env(safe-area-inset-top) stays 0 in the browser) — don't re-add it. */
 export const viewport: Viewport = { themeColor: "#fbf6f1" };
 
 export const metadata: Metadata = {
-  /* Tab shows just the brand (founder 2026-08-31: "I just want to see
-     Pancake next to the favicon"); og:title below keeps the value prop
-     for link previews. */
-  title: "Pancake",
+  /* SERP revert (founder 2026-09-01: Google titled the site "Pancake's AI"
+     and showed the artboard lede as the snippet — "REMETS LE H2 D'AVANT").
+     The bare "Pancake" title (#256 tab request) was too weak: Google rewrote
+     it from the description's opening words. Title + descriptions below are
+     the pre-v3 strings, identical to the root layout's. Known tradeoff: the
+     browser tab shows the full title again — flagged to the founder. */
+  title: "Pancake: The AI employee that does the work for you",
   description:
-    "Pancake’s AI agents monitor buying signals, find warm leads, grow your AI search visibility, and learn from every interaction.",
+    "Pancake connects to your tools and does the work for you. Autonomously. One AI coworker in Slack, a whole team of agents behind it. $49/month, no tiers.",
   alternates: { canonical: "https://getpancake.ai" },
   openGraph: {
     type: "website",
     url: "https://getpancake.ai",
-    title: "You run your company. We bring you customers.",
+    title: "Pancake: The AI employee that does the work for you",
     description:
-      "Pancake’s AI agents monitor buying signals, find warm leads, grow your AI search visibility, and learn from every interaction.",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake" }],
+      "Pancake connects to your tools and does the work for you. Autonomously. One AI coworker in Slack, a whole team of agents behind it. $49/month, no tiers.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake, the AI coworker" }],
     siteName: "Pancake",
   },
   twitter: {
     card: "summary_large_image",
-    title: "You run your company. We bring you customers.",
+    title: "Pancake: The AI employee that does the work for you",
     description:
-      "Pancake’s AI agents monitor buying signals, find warm leads, grow your AI search visibility, and learn from every interaction.",
+      "Pancake connects to your tools and does the work for you. Autonomously. One AI coworker in Slack, a whole team of agents behind it. $49/month, no tiers.",
     images: ["/og-image.png"],
   },
 };
@@ -62,7 +68,7 @@ const softwareApplicationJsonLd = {
   operatingSystem: "Web",
   url: "https://getpancake.ai",
   description:
-    "Pancake’s AI agents monitor buying signals, find warm leads, grow your AI search visibility, and learn from every interaction. A living GTM Brain, outreach in your voice, and content recommended on Google and ChatGPT.",
+    "Pancake connects to your tools and does the work for you. Autonomously. One AI coworker in Slack, a whole team of agents behind it. $49/month, no tiers.",
   offers: {
     "@type": "Offer",
     url: "https://getpancake.ai/pricing",
