@@ -83,7 +83,10 @@
   z-index: 1;
 }
 .lp-hero-title {
-  bottom: 104.65px;
+  /* artboard: 104.65 — lowered 36px (founder 2026-09-01: "baisse un peu le
+     bloc h1/h2/cta", the green band ran too close to the "You"); the col
+     below shifts the same 36 so the internal 16px offset holds */
+  bottom: 68.65px;
   color: var(--lp-text);
   font-size: 69.014px;
   left: calc(50% - 240px); /* column center at x 587 → left edge 259 */
@@ -100,7 +103,7 @@
 }
 .lp-hero-col {
   align-items: flex-start;
-  bottom: 120.65px;
+  bottom: 84.65px; /* artboard 120.65 − the same 36px founder shift */
   display: flex;
   flex-direction: column;
   gap: 24px;
