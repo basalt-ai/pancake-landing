@@ -130,7 +130,14 @@ function Feature1() {
           <div className="lp-mockcard lp-feat-f1-roles">
             <div className="lp-feat-f1-roleshead">
               <p className="lp-feat-f1-rolestitle">Roles</p>
-              <p className="lp-feat-f1-sigcount">3 selected</p>
+              {/* rest DOM is the artboard's "3 selected"; the 0/1/2 overlays
+                  are animation-only layers that count up with the checks */}
+              <p className="lp-feat-f1-sigcount lp-feat-f1-rolecount">
+                <span data-rc="3">3 selected</span>
+                <span className="lp-feat-f1-rc-alt" data-rc="0">0 selected</span>
+                <span className="lp-feat-f1-rc-alt" data-rc="1">1 selected</span>
+                <span className="lp-feat-f1-rc-alt" data-rc="2">2 selected</span>
+              </p>
             </div>
             <RoleRow label="Sales" checked pop="s" />
             <RoleRow label="Marketing" checked pop="m" />
@@ -198,6 +205,10 @@ function Feature2() {
           </div>
           {/* rainbow draft ring — baked Figma export (4 offset outside-stroke rects) */}
           <img src="/lp/lp-f2-draft-ring.svg" alt="" width={405} height={284} className="lp-feat-f2-ring" />
+          {/* animated twin: the ring contour as a mask over a spinning conic
+              rainbow — the arc mechanism adapted to the border (founder
+              2026-08-31); shown only when motion is allowed */}
+          <div className="lp-feat-ringfx lp-feat-f2-ringfx" aria-hidden="true"><i /></div>
           <div className="lp-feat-f2-draft">
             <p className="lp-feat-f2-eyebrow">Draft ready</p>
             <p className="lp-feat-f2-msg">
@@ -293,6 +304,7 @@ function Feature4() {
           </div>
           {/* rainbow ring — baked Figma export, sits behind the brain card */}
           <img src="/lp/lp-f4-brain-ring.svg" alt="" width={475} height={105} className="lp-feat-f4-ring" />
+          <div className="lp-feat-ringfx lp-feat-f4-ringfx" aria-hidden="true"><i /></div>
           <div className="lp-feat-f4-brain">
             <p className="lp-feat-f4-cardtitle">Brain updated</p>
             <p className="lp-feat-f4-brainsub">The winning playbook is ready for the next campaign.</p>

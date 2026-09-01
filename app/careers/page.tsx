@@ -72,7 +72,7 @@ const TEAM: TeamMember[] = [
   },
   {
     name: "François de Fitte",
-    role: "Co-founder",
+    role: "Co-founder & COO",
     photo: "/team/francois.jpg",
     linkedin: "https://www.linkedin.com/in/francoisdefitte/",
   },

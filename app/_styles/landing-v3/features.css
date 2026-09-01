@@ -380,19 +380,21 @@
   width: 75.63px;
 }
 
-/* ── f1 choreography — one 16s master loop, 4 acts of 4s ──
-   Act k: quip slaps in at its row (0.26s: scale .6 → 1.07 overshoot →
-   settle, rotation settling with it), the row's toggle snaps on 0.6s later
-   (0.22s) and STAYS on; the quip holds ~2s and fades. Act 3 is the payoff:
-   the moment the Companies-hiring toggle lights, the Roles panel — hidden
-   since loop start — springs open from its signals-card side, then Sales →
-   Marketing → Customer success get checked one by one (bouncy pops, 0.35s
-   stagger; Operations stays unchecked). Last 0.5s: toggles, panel, and
-   checks quietly reset.
+/* ── f1 choreography — one 11.2s master loop, acts every 2.6s ──
+   Act k (t0 = 0.25 / 2.85 / 5.45 / 8.05s): quip slaps in at its row (0.26s:
+   scale .6 → 1.07 overshoot → settle), the row's toggle snaps on at t0+0.5
+   (0.22s) and STAYS on; the quip holds ~1.75s and fades at t0+2.0 — the
+   next act's slap lands 0.6s after that fade starts, so the card never
+   idles. Act 3 is the payoff: the moment the Companies-hiring toggle
+   lights, the Roles panel — hidden since loop start — springs open from its
+   signals-card side showing "0 selected", then Sales → Marketing →
+   Customer success get checked one by one (bouncy pops, 0.35s stagger) with
+   the header counting 1 → 2 → 3 as each lands (Operations stays unchecked).
+   Last 0.7s: toggles, panel, and checks quietly reset.
    Acts → rows: 1 Keyword mentions, 2 Competitor engagement, 3 Companies
    hiring, 4 Technologies used.
 
-   Mechanics: every animation runs 16s linear infinite with delay 0 — each
+   Mechanics: every animation runs 11.2s linear infinite with delay 0 — each
    element's OWN keyframes place its events on the shared clock, so all
    animations are phase-identical (currentTime is the master clock).
    RESTING state (reduced motion, or animations cancelled) is the exact
@@ -450,6 +452,21 @@
   top: 349.5px;
 }
 
+/* counting Roles header — the rest DOM is the artboard's "3 selected" (a
+   bare inline span: renders exactly as the old text node). The 0/1/2
+   overlays are animation-only layers stacked on the same baseline (base
+   opacity 0); keyframed hard cuts count them up as the checks land. */
+.lp-feat-f1-rolecount {
+  position: relative;
+}
+.lp-feat-f1-rc-alt {
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+}
+
 /* choreography check stack — the empty outline under an animated check img
    is animation-only (base opacity 0): at rest the img alone renders, exactly
    the artboard. The img is position:relative so it paints above the
@@ -476,65 +493,79 @@
      the artboard render. */
   .lp-feat-f1-bubble,
   .lp-feat-f1-bubbletext {
-    animation: lp-feat-f1-sticker-off 16s linear infinite;
+    animation: lp-feat-f1-sticker-off 11.2s linear infinite;
   }
   .lp-feat-f1-quip[data-quip="1"] {
-    animation: lp-feat-f1-quip1 16s linear infinite;
+    animation: lp-feat-f1-quip1 11.2s linear infinite;
   }
   .lp-feat-f1-quip[data-quip="2"] {
-    animation: lp-feat-f1-quip2 16s linear infinite;
+    animation: lp-feat-f1-quip2 11.2s linear infinite;
   }
   .lp-feat-f1-quip[data-quip="3"] {
-    animation: lp-feat-f1-quip3 16s linear infinite;
+    animation: lp-feat-f1-quip3 11.2s linear infinite;
   }
   .lp-feat-f1-quip[data-quip="4"] {
-    animation: lp-feat-f1-quip4 16s linear infinite;
+    animation: lp-feat-f1-quip4 11.2s linear infinite;
   }
   /* animations outrank the .is-on declarations, so the same markup renders
      the artboard toggle when the loop is off */
   .lp-feat-f1-row[data-act="1"] .lp-feat-f1-toggle {
-    animation: lp-feat-f1-track1 16s linear infinite;
+    animation: lp-feat-f1-track1 11.2s linear infinite;
   }
   .lp-feat-f1-row[data-act="1"] .lp-feat-f1-toggle::after {
-    animation: lp-feat-f1-knob1 16s linear infinite;
+    animation: lp-feat-f1-knob1 11.2s linear infinite;
   }
   .lp-feat-f1-row[data-act="2"] .lp-feat-f1-toggle {
-    animation: lp-feat-f1-track2 16s linear infinite;
+    animation: lp-feat-f1-track2 11.2s linear infinite;
   }
   .lp-feat-f1-row[data-act="2"] .lp-feat-f1-toggle::after {
-    animation: lp-feat-f1-knob2 16s linear infinite;
+    animation: lp-feat-f1-knob2 11.2s linear infinite;
   }
   .lp-feat-f1-row[data-act="3"] .lp-feat-f1-toggle {
-    animation: lp-feat-f1-track3 16s linear infinite;
+    animation: lp-feat-f1-track3 11.2s linear infinite;
   }
   .lp-feat-f1-row[data-act="3"] .lp-feat-f1-toggle::after {
-    animation: lp-feat-f1-knob3 16s linear infinite;
+    animation: lp-feat-f1-knob3 11.2s linear infinite;
   }
   .lp-feat-f1-row[data-act="4"] .lp-feat-f1-toggle {
-    animation: lp-feat-f1-track4 16s linear infinite;
+    animation: lp-feat-f1-track4 11.2s linear infinite;
   }
   .lp-feat-f1-row[data-act="4"] .lp-feat-f1-toggle::after {
-    animation: lp-feat-f1-knob4 16s linear infinite;
+    animation: lp-feat-f1-knob4 11.2s linear infinite;
   }
   /* Roles panel springs open from its signals-card side the moment the
      hiring toggle lights (origin x0, at the hiring row's height) */
   .lp-feat-f1-roles {
-    animation: lp-feat-f1-roles-in 16s linear infinite;
+    animation: lp-feat-f1-roles-in 11.2s linear infinite;
     transform-origin: 0% 48%;
   }
   /* empty outlines under the animated checks — visible for the whole loop
      (the landed check img covers them) */
   .lp-feat-f1-checkwrap .lp-feat-f1-checkbox-off {
-    animation: lp-feat-f1-outline-on 16s linear infinite;
+    animation: lp-feat-f1-outline-on 11.2s linear infinite;
   }
   .lp-feat-f1-checkimg[data-pop="s"] {
-    animation: lp-feat-f1-check-s 16s linear infinite;
+    animation: lp-feat-f1-check-s 11.2s linear infinite;
   }
   .lp-feat-f1-checkimg[data-pop="m"] {
-    animation: lp-feat-f1-check-m 16s linear infinite;
+    animation: lp-feat-f1-check-m 11.2s linear infinite;
   }
   .lp-feat-f1-checkimg[data-pop="cs"] {
-    animation: lp-feat-f1-check-cs 16s linear infinite;
+    animation: lp-feat-f1-check-cs 11.2s linear infinite;
+  }
+  /* counting header — exactly one layer visible at a time; hard cuts at
+     each check's landing moment */
+  .lp-feat-f1-rolecount [data-rc="3"] {
+    animation: lp-feat-f1-rc3 11.2s linear infinite;
+  }
+  .lp-feat-f1-rolecount [data-rc="0"] {
+    animation: lp-feat-f1-rc0 11.2s linear infinite;
+  }
+  .lp-feat-f1-rolecount [data-rc="1"] {
+    animation: lp-feat-f1-rc1 11.2s linear infinite;
+  }
+  .lp-feat-f1-rolecount [data-rc="2"] {
+    animation: lp-feat-f1-rc2 11.2s linear infinite;
   }
 
   @keyframes lp-feat-f1-sticker-off {
@@ -546,27 +577,27 @@
   }
 
   /* quip k: sticker-slap pop — t0: scale .6 tilted 5° short → t0+0.15:
-     1.07 overshoot 1.5° past → t0+0.26: settled; hold; fade t0+2.2→t0+2.5.
-     t0 = 0.3 / 4.3 / 8.3 / 12.3s. 1% = 0.16s. */
+     1.07 overshoot 1.5° past → t0+0.26: settled; hold; fade t0+2.0→t0+2.25.
+     t0 = 0.25 / 2.85 / 5.45 / 8.05s. 1% = 0.112s. */
   @keyframes lp-feat-f1-quip1 {
     0%,
-    1.875% {
+    2.2321% {
       animation-timing-function: cubic-bezier(0.16, 0.84, 0.44, 1);
       opacity: 0;
       transform: rotate(calc(var(--quip-tilt) - 5deg)) scale(0.6);
     }
-    2.8125% {
+    3.5714% {
       animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
       opacity: 1;
       transform: rotate(calc(var(--quip-tilt) + 1.5deg)) scale(1.07);
     }
-    3.5%,
-    15.625% {
+    4.5536%,
+    20.0893% {
       animation-timing-function: ease-in;
       opacity: 1;
       transform: rotate(var(--quip-tilt)) scale(1);
     }
-    17.5%,
+    22.3214%,
     100% {
       opacity: 0;
       transform: rotate(var(--quip-tilt)) scale(1);
@@ -574,23 +605,23 @@
   }
   @keyframes lp-feat-f1-quip2 {
     0%,
-    26.875% {
+    25.4464% {
       animation-timing-function: cubic-bezier(0.16, 0.84, 0.44, 1);
       opacity: 0;
       transform: rotate(calc(var(--quip-tilt) - 5deg)) scale(0.6);
     }
-    27.8125% {
+    26.7857% {
       animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
       opacity: 1;
       transform: rotate(calc(var(--quip-tilt) + 1.5deg)) scale(1.07);
     }
-    28.5%,
-    40.625% {
+    27.7679%,
+    43.3036% {
       animation-timing-function: ease-in;
       opacity: 1;
       transform: rotate(var(--quip-tilt)) scale(1);
     }
-    42.5%,
+    45.5357%,
     100% {
       opacity: 0;
       transform: rotate(var(--quip-tilt)) scale(1);
@@ -598,23 +629,23 @@
   }
   @keyframes lp-feat-f1-quip3 {
     0%,
-    51.875% {
+    48.6607% {
       animation-timing-function: cubic-bezier(0.16, 0.84, 0.44, 1);
       opacity: 0;
       transform: rotate(calc(var(--quip-tilt) - 5deg)) scale(0.6);
     }
-    52.8125% {
+    50% {
       animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
       opacity: 1;
       transform: rotate(calc(var(--quip-tilt) + 1.5deg)) scale(1.07);
     }
-    53.5%,
-    65.625% {
+    50.9821%,
+    66.5179% {
       animation-timing-function: ease-in;
       opacity: 1;
       transform: rotate(var(--quip-tilt)) scale(1);
     }
-    67.5%,
+    68.75%,
     100% {
       opacity: 0;
       transform: rotate(var(--quip-tilt)) scale(1);
@@ -622,184 +653,185 @@
   }
   @keyframes lp-feat-f1-quip4 {
     0%,
-    76.875% {
+    71.875% {
       animation-timing-function: cubic-bezier(0.16, 0.84, 0.44, 1);
       opacity: 0;
       transform: rotate(calc(var(--quip-tilt) - 5deg)) scale(0.6);
     }
-    77.8125% {
+    73.2143% {
       animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
       opacity: 1;
       transform: rotate(calc(var(--quip-tilt) + 1.5deg)) scale(1.07);
     }
-    78.5%,
-    90.625% {
+    74.1964%,
+    89.7321% {
       animation-timing-function: ease-in;
       opacity: 1;
       transform: rotate(var(--quip-tilt)) scale(1);
     }
-    92.5%,
+    91.9643%,
     100% {
       opacity: 0;
       transform: rotate(var(--quip-tilt)) scale(1);
     }
   }
 
-  /* toggle k: off until t0+0.6, snaps on over 0.22s, holds green, resets
-     quietly 15.5→15.9s */
+  /* toggle k: off until t0+0.5, snaps on over 0.22s, holds green, resets
+     quietly 10.5→10.9s */
   @keyframes lp-feat-f1-track1 {
     0%,
-    5.625% {
+    6.6964% {
       animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
       background: var(--lp-ink-50);
     }
-    7%,
-    96.875% {
+    8.6607%,
+    93.75% {
       animation-timing-function: ease;
       background: var(--lp-green-30);
     }
-    99.375%,
+    97.3214%,
     100% {
       background: var(--lp-ink-50);
     }
   }
   @keyframes lp-feat-f1-knob1 {
     0%,
-    5.625% {
+    6.6964% {
       animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
       left: 1.6px;
     }
-    7%,
-    96.875% {
+    8.6607%,
+    93.75% {
       animation-timing-function: ease;
       left: 14.4px;
     }
-    99.375%,
+    97.3214%,
     100% {
       left: 1.6px;
     }
   }
   @keyframes lp-feat-f1-track2 {
     0%,
-    30.625% {
+    29.9107% {
       animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
       background: var(--lp-ink-50);
     }
-    32%,
-    96.875% {
+    31.875%,
+    93.75% {
       animation-timing-function: ease;
       background: var(--lp-green-30);
     }
-    99.375%,
+    97.3214%,
     100% {
       background: var(--lp-ink-50);
     }
   }
   @keyframes lp-feat-f1-knob2 {
     0%,
-    30.625% {
+    29.9107% {
       animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
       left: 1.6px;
     }
-    32%,
-    96.875% {
+    31.875%,
+    93.75% {
       animation-timing-function: ease;
       left: 14.4px;
     }
-    99.375%,
+    97.3214%,
     100% {
       left: 1.6px;
     }
   }
   @keyframes lp-feat-f1-track3 {
     0%,
-    55.625% {
+    53.125% {
       animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
       background: var(--lp-ink-50);
     }
-    57%,
-    96.875% {
+    55.0893%,
+    93.75% {
       animation-timing-function: ease;
       background: var(--lp-green-30);
     }
-    99.375%,
+    97.3214%,
     100% {
       background: var(--lp-ink-50);
     }
   }
   @keyframes lp-feat-f1-knob3 {
     0%,
-    55.625% {
+    53.125% {
       animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
       left: 1.6px;
     }
-    57%,
-    96.875% {
+    55.0893%,
+    93.75% {
       animation-timing-function: ease;
       left: 14.4px;
     }
-    99.375%,
+    97.3214%,
     100% {
       left: 1.6px;
     }
   }
   @keyframes lp-feat-f1-track4 {
     0%,
-    80.625% {
+    76.3393% {
       animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
       background: var(--lp-ink-50);
     }
-    82%,
-    96.875% {
+    78.3036%,
+    93.75% {
       animation-timing-function: ease;
       background: var(--lp-green-30);
     }
-    99.375%,
+    97.3214%,
     100% {
       background: var(--lp-ink-50);
     }
   }
   @keyframes lp-feat-f1-knob4 {
     0%,
-    80.625% {
+    76.3393% {
       animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
       left: 1.6px;
     }
-    82%,
-    96.875% {
+    78.3036%,
+    93.75% {
       animation-timing-function: ease;
       left: 14.4px;
     }
-    99.375%,
+    97.3214%,
     100% {
       left: 1.6px;
     }
   }
 
-  /* act-3 payoff chain — hiring toggle lands 9.12s: the Roles panel springs
-     open 9.1→9.5s (scale .5→1.06→1 from its left edge, a consequence of the
-     toggle), then the checks land in order: Sales 9.6→9.9, Marketing
-     9.95→10.25, Customer success 10.3→10.6. Panel and checks fade back with
-     the toggle wrap (15.5→15.9s). */
+  /* act-3 payoff chain — hiring toggle lands 6.17s: the Roles panel springs
+     open 6.15→6.5s (scale .5→1.06→1 from its left edge, a consequence of
+     the toggle) reading "0 selected", then the checks land in order: Sales
+     6.6→6.85, Marketing 6.95→7.2, Customer success 7.3→7.55, the header
+     counting with them. Panel and checks fade back with the toggle wrap
+     (10.5→10.9s). */
   @keyframes lp-feat-f1-roles-in {
     0%,
-    56.875% {
+    54.9107% {
       animation-timing-function: cubic-bezier(0.16, 0.84, 0.44, 1);
       opacity: 0;
       transform: scale(0.5);
     }
-    58.125% {
+    56.6964% {
       animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
       opacity: 1;
       transform: scale(1.06);
     }
-    59.375%,
-    96.875% {
+    58.0357%,
+    93.75% {
       animation-timing-function: ease;
       opacity: 1;
       transform: scale(1);
     }
-    99.375%,
+    97.3214%,
     100% {
       opacity: 0;
       transform: scale(0.94);
@@ -813,18 +845,18 @@
   }
   @keyframes lp-feat-f1-check-s {
     0%,
-    60% {
+    58.9286% {
       animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
       opacity: 0;
       transform: scale(0.3);
     }
-    61.875%,
-    96.875% {
+    61.1607%,
+    93.75% {
       animation-timing-function: ease;
       opacity: 1;
       transform: scale(1);
     }
-    99.375%,
+    97.3214%,
     100% {
       opacity: 0;
       transform: scale(1);
@@ -832,18 +864,18 @@
   }
   @keyframes lp-feat-f1-check-m {
     0%,
-    62.1875% {
+    62.0536% {
       animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
       opacity: 0;
       transform: scale(0.3);
     }
-    64.0625%,
-    96.875% {
+    64.2857%,
+    93.75% {
       animation-timing-function: ease;
       opacity: 1;
       transform: scale(1);
     }
-    99.375%,
+    97.3214%,
     100% {
       opacity: 0;
       transform: scale(1);
@@ -851,21 +883,78 @@
   }
   @keyframes lp-feat-f1-check-cs {
     0%,
-    64.375% {
+    65.1786% {
       animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
       opacity: 0;
       transform: scale(0.3);
     }
-    66.25%,
-    96.875% {
+    67.4107%,
+    93.75% {
       animation-timing-function: ease;
       opacity: 1;
       transform: scale(1);
     }
-    99.375%,
+    97.3214%,
     100% {
       opacity: 0;
       transform: scale(1);
+    }
+  }
+
+  /* counting header — hard cuts (0.05% ≈ 5.6ms) at each check's landing:
+     "0 selected" from panel-open, then 1 / 2 / 3 as S / M / CS land. The
+     rest-DOM "3 selected" is hidden for the rest of the loop; at the seam
+     the panel itself is opacity-0, so its 100%→0% flip is invisible. */
+  @keyframes lp-feat-f1-rc3 {
+    0%,
+    67.3607% {
+      opacity: 0;
+    }
+    67.4107%,
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes lp-feat-f1-rc0 {
+    0%,
+    54.8607% {
+      opacity: 0;
+    }
+    54.9107%,
+    61.1107% {
+      opacity: 1;
+    }
+    61.1607%,
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes lp-feat-f1-rc1 {
+    0%,
+    61.1107% {
+      opacity: 0;
+    }
+    61.1607%,
+    64.2357% {
+      opacity: 1;
+    }
+    64.2857%,
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes lp-feat-f1-rc2 {
+    0%,
+    64.2357% {
+      opacity: 0;
+    }
+    64.2857%,
+    67.3607% {
+      opacity: 1;
+    }
+    67.4107%,
+    100% {
+      opacity: 0;
     }
   }
 }
@@ -1531,5 +1620,71 @@
   /* desktop delight only — no room next to the 0.625-scale signals mock */
   .lp-feat-f1-quip {
     display: none;
+  }
+}
+
+/* ── ring flow — the rainbow mechanism on the gradient rings (founder
+   2026-08-31: "not a glow — the same mechanism as the arc-en-ciel adapted
+   to the contour"). The baked ring svg becomes a MASK over an oversized
+   conic rainbow that spins on the same 20s linear cohort as the arcs, so
+   the colors travel along the designer's exact hand-drawn contour. At
+   reduced motion the static baked rings render exactly as the artboard. ── */
+.lp-feat-ringfx {
+  display: none;
+  pointer-events: none;
+  position: absolute;
+}
+.lp-feat-f2-ringfx {
+  height: 284px;
+  left: 0;
+  -webkit-mask-image: url("/lp/lp-f2-draft-ring.svg");
+  mask-image: url("/lp/lp-f2-draft-ring.svg");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  top: 187.8px;
+  width: 405px;
+}
+.lp-feat-f4-ringfx {
+  height: 105px;
+  left: 0;
+  -webkit-mask-image: url("/lp/lp-f4-brain-ring.svg");
+  mask-image: url("/lp/lp-f4-brain-ring.svg");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  top: 378px;
+  width: 475px;
+}
+.lp-feat-ringfx i {
+  animation: lp-feat-ringspin 20s linear infinite;
+  background: conic-gradient(
+    from 0deg,
+    #ba8bff,
+    #6ebbff 25%,
+    #ff7aa0 50%,
+    #ffbd7a 75%,
+    #ba8bff
+  );
+  display: block;
+  height: 520px;
+  left: 50%;
+  margin: -260px 0 0 -260px;
+  position: absolute;
+  top: 50%;
+  width: 520px;
+}
+@keyframes lp-feat-ringspin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (mask-image: url("")) or (-webkit-mask-image: url("")) {
+    .lp-feat-ringfx {
+      display: block;
+    }
+    .lp-feat-f2-ring,
+    .lp-feat-f4-ring {
+      opacity: 0;
+    }
   }
 }
