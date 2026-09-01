@@ -56,7 +56,9 @@ export function LpBottleneck() {
     let active: "intro" | "loop" = "intro";
     let disposed = false;
     let loading = false;
-    let onStage = false;
+    let onStage = false; // within a viewport: preload + pre-render
+    let visible = false; // actually on screen (≥35% of the card): PLAY
+    let ready = false; // active player's renderer is up (DOMLoaded)
 
     const teardown = () => {
       intro?.destroy();
@@ -82,12 +84,22 @@ export function LpBottleneck() {
           dpr: Math.min(window.devicePixelRatio || 1, 2),
         },
       };
+      // autoplay OFF: the intro starts only once the card is actually on
+      // screen (founder 2026-09-01: it used to start a viewport early, so the
+      // pour was already over by the time you saw it). play() is issued from
+      // sync() after DOMLoaded — the renderer must be up first.
+      ready = false;
       intro = lottie.loadAnimation({
         ...settings,
         container: hostA,
         loop: false,
-        autoplay: true,
+        autoplay: false,
         path: src.intro,
+      });
+      intro.addEventListener("DOMLoaded", () => {
+        if (disposed) return;
+        ready = true;
+        sync();
       });
       // the loop pre-renders NOW, hidden, at its first frame — which is the
       // intro's last — so the 5.5s handoff swaps two identical frames
@@ -125,8 +137,8 @@ export function LpBottleneck() {
 
     const sync = () => {
       const anim = active === "intro" ? intro : loop;
-      if (!anim) return;
-      if (onStage && !document.hidden) anim.play();
+      if (!anim || !ready) return;
+      if (visible && !document.hidden) anim.play();
       else anim.pause();
     };
 
@@ -140,15 +152,25 @@ export function LpBottleneck() {
       });
     };
 
+    // Two observers: a wide one to PRELOAD (import + JSON + pre-rendered
+    // loop) a viewport ahead, and a tight one to PLAY only once ≥35% of the
+    // card is really on screen — so the pour's opening frames are seen.
     const io = new IntersectionObserver(
       (entries) => {
         onStage = entries.some((e) => e.isIntersecting);
         if (onStage) boot();
-        sync();
       },
       { rootMargin: "100% 0%" },
     );
     io.observe(holder);
+    const ioPlay = new IntersectionObserver(
+      (entries) => {
+        visible = entries.some((e) => e.isIntersecting);
+        sync();
+      },
+      { threshold: 0.35 },
+    );
+    ioPlay.observe(holder);
 
     const onMedia = () => {
       if (reduced.matches) {

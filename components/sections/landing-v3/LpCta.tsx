@@ -1,5 +1,6 @@
 import { LpFxLink, LpFxPill } from "@/components/sections/landing-v3/LpFxButton";
 import { LpPancakes } from "@/components/sections/landing-v3/LpPancakes";
+import { LpRainbowGL } from "@/components/sections/landing-v3/LpRainbowGL";
 
 /**
  * Landing v3 — Section 7: CTA "Try Pancake now" (Figma node 4389:4492).
@@ -18,11 +19,14 @@ export function LpCta() {
           <div className="lp-anim-canvas lp-anim-canvas--cta-left">
             <LpPancakes variant="ctaLeft" />
           </div>
+          {/* desktop rotation on one WebGL canvas per sliver (LpRainbowGL) */}
+          <LpRainbowGL variant="ctaLeft" />
         </div>
         <div aria-hidden="true" className="lp-cta__art lp-cta__art--right">
           <div className="lp-anim-canvas lp-anim-canvas--cta-right">
             <LpPancakes variant="ctaRight" />
           </div>
+          <LpRainbowGL variant="ctaRight" />
         </div>
         <div className="lp-cta__content">
           <div className="lp-cta__text">

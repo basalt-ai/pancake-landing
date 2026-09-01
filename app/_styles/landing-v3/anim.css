@@ -175,8 +175,24 @@
    a fraction of the desktop cost). */
 @media (min-width: 768px) {
   .lp-cta__art .lp-anim-spin--cw,
-  .lp-cta__art .lp-anim-spin--ccw {
+  .lp-cta__art .lp-anim-spin--ccw,
+  /* pricing too (founder 2026-09-01: "fige l'arc-en-ciel avant le footer")
+     — same doctrine, t0 == the artboard; mobile keeps its animated rings */
+  .lp-price-art .lp-anim-spin--cw,
+  .lp-price-art .lp-anim-spin--ccw {
     animation: none;
+  }
+  /* De-mirror the static CTA (founder 2026-09-01: "rends pas symétrique les
+     arcs-en-ciel dans le CTA") — the two groups' t0 poses are exact mirror
+     copies, the look the founder already rejected in motion (2026-08-28,
+     hence the animated version's −7.3s left-group delay). Bake that same
+     designed offset statically: −7.3s of the ±360°/20s spin = ±131.4°, i.e.
+     the exact frame the animated pair showed at the global clock's t0. */
+  .lp-cta__art--left .lp-anim-spin--cw {
+    transform: rotate(131.4deg);
+  }
+  .lp-cta__art--left .lp-anim-spin--ccw {
+    transform: rotate(-131.4deg);
   }
 }
 /* Founder tweak (2026-08-28): the CTA card's two rainbows are exact mirror
@@ -315,6 +331,46 @@
   [data-lp-offstage] .lp-tst-track,
   [data-lp-offstage] .lp-marquee__track {
     animation-play-state: paused;
+  }
+}
+
+/* ── desktop: WebGL rainbow renderer (LpRainbowGL.tsx) ────────────────────
+   One canvas per art. Hidden until the renderer has drawn its first frame;
+   [data-lp-gl] then lands on the art, hides the DOM rings AND stops their
+   CSS animations — that is what frees the composited layers. The DOM stays
+   in the tree as the fallback (no WebGL2 / context loss / reduced motion:
+   the attribute never lands or is removed, and the artboard shows). The
+   hero canvas covers only the art's un-clipped 61.96% (clip-path inset
+   38.04% — 878.13px at ≥1655 — is the same line). */
+.lp-gl-canvas {
+  display: none;
+}
+@media (min-width: 768px) {
+  /* laid out (so the renderer can size its buffer from the box) but
+     invisible until the handoff attribute lands */
+  .lp-gl-canvas {
+    display: block;
+    height: 100%;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    visibility: hidden;
+    width: 100%;
+  }
+  .lp-gl-canvas--hero {
+    height: 61.96%;
+  }
+  [data-lp-gl] > .lp-gl-canvas {
+    visibility: visible;
+  }
+  [data-lp-gl] .lp-anim-box {
+    visibility: hidden;
+  }
+  [data-lp-gl] .lp-anim-spin--cw,
+  [data-lp-gl] .lp-anim-spin--ccw,
+  [data-lp-gl] .lp-anim-fill.lp-anim-pop {
+    animation: none;
   }
 }
 

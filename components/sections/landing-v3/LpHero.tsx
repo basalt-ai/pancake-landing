@@ -1,6 +1,7 @@
 import { LpArcCanvas } from "@/components/sections/landing-v3/LpArcCanvas";
 import { LpFxLink, LpFxPill } from "@/components/sections/landing-v3/LpFxButton";
 import { LpPancakes } from "@/components/sections/landing-v3/LpPancakes";
+import { LpRainbowGL } from "@/components/sections/landing-v3/LpRainbowGL";
 import { LpViewportVar } from "@/components/sections/landing-v3/LpViewportVar";
 
 // Landing v3 — Hero (Figma node 4257:4906, 1654×758).
@@ -21,6 +22,9 @@ export function LpHero() {
         {/* phones: the rotation lives here (one canvas) while the DOM rings
             above hold the static artboard pose — see LpArcCanvas.tsx */}
         <LpArcCanvas />
+        {/* desktop: WebGL rendering of the same rings — one canvas instead
+            of six composited layers — see LpRainbowGL.tsx */}
+        <LpRainbowGL variant="hero" />
       </div>
       <div className="lp-hero-inner">
         <h1 id="lp-hero-title" className="lp-hero-title lp-display">
