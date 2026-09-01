@@ -22,9 +22,15 @@ import { useEffect } from "react";
  * desync, and every flip happens far off-screen anyway.
  */
 
-/** Section roots that own animated members (attribute target). */
+/** Section roots that own animated members (attribute target).
+    NO .lp-hero-art: pausing/resuming the hero arcs restructures compositing
+    right next to the H1's pinned layer and re-triggered Safari's headline
+    eviction on scroll-return (founder 2026-09-01, third recurrence — the
+    will-change/translateZ guards only hold in a stable layer tree). Desktop
+    hero arcs stay always-on, the long-stable baseline; on phones the hero
+    DOM arcs are static anyway (LpArcCanvas is the mobile rotation), so the
+    hero never needed this list there. */
 const STAGES = [
-  ".lp-hero-art",
   ".lp-banner__card",
   ".lp-marquee",
   ".lp-feat-f2",
