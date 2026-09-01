@@ -123,6 +123,20 @@
    unconditional translateZ(0) would override these at equal specificity.
    Tiers flip on live viewport height (discrete, no per-frame reflow); the
    height itself uses the frozen measure. */
+/* Ladder gap fix (founder 2026-09-01: "parfois l'arc-en-ciel recouvre le
+   You"). Windows 760–877px tall compress the hero toward the 640 floor —
+   the bottom-anchored title rises up to ~118px — but the text scale-down
+   only starts ≤759, so the rotating rings' left flank swept the raised
+   headline at some phases (measured: phases ~5/8-9/18s at svh 760; zero at
+   full 758 hero geometry). In this band the art lifts proportionally, the
+   same clearance move tier 2 makes: −120 at svh 878 (identity, matches the
+   base rule) down to −179 at svh 760. Phase-sweep gate: 0% ink in the H1
+   box at every second of the loop across 760/790/820/850/877 viewports. */
+@media (min-width: 1025px) and (max-height: 877px) and (min-height: 760px) {
+  .lp-hero-art {
+    top: calc(-120px - (878px - var(--lp-svh, 100svh)) / 2);
+  }
+}
 @media (min-width: 1025px) and (max-height: 759px) {
   .lp-hero {
     height: max(500px, calc(var(--lp-svh, 100svh) - 120px));
