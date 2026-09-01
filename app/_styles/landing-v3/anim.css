@@ -182,6 +182,18 @@
   .lp-price-art .lp-anim-spin--ccw {
     animation: none;
   }
+  /* De-mirror the static CTA (founder 2026-09-01: "rends pas symétrique les
+     arcs-en-ciel dans le CTA") — the two groups' t0 poses are exact mirror
+     copies, the look the founder already rejected in motion (2026-08-28,
+     hence the animated version's −7.3s left-group delay). Bake that same
+     designed offset statically: −7.3s of the ±360°/20s spin = ±131.4°, i.e.
+     the exact frame the animated pair showed at the global clock's t0. */
+  .lp-cta__art--left .lp-anim-spin--cw {
+    transform: rotate(131.4deg);
+  }
+  .lp-cta__art--left .lp-anim-spin--ccw {
+    transform: rotate(-131.4deg);
+  }
 }
 /* Founder tweak (2026-08-28): the CTA card's two rainbows are exact mirror
    copies, so mid-animation every frame was a perfect reflection ("le côté
