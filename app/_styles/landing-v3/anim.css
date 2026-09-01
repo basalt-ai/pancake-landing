@@ -264,27 +264,46 @@
 }
 
 /* ── off-stage freeze (LpAnimFreeze.tsx) ──────────────────────────────────
-   iPhone Safari killed WebContent while scrolling the page ("A problem
-   repeatedly occurred", founder 17 Pro report 2026-08-31): every animated
-   cohort on the page — 6 hero arcs, 44 bubbles, pricing/CTA arcs, ring flow,
-   9200px testimonial tracks — held live composited GPU surfaces at once.
-   LpAnimFreeze stamps data-lp-offstage on section roots further than 1.5
-   viewports away; dropping animation-name (and the big tracks' will-change)
-   lets WebKit decompose those layers and free the memory. The frozen pose ==
-   the static artboard (same contract as reduced-motion). On re-entry the
-   component restores each member IN PHASE via a negative animation-delay
-   computed on the shared page clock, so the phase-locked cohorts never
-   visibly desync — all flips happen far off-screen. */
-[data-lp-offstage] .lp-anim-spin--cw,
-[data-lp-offstage] .lp-anim-spin--ccw,
-[data-lp-offstage] .lp-anim-bubble,
-[data-lp-offstage] .lp-feat-ringfx i {
-  animation-name: none;
+   Two mechanisms for one goal — sections >0.75 viewport away stop costing
+   GPU per frame — because the two platforms fail differently:
+
+   PHONES must RELEASE memory (iPhone killed WebContent under the standing
+   layer budget, 2026-08-31): animation-name:none decomposes the layers and
+   frees them; the frozen pose is the static artboard, and LpAnimFreeze
+   restores phase via negative animation-delay on re-entry.
+
+   DESKTOP must NOT churn layers (decompose/recompose is what produced
+   Safari's frozen-rainbow flashes, square tiles, and the CTA hover glitch
+   meltdown on weaker Macs — screen recording, 2026-09-01): the spinners'
+   will-change keeps every backing store alive, and freezing is merely
+   animation-play-state:paused — the compositor stops ticking ~20 big
+   rotating layers page-wide (only the ~1 viewport near the user animates),
+   and resume simply continues from the paused pose: no restart, no repaint,
+   no visible seam. Cross-section phase drifts, but sections are never
+   co-visible with each other's rings; within a section the members pause
+   and resume together, so the designed counter-rotation stays locked. */
+@media (max-width: 767px) {
+  [data-lp-offstage] .lp-anim-spin--cw,
+  [data-lp-offstage] .lp-anim-spin--ccw,
+  [data-lp-offstage] .lp-anim-bubble,
+  [data-lp-offstage] .lp-feat-ringfx i {
+    animation-name: none;
+  }
+  [data-lp-offstage] .lp-tst-track,
+  [data-lp-offstage] .lp-marquee__track {
+    animation-name: none;
+    will-change: auto;
+  }
 }
-[data-lp-offstage] .lp-tst-track,
-[data-lp-offstage] .lp-marquee__track {
-  animation-name: none;
-  will-change: auto;
+@media (min-width: 768px) {
+  [data-lp-offstage] .lp-anim-spin--cw,
+  [data-lp-offstage] .lp-anim-spin--ccw,
+  [data-lp-offstage] .lp-anim-bubble,
+  [data-lp-offstage] .lp-feat-ringfx i,
+  [data-lp-offstage] .lp-tst-track,
+  [data-lp-offstage] .lp-marquee__track {
+    animation-play-state: paused;
+  }
 }
 
 /* ── phones: canvas-rendered hero rotation (LpArcCanvas.tsx) ─────────────
