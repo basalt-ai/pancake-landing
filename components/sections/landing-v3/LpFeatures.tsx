@@ -46,18 +46,27 @@ function SignalRow({
   );
 }
 
-function RoleRow({ label, checked, pop }: { label: string; checked: boolean; pop?: "m" | "cs" }) {
+function RoleRow({ label, checked, pop }: { label: string; checked: boolean; pop?: "s" | "m" | "cs" }) {
   return (
     <div className="lp-feat-f1-role">
       {checked ? (
-        <img
-          src="/lp/lp-f1-checkbox.svg"
-          alt=""
-          width={19}
-          height={19}
-          className="lp-feat-f1-checkimg"
-          data-pop={pop}
-        />
+        pop ? (
+          /* choreography rows stack an (animation-only) empty outline under
+             the check img, so the box reads "unchecked" before its pop */
+          <span className="lp-feat-f1-checkwrap">
+            <span className="lp-feat-f1-checkbox-off" />
+            <img
+              src="/lp/lp-f1-checkbox.svg"
+              alt=""
+              width={19}
+              height={19}
+              className="lp-feat-f1-checkimg"
+              data-pop={pop}
+            />
+          </span>
+        ) : (
+          <img src="/lp/lp-f1-checkbox.svg" alt="" width={19} height={19} className="lp-feat-f1-checkimg" />
+        )
       ) : (
         <span className="lp-feat-f1-checkbox-off" />
       )}
@@ -123,7 +132,7 @@ function Feature1() {
               <p className="lp-feat-f1-rolestitle">Roles</p>
               <p className="lp-feat-f1-sigcount">3 selected</p>
             </div>
-            <RoleRow label="Sales" checked />
+            <RoleRow label="Sales" checked pop="s" />
             <RoleRow label="Marketing" checked pop="m" />
             <RoleRow label="Customer success" checked pop="cs" />
             <RoleRow label="Operations" checked={false} />
@@ -132,9 +141,9 @@ function Feature1() {
               only (choreography hides it and act 1 takes over its copy) */}
           <img src="/lp/lp-f1-annotation.svg" alt="" width={76} height={43} className="lp-feat-f1-bubble" />
           <p className="lp-feat-f1-bubbletext">clay alternatives</p>
-          {/* choreography quips — one per act, slapped next to the row whose
-              toggle lights up (sides alternate R/L/R/L); pure CSS 20s loop,
-              hidden on reduced motion */}
+          {/* choreography quips — one per act, each slapped at the clay
+              sticker's artboard offset from its own row's toggle; pure CSS
+              16s loop, hidden on reduced motion */}
           <p className="lp-feat-f1-quip" data-quip="1">clay alternatives</p>
           <p className="lp-feat-f1-quip" data-quip="2">flirting with your rival</p>
           <p className="lp-feat-f1-quip" data-quip="3">budget just landed</p>
