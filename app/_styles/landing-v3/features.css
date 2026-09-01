@@ -1625,10 +1625,14 @@
 
 /* ── ring flow — the rainbow mechanism on the gradient rings (founder
    2026-08-31: "not a glow — the same mechanism as the arc-en-ciel adapted
-   to the contour"). The baked ring svg becomes a MASK over an oversized
-   conic rainbow that spins on the same 20s linear cohort as the arcs, so
-   the colors travel along the designer's exact hand-drawn contour. At
-   reduced motion the static baked rings render exactly as the artboard. ── */
+   to the contour", then "pixel aligné avec le figma"). The baked ring is
+   four solid-color hand-drawn squiggles (purple/orange/blue/pink) weaving
+   around the border. Each squiggle becomes its own MASK (lp-*-ring-p1..4)
+   over a spinning 4-color palette wheel on the arcs' 20s linear cohort, so
+   every frame keeps the designer's exact stroke geometry while the four
+   colors chase each other along the contour. Wheels are phase-aligned so
+   each squiggle wears its own designed color at the top at rest, and the
+   baked img stays underneath as the reduced-motion / no-mask fallback. ── */
 .lp-feat-ringfx {
   display: none;
   pointer-events: none;
@@ -1637,8 +1641,6 @@
 .lp-feat-f2-ringfx {
   height: 284px;
   left: 0;
-  -webkit-mask-image: url("/lp/lp-f2-draft-ring.svg");
-  mask-image: url("/lp/lp-f2-draft-ring.svg");
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
   top: 187.8px;
@@ -1647,30 +1649,88 @@
 .lp-feat-f4-ringfx {
   height: 105px;
   left: 0;
-  -webkit-mask-image: url("/lp/lp-f4-brain-ring.svg");
-  mask-image: url("/lp/lp-f4-brain-ring.svg");
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
   top: 378px;
   width: 475px;
 }
+.lp-feat-f2-ringfx.lp-feat-ringfx--p1 {
+  -webkit-mask-image: url("/lp/lp-f2-ring-p1.svg");
+  mask-image: url("/lp/lp-f2-ring-p1.svg");
+}
+.lp-feat-f2-ringfx.lp-feat-ringfx--p2 {
+  -webkit-mask-image: url("/lp/lp-f2-ring-p2.svg");
+  mask-image: url("/lp/lp-f2-ring-p2.svg");
+}
+.lp-feat-f2-ringfx.lp-feat-ringfx--p3 {
+  -webkit-mask-image: url("/lp/lp-f2-ring-p3.svg");
+  mask-image: url("/lp/lp-f2-ring-p3.svg");
+}
+.lp-feat-f2-ringfx.lp-feat-ringfx--p4 {
+  -webkit-mask-image: url("/lp/lp-f2-ring-p4.svg");
+  mask-image: url("/lp/lp-f2-ring-p4.svg");
+}
+.lp-feat-f4-ringfx.lp-feat-ringfx--p1 {
+  -webkit-mask-image: url("/lp/lp-f4-ring-p1.svg");
+  mask-image: url("/lp/lp-f4-ring-p1.svg");
+}
+.lp-feat-f4-ringfx.lp-feat-ringfx--p2 {
+  -webkit-mask-image: url("/lp/lp-f4-ring-p2.svg");
+  mask-image: url("/lp/lp-f4-ring-p2.svg");
+}
+.lp-feat-f4-ringfx.lp-feat-ringfx--p3 {
+  -webkit-mask-image: url("/lp/lp-f4-ring-p3.svg");
+  mask-image: url("/lp/lp-f4-ring-p3.svg");
+}
+.lp-feat-f4-ringfx.lp-feat-ringfx--p4 {
+  -webkit-mask-image: url("/lp/lp-f4-ring-p4.svg");
+  mask-image: url("/lp/lp-f4-ring-p4.svg");
+}
 .lp-feat-ringfx i {
   animation: lp-feat-ringspin 20s linear infinite;
-  background: conic-gradient(
-    from 0deg,
-    #ba8bff,
-    #6ebbff 25%,
-    #ff7aa0 50%,
-    #ffbd7a 75%,
-    #ba8bff
-  );
   display: block;
-  height: 520px;
+  height: 640px;
   left: 50%;
-  margin: -260px 0 0 -260px;
+  margin: -320px 0 0 -320px;
   position: absolute;
   top: 50%;
-  width: 520px;
+  width: 640px;
+}
+/* per-squiggle wheel: its own designed color around ~80% of the turn, and
+   one shared 70° traveling wave where every squiggle rolls one palette step
+   (purple→orange→blue→pink→purple) — outside the wave the ring is exactly
+   the artboard, inside it stays a four-color weave */
+.lp-feat-ringfx--p1 i {
+  background: conic-gradient(
+    from 0deg,
+    #ba8bff 0deg 290deg,
+    #ffbd7a 315deg 335deg,
+    #ba8bff 360deg
+  );
+}
+.lp-feat-ringfx--p2 i {
+  background: conic-gradient(
+    from 0deg,
+    #ffbd7a 0deg 290deg,
+    #6ebbff 315deg 335deg,
+    #ffbd7a 360deg
+  );
+}
+.lp-feat-ringfx--p3 i {
+  background: conic-gradient(
+    from 0deg,
+    #6ebbff 0deg 290deg,
+    #ff7aa0 315deg 335deg,
+    #6ebbff 360deg
+  );
+}
+.lp-feat-ringfx--p4 i {
+  background: conic-gradient(
+    from 0deg,
+    #ff7aa0 0deg 290deg,
+    #ba8bff 315deg 335deg,
+    #ff7aa0 360deg
+  );
 }
 @keyframes lp-feat-ringspin {
   to {
@@ -1681,10 +1741,6 @@
   @supports (mask-image: url("")) or (-webkit-mask-image: url("")) {
     .lp-feat-ringfx {
       display: block;
-    }
-    .lp-feat-f2-ring,
-    .lp-feat-f4-ring {
-      opacity: 0;
     }
   }
 }

@@ -205,10 +205,15 @@ function Feature2() {
           </div>
           {/* rainbow draft ring — baked Figma export (4 offset outside-stroke rects) */}
           <img src="/lp/lp-f2-draft-ring.svg" alt="" width={405} height={284} className="lp-feat-f2-ring" />
-          {/* animated twin: the ring contour as a mask over a spinning conic
-              rainbow — the arc mechanism adapted to the border (founder
-              2026-08-31); shown only when motion is allowed */}
-          <div className="lp-feat-ringfx lp-feat-f2-ringfx" aria-hidden="true"><i /></div>
+          {/* ring flow: each of the ring's four hand-drawn squiggles masks its
+              own spinning palette wheel, so the exact stroke geometry stays
+              and the colors chase along the contour (founder 2026-08-31);
+              shown only when motion is allowed — the img above is the rest
+              state. Stack order p1→p4 mirrors the baked svg paint order. */}
+          <div className="lp-feat-ringfx lp-feat-f2-ringfx lp-feat-ringfx--p1" aria-hidden="true"><i /></div>
+          <div className="lp-feat-ringfx lp-feat-f2-ringfx lp-feat-ringfx--p2" aria-hidden="true"><i /></div>
+          <div className="lp-feat-ringfx lp-feat-f2-ringfx lp-feat-ringfx--p3" aria-hidden="true"><i /></div>
+          <div className="lp-feat-ringfx lp-feat-f2-ringfx lp-feat-ringfx--p4" aria-hidden="true"><i /></div>
           <div className="lp-feat-f2-draft">
             <p className="lp-feat-f2-eyebrow">Draft ready</p>
             <p className="lp-feat-f2-msg">
@@ -304,7 +309,10 @@ function Feature4() {
           </div>
           {/* rainbow ring — baked Figma export, sits behind the brain card */}
           <img src="/lp/lp-f4-brain-ring.svg" alt="" width={475} height={105} className="lp-feat-f4-ring" />
-          <div className="lp-feat-ringfx lp-feat-f4-ringfx" aria-hidden="true"><i /></div>
+          <div className="lp-feat-ringfx lp-feat-f4-ringfx lp-feat-ringfx--p1" aria-hidden="true"><i /></div>
+          <div className="lp-feat-ringfx lp-feat-f4-ringfx lp-feat-ringfx--p2" aria-hidden="true"><i /></div>
+          <div className="lp-feat-ringfx lp-feat-f4-ringfx lp-feat-ringfx--p3" aria-hidden="true"><i /></div>
+          <div className="lp-feat-ringfx lp-feat-f4-ringfx lp-feat-ringfx--p4" aria-hidden="true"><i /></div>
           <div className="lp-feat-f4-brain">
             <p className="lp-feat-f4-cardtitle">Brain updated</p>
             <p className="lp-feat-f4-brainsub">The winning playbook is ready for the next campaign.</p>
