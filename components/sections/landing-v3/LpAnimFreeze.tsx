@@ -74,9 +74,12 @@ export function LpAnimFreeze() {
           }
         }
       },
-      // 1.5 viewports of slack above and below: flips are never on screen,
-      // and a fast flick still finds the next section already running.
-      { rootMargin: "150% 0%" },
+      // 0.75 viewport of slack above and below — flips stay off-screen at
+      // normal scroll speeds while roughly halving the peak count of live
+      // sections vs the original 150% (OOM round 2, 2026-09-01). A hard
+      // flick may catch a section at its artboard pose for a beat; that
+      // beats the WebContent kill it prevents.
+      { rootMargin: "75% 0%" },
     );
 
     document.querySelectorAll(STAGES).forEach((s) => observer.observe(s));
