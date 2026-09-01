@@ -334,6 +334,46 @@
   }
 }
 
+/* ── desktop: WebGL rainbow renderer (LpRainbowGL.tsx) ────────────────────
+   One canvas per art. Hidden until the renderer has drawn its first frame;
+   [data-lp-gl] then lands on the art, hides the DOM rings AND stops their
+   CSS animations — that is what frees the composited layers. The DOM stays
+   in the tree as the fallback (no WebGL2 / context loss / reduced motion:
+   the attribute never lands or is removed, and the artboard shows). The
+   hero canvas covers only the art's un-clipped 61.96% (clip-path inset
+   38.04% — 878.13px at ≥1655 — is the same line). */
+.lp-gl-canvas {
+  display: none;
+}
+@media (min-width: 768px) {
+  /* laid out (so the renderer can size its buffer from the box) but
+     invisible until the handoff attribute lands */
+  .lp-gl-canvas {
+    display: block;
+    height: 100%;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    visibility: hidden;
+    width: 100%;
+  }
+  .lp-gl-canvas--hero {
+    height: 61.96%;
+  }
+  [data-lp-gl] > .lp-gl-canvas {
+    visibility: visible;
+  }
+  [data-lp-gl] .lp-anim-box {
+    visibility: hidden;
+  }
+  [data-lp-gl] .lp-anim-spin--cw,
+  [data-lp-gl] .lp-anim-spin--ccw,
+  [data-lp-gl] .lp-anim-fill.lp-anim-pop {
+    animation: none;
+  }
+}
+
 /* ── phones: canvas-rendered hero rotation (LpArcCanvas.tsx) ─────────────
    One canvas over the art box replaces six 2390×2331 animated layers. The
    [data-lp-arc-canvas] attribute lands only after the canvas drew its first

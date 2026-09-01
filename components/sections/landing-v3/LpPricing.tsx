@@ -1,5 +1,6 @@
 import { LpFxLink } from "@/components/sections/landing-v3/LpFxButton";
 import { LpPancakes } from "@/components/sections/landing-v3/LpPancakes";
+import { LpRainbowGL } from "@/components/sections/landing-v3/LpRainbowGL";
 
 /**
  * Landing v3 — Pricing (Figma node 4257:5083, 1654×890, bg #000).
@@ -52,6 +53,9 @@ export function LpPricing() {
         <div className="lp-anim-canvas lp-anim-canvas--pricing">
           <LpPancakes variant="pricing" />
         </div>
+        {/* desktop rotation on one WebGL canvas (LpRainbowGL.tsx); the DOM
+            rings above stay as the static fallback */}
+        <LpRainbowGL variant="pricing" />
       </div>
     </section>
   );
