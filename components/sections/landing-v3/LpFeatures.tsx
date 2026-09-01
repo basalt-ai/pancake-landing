@@ -132,8 +132,9 @@ function Feature1() {
               only (choreography hides it and act 1 takes over its copy) */}
           <img src="/lp/lp-f1-annotation.svg" alt="" width={76} height={43} className="lp-feat-f1-bubble" />
           <p className="lp-feat-f1-bubbletext">clay alternatives</p>
-          {/* choreography quips — one per act, popping RIGHT of the row whose
-              toggle lights up; pure CSS 24s loop, hidden on reduced motion */}
+          {/* choreography quips — one per act, slapped next to the row whose
+              toggle lights up (sides alternate R/L/R/L); pure CSS 20s loop,
+              hidden on reduced motion */}
           <p className="lp-feat-f1-quip" data-quip="1">clay alternatives</p>
           <p className="lp-feat-f1-quip" data-quip="2">flirting with your rival</p>
           <p className="lp-feat-f1-quip" data-quip="3">budget just landed</p>
