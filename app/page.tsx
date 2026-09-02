@@ -34,28 +34,33 @@ export const metadata: Metadata = {
   /* Tab title is EXACTLY "Pancake" — founder decision, twice (2026-08-31
      "just Pancake next to the favicon"; 2026-09-01 "arrête de remettre qqch
      après Pancake"). NON-NEGOTIABLE — never append a descriptor here again.
-     Google-title risk is managed by the description below (the pre-v3 copy;
-     the old "Pancake's AI agents…" opener that Google lifted into the SERP
-     title is gone) + the WebSite JSON-LD site name. og/twitter titles carry
-     the descriptive value for link previews. */
+     Description = this landing's hero H2 (its SERP line from 2026-08-18 to
+     2026-08-31), restored 2026-09-02 on the founder's word ("on a eu des H2
+     différents avant sur cette landing page, il faut le remettre") after a
+     revert had swapped in the July v1 copy ("AI coworker in Slack, $49/
+     month" — wrong positioning, wrong price). Known trade-off: with a
+     one-word <title>, Google may build its own title from other signals
+     (it showed "Pancake's AI" once); the og/twitter titles and the JSON-LD
+     names carry the full "Pancake — You run your company. We bring you
+     customers." so it has a coherent descriptive title to pick instead. */
   title: "Pancake",
   description:
-    "Pancake connects to your tools and does the work for you. Autonomously. One AI coworker in Slack, a whole team of agents behind it. $49/month, no tiers.",
+    "Pancake’s AI agents monitor buying signals, find warm leads, grow your AI search visibility, and learn from every interaction.",
   alternates: { canonical: "https://getpancake.ai" },
   openGraph: {
     type: "website",
     url: "https://getpancake.ai",
-    title: "Pancake: The AI employee that does the work for you",
+    title: "Pancake — You run your company. We bring you customers.",
     description:
-      "Pancake connects to your tools and does the work for you. Autonomously. One AI coworker in Slack, a whole team of agents behind it. $49/month, no tiers.",
+      "Pancake’s AI agents monitor buying signals, find warm leads, grow your AI search visibility, and learn from every interaction.",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake, the AI coworker" }],
     siteName: "Pancake",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pancake: The AI employee that does the work for you",
+    title: "Pancake — You run your company. We bring you customers.",
     description:
-      "Pancake connects to your tools and does the work for you. Autonomously. One AI coworker in Slack, a whole team of agents behind it. $49/month, no tiers.",
+      "Pancake’s AI agents monitor buying signals, find warm leads, grow your AI search visibility, and learn from every interaction.",
     images: ["/og-image.png"],
   },
 };
@@ -69,7 +74,7 @@ const softwareApplicationJsonLd = {
   operatingSystem: "Web",
   url: "https://getpancake.ai",
   description:
-    "Pancake connects to your tools and does the work for you. Autonomously. One AI coworker in Slack, a whole team of agents behind it. $49/month, no tiers.",
+    "Pancake’s AI agents monitor buying signals, find warm leads, grow your AI search visibility, and learn from every interaction.",
   offers: {
     "@type": "Offer",
     url: "https://getpancake.ai/pricing",
