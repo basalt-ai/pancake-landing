@@ -92,7 +92,7 @@ back during a fidelity pass:
   phones. Step 03 copy is the founder's override, not the artboard's. The
   old studio loop trio (`/public/how/*-loop.mp4`) is retired from this section;
   the designer's storyboard loops (`/public/how/brain-research-loop.mp4`, …) take
-  each card over as the founder approves them (step 01 done 2026-09-02).
+  each card over as the founder approves them (steps 01 and 02 done 2026-09-02).
 - Logo strip scrolls (seamless 1424px-period tile
   `lp-logo-strip-tile.png`, ~34 px/s leftward, blend moved to the track).
 - Testimonials: two counter-scrolling marquees (~28.75 px/s), 48px between

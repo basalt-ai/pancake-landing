@@ -42,8 +42,10 @@ const STEPS: Step[] = [
     num: "02",
     title: "Agents start working.",
     body: "Pancake reaches out to the people ready to buy and gets you found on Google and ChatGPT.",
-    art: "/how/step-2-pipeline.svg",
-    alt: "The Pancake pipeline checklist, 24 warm leads: monitor buying signals, find people ready to buy and enrich every prospect are done; score leads for ICP fit is in progress; write outreach in your voice and follow-up automatically are next.",
+    video: "/how/pipeline-checklist-loop.mp4",
+    poster: "/how/pipeline-checklist-loop-poster.jpg",
+    posterAt: 9.5,
+    alt: "Animation: the Pipeline agent (24 warm leads) opens its checklist by itself and works through it — monitor buying signals, find people ready to buy, enrich every prospect, score leads for ICP fit, write outreach in your voice, follow-up automatically — each item loading, then ticked.",
   },
   {
     num: "03",
