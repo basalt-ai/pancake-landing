@@ -220,6 +220,12 @@
      copy string's "\n" after "living plan." is a desktop-only break, so let
      pre-line collapse to normal here without touching the copy. Titles keep
      pre-line: their explicit breaks match the artboard's 3-line stacks. */
+  /* Step 03's founder line break ("…the meeting. / You close it.") leaves a
+     one-word middle line ("meeting.") on phones — wrap it naturally there.
+     Step 01 keeps its break: the phone artboard shows exactly that shape. */
+  .lp-steps__row:nth-child(3) .lp-steps__step-title {
+    white-space: normal;
+  }
   .lp-steps__body {
     /* the phone artboard (4389:8215) keeps the body at 120% — measured 19px
        line pitch — while the desktop revision moved to 150% */
@@ -227,8 +233,8 @@
     white-space: normal;
   }
   .lp-steps__media {
-    /* artboard placeholder tone shows until the video's first paint;
-       flex:none beats ≤1360's basis-0 (zero height in the column) */
+    /* the illustration carries its own cream canvas; the placeholder tone is
+       only ever visible before the SVG has decoded */
     aspect-ratio: 464 / 426;
     background: rgba(0, 0, 0, 0.04);
     border-radius: 0;

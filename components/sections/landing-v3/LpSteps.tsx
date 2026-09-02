@@ -25,14 +25,14 @@ const STEPS: Step[] = [
     title: "Add your website.\nPancake builds your GTM brain.",
     body: "Pancake turns your website into a living plan.\nWho buys from you, what to say to them, and where to show up. Always up to date.",
     art: "/how/step-1-brain.svg",
-    alt: "A knowledge graph: the Pelican company node at the centre, with purple, green, pink, orange and blue branches of smaller nodes growing around it.",
+    alt: "A knowledge graph: the Pelican company node at the center, with purple, green, pink, orange and blue branches of smaller nodes growing around it.",
   },
   {
     num: "02",
     title: "Agents start working.",
     body: "Pancake reaches out to the people ready to buy and gets you found on Google and ChatGPT.",
     art: "/how/step-2-pipeline.svg",
-    alt: "The Pancake pipeline checklist, 24 warm leads: monitor buying signals, find people ready to buy and enrich every prospect are done; score leads for ICP fit is in progress; write outreach in your voice, follow-up automatically and learn from every reply are next.",
+    alt: "The Pancake pipeline checklist, 24 warm leads: monitor buying signals, find people ready to buy and enrich every prospect are done; score leads for ICP fit is in progress; write outreach in your voice and follow-up automatically are next.",
   },
   {
     num: "03",
