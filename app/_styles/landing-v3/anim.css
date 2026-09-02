@@ -173,36 +173,36 @@
    sliver-sized buffer per side), not CSS layers. Phones keep their own
    cohort (the mobile CTA bands re-animated earlier today are 0.4-scale —
    a fraction of the desktop cost). */
-@media (min-width: 768px) {
-  .lp-cta__art .lp-anim-spin--cw,
-  .lp-cta__art .lp-anim-spin--ccw,
-  /* pricing too (founder 2026-09-01: "fige l'arc-en-ciel avant le footer")
-     — same doctrine, t0 == the artboard; mobile keeps its animated rings */
-  .lp-price-art .lp-anim-spin--cw,
-  .lp-price-art .lp-anim-spin--ccw,
-  /* and the hero, since the desktop rotation is LpRainbowGL: the DOM holds
-     the artboard until the canvas takes over AT PHASE 0 (a spinning DOM
-     would snap back by however long the handoff took), and a browser
-     without usable WebGL shows the artboard instead of the CSS cohort —
-     which Gecko paints at 0.1–0.5 fps (six 2600px SVGs re-rasterized per
-     frame, measured 2026-09-01). The cream pop still plays here; the GL
-     picks it up mid-settle. */
-  .lp-hero-art .lp-anim-spin--cw,
-  .lp-hero-art .lp-anim-spin--ccw {
-    animation: none;
-  }
-  /* De-mirror the static CTA (founder 2026-09-01: "rends pas symétrique les
-     arcs-en-ciel dans le CTA") — the two groups' t0 poses are exact mirror
-     copies, the look the founder already rejected in motion (2026-08-28,
-     hence the animated version's −7.3s left-group delay). Bake that same
-     designed offset statically: −7.3s of the ±360°/20s spin = ±131.4°, i.e.
-     the exact frame the animated pair showed at the global clock's t0. */
-  .lp-cta__art--left .lp-anim-spin--cw {
-    transform: rotate(131.4deg);
-  }
-  .lp-cta__art--left .lp-anim-spin--ccw {
-    transform: rotate(-131.4deg);
-  }
+/* EVERY width since 2026-09-02 (was ≥768 only — phones kept the CTA and
+   pricing cohorts animated, thawed by LpAnimFreeze on approach: eleven
+   ~2600px layers recomposited at once right when the footer arrived —
+   founder: "quand on arrive en bas ça casse"). The rotation everywhere is
+   LpRainbowGL (phones: LpArcCanvas for the hero as its fallback); the DOM
+   holds the artboard until a canvas takes over AT PHASE 0 (a spinning DOM
+   would snap back by however long the handoff took), and a browser without
+   usable WebGL shows the artboard instead of the CSS cohort — which Gecko
+   paints at 0.1–0.5 fps and which is what pushed iPhone WebContent over its
+   memory line (2026-08-31). The cream pop still plays on desktop; the GL
+   picks it up mid-settle (phones: the GL plays it itself). */
+.lp-cta__art .lp-anim-spin--cw,
+.lp-cta__art .lp-anim-spin--ccw,
+.lp-price-art .lp-anim-spin--cw,
+.lp-price-art .lp-anim-spin--ccw,
+.lp-hero-art .lp-anim-spin--cw,
+.lp-hero-art .lp-anim-spin--ccw {
+  animation: none;
+}
+/* De-mirror the static CTA (founder 2026-09-01: "rends pas symétrique les
+   arcs-en-ciel dans le CTA") — the two groups' t0 poses are exact mirror
+   copies, the look the founder already rejected in motion (2026-08-28,
+   hence the animated version's −7.3s left-group delay). Bake that same
+   designed offset statically: −7.3s of the ±360°/20s spin = ±131.4°, i.e.
+   the exact frame the animated pair showed at the global clock's t0. */
+.lp-cta__art--left .lp-anim-spin--cw {
+  transform: rotate(131.4deg);
+}
+.lp-cta__art--left .lp-anim-spin--ccw {
+  transform: rotate(-131.4deg);
 }
 /* Founder tweak (2026-08-28): the CTA card's two rainbows are exact mirror
    copies, so mid-animation every frame was a perfect reflection ("le côté
@@ -348,44 +348,56 @@
   }
 }
 
-/* ── desktop: WebGL rainbow renderer (LpRainbowGL.tsx) ────────────────────
-   One canvas per art. Hidden until the renderer has drawn its first frame;
-   [data-lp-gl] then lands on the art, hides the DOM rings AND stops the
-   cream pop (the spins are already static on desktop, above). The DOM stays
-   in the tree as the fallback (no WebGL2 / context loss / reduced motion:
-   the attribute never lands or is removed, and the artboard shows). The
-   hero canvas covers only the art's un-clipped 61.96% (clip-path inset
-   38.04% — 878.13px at ≥1655 — is the same line). */
+/* ── WebGL rainbow renderer (LpRainbowGL.tsx), every width ────────────────
+   One canvas per art. Laid out (so the renderer can size its buffer from
+   the box) but invisible until it has drawn its first frame; [data-lp-gl]
+   then lands on the art, hides the DOM rings AND stops the cream pop (the
+   spins are static everywhere, above). The DOM stays in the tree as the
+   fallback (no WebGL2 / context loss / reduced motion: the attribute never
+   lands or is removed, and the artboard shows — phones then get the
+   LpArcCanvas hero rotation back). The hero canvas covers only the art's
+   un-clipped 61.96% (clip-path inset 38.04% — 878.13px at ≥1655 — is the
+   same line at every width). */
 .lp-gl-canvas {
-  display: none;
+  display: block;
+  height: 100%;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  visibility: hidden;
+  width: 100%;
 }
-@media (min-width: 768px) {
-  /* laid out (so the renderer can size its buffer from the box) but
-     invisible until the handoff attribute lands */
-  .lp-gl-canvas {
-    display: block;
-    height: 100%;
-    left: 0;
-    pointer-events: none;
-    position: absolute;
-    top: 0;
-    visibility: hidden;
-    width: 100%;
-  }
-  .lp-gl-canvas--hero {
-    height: 61.96%;
-  }
-  [data-lp-gl] > .lp-gl-canvas {
-    visibility: visible;
-  }
-  [data-lp-gl] .lp-anim-box {
-    visibility: hidden;
-  }
-  [data-lp-gl] .lp-anim-spin--cw,
-  [data-lp-gl] .lp-anim-spin--ccw,
-  [data-lp-gl] .lp-anim-fill.lp-anim-pop {
-    animation: none;
-  }
+.lp-gl-canvas--hero {
+  height: 61.96%;
+  z-index: 0;
+}
+[data-lp-gl] > .lp-gl-canvas {
+  visibility: visible;
+}
+[data-lp-gl] .lp-anim-box {
+  visibility: hidden;
+}
+/* The CTA and pricing DOM rings are never painted unless WebGL is off:
+   ten + six static 2600px SVGs that a canvas covers within a frame of
+   coming near are pure paint cost — Gecko froze 1–1.8s rasterizing them
+   as the sections approached (measured 2026-09-02, after content-
+   visibility left those sections), and phones would tile them for
+   nothing. Laid out (the renderer reads their geometry), not painted.
+   The hero keeps its server-rendered artboard: first paint must show the
+   rainbow. [data-lp-gl-off] = no usable WebGL / context lost / reduced
+   motion / kill switch → the artboard shows. */
+.lp-cta__art .lp-anim-box,
+.lp-price-art .lp-anim-box {
+  visibility: hidden;
+}
+[data-lp-gl-off] .lp-anim-box {
+  visibility: visible;
+}
+[data-lp-gl] .lp-anim-spin--cw,
+[data-lp-gl] .lp-anim-spin--ccw,
+[data-lp-gl] .lp-anim-fill.lp-anim-pop {
+  animation: none;
 }
 
 /* ── phones: canvas-rendered hero rotation (LpArcCanvas.tsx) ─────────────
@@ -415,17 +427,13 @@
   }
 }
 
-/* ── phones: the HERO holds the artboard pose — its rotation is LpArcCanvas
-   (one visible-crop canvas instead of six 2390×2331 composited layers, the
-   allocation that killed WebContent 2026-09-01). The pricing and CTA
-   cohorts RUN on phones again (founder, same day: "réanime les arcs du
-   final CTA et du footer maintenant qu'on a déchargé les GPU") — the budget
-   holds because the banner's 44 CSS bubbles are gone (Lottie), the feature
-   rings are desktop-only, and LpAnimFreeze bounds the live cohort to the
-   sections near the viewport, resuming them in phase. */
+/* ── phones: the cream pop is not a CSS animation here (it was the last
+   layout-animating member of the hero cohort on iPhone); the canvas
+   renderer plays the settle itself. The spins are static at every width
+   (rule above). History: 2026-09-01 the pricing and CTA cohorts ran on
+   phones again ("réanime les arcs du final CTA et du footer"); since
+   2026-09-02 that motion is the WebGL canvas, not CSS layers. */
 @media (max-width: 767px) {
-  .lp-hero-art .lp-anim-spin--cw,
-  .lp-hero-art .lp-anim-spin--ccw,
   .lp-hero-art .lp-anim-fill.lp-anim-pop {
     animation: none;
   }
