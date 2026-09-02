@@ -28,10 +28,23 @@ import { useEffect, useRef } from "react";
  *
  * Handoff: the canvas draws its first frame, THEN [data-lp-gl] on the art
  * hides the DOM rings and stops their CSS animations (freeing the layers).
- * The static DOM artboard is the permanent fallback — no WebGL2, context
- * loss, reduced motion, phones (<768, where LpArcCanvas / static rules
- * apply): nothing changes. Off-stage the loop stops and the drawing buffer
- * shrinks to 1×1 so no GPU memory sits idle for far sections.
+ * The static DOM artboard is the permanent fallback — no WebGL2 (or only a
+ * software one: failIfMajorPerformanceCaveat), context loss, reduced
+ * motion, phones (<768, where LpArcCanvas / static rules apply): nothing
+ * changes. Off-stage the loop stops and the drawing buffer shrinks to 1×1
+ * so no GPU memory sits idle for far sections.
+ *
+ * Firefox lesson (2026-09-01, the day after shipping): the first version
+ * flattened each ring by sampling a scratch SVGPathElement.getPointAtLength
+ * ~10k times per build — 0.28ms a call in Gecko (0.06 Blink, 0.12 WebKit),
+ * i.e. a 2.8–5s main-thread freeze at every rainbow section, replayed on
+ * every scroll-return because the off-stage 1×1 shrink rebuilt from
+ * scratch. Paths are now flattened in plain JS (M/L/H/V/C/S/A/Z, the DOM
+ * sampler only as a fallback for anything else), cached per `d`, and the
+ * GPU buffers persist across the shrink; a rebuild is a handful of DOM
+ * reads. The ring DOM is also static on desktop from the start (anim.css),
+ * so the handoff never snaps phase and a browser without usable WebGL
+ * shows the artboard instead of Gecko's 0.1fps CSS spin of six 2600px SVGs.
  */
 
 type Variant = "hero" | "pricing" | "ctaLeft" | "ctaRight";
@@ -49,6 +62,14 @@ const POP_MS = 500;
 const MAX_DPR = 2;
 const MIN_SAMPLES = 256;
 const MAX_SAMPLES = 2048;
+const CHORD = 8; // user units per flattened segment (sub-0.02px sagitta here)
+
+interface Mesh {
+  vao: WebGLVertexArrayObject;
+  vbuf: WebGLBuffer;
+  fans: [number, number][];
+  cover: number;
+}
 
 interface Ring {
   poseX: number;
@@ -58,9 +79,7 @@ interface Ring {
   pose: DOMMatrix;
   dir: 1 | -1;
   delayMs: number;
-  vao: WebGLVertexArrayObject;
-  fans: [number, number][];
-  cover: number;
+  mesh: Mesh;
   evenOdd: boolean;
   color: [number, number, number, number];
   viewW: number;
@@ -79,12 +98,174 @@ const clock = () => {
 
 /** Ring outline → one flattened polygon PER SUBPATH. The LpPancakes rings
     are annuli: a hand-drawn outer contour plus an inner circle drawn with
-    an `A` arc, two subpaths in one `d`. Each subpath is sampled through a
-    scratch SVGPathElement so every command is handled by the browser's own
-    path machinery (~8 user units per chord — sub-0.02px sagitta here), and
-    the fill rule then combines them exactly like the SVG renderer does.
-    Sampling them as one outline would bridge the two with a chord — a
-    hairline crack through every band (found the hard way, 2026-09-01). */
+    an `A` arc, two subpaths in one `d`; the fill rule then combines them
+    exactly like the SVG renderer does. Sampling them as one outline would
+    bridge the two with a chord — a hairline crack through every band (found
+    the hard way, 2026-09-01). Flattened once per distinct `d` for the life
+    of the page (the six ring paths are shared by every art). */
+const FLAT = new Map<string, number[][] | null>();
+function flatten(d: string): number[][] | null {
+  let polys = FLAT.get(d);
+  if (polys === undefined) {
+    polys = flattenPath(d) ?? sampleSubpaths(d);
+    FLAT.set(d, polys);
+  }
+  return polys;
+}
+
+/** Plain-JS path flattener: M L H V C S A Z (absolute and relative) — the
+    whole vocabulary of the ring exports and of LpPancakes.withHole. Cubics
+    are stepped at ~CHORD units of control-polygon length, arcs by angle at
+    the same chord; anything else (Q/T) returns null and the DOM sampler
+    below takes over. Pure arithmetic: microseconds, in every engine. */
+function flattenPath(d: string): number[][] | null {
+  const tok = d.match(/[MmLlHhVvCcSsQqTtAaZz]|[-+]?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?/gi);
+  if (!tok) return null;
+  const polys: number[][] = [];
+  let cur: number[] | null = null;
+  let cmd = "";
+  let i = 0;
+  let x = 0, y = 0, sx = 0, sy = 0, px = 0, py = 0;
+  const num = () => {
+    const v = parseFloat(tok[i++]);
+    if (!Number.isFinite(v)) throw new Error("path");
+    return v;
+  };
+  const push = (nx: number, ny: number) => {
+    if (!cur) {
+      cur = [x, y];
+      polys.push(cur);
+    }
+    cur.push(nx, ny);
+    x = nx;
+    y = ny;
+  };
+  const cubic = (x1: number, y1: number, x2: number, y2: number, x3: number, y3: number) => {
+    const x0 = x, y0 = y;
+    const len = Math.hypot(x1 - x0, y1 - y0) + Math.hypot(x2 - x1, y2 - y1) + Math.hypot(x3 - x2, y3 - y2);
+    const n = Math.min(512, Math.max(8, Math.ceil(len / CHORD)));
+    for (let k = 1; k <= n; k++) {
+      const t = k / n, u = 1 - t;
+      const a = u * u * u, b = 3 * u * u * t, c = 3 * u * t * t, e = t * t * t;
+      push(a * x0 + b * x1 + c * x2 + e * x3, a * y0 + b * y1 + c * y2 + e * y3);
+    }
+    px = x2;
+    py = y2;
+  };
+  // SVG implementation notes F.6.5: endpoint → center parameterization
+  const arc = (rx: number, ry: number, deg: number, fa: number, fs: number, x2: number, y2: number) => {
+    const x1 = x, y1 = y;
+    if (x1 === x2 && y1 === y2) return;
+    rx = Math.abs(rx);
+    ry = Math.abs(ry);
+    if (!rx || !ry) return push(x2, y2);
+    const phi = (deg * Math.PI) / 180, cs = Math.cos(phi), sn = Math.sin(phi);
+    const dx = (x1 - x2) / 2, dy = (y1 - y2) / 2;
+    const x1p = cs * dx + sn * dy, y1p = -sn * dx + cs * dy;
+    const lam = (x1p * x1p) / (rx * rx) + (y1p * y1p) / (ry * ry);
+    if (lam > 1) {
+      rx *= Math.sqrt(lam);
+      ry *= Math.sqrt(lam);
+    }
+    const den = rx * rx * y1p * y1p + ry * ry * x1p * x1p;
+    const coef = (fa !== fs ? 1 : -1) * Math.sqrt(Math.max(0, (rx * rx * ry * ry - den) / den));
+    const cxp = (coef * rx * y1p) / ry, cyp = (-coef * ry * x1p) / rx;
+    const cx = cs * cxp - sn * cyp + (x1 + x2) / 2, cy = sn * cxp + cs * cyp + (y1 + y2) / 2;
+    const ang = (ux: number, uy: number, vx: number, vy: number) => {
+      const s = Math.sign(ux * vy - uy * vx) || 1;
+      return s * Math.acos(Math.max(-1, Math.min(1, (ux * vx + uy * vy) / (Math.hypot(ux, uy) * Math.hypot(vx, vy)))));
+    };
+    const ux = (x1p - cxp) / rx, uy = (y1p - cyp) / ry;
+    const t1 = ang(1, 0, ux, uy);
+    let dt = ang(ux, uy, (-x1p - cxp) / rx, (-y1p - cyp) / ry);
+    if (!fs && dt > 0) dt -= 2 * Math.PI;
+    else if (fs && dt < 0) dt += 2 * Math.PI;
+    const n = Math.min(2048, Math.max(4, Math.ceil((Math.abs(dt) * Math.max(rx, ry)) / CHORD)));
+    for (let k = 1; k <= n; k++) {
+      const t = t1 + (dt * k) / n, ct = Math.cos(t), st = Math.sin(t);
+      push(cx + rx * ct * cs - ry * st * sn, cy + rx * ct * sn + ry * st * cs);
+    }
+  };
+  try {
+    while (i < tok.length) {
+      const t = tok[i];
+      if (/[A-Za-z]/.test(t)) {
+        cmd = t;
+        i++;
+        if (cmd === "Z" || cmd === "z") {
+          cur = null;
+          x = px = sx;
+          y = py = sy;
+          continue;
+        }
+      } else if (!cmd) return null;
+      const rel = cmd === cmd.toLowerCase();
+      switch (cmd.toUpperCase()) {
+        case "M": {
+          let nx = num(), ny = num();
+          if (rel) { nx += x; ny += y; }
+          cur = [nx, ny];
+          polys.push(cur);
+          x = sx = px = nx;
+          y = sy = py = ny;
+          cmd = rel ? "l" : "L";
+          break;
+        }
+        case "L": {
+          let nx = num(), ny = num();
+          if (rel) { nx += x; ny += y; }
+          push(nx, ny);
+          px = x; py = y;
+          break;
+        }
+        case "H": {
+          let nx = num();
+          if (rel) nx += x;
+          push(nx, y);
+          px = x; py = y;
+          break;
+        }
+        case "V": {
+          let ny = num();
+          if (rel) ny += y;
+          push(x, ny);
+          px = x; py = y;
+          break;
+        }
+        case "C": {
+          let x1 = num(), y1 = num(), x2 = num(), y2 = num(), x3 = num(), y3 = num();
+          if (rel) { x1 += x; y1 += y; x2 += x; y2 += y; x3 += x; y3 += y; }
+          cubic(x1, y1, x2, y2, x3, y3);
+          break;
+        }
+        case "S": {
+          let x2 = num(), y2 = num(), x3 = num(), y3 = num();
+          if (rel) { x2 += x; y2 += y; x3 += x; y3 += y; }
+          cubic(2 * x - px, 2 * y - py, x2, y2, x3, y3);
+          break;
+        }
+        case "A": {
+          const rx = num(), ry = num(), deg = num(), fa = num(), fs = num();
+          let x2 = num(), y2 = num();
+          if (rel) { x2 += x; y2 += y; }
+          arc(rx, ry, deg, fa, fs, x2, y2);
+          px = x; py = y;
+          break;
+        }
+        default:
+          return null;
+      }
+    }
+  } catch {
+    return null;
+  }
+  const out = polys.filter((p) => p.length >= 6);
+  return out.length ? out : null;
+}
+
+/** Fallback flattener through a scratch SVGPathElement (any command the
+    browser knows). Slow in Gecko (see header) — only ever reached for a
+    path vocabulary the JS flattener does not cover. */
 function sampleSubpaths(d: string): number[][] | null {
   const pieces = d.split(/(?=[Mm])/).map((s) => s.trim()).filter(Boolean);
   if (!pieces.length) return null;
@@ -94,7 +275,7 @@ function sampleSubpaths(d: string): number[][] | null {
     scratch.setAttribute("d", piece);
     const len = scratch.getTotalLength();
     if (!(len > 0)) continue;
-    const n = Math.min(MAX_SAMPLES, Math.max(MIN_SAMPLES, Math.round(len / 8)));
+    const n = Math.min(MAX_SAMPLES, Math.max(MIN_SAMPLES, Math.round(len / CHORD)));
     const out: number[] = [];
     for (let k = 0; k < n; k++) {
       const pt = scratch.getPointAtLength((k / n) * len);
@@ -179,6 +360,9 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
     let uM: WebGLUniformLocation | null = null;
     let uC: WebGLUniformLocation | null = null;
     let rings: Ring[] = [];
+    // GPU geometry per distinct path, kept for the life of the context: a
+    // rebuild (scroll-return, resize) re-reads the DOM but uploads nothing
+    let meshes = new Map<string, Mesh>();
     let base = new DOMMatrix();
     let scissor: [number, number, number, number] | null = null;
     let dpr = 1;
@@ -188,14 +372,33 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
     let disposed = false;
     let lost = false;
     let popT0 = 0;
+    let builtW = 0;
+    let builtH = 0;
+    let resizeTimer = 0;
+
+    const dropMeshes = () => {
+      const g = gl;
+      if (g) {
+        meshes.forEach((m) => {
+          g.deleteVertexArray(m.vao);
+          g.deleteBuffer(m.vbuf);
+        });
+      }
+      meshes = new Map();
+      rings = [];
+    };
 
     const initGL = (): boolean => {
       gl = canvas.getContext("webgl2", {
         antialias: true,
         alpha: true,
+        depth: false,
         premultipliedAlpha: true,
         stencil: true,
         powerPreference: "low-power",
+        // a software GL (llvmpipe / SwiftShader / blocklisted driver) is
+        // worse than the static artboard — let the DOM fallback stand
+        failIfMajorPerformanceCaveat: true,
       });
       if (!gl || gl.isContextLost()) return false;
       const sh = (type: number, src: string) => {
@@ -255,8 +458,6 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
       const ey = Math.min(canvas.height, Math.ceil(Math.max(b0.y, b1.y) * dpr));
       scissor = [sx, canvas.height - ey, Math.max(0, ex - sx), Math.max(0, ey - sy)];
 
-      // rings (drop any previous GPU buffers)
-      for (const r of rings) gl.deleteVertexArray(r.vao);
       const next: Ring[] = [];
       for (const arc of Array.from(box.querySelectorAll<HTMLElement>(".lp-anim-arc"))) {
         const pose = arc.querySelector<HTMLElement>(".lp-anim-pose");
@@ -269,22 +470,38 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
         const color = rgba(pathEl.getAttribute("fill") || getComputedStyle(pathEl).fill);
         if (!poseT || poseT === "none" || !vb || !(vb.width > 0) || !color) return false;
         const d = pathEl.getAttribute("d");
-        const polys = d ? sampleSubpaths(d) : null;
-        if (!polys) return false;
-        const mesh = meshFor(polys);
-
-        const vao = gl.createVertexArray()!;
-        gl.bindVertexArray(vao);
-        const vbuf = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.verts), gl.STATIC_DRAW);
-        gl.enableVertexAttribArray(0);
-        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-        gl.bindVertexArray(null);
+        if (!d) return false;
+        let mesh = meshes.get(d);
+        if (!mesh) {
+          const polys = flatten(d);
+          if (!polys) return false;
+          const m = meshFor(polys);
+          const vao = gl.createVertexArray();
+          const vbuf = gl.createBuffer();
+          if (!vao || !vbuf) return false;
+          gl.bindVertexArray(vao);
+          gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
+          gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(m.verts), gl.STATIC_DRAW);
+          gl.enableVertexAttribArray(0);
+          gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+          gl.bindVertexArray(null);
+          mesh = { vao, vbuf, fans: m.fans, cover: m.cover };
+          meshes.set(d, mesh);
+        }
         const evenOdd = getComputedStyle(pathEl).fillRule === "evenodd";
+        const spinCs = getComputedStyle(spin);
 
         const isPop = svg.classList.contains("lp-anim-pop");
         const scs = getComputedStyle(svg);
+        if (isPop) {
+          // continue the CSS entrance settle from wherever it is (it plays
+          // on the DOM ring until the handoff); no running pop = settled
+          const a = typeof svg.getAnimations === "function"
+            ? svg.getAnimations().find((k) => (k as CSSAnimation).animationName === "lp-anim-pop")
+            : undefined;
+          const t = a && typeof a.currentTime === "number" ? a.currentTime : POP_MS;
+          popT0 = performance.now() - t;
+        }
         next.push({
           poseX: box.offsetLeft + arc.offsetLeft + pose.offsetLeft,
           poseY: box.offsetTop + arc.offsetTop + pose.offsetTop,
@@ -292,12 +509,13 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
           poseH: pose.offsetHeight,
           pose: new DOMMatrix(poseT),
           dir: spin.classList.contains("lp-anim-spin--ccw") ? -1 : 1,
-          // the designed phase offset (CTA-left −7.3s) — read before the
-          // handoff removes the CSS animation
-          delayMs: (parseFloat(getComputedStyle(spin).animationDelay) || 0) * 1000,
-          vao,
-          fans: mesh.fans,
-          cover: mesh.cover,
+          // the designed phase offset (CTA-left −7.3s). --lp-phase, not
+          // animation-delay: the desktop static rules and the handoff both
+          // set `animation: none`, and that shorthand resets the delay to
+          // 0s — reading it made every rebuild re-mirror the two slivers
+          delayMs:
+            (parseFloat(spinCs.getPropertyValue("--lp-phase")) || parseFloat(spinCs.animationDelay) || 0) * 1000,
+          mesh,
           evenOdd,
           color,
           viewW: vb.width,
@@ -309,6 +527,8 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
       }
       if (!next.length) return false;
       rings = next;
+      builtW = art.offsetWidth;
+      builtH = art.offsetHeight;
       if (!popT0) popT0 = performance.now();
       return true;
     };
@@ -355,7 +575,7 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
           .scale(w / r.viewW, h / r.viewH);
         gl.uniformMatrix3fv(uM, false, [m.a, m.b, 0, m.c, m.d, 0, m.e, m.f, 1]);
         gl.uniform4fv(uC, r.color);
-        gl.bindVertexArray(r.vao);
+        gl.bindVertexArray(r.mesh.vao);
         // pass 1 — winding numbers into the stencil (no color)
         gl.colorMask(false, false, false, false);
         gl.stencilFunc(gl.ALWAYS, 0, 0xff);
@@ -365,12 +585,12 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
           gl.stencilOpSeparate(gl.FRONT, gl.KEEP, gl.KEEP, gl.INCR_WRAP);
           gl.stencilOpSeparate(gl.BACK, gl.KEEP, gl.KEEP, gl.DECR_WRAP);
         }
-        for (const [start, count] of r.fans) gl.drawArrays(gl.TRIANGLE_FAN, start, count);
+        for (const [start, count] of r.mesh.fans) gl.drawArrays(gl.TRIANGLE_FAN, start, count);
         // pass 2 — color where the winding is non-zero, resetting the stencil
         gl.colorMask(true, true, true, true);
         gl.stencilFunc(gl.NOTEQUAL, 0, 0xff);
         gl.stencilOp(gl.ZERO, gl.ZERO, gl.ZERO);
-        gl.drawArrays(gl.TRIANGLES, r.cover, 3);
+        gl.drawArrays(gl.TRIANGLES, r.mesh.cover, 3);
       }
       gl.bindVertexArray(null);
       if (!live) {
@@ -384,7 +604,8 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
       if (raf || disposed || lost || !gl) return;
       if (!desktop.matches || reduced.matches || !onStage || document.hidden) return;
       if (live && canvas.width === 1) {
-        // back on stage: restore the drawing buffer (was shrunk off-stage)
+        // back on stage: restore the drawing buffer (was shrunk off-stage);
+        // the meshes stay — the rebuild is DOM reads only
         rings = [];
       }
       raf = requestAnimationFrame(frame);
@@ -422,11 +643,30 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
       { rootMargin: "25% 0%" },
     );
     io.observe(art);
-    const ro = new ResizeObserver(() => {
+    // relayout → rebuild, but only when the art actually changed size (the
+    // observer also fires once on observe, and on every off-stage/on-stage
+    // visibility flip in some engines), and settled — a live drag resize
+    // would otherwise rebuild every frame
+    const relayout = () => {
+      if (art.offsetWidth === builtW && art.offsetHeight === builtH) return;
+      clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        rings = [];
+        start();
+      }, 120);
+    };
+    const ro = new ResizeObserver(relayout);
+    ro.observe(art);
+    // zoom / monitor change: the buffer scale follows devicePixelRatio
+    let dprMq = matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+    const onDpr = () => {
+      dprMq.removeEventListener("change", onDpr);
+      dprMq = matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+      dprMq.addEventListener("change", onDpr);
       rings = [];
       start();
-    });
-    ro.observe(art);
+    };
+    dprMq.addEventListener("change", onDpr);
     const onMedia = () => {
       if (desktop.matches && !reduced.matches) {
         if (!gl && !initGL()) return;
@@ -437,11 +677,12 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
     const onLost = (e: Event) => {
       e.preventDefault();
       lost = true;
+      meshes = new Map(); // GPU objects died with the context
+      rings = [];
       restoreDom();
     };
     const onRestored = () => {
       lost = false;
-      rings = [];
       if (initGL()) start();
     };
     desktop.addEventListener("change", onMedia);
@@ -454,8 +695,10 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
     return () => {
       disposed = true;
       restoreDom();
+      clearTimeout(resizeTimer);
       io.disconnect();
       ro.disconnect();
+      dprMq.removeEventListener("change", onDpr);
       desktop.removeEventListener("change", onMedia);
       reduced.removeEventListener("change", onMedia);
       document.removeEventListener("visibilitychange", onVisibility);
@@ -464,7 +707,7 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
       // GPU buffers go; the context itself is left to die with the canvas.
       // Forcing loseContext() here poisoned React's dev double-mount: the
       // second effect run got the same, now-lost, context back and bailed.
-      if (gl) for (const r of rings) gl.deleteVertexArray(r.vao);
+      dropMeshes();
     };
   }, [variant]);
 
