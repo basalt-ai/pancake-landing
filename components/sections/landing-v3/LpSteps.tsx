@@ -1,19 +1,28 @@
 // Steps — "Pancake sells it" (Figma 4636:3164, 1622×1741 — the 2026-09-02
-// revision: the three studio loops are replaced by the designer's vector
-// illustrations). Heading block + 3 checkerboard rows: 656px text card +
+// revision: the designer's vector illustrations, each replaced by its storyboard
+// loop as the founder approves it — step 01 first). Heading block + 3 checkerboard rows: 656px text card +
 // 464×426 media card. Copy follows the artboard except casing: founder rule
 // (2026-08-28) — no capitals on common nouns mid-sentence ("sells it", "your
 // business", "GTM brain") — and step 03, whose artboard copy the founder
 // overrode in the brief (2026-09-02): "Pancake gets you the meeting. / You
 // close it." + the follow-up body.
 
+import { LpLoopVideo } from "./LpLoopVideo";
+
 type Step = {
   num: string;
   title: string;
   body: string;
   /** Illustration exported from the Figma media card (464×426, cream canvas,
-      text outlined) — the whole card is the picture. */
-  art: string;
+      text outlined) — the whole card is the picture. Steps still waiting for
+      their approved loop. */
+  art?: string;
+  /** Storyboard loop (pancake-studio shorts/<name>, 1080×1080 30fps, seamless,
+      464/426 safe band) — replaces the illustration once the founder approves
+      it. The poster is a "full" frame of the loop; playback starts there. */
+  video?: string;
+  poster?: string;
+  posterAt?: number;
   /** What the illustration shows — its text is outlined in the SVG, so this
       is the only copy a screen reader gets. */
   alt: string;
@@ -24,8 +33,10 @@ const STEPS: Step[] = [
     num: "01",
     title: "Add your website.\nPancake builds your GTM brain.",
     body: "Pancake turns your website into a living plan.\nWho buys from you, what to say to them, and where to show up. Always up to date.",
-    art: "/how/step-1-brain.svg",
-    alt: "A knowledge graph: the Pelican company node at the center, with purple, green, pink, orange and blue branches of smaller nodes growing around it.",
+    video: "/how/brain-research-loop.mp4",
+    poster: "/how/brain-research-loop-poster.jpg",
+    posterAt: 7.5,
+    alt: "Animation: a website address is typed and researched; from the Studio Pelican node a knowledge graph blooms — purple, green, pink, orange and blue branches — then a market profile fills in: Company, Offering, Ideal clients.",
   },
   {
     num: "02",
@@ -60,17 +71,27 @@ export function LpSteps() {
                 <h3 className="lp-steps__step-title lp-display">{step.title}</h3>
                 <p className="lp-steps__body">{step.body}</p>
               </div>
-              <div className="lp-steps__media">
-                <img
-                  className="lp-steps__art"
-                  src={step.art}
+              {step.video ? (
+                <LpLoopVideo
+                  className="lp-steps__media"
+                  src={step.video}
+                  poster={step.poster}
+                  posterAt={step.posterAt}
                   alt={step.alt}
-                  width={464}
-                  height={426}
-                  loading="lazy"
-                  decoding="async"
                 />
-              </div>
+              ) : (
+                <div className="lp-steps__media">
+                  <img
+                    className="lp-steps__art"
+                    src={step.art}
+                    alt={step.alt}
+                    width={464}
+                    height={426}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              )}
             </div>
           ))}
         </div>

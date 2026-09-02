@@ -119,6 +119,29 @@
   position: absolute;
   width: 100%;
 }
+/* Studio loop in the card (step 01 since 2026-09-02, the storyboard loops replace
+   the illustrations one by one as the founder approves them). 1080×1080 master
+   composed with a 464/426 safe band: cover crops only the cream margins. */
+.lp-loop-video {
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  object-position: center;
+  position: absolute;
+  width: 100%;
+}
+/* iOS paints its own start-playback glyph over any inline video it refuses to
+   autoplay (Low Power Mode, Reduce Motion) — founder 2026-09-02: no play button
+   ever. The poster is the still; LpLoopVideo retries play() on the first gesture. */
+.lp-loop-video::-webkit-media-controls,
+.lp-loop-video::-webkit-media-controls-panel,
+.lp-loop-video::-webkit-media-controls-start-playback-button {
+  -webkit-appearance: none;
+  display: none !important;
+  opacity: 0;
+}
 
 /* ── responsive ── */
 @media (max-width: 1360px) {
