@@ -120,21 +120,22 @@ html:has(main.lp) {
    budget everywhere. Estimates per breakpoint below. */
 .lp-banner,
 .lp-feat,
-.lp-cta,
-.lp-tst,
-.lp-price-art {
+.lp-tst {
   content-visibility: auto;
 }
-/* .lp-price-art, not .lp-price: content-visibility's paint containment
-   clips every descendant at the element box no matter what overflow says,
-   and the pricing section's box cuts the rotating rings flat — the yellow
-   ring dips ~15 canvas px below the section's y890 crop line once per loop
-   (the founder's flat-cut-mid-strand report, 2026-08-31). The art box
-   (aspect 1654:1039) contains the full ring extent with ~134 canvas px to
-   spare, and the art subtree holds the six huge composited spin layers that
-   motivated this block — the section's remaining content is one static text
-   frame. The art's size is width+aspect-ratio-driven, so it needs no
-   contain-intrinsic-size while skipped. */
+/* NOT the ring arts any more (.lp-cta, .lp-price-art — dropped 2026-09-02).
+   They were here for the six/ten huge composited spin layers each subtree
+   held; the rotation is now one WebGL canvas per art (LpRainbowGL) and the
+   DOM rings are static, so there is nothing to skip — and skipping cost
+   two visible artifacts on phones (diagnosed 2026-09-02): a skipped
+   .lp-price-art paints only its black wrapper for a frame when it becomes
+   relevant (a black bar flashes where the rainbow appears), and a skipped
+   .lp-cta reports no intersection until it is on screen, defeating every
+   observer margin (the freeze thawed, and the canvas would boot, IN view).
+   History kept for the art-vs-section choice: content-visibility's paint
+   containment clips at the element box whatever overflow says, and the
+   pricing SECTION's box cut the rotating rings flat once per loop (founder
+   2026-08-31) — which is why the art, not the section, was ever listed. */
 @media (min-width: 768px) {
   .lp-banner {
     contain-intrinsic-size: auto 753px;
@@ -175,6 +176,17 @@ html:has(main.lp) {
    Literal value = --lp-page-bg (the var lives on .lp, out of body's reach). */
 body:has(main.lp) {
   background-color: #fbf6f1;
+}
+/* No elastic bounce on the landing (founder 2026-09-02, iPhone: "quand on
+   arrive en bas ça casse"): iOS paints the rubber-band area with the BODY
+   background — cream, for the Dynamic-Island band above — so a fling to the
+   end slid a cream slab up under the black footer. Reproduced on the 17 Pro
+   simulator; a black body turns the island band black, a fixed slab / a
+   footer shadow / an html background are all ignored there. This is the
+   only variant that holds (device-verified). Reversible in one line. */
+html:has(main.lp),
+body:has(main.lp) {
+  overscroll-behavior: none;
 }
 .lp {
   background: var(--lp-page-bg);

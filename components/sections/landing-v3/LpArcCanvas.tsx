@@ -214,8 +214,25 @@ export function LpArcCanvas() {
       raf = requestAnimationFrame(frame);
     };
 
+    // LpRainbowGL owns the hero when it can: wait for its verdict
+    // ([data-lp-gl] = drew, [data-lp-gl-off] = no WebGL / kill switch)
+    // instead of racing it — both renderers building in the same frame
+    // meant ~50MB of ring bitmaps allocated for nothing at every load.
+    // A verdict that never comes (a build stalled pre-LpFitVars) is
+    // covered by the timeout.
+    let glWait = 0;
+    let glTimedOut = false;
     const start = () => {
       if (art.hasAttribute("data-lp-gl")) return; // the WebGL renderer owns the hero
+      if (!art.hasAttribute("data-lp-gl-off") && !glTimedOut) {
+        if (!glWait) {
+          glWait = window.setTimeout(() => {
+            glTimedOut = true;
+            start();
+          }, 1500);
+        }
+        return;
+      }
       if (!raf && phone.matches && !reduced.matches && onStage && !document.hidden) {
         raf = requestAnimationFrame(frame);
       }
@@ -228,12 +245,14 @@ export function LpArcCanvas() {
         raf = 0;
         art.removeAttribute("data-lp-arc-canvas");
         rings.forEach((r) => (r.bitmap = null)); // free the bitmaps too
+        canvas.width = 0; // and the 2D backing store (build() re-sizes it)
+        canvas.height = 0;
       } else {
         if (rings.some((r) => !r.bitmap)) rings = [];
         start();
       }
     });
-    glWatch.observe(art, { attributes: true, attributeFilter: ["data-lp-gl"] });
+    glWatch.observe(art, { attributes: true, attributeFilter: ["data-lp-gl", "data-lp-gl-off"] });
     const stopAndRestore = () => {
       if (raf) cancelAnimationFrame(raf);
       raf = 0;
@@ -283,6 +302,7 @@ export function LpArcCanvas() {
     return () => {
       disposed = true;
       stopAndRestore();
+      clearTimeout(glWait);
       glWatch.disconnect();
       io.disconnect();
       ro.disconnect();

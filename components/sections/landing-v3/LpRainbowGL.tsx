@@ -96,12 +96,10 @@ interface Ring {
   isPop: boolean;
 }
 
-/** Shared page clock so every section spins in the same phase. */
-let clockT0 = 0;
-const clock = () => {
-  if (!clockT0) clockT0 = performance.now();
-  return clockT0;
-};
+/** `?lp-nogl` — kill switch: no WebGL anywhere (static artboard; phones
+    keep the LpArcCanvas hero). For comparing builds on a device. */
+const killSwitch = () =>
+  typeof location !== "undefined" && new URLSearchParams(location.search).has("lp-nogl");
 
 /** Ring outline → one flattened polygon PER SUBPATH. The LpPancakes rings
     are annuli: a hand-drawn outer contour plus an inner circle drawn with
@@ -378,9 +376,16 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
     let disposed = false;
     let lost = false;
     let popT0 = 0;
+    // Phase clock anchored at THIS art's first drawn frame: cycle 0 == the
+    // static artboard the DOM shows until the handoff, so the swap is
+    // continuous even when it happens on screen (fast fling), and the two
+    // CTA slivers — booting in the same frame — keep their −7.3s offset.
+    // Sections are never co-visible, so a page-wide lock buys nothing.
+    let t0 = 0;
     let builtW = 0;
     let builtH = 0;
     let resizeTimer = 0;
+    const phone = matchMedia("(max-width: 767px)").matches;
 
     const dropMeshes = () => {
       const g = gl;
@@ -407,6 +412,7 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
         failIfMajorPerformanceCaveat: true,
       });
       if (!gl || gl.isContextLost()) return false;
+      art.removeAttribute("data-lp-gl-off");
       const sh = (type: number, src: string) => {
         const h = gl!.createShader(type)!;
         gl!.shaderSource(h, src);
@@ -589,11 +595,12 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
         return;
       }
       const now = performance.now();
-      // test hook: freeze the PAGE clock at a cycle fraction (gates only);
+      if (!t0) t0 = now;
+      // test hook: freeze the clock at a cycle fraction (gates only);
       // designed delays still apply, so hook 0 == the static artboard incl.
       // the CTA-left ±131.4° de-mirror
       const hook = (window as unknown as { __lpArcPhase?: number }).__lpArcPhase;
-      const elapsed = typeof hook === "number" ? hook * LOOP_MS : now - clock();
+      const elapsed = typeof hook === "number" ? hook * LOOP_MS : now - t0;
       const popP = typeof hook === "number" ? 1 : Math.min(1, (now - popT0) / POP_MS);
 
       gl.clearColor(0, 0, 0, 0);
@@ -666,13 +673,17 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
       stop();
       live = false;
       art.removeAttribute("data-lp-gl");
+      art.setAttribute("data-lp-gl-off", ""); // the artboard shows (anim.css)
     };
 
     if (reduced.matches) {
-      // reduced motion never boots; a later preference flip does
-    } else if (!initGL()) {
-      return; // no usable WebGL2 — the static DOM artboard stays (phones:
-      //         LpArcCanvas keeps the hero's rotation)
+      // reduced motion never boots (the artboard shows); a later flip does
+      art.setAttribute("data-lp-gl-off", "");
+    } else if (killSwitch() || !initGL()) {
+      // no usable WebGL2 — the static DOM artboard stays; the attribute
+      // tells LpArcCanvas to take the phone hero right away
+      art.setAttribute("data-lp-gl-off", "");
+      return;
     }
 
     const io = new IntersectionObserver(
@@ -689,7 +700,11 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
           }
         }
       },
-      { rootMargin: "25% 0%" },
+      // phones: the same 0.75-viewport slack LpAnimFreeze proved — a fling
+      // at ~100px/frame must not reach a released canvas (ring-less art for
+      // a frame or two: the 2026-08-31 "missing CTA band" look). Desktop
+      // keeps the tighter margin (bigger buffers, more co-residency).
+      { rootMargin: phone ? "75% 0%" : "25% 0%" },
     );
     io.observe(art);
     // relayout → rebuild, but only when the art actually changed size (the
@@ -743,6 +758,7 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
     return () => {
       disposed = true;
       restoreDom();
+      art.removeAttribute("data-lp-gl-off"); // a remount decides afresh
       clearTimeout(resizeTimer);
       io.disconnect();
       ro.disconnect();

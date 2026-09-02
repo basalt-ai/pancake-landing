@@ -23,22 +23,20 @@ import { useEffect } from "react";
  */
 
 /** Section roots that own animated members (attribute target).
-    NO .lp-hero-art: pausing/resuming the hero arcs restructures compositing
-    right next to the H1's pinned layer and re-triggered Safari's headline
-    eviction on scroll-return (founder 2026-09-01, third recurrence — the
-    will-change/translateZ guards only hold in a stable layer tree). Desktop
-    hero arcs stay always-on, the long-stable baseline; on phones the hero
-    DOM arcs are static anyway (LpArcCanvas is the mobile rotation), so the
-    hero never needed this list there. */
+    NO ring art (hero, CTA slivers, pricing): since 2026-09-02 the rings'
+    rotation is LpRainbowGL at every width — one canvas per art with its own
+    on-stage gate and off-stage buffer release — and the DOM rings are static
+    everywhere (anim.css). History: the hero left this list on 2026-09-01
+    (pausing/resuming its arcs restructured compositing next to the H1's
+    pinned layer and re-triggered Safari's headline eviction); the CTA and
+    pricing arts left it on 2026-09-02 (their phone thaw was eleven ~2600px
+    layers recomposited at once on the way to the footer). */
 const STAGES = [
   ".lp-banner__card",
   ".lp-marquee",
   ".lp-feat-f2",
   ".lp-feat-f4",
   ".lp-tst-strip",
-  ".lp-price-art",
-  ".lp-cta__art--left",
-  ".lp-cta__art--right",
 ].join(", ");
 
 /** Animated members inside a stage (mirror of the anim.css offstage block). */

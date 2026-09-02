@@ -378,6 +378,22 @@
 [data-lp-gl] .lp-anim-box {
   visibility: hidden;
 }
+/* The CTA and pricing DOM rings are never painted unless WebGL is off:
+   ten + six static 2600px SVGs that a canvas covers within a frame of
+   coming near are pure paint cost — Gecko froze 1–1.8s rasterizing them
+   as the sections approached (measured 2026-09-02, after content-
+   visibility left those sections), and phones would tile them for
+   nothing. Laid out (the renderer reads their geometry), not painted.
+   The hero keeps its server-rendered artboard: first paint must show the
+   rainbow. [data-lp-gl-off] = no usable WebGL / context lost / reduced
+   motion / kill switch → the artboard shows. */
+.lp-cta__art .lp-anim-box,
+.lp-price-art .lp-anim-box {
+  visibility: hidden;
+}
+[data-lp-gl-off] .lp-anim-box {
+  visibility: visible;
+}
 [data-lp-gl] .lp-anim-spin--cw,
 [data-lp-gl] .lp-anim-spin--ccw,
 [data-lp-gl] .lp-anim-fill.lp-anim-pop {
