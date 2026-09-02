@@ -81,7 +81,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://getpancake.ai"),
   title: "Pancake: The AI employee that does the work for you",
   description:
-    "Pancake connects to your tools and does the work for you. Autonomously. One AI coworker in Slack, a whole team of agents behind it. $49/month, no tiers.",
+    "Pancake’s AI agents monitor buying signals, find warm leads, grow your AI search visibility, and learn from every interaction.",
   alternates: {
     canonical: "https://getpancake.ai",
   },
@@ -90,7 +90,7 @@ export const metadata: Metadata = {
     url: "https://getpancake.ai",
     title: "Pancake: The AI employee that does the work for you",
     description:
-      "Pancake connects to your tools and does the work for you. Autonomously. One AI coworker in Slack, a whole team of agents behind it. $49/month, no tiers.",
+      "Pancake’s AI agents monitor buying signals, find warm leads, grow your AI search visibility, and learn from every interaction.",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake, the AI coworker" }],
     siteName: "Pancake",
   },
@@ -98,7 +98,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Pancake: The AI employee that does the work for you",
     description:
-      "Pancake connects to your tools and does the work for you. Autonomously. One AI coworker in Slack, a whole team of agents behind it. $49/month, no tiers.",
+      "Pancake’s AI agents monitor buying signals, find warm leads, grow your AI search visibility, and learn from every interaction.",
     images: ["/og-image.png"],
   },
 };
@@ -117,7 +117,7 @@ const organizationJsonLd = {
   url: "https://getpancake.ai",
   logo: "https://getpancake.ai/pancake-mark.png",
   description:
-    "Pancake is the AI employee that does the work for you. It connects to your tools and works autonomously. One AI employee in Slack, a whole team of agents behind it.",
+    "Pancake’s AI agents monitor buying signals, find warm leads, grow your AI search visibility, and learn from every interaction.",
   foundingDate: "2024",
   address: {
     "@type": "PostalAddress",

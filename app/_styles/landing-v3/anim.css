@@ -179,7 +179,16 @@
   /* pricing too (founder 2026-09-01: "fige l'arc-en-ciel avant le footer")
      — same doctrine, t0 == the artboard; mobile keeps its animated rings */
   .lp-price-art .lp-anim-spin--cw,
-  .lp-price-art .lp-anim-spin--ccw {
+  .lp-price-art .lp-anim-spin--ccw,
+  /* and the hero, since the desktop rotation is LpRainbowGL: the DOM holds
+     the artboard until the canvas takes over AT PHASE 0 (a spinning DOM
+     would snap back by however long the handoff took), and a browser
+     without usable WebGL shows the artboard instead of the CSS cohort —
+     which Gecko paints at 0.1–0.5 fps (six 2600px SVGs re-rasterized per
+     frame, measured 2026-09-01). The cream pop still plays here; the GL
+     picks it up mid-settle. */
+  .lp-hero-art .lp-anim-spin--cw,
+  .lp-hero-art .lp-anim-spin--ccw {
     animation: none;
   }
   /* De-mirror the static CTA (founder 2026-09-01: "rends pas symétrique les
@@ -199,9 +208,14 @@
    copies, so mid-animation every frame was a perfect reflection ("le côté
    parfaitement symétrique … c'est assez bizarre"). A phase offset on the left
    group keeps the designed motion but desynchronizes the sides so they never
-   mirror-match. Reduced motion still shows the artboard pose. */
+   mirror-match. Reduced motion still shows the artboard pose. --lp-phase
+   carries the same value for LpRainbowGL: `animation: none` (the desktop
+   static rules above, the [data-lp-gl] handoff below) resets the shorthand's
+   animation-delay to 0s, and the renderer used to read that — every rebuild
+   after the first re-mirrored the slivers. A custom property survives. */
 .lp-anim-box--cta-left .lp-anim-spin--cw,
 .lp-anim-box--cta-left .lp-anim-spin--ccw {
+  --lp-phase: -7.3s;
   animation-delay: -7.3s;
 }
 .lp-anim-fill {
@@ -336,8 +350,8 @@
 
 /* ── desktop: WebGL rainbow renderer (LpRainbowGL.tsx) ────────────────────
    One canvas per art. Hidden until the renderer has drawn its first frame;
-   [data-lp-gl] then lands on the art, hides the DOM rings AND stops their
-   CSS animations — that is what frees the composited layers. The DOM stays
+   [data-lp-gl] then lands on the art, hides the DOM rings AND stops the
+   cream pop (the spins are already static on desktop, above). The DOM stays
    in the tree as the fallback (no WebGL2 / context loss / reduced motion:
    the attribute never lands or is removed, and the artboard shows). The
    hero canvas covers only the art's un-clipped 61.96% (clip-path inset
