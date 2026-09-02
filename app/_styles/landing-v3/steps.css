@@ -236,7 +236,7 @@
     /* the illustration carries its own cream canvas; the placeholder tone is
        only ever visible before the SVG has decoded */
     aspect-ratio: 464 / 426;
-    background: rgba(0, 0, 0, 0.04);
+    background: var(--lp-card-cream);
     border-radius: 0;
     display: block;
     flex: none;
