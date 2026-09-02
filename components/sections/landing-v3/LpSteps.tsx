@@ -51,8 +51,10 @@ const STEPS: Step[] = [
     num: "03",
     title: "Pancake gets you the meeting.\nYou close it.",
     body: "Pancake handles the follow-up and keeps every warm conversation moving until a qualified meeting lands on your calendar.",
-    art: "/how/step-3-calendar.svg",
-    alt: "A calendar week in October 2026 filling up with booked meetings: Martin Torres and Studio P, Julien Aubert, Fernhollow Studio, Lumen Collective, a Martin C. follow-up and Samantha M.",
+    video: "/how/meetings-calendar-loop.mp4",
+    poster: "/how/meetings-calendar-loop-poster.jpg",
+    posterAt: 11.8,
+    alt: "Animation: a calendar week in October 2026 fills up day by day with booked meetings — Samantha M., Julien Aubert, Martin Torres and Studio P, Lumen Collective, Fernhollow Studio, a Martin C. follow-up — past meetings marked closed or follow-up as the days go by.",
   },
 ];
 
