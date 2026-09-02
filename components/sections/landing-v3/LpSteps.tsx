@@ -1,25 +1,21 @@
-// Steps — "Pancake sells it" (Figma 4257:4926). Heading block + 3 checkerboard
-// rows: 656px text card + 464×426 media card. Copy follows the artboard except
-// casing: founder rule (2026-08-28) — no capitals on common nouns mid-sentence
-// ("sells it", "your business", "GTM brain"). Trailing space after "feedback."
-// is verbatim — do not fix. \n line breaks render via white-space: pre-line.
-
-import { LpLoopVideo } from "./LpLoopVideo";
+// Steps — "Pancake sells it" (Figma 4636:3164, 1622×1741 — the 2026-09-02
+// revision: the three studio loops are replaced by the designer's vector
+// illustrations). Heading block + 3 checkerboard rows: 656px text card +
+// 464×426 media card. Copy follows the artboard except casing: founder rule
+// (2026-08-28) — no capitals on common nouns mid-sentence ("sells it", "your
+// business", "GTM brain") — and step 03, whose artboard copy the founder
+// overrode in the brief (2026-09-02): "Pancake gets you the meeting. / You
+// close it." + the follow-up body.
 
 type Step = {
   num: string;
   title: string;
   body: string;
-  /** Studio motion loop (pancake-studio trio — 1080×1080, cream canvas). */
-  video: string;
-  /** Still shown whenever the loop is not playing (iOS refuses autoplay in
-      Low Power Mode / Reduce Motion — it used to paint a play glyph over a
-      blank first frame, founder 2026-09-02). A "full" frame of the loop,
-      extracted at posterAt; playback starts from that same instant so the
-      still and the motion are one continuous frame. */
-  poster: string;
-  posterAt: number;
-  /** What the loop shows — read to screen readers in place of the video. */
+  /** Illustration exported from the Figma media card (464×426, cream canvas,
+      text outlined) — the whole card is the picture. */
+  art: string;
+  /** What the illustration shows — its text is outlined in the SVG, so this
+      is the only copy a screen reader gets. */
   alt: string;
 };
 
@@ -28,28 +24,22 @@ const STEPS: Step[] = [
     num: "01",
     title: "Add your website.\nPancake builds your GTM brain.",
     body: "Pancake turns your website into a living plan.\nWho buys from you, what to say to them, and where to show up. Always up to date.",
-    video: "/how/brain-loop.mp4",
-    poster: "/how/brain-loop-poster.jpg",
-    posterAt: 8,
-    alt: "Animation: from a single node, Pancake's GTM Brain researches your company and grows into a full knowledge graph — market profile, ideal customers, keywords, personas and market references.",
+    art: "/how/step-1-brain.svg",
+    alt: "A knowledge graph: the Pelican company node at the centre, with purple, green, pink, orange and blue branches of smaller nodes growing around it.",
   },
   {
     num: "02",
     title: "Agents start working.",
     body: "Pancake reaches out to the people ready to buy and gets you found on Google and ChatGPT.",
-    video: "/how/agents-loop.mp4",
-    poster: "/how/agents-loop-poster.jpg",
-    posterAt: 3.5,
-    alt: "Animation: the Pancake app finds people who match your ideal customer and contacts them, then switches to the AI SEO planner publishing articles — with 'Recommended on Google' and 'Recommended by ChatGPT' chips.",
+    art: "/how/step-2-pipeline.svg",
+    alt: "The Pancake pipeline checklist, 24 warm leads: monitor buying signals, find people ready to buy and enrich every prospect are done; score leads for ICP fit is in progress; write outreach in your voice, follow-up automatically and learn from every reply are next.",
   },
   {
     num: "03",
-    title: "Give feedback. \nPancake self-improves.",
-    body: "Pancake learns from every correction and gets better every day.",
-    video: "/how/feedback-loop.mp4",
-    poster: "/how/feedback-loop-poster.jpg",
-    posterAt: 10,
-    alt: "Animation: you reply 'too formal, we're playful' to a draft; the feedback flows into the Brain, the voice updates, and the next draft comes back on-tone and approved.",
+    title: "Pancake gets you the meeting.\nYou close it.",
+    body: "Pancake handles the follow-up and keeps every warm conversation moving until a qualified meeting lands on your calendar.",
+    art: "/how/step-3-calendar.svg",
+    alt: "A calendar week in October 2026 filling up with booked meetings: Martin Torres and Studio P, Julien Aubert, Fernhollow Studio, Lumen Collective, a Martin C. follow-up and Samantha M.",
   },
 ];
 
@@ -70,13 +60,17 @@ export function LpSteps() {
                 <h3 className="lp-steps__step-title lp-display">{step.title}</h3>
                 <p className="lp-steps__body">{step.body}</p>
               </div>
-              <LpLoopVideo
-                className="lp-steps__media"
-                src={step.video}
-                poster={step.poster}
-                posterAt={step.posterAt}
-                alt={step.alt}
-              />
+              <div className="lp-steps__media">
+                <img
+                  className="lp-steps__art"
+                  src={step.art}
+                  alt={step.alt}
+                  width={464}
+                  height={426}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
             </div>
           ))}
         </div>

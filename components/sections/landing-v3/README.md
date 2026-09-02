@@ -84,10 +84,13 @@ These intentionally diverge from the static Figma export — don't "fix" them
 back during a fidelity pass:
 
 - Casing: no capitals on common nouns mid-sentence ("Pancake sells it",
-  "While you run your business,", "GTM brain"). Note: the studio mp4s still
-  contain "your Brain" — needs a studio re-render to change.
-- Steps media cards host the pancake-studio loop trio (`LpLoopVideo.tsx`,
-  `/public/how/*.mp4`, cover-fit, IO-paused offscreen).
+  "While you run your business,", "GTM brain").
+- Steps media cards are the designer's vector illustrations (Figma 4636:3164,
+  2026-09-02: knowledge graph / pipeline checklist / calendar week), exported
+  as 464×426 SVGs with outlined text (`/public/how/step-*.svg`), contain-fit
+  in a card that keeps the 464/426 aspect at every width — nothing cropped on
+  phones. Step 03 copy is the founder's override, not the artboard's. The
+  studio loop trio (`/public/how/*-loop.mp4`) is retired from this section.
 - Logo strip scrolls (seamless 1424px-period tile
   `lp-logo-strip-tile.png`, ~34 px/s leftward, blend moved to the track).
 - Testimonials: two counter-scrolling marquees (~28.75 px/s), 48px between
