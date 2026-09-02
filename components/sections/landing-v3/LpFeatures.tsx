@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { LpRingFlow } from "@/components/sections/landing-v3/LpRingFlow";
+
 /**
  * Landing v3 — section 6 "How Pancake finds customers" (Figma 4257:4976,
  * rev2 artboard 1654×2969, re-extracted 2026-08-31).
@@ -212,6 +214,10 @@ function Feature2() {
           <div className="lp-feat-ringfx lp-feat-f2-ringfx lp-feat-ringfx--p2" aria-hidden="true"><i /></div>
           <div className="lp-feat-ringfx lp-feat-f2-ringfx lp-feat-ringfx--p3" aria-hidden="true"><i /></div>
           <div className="lp-feat-ringfx lp-feat-f2-ringfx lp-feat-ringfx--p4" aria-hidden="true"><i /></div>
+          {/* ring flow on canvas: the same masks × wheels; once its first
+              frame is up it replaces the eight discs above (desktop) — Gecko
+              ran them on the main thread. See LpRingFlow.tsx. */}
+          <LpRingFlow variant="f2" />
           <div className="lp-feat-f2-draft">
             <p className="lp-feat-f2-eyebrow">Draft ready</p>
             <p className="lp-feat-f2-msg">
@@ -311,6 +317,8 @@ function Feature4() {
           <div className="lp-feat-ringfx lp-feat-f4-ringfx lp-feat-ringfx--p2" aria-hidden="true"><i /></div>
           <div className="lp-feat-ringfx lp-feat-f4-ringfx lp-feat-ringfx--p3" aria-hidden="true"><i /></div>
           <div className="lp-feat-ringfx lp-feat-f4-ringfx lp-feat-ringfx--p4" aria-hidden="true"><i /></div>
+          {/* ring flow on canvas — the same handoff as f2 (LpRingFlow.tsx) */}
+          <LpRingFlow variant="f4" />
           <div className="lp-feat-f4-brain">
             <p className="lp-feat-f4-cardtitle">Brain updated</p>
             <p className="lp-feat-f4-brainsub">The winning playbook is ready for the next campaign.</p>
