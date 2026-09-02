@@ -1776,3 +1776,50 @@
     }
   }
 }
+
+/* ── ring flow on canvas (LpRingFlow.tsx), desktop ───────────────────────
+   Gecko runs the eight discs above on the main thread: a transform
+   animation is refused the compositor when an ancestor carries mask-image
+   (nsDisplayTransform::ShouldPrerenderTransformedContent), so every vsync
+   near the section restyles, rebuilds the display list and a WebRender
+   scene — ≈70% of a core (measured 2026-09-02; Chromium/WebKit composite
+   the same DOM for free). One Canvas 2D per ring composes the same four
+   masks over the same four wheels at ~30 draws/s instead. The canvas is
+   laid out over the ring box (the renderer sizes its buffer from it) but
+   invisible until its first frame; [data-lp-ringflow] then lands on the
+   ring stage (.lp-feat-f2 / .lp-feat-f4), shows the canvas and
+   display:none's the discs — their animations end with them. A mask that
+   fails to load / no 2D context / no conic gradients: the attribute never
+   lands and the CSS flow above stays, unchanged. Same gate as that flow
+   (desktop, motion allowed): phones and reduced motion never lay the
+   canvas out, and the component removes the attribute on a flip. */
+.lp-feat-ringflow {
+  display: none;
+  pointer-events: none;
+  position: absolute;
+  visibility: hidden;
+}
+.lp-feat-ringflow--f2 {
+  height: 284px;
+  left: 0;
+  top: 187.8px;
+  width: 405px;
+}
+.lp-feat-ringflow--f4 {
+  height: 105px;
+  left: 0;
+  top: 378px;
+  width: 475px;
+}
+@media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
+  .lp-feat-ringflow {
+    display: block;
+  }
+  [data-lp-ringflow] .lp-feat-ringflow {
+    visibility: visible;
+  }
+  /* 0,2,0 — beats the discs' enabling rule above whatever the order */
+  [data-lp-ringflow] .lp-feat-ringfx {
+    display: none;
+  }
+}

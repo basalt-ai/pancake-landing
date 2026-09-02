@@ -29,6 +29,13 @@
   inset: 0;
   position: absolute;
 }
+/* the drop-only player (LpBottleneck hostC) is placed by JS over the drop's
+   travel band — left/top/width/height inline; right/bottom must not pin it */
+.lp-banner__lottie-host--drop {
+  bottom: auto;
+  pointer-events: none;
+  right: auto;
+}
 .lp-banner__lottie canvas {
   display: block;
   height: 100%;

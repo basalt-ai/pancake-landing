@@ -44,7 +44,11 @@ export function LpFitVars() {
         const box = entry.contentBoxSize?.[0];
         const width = box ? box.inlineSize : entry.contentRect.width;
         if (!(width > 0)) continue;
-        const fit = String(Math.round((width / design) * 1e5) / 1e5);
+        // the exact quotient, unrounded: the CSS fallback computes the same
+        // value, so in engines that get the trig right the write is a no-op
+        // for the computed transform (a rounded value differed by ~1e-6 and
+        // made Gecko re-rasterise the six hero ring blobs during hydration)
+        const fit = String(width / design);
         if (last.get(entry.target) === fit) continue;
         last.set(entry.target, fit);
         (entry.target as HTMLElement).style.setProperty("--lp-fit", fit);

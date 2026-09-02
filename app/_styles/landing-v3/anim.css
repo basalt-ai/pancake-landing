@@ -331,8 +331,8 @@
   [data-lp-offstage] .lp-feat-ringfx i {
     animation-name: none;
   }
-  [data-lp-offstage] .lp-tst-track,
-  [data-lp-offstage] .lp-marquee__track {
+  [data-lp-offstage] .lp-tst-track .lp-tst-card,
+  [data-lp-offstage] .lp-marquee__seq {
     animation-name: none;
     will-change: auto;
   }
@@ -342,8 +342,8 @@
   [data-lp-offstage] .lp-anim-spin--ccw,
   [data-lp-offstage] .lp-anim-bubble,
   [data-lp-offstage] .lp-feat-ringfx i,
-  [data-lp-offstage] .lp-tst-track,
-  [data-lp-offstage] .lp-marquee__track {
+  [data-lp-offstage] .lp-tst-track .lp-tst-card,
+  [data-lp-offstage] .lp-marquee__seq {
     animation-play-state: paused;
   }
 }
@@ -427,16 +427,18 @@
   }
 }
 
-/* ── phones: the cream pop is not a CSS animation here (it was the last
-   layout-animating member of the hero cohort on iPhone); the canvas
-   renderer plays the settle itself. The spins are static at every width
-   (rule above). History: 2026-09-01 the pricing and CTA cohorts ran on
-   phones again ("réanime les arcs du final CTA et du footer"); since
-   2026-09-02 that motion is the WebGL canvas, not CSS layers. */
-@media (max-width: 767px) {
-  .lp-hero-art .lp-anim-fill.lp-anim-pop {
-    animation: none;
-  }
+/* ── the cream pop is not a CSS animation at ANY width: the canvas
+   renderer plays the settle itself from its first frame (LpRainbowGL,
+   LpArcCanvas). Phones first (2026-09-01: it was the last layout-animating
+   member of the hero cohort on iPhone), desktop since 2026-09-02 — the
+   keyframes animate width/height on a 2400px inline SVG, which Gecko
+   reflows AND re-rasterises as a blob image on every frame of the 500ms
+   settle, right inside the load window (hydration, fonts, the first GL
+   frame all compete for the same core). The spins are static at every
+   width (rule above); the artboard shows until the handoff, then the pop
+   plays on the canvas — the same 500ms ease-out, half a second later. */
+.lp-anim-fill.lp-anim-pop {
+  animation: none;
 }
 
 /* ── reduced motion: freeze everything at the static artboard pose ── */

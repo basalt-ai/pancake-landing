@@ -229,6 +229,9 @@ export function LpPancakes({ variant }: { variant: Variant }) {
                 >
                   <path
                     d={arc.hole ? withHole(ring, arc.hole) : ring.d}
+                    /* the hole radius, for LpRainbowGL: the GL fill skips
+                       the hole subpath and colours an annulus instead */
+                    data-lp-hole={arc.hole}
                     fill={ring.fill}
                     fillRule="evenodd"
                   />
