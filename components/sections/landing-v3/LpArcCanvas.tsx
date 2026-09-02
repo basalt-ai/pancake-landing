@@ -159,6 +159,12 @@ export function LpArcCanvas() {
     const frame = () => {
       raf = 0;
       if (disposed || !onStage || document.hidden) return;
+      if (art.hasAttribute("data-lp-gl")) {
+        // LpRainbowGL drew (2026-09-02: it runs on phones too) — yield; the
+        // attribute observer below restarts this renderer if it ever bails
+        art.removeAttribute("data-lp-arc-canvas");
+        return;
+      }
       if (!rings.length && !build()) {
         raf = requestAnimationFrame(frame); // LpFitVars not there yet — retry
         return;
@@ -209,10 +215,25 @@ export function LpArcCanvas() {
     };
 
     const start = () => {
+      if (art.hasAttribute("data-lp-gl")) return; // the WebGL renderer owns the hero
       if (!raf && phone.matches && !reduced.matches && onStage && !document.hidden) {
         raf = requestAnimationFrame(frame);
       }
     };
+    // WebGL handoff / bail-out (context loss, reduced motion flip) → this
+    // renderer stops / resumes accordingly, phase held by the clock
+    const glWatch = new MutationObserver(() => {
+      if (art.hasAttribute("data-lp-gl")) {
+        if (raf) cancelAnimationFrame(raf);
+        raf = 0;
+        art.removeAttribute("data-lp-arc-canvas");
+        rings.forEach((r) => (r.bitmap = null)); // free the bitmaps too
+      } else {
+        if (rings.some((r) => !r.bitmap)) rings = [];
+        start();
+      }
+    });
+    glWatch.observe(art, { attributes: true, attributeFilter: ["data-lp-gl"] });
     const stopAndRestore = () => {
       if (raf) cancelAnimationFrame(raf);
       raf = 0;
@@ -262,6 +283,7 @@ export function LpArcCanvas() {
     return () => {
       disposed = true;
       stopAndRestore();
+      glWatch.disconnect();
       io.disconnect();
       ro.disconnect();
       phone.removeEventListener("change", onMedia);

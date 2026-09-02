@@ -3,8 +3,15 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Desktop rainbow renderer — WebGL, one canvas per art (hero, pricing, the
- * two CTA slivers), replacing the CSS cohort's per-ring composited layers.
+ * Rainbow renderer — WebGL, one canvas per art (hero, pricing, the two CTA
+ * slivers), replacing the CSS cohort's per-ring composited layers. Desktop
+ * since 2026-09-01; every width since 2026-09-02 (founder: "le même travail
+ * de fluidité / anti-freeze sur mobile — quand on arrive en bas ça casse"):
+ * on phones the CTA and pricing rings were still the CSS cohort, thawed by
+ * LpAnimFreeze on approach — eleven ~2600px layers recomposited at once
+ * right when the footer arrives. Now the DOM rings are static at every
+ * width and this canvas is the only motion; LpArcCanvas (the phone hero's
+ * bitmap renderer) yields to it on handoff and remains the fallback.
  *
  * Why (2026-09-01, after a day of desktop-Safari failures): every rotating
  * ring was its own ~2400×2600px composited layer — six per section, ten in
@@ -351,7 +358,6 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
     const canvas = canvasRef.current;
     const art = canvas?.parentElement;
     if (!canvas || !art) return;
-    const desktop = matchMedia("(min-width: 768px)");
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
     const sel = SEL[variant];
 
@@ -434,6 +440,40 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
       if (!cdiv || !box || !art.style.getPropertyValue("--lp-fit")) return false;
       const cdivT = getComputedStyle(cdiv).transform;
       if (!cdivT || cdivT === "none") return false;
+      const fit = new DOMMatrix(cdivT); // transform-origin 0 0 (anim.css)
+      const axisAligned = Math.abs(fit.b) < 1e-6 && Math.abs(fit.c) < 1e-6;
+      // the ring box (.lp-anim-box, overflow:clip) in art space
+      const bp0 = fit.transformPoint(new DOMPoint(box.offsetLeft, box.offsetTop));
+      const bp1 = fit.transformPoint(new DOMPoint(box.offsetLeft + box.offsetWidth, box.offsetTop + box.offsetHeight));
+      const bx0 = Math.min(bp0.x, bp1.x), bx1 = Math.max(bp0.x, bp1.x);
+      const by0 = Math.min(bp0.y, bp1.y), by1 = Math.max(bp0.y, bp1.y);
+
+      // Canvas placement in art space. Hero / pricing: the art rect itself
+      // (CSS: inset 0, hero 61.96%). CTA slivers: the box spills far outside
+      // the art rect and the CARD (overflow:hidden) is the real clip — on
+      // desktop the card cuts exactly at the art, but on phones the arts are
+      // rotated 90° into the card (cta.css) and the spilled ink lands inside
+      // it: part of the mobile artboard, so the canvas must cover box ∩ card,
+      // mapped into art space through the art's own transform (origin 0 0).
+      let vx = 0, vy = 0;
+      const clipEl = variant === "ctaLeft" || variant === "ctaRight" ? art.offsetParent : null;
+      if (clipEl instanceof HTMLElement) {
+        const artT = getComputedStyle(art).transform;
+        const inv = (artT && artT !== "none" ? new DOMMatrix(artT) : new DOMMatrix()).inverse();
+        const ox = art.offsetLeft, oy = art.offsetTop;
+        const cs = [[0, 0], [clipEl.clientWidth, 0], [0, clipEl.clientHeight], [clipEl.clientWidth, clipEl.clientHeight]]
+          .map(([x, y]) => inv.transformPoint(new DOMPoint(x - ox, y - oy)));
+        const rx0 = Math.max(bx0, Math.min(...cs.map((c) => c.x))), rx1 = Math.min(bx1, Math.max(...cs.map((c) => c.x)));
+        const ry0 = Math.max(by0, Math.min(...cs.map((c) => c.y))), ry1 = Math.min(by1, Math.max(...cs.map((c) => c.y)));
+        if (!(rx1 - rx0 > 1 && ry1 - ry0 > 1)) return false;
+        vx = rx0;
+        vy = ry0;
+        canvas.style.left = `${rx0}px`;
+        canvas.style.top = `${ry0}px`;
+        canvas.style.width = `${rx1 - rx0}px`;
+        canvas.style.height = `${ry1 - ry0}px`;
+      }
+
       const cw = canvas.clientWidth;
       const ch = canvas.clientHeight;
       if (!(cw > 0 && ch > 0)) return false;
@@ -445,18 +485,22 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
 
       // device px → clip space, then art-space (CSS px) → device px
       const proj = new DOMMatrix([2 / canvas.width, 0, 0, -2 / canvas.height, -1, 1]);
-      const fit = new DOMMatrix(cdivT); // transform-origin 0 0 (anim.css)
-      base = proj.multiply(new DOMMatrix().scale(dpr)).multiply(fit);
+      base = proj.multiply(new DOMMatrix().scale(dpr)).multiply(new DOMMatrix().translate(-vx, -vy)).multiply(fit);
 
-      // the Figma group clip (.lp-anim-box overflow:clip) as a scissor rect;
-      // the fit matrix is axis-aligned on desktop (scale / scaleX)
-      const b0 = fit.transformPoint(new DOMPoint(box.offsetLeft, box.offsetTop));
-      const b1 = fit.transformPoint(new DOMPoint(box.offsetLeft + box.offsetWidth, box.offsetTop + box.offsetHeight));
-      const sx = Math.max(0, Math.floor(Math.min(b0.x, b1.x) * dpr));
-      const sy = Math.max(0, Math.floor(Math.min(b0.y, b1.y) * dpr));
-      const ex = Math.min(canvas.width, Math.ceil(Math.max(b0.x, b1.x) * dpr));
-      const ey = Math.min(canvas.height, Math.ceil(Math.max(b0.y, b1.y) * dpr));
-      scissor = [sx, canvas.height - ey, Math.max(0, ex - sx), Math.max(0, ey - sy)];
+      // the Figma group clip as a scissor rect when the fit matrix is
+      // axis-aligned (desktop: scale / scaleX; every CTA). The phone hero's
+      // fit carries rotate(15°)·flipX — a rect can't express that clip, and
+      // the art's own clip-path already bounds the visible ink there
+      // (LpArcCanvas never clipped either): no scissor.
+      if (axisAligned) {
+        const sx = Math.max(0, Math.floor((bx0 - vx) * dpr));
+        const sy = Math.max(0, Math.floor((by0 - vy) * dpr));
+        const ex = Math.min(canvas.width, Math.ceil((bx1 - vx) * dpr));
+        const ey = Math.min(canvas.height, Math.ceil((by1 - vy) * dpr));
+        scissor = [sx, canvas.height - ey, Math.max(0, ex - sx), Math.max(0, ey - sy)];
+      } else {
+        scissor = null;
+      }
 
       const next: Ring[] = [];
       for (const arc of Array.from(box.querySelectorAll<HTMLElement>(".lp-anim-arc"))) {
@@ -494,13 +538,15 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
         const isPop = svg.classList.contains("lp-anim-pop");
         const scs = getComputedStyle(svg);
         if (isPop) {
-          // continue the CSS entrance settle from wherever it is (it plays
-          // on the DOM ring until the handoff); no running pop = settled
+          // continue the CSS entrance settle from wherever it is (desktop:
+          // it plays on the DOM ring until the handoff). Phones keep the
+          // DOM pop off (anim.css) — there the first build plays it from
+          // now, like LpArcCanvas did; any later rebuild is settled.
           const a = typeof svg.getAnimations === "function"
             ? svg.getAnimations().find((k) => (k as CSSAnimation).animationName === "lp-anim-pop")
             : undefined;
-          const t = a && typeof a.currentTime === "number" ? a.currentTime : POP_MS;
-          popT0 = performance.now() - t;
+          if (a && typeof a.currentTime === "number") popT0 = performance.now() - a.currentTime;
+          else if (!popT0) popT0 = performance.now();
         }
         next.push({
           poseX: box.offsetLeft + arc.offsetLeft + pose.offsetLeft,
@@ -543,8 +589,11 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
         return;
       }
       const now = performance.now();
+      // test hook: freeze the PAGE clock at a cycle fraction (gates only);
+      // designed delays still apply, so hook 0 == the static artboard incl.
+      // the CTA-left ±131.4° de-mirror
       const hook = (window as unknown as { __lpArcPhase?: number }).__lpArcPhase;
-      const elapsed = now - clock();
+      const elapsed = typeof hook === "number" ? hook * LOOP_MS : now - clock();
       const popP = typeof hook === "number" ? 1 : Math.min(1, (now - popT0) / POP_MS);
 
       gl.clearColor(0, 0, 0, 0);
@@ -555,8 +604,7 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
         gl.scissor(scissor[0], scissor[1], scissor[2], scissor[3]);
       }
       for (const r of rings) {
-        const cycle =
-          typeof hook === "number" ? hook : (((elapsed - r.delayMs) % LOOP_MS) + LOOP_MS) % LOOP_MS / LOOP_MS;
+        const cycle = ((((elapsed - r.delayMs) % LOOP_MS) + LOOP_MS) % LOOP_MS) / LOOP_MS;
         let w = r.fillW;
         let h = r.fillH;
         if (r.isPop && popP < 1) {
@@ -602,7 +650,7 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
 
     const start = () => {
       if (raf || disposed || lost || !gl) return;
-      if (!desktop.matches || reduced.matches || !onStage || document.hidden) return;
+      if (reduced.matches || !onStage || document.hidden) return;
       if (live && canvas.width === 1) {
         // back on stage: restore the drawing buffer (was shrunk off-stage);
         // the meshes stay — the rebuild is DOM reads only
@@ -620,10 +668,11 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
       art.removeAttribute("data-lp-gl");
     };
 
-    if (reduced.matches || !desktop.matches) {
-      // phones / reduced motion never boot; a later breakpoint flip does
+    if (reduced.matches) {
+      // reduced motion never boots; a later preference flip does
     } else if (!initGL()) {
-      return; // no WebGL2 — the static DOM artboard stays
+      return; // no usable WebGL2 — the static DOM artboard stays (phones:
+      //         LpArcCanvas keeps the hero's rotation)
     }
 
     const io = new IntersectionObserver(
@@ -668,7 +717,7 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
     };
     dprMq.addEventListener("change", onDpr);
     const onMedia = () => {
-      if (desktop.matches && !reduced.matches) {
+      if (!reduced.matches) {
         if (!gl && !initGL()) return;
         start();
       } else restoreDom();
@@ -685,7 +734,6 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
       lost = false;
       if (initGL()) start();
     };
-    desktop.addEventListener("change", onMedia);
     reduced.addEventListener("change", onMedia);
     document.addEventListener("visibilitychange", onVisibility);
     canvas.addEventListener("webglcontextlost", onLost);
@@ -699,7 +747,6 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
       io.disconnect();
       ro.disconnect();
       dprMq.removeEventListener("change", onDpr);
-      desktop.removeEventListener("change", onMedia);
       reduced.removeEventListener("change", onMedia);
       document.removeEventListener("visibilitychange", onVisibility);
       canvas.removeEventListener("webglcontextlost", onLost);

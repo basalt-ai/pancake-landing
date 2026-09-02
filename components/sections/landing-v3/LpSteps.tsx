@@ -12,6 +12,13 @@ type Step = {
   body: string;
   /** Studio motion loop (pancake-studio trio — 1080×1080, cream canvas). */
   video: string;
+  /** Still shown whenever the loop is not playing (iOS refuses autoplay in
+      Low Power Mode / Reduce Motion — it used to paint a play glyph over a
+      blank first frame, founder 2026-09-02). A "full" frame of the loop,
+      extracted at posterAt; playback starts from that same instant so the
+      still and the motion are one continuous frame. */
+  poster: string;
+  posterAt: number;
   /** What the loop shows — read to screen readers in place of the video. */
   alt: string;
 };
@@ -22,6 +29,8 @@ const STEPS: Step[] = [
     title: "Add your website.\nPancake builds your GTM brain.",
     body: "Pancake turns your website into a living plan.\nWho buys from you, what to say to them, and where to show up. Always up to date.",
     video: "/how/brain-loop.mp4",
+    poster: "/how/brain-loop-poster.jpg",
+    posterAt: 8,
     alt: "Animation: from a single node, Pancake's GTM Brain researches your company and grows into a full knowledge graph — market profile, ideal customers, keywords, personas and market references.",
   },
   {
@@ -29,6 +38,8 @@ const STEPS: Step[] = [
     title: "Agents start working.",
     body: "Pancake reaches out to the people ready to buy and gets you found on Google and ChatGPT.",
     video: "/how/agents-loop.mp4",
+    poster: "/how/agents-loop-poster.jpg",
+    posterAt: 3.5,
     alt: "Animation: the Pancake app finds people who match your ideal customer and contacts them, then switches to the AI SEO planner publishing articles — with 'Recommended on Google' and 'Recommended by ChatGPT' chips.",
   },
   {
@@ -36,6 +47,8 @@ const STEPS: Step[] = [
     title: "Give feedback. \nPancake self-improves.",
     body: "Pancake learns from every correction and gets better every day.",
     video: "/how/feedback-loop.mp4",
+    poster: "/how/feedback-loop-poster.jpg",
+    posterAt: 10,
     alt: "Animation: you reply 'too formal, we're playful' to a draft; the feedback flows into the Brain, the voice updates, and the next draft comes back on-tone and approved.",
   },
 ];
@@ -57,7 +70,13 @@ export function LpSteps() {
                 <h3 className="lp-steps__step-title lp-display">{step.title}</h3>
                 <p className="lp-steps__body">{step.body}</p>
               </div>
-              <LpLoopVideo className="lp-steps__media" src={step.video} alt={step.alt} />
+              <LpLoopVideo
+                className="lp-steps__media"
+                src={step.video}
+                poster={step.poster}
+                posterAt={step.posterAt}
+                alt={step.alt}
+              />
             </div>
           ))}
         </div>
