@@ -164,8 +164,9 @@
 /* Mobile — Figma artboard 4389:8164, frame 4389:8215 "Frame 186" (its overlap
    twin 4389:8187 is a byte-identical duplicate). Org: pad 16, gap 48, text-only
    step cards 370 wide — the artboard's 370×240 media area is an EMPTY
-   rgba(0,0,0,.04) placeholder, and the loop videos are desktop/tablet only, so
-   the media card is display:none here (IO-paused, so hidden is cheap). Kicker
+   rgba(0,0,0,.04) placeholder; since PR #254 the studio loops DO render on
+   phones in that slot (poster still + observer-driven playback, see
+   LpLoopVideo.tsx — the placeholder tone only shows before the poster). Kicker
    falls back to the base 24px/32px — exactly the artboard values. Numeral keeps
    the desktop 57.336/1.2 (Figma: 120% → 69px box) and per-step colors. Figma
    keeps a 1px spacer between numeral and title (16+1+16 = 33px visual gap) —
