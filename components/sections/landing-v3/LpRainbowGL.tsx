@@ -7,11 +7,9 @@ import { useEffect, useRef } from "react";
  * slivers), replacing the CSS cohort's per-ring composited layers. Desktop
  * since 2026-09-01; every width since 2026-09-02 (founder: "le même travail
  * de fluidité / anti-freeze sur mobile — quand on arrive en bas ça casse"):
- * on phones the CTA and pricing rings were still the CSS cohort, thawed by
- * LpAnimFreeze on approach — eleven ~2600px layers recomposited at once
- * right when the footer arrives. Now the DOM rings are static at every
- * width and this canvas is the only motion; LpArcCanvas (the phone hero's
- * bitmap renderer) yields to it on handoff and remains the fallback.
+ * the DOM rings are static at every width and this canvas is the only
+ * motion; LpArcCanvas (the phone hero's bitmap renderer) yields to it on
+ * handoff and remains the fallback.
  *
  * Why (2026-09-01, after a day of desktop-Safari failures): every rotating
  * ring was its own ~2400×2600px composited layer — six per section, ten in
@@ -20,38 +18,73 @@ import { useEffect, useRef } from "react";
  * Benchmarked three replacements with the live geometry: Canvas2D path
  * fills (what a Lottie canvas player does — CPU rasterization in WebKit,
  * cost grows with load), Canvas2D bitmap blits (drops frames in Chromium),
- * and WebGL meshes — flat CPU, trivial GPU work (six flat-color triangle
- * meshes per frame), tiny memory. WebGL won.
+ * and WebGL meshes — flat CPU, trivial GPU work, tiny memory. WebGL won.
  *
  * Fidelity: nothing is re-derived. Each ring's path, viewBox, pose matrix,
  * layout offsets, spin direction and designed delay (the CTA-left −7.3s)
  * are read from the DOM that anim.css/LpPancakes already position, and the
  * canvas div's computed transform (fit / wide-screen scaleX) is applied as
- * is. The frame composes the same matrices the CSS version did, with the
- * spin angle on a clock shared by every instance — the whole page stays
- * phase-locked like the Figma cohort. Ring paths are flattened once
- * (48 segments per cubic — sub-0.2px chord error at these radii) and
- * triangulated with earcut; MSAA does the edge anti-aliasing.
+ * is. The frame composes the same matrices the CSS version did. Ring paths
+ * are flattened once in plain JS (~8 user units per segment — sub-0.02px
+ * sagitta at these radii) and filled through the stencil buffer exactly
+ * like the SVG renderer evaluates the path's evenodd rule; MSAA does the
+ * edge anti-aliasing.
  *
  * Handoff: the canvas draws its first frame, THEN [data-lp-gl] on the art
- * hides the DOM rings and stops their CSS animations (freeing the layers).
- * The static DOM artboard is the permanent fallback — no WebGL2 (or only a
- * software one: failIfMajorPerformanceCaveat), context loss, reduced
- * motion, phones (<768, where LpArcCanvas / static rules apply): nothing
- * changes. Off-stage the loop stops and the drawing buffer shrinks to 1×1
- * so no GPU memory sits idle for far sections.
+ * hides the DOM rings. The static DOM artboard is the permanent fallback —
+ * no WebGL2, context loss that does not recover, reduced motion, the
+ * `?lp-nogl` kill switch, or a machine that measurably cannot hold the
+ * loop (the governor below): [data-lp-gl-off] lands and the artboard shows.
  *
- * Firefox lesson (2026-09-01, the day after shipping): the first version
- * flattened each ring by sampling a scratch SVGPathElement.getPointAtLength
- * ~10k times per build — 0.28ms a call in Gecko (0.06 Blink, 0.12 WebKit),
- * i.e. a 2.8–5s main-thread freeze at every rainbow section, replayed on
- * every scroll-return because the off-stage 1×1 shrink rebuilt from
- * scratch. Paths are now flattened in plain JS (M/L/H/V/C/S/A/Z, the DOM
- * sampler only as a fallback for anything else), cached per `d`, and the
- * GPU buffers persist across the shrink; a rebuild is a handful of DOM
- * reads. The ring DOM is also static on desktop from the start (anim.css),
- * so the handoff never snaps phase and a browser without usable WebGL
- * shows the artboard instead of Gecko's 0.1fps CSS spin of six 2600px SVGs.
+ * Firefox, round two (2026-09-02, founder: the page "freeze encore sur
+ * Firefox" after the getPointAtLength fix of the day before). What Gecko
+ * pays that Blink/WebKit do not, and what changed here:
+ *  1. The fill did ~18 full-buffer 4×MSAA stencil passes per hero frame:
+ *     a centroid fan over the outer contour, a second fan over the `hole`
+ *     circle LpPancakes cuts for the DOM compositor, and a colour pass over
+ *     ONE triangle twice the ring's bbox (the whole canvas), with a stencil
+ *     reset on every sample. An Apple GPU keeps the stencil on-chip; an
+ *     Intel/AMD iGPU is fill-bound at 20–40ms a frame, and in Firefox a
+ *     late GPU stalls the compositor and the content main thread (every
+ *     presented WebGL frame is a synchronous GetFrontBuffer IPC to the GPU
+ *     process). Now each ring owns one stencil BIT (INVERT parity == the
+ *     path's evenodd rule; ≤6 rings ≤ 8 bits, so nothing is ever reset),
+ *     the hole subpath is not drawn at all, and the colour pass rasterises
+ *     an ANNULUS from the hole radius outward instead of the canvas — the
+ *     same pixels (the hole's interior is hidden under the next ring by
+ *     construction, see LpPancakes.ArcSpec.hole) for ~4× less fill.
+ *  2. Draws are capped at 60/s: on a 120 Hz ProMotion display every cost
+ *     above doubled for a 0.15° step nobody can see (the loop turns
+ *     18°/s; 60 Hz screens always showed 0.3°/frame).
+ *  3. The four contexts were created — shaders compiled, MSAA buffers
+ *     allocated (~640 MB), a first frame drawn — inside the hydration task,
+ *     three of them for arts that then shrank to 1×1 a frame later. A
+ *     context now exists only once its canvas comes within the observer
+ *     margin, and the observer watches the CANVAS (the hero's visible
+ *     61.96% band), not the un-clipped art: the hero stopped drawing ~760px
+ *     late and pricing + both slivers drew concurrently for 584px of scroll.
+ *  4. Off-stage the drawing buffer shrank to 1×1 at once and re-allocated
+ *     its MSAA surfaces on re-entry — a fling or a scroll bounce across a
+ *     section edge was a 250–330 MB GPU allocation each way. The release is
+ *     now deferred (SHRINK_DELAY_MS) and cancelled by a return.
+ *  5. `failIfMajorPerformanceCaveat` is a no-op in Firefox ≥ 86 (pref
+ *     webgl.disable-fail-if-major-performance-caveat): under software
+ *     WebRender (hardware acceleration off, blocklisted driver, remote
+ *     desktop) Firefox still hands out a hardware WebGL whose every frame is
+ *     read back into the CPU compositor — 23 MB per hero frame. A governor
+ *     now decides for real: a software renderer string bails at init, and a
+ *     loop that cannot sustain 12 fps for two consecutive 2s windows
+ *     degrades every art to the static artboard for the session
+ *     (sessionStorage "lp-gl" = "off"; `?lp-gl=force` bypasses it).
+ *  6. Context loss (GPU-process restart, driver reset): Gecko restores a
+ *     lost context at most once, and only if the GPU process is already
+ *     back — otherwise the canvas is lost for good. The renderer now falls
+ *     back to the artboard immediately AND retries on a fresh canvas element
+ *     with backoff, so the rotation comes back instead of staying frozen at
+ *     the artboard pose for the rest of the visit.
+ *  7. `powerPreference: "low-power"` could put the context on the other GPU
+ *     of a dual-GPU MacBook Pro, forcing a per-frame surface copy; six
+ *     flat-colour meshes need no hint.
  */
 
 type Variant = "hero" | "pricing" | "ctaLeft" | "ctaRight";
@@ -70,12 +103,24 @@ const MAX_DPR = 2;
 const MIN_SAMPLES = 256;
 const MAX_SAMPLES = 2048;
 const CHORD = 8; // user units per flattened segment (sub-0.02px sagitta here)
+const MIN_FRAME_MS = 14; // ≤ 60 draws/s (a 16.7ms period never skips; 8.3ms draws every other tick)
+const SHRINK_DELAY_MS = 1000; // off-stage grace before the drawing buffer is released
+const ANNULUS_SEGMENTS = 180; // inner edge of the colour pass (chord error 0.4px at r 1200, under the next ring)
+const GOVERNOR_WINDOW_MS = 2000;
+const GOVERNOR_MIN_FRAMES = 24; // < 12 fps sustained …
+const GOVERNOR_LONG_MS = 40; // … with more than a third of the frames slower than this …
+const GOVERNOR_LONG_RATIO = 0.35;
+const GOVERNOR_STRIKES = 2; // … for two consecutive windows → static artboard for the session
+const GOVERNOR_WARMUP_MS = 1500; // first frames after boot (pop settle, hydration) are not judged
+const RECOVER_DELAYS_MS = [800, 2500, 6000]; // fresh-canvas retries after a context loss
 
 interface Mesh {
   vao: WebGLVertexArrayObject;
   vbuf: WebGLBuffer;
+  /** [first, count] of the stencil fans (one per subpath drawn) */
   fans: [number, number][];
-  cover: number;
+  /** colour pass: first vertex, count, primitive mode */
+  cover: [number, number, number];
 }
 
 interface Ring {
@@ -87,7 +132,6 @@ interface Ring {
   dir: 1 | -1;
   delayMs: number;
   mesh: Mesh;
-  evenOdd: boolean;
   color: [number, number, number, number];
   viewW: number;
   viewH: number;
@@ -97,9 +141,39 @@ interface Ring {
 }
 
 /** `?lp-nogl` — kill switch: no WebGL anywhere (static artboard; phones
-    keep the LpArcCanvas hero). For comparing builds on a device. */
-const killSwitch = () =>
-  typeof location !== "undefined" && new URLSearchParams(location.search).has("lp-nogl");
+    keep the LpArcCanvas hero). `?lp-gl=force` — no governor (measurements
+    on a machine that would otherwise degrade). */
+const query = () => (typeof location !== "undefined" ? new URLSearchParams(location.search) : null);
+const killSwitch = () => query()?.has("lp-nogl") ?? false;
+const forceGL = () => query()?.get("lp-gl") === "force";
+const SESSION_KEY = "lp-gl";
+
+/** Page-wide verdict shared by the four instances: once one of them finds
+    WebGL unusable (no context, a software renderer, a loop that cannot keep
+    up), the others show the artboard at once instead of finding out one by
+    one. Persisted for the session so a reload does not re-run the trial. */
+let verdict: "unknown" | "off" = "unknown";
+const offHandlers = new Set<() => void>();
+const readVerdict = (): "unknown" | "off" => {
+  if (verdict === "off") return "off";
+  try {
+    if (sessionStorage.getItem(SESSION_KEY) === "off") verdict = "off";
+  } catch {
+    /* storage may be unavailable (privacy modes) — the in-memory verdict stands */
+  }
+  return verdict;
+};
+const declareOff = () => {
+  verdict = "off";
+  try {
+    sessionStorage.setItem(SESSION_KEY, "off");
+  } catch {
+    /* see above */
+  }
+  offHandlers.forEach((fn) => fn());
+};
+
+const SOFTWARE_GL = /swiftshader|llvmpipe|softpipe|software|basic render|warp\b|mesa offscreen/i;
 
 /** Ring outline → one flattened polygon PER SUBPATH. The LpPancakes rings
     are annuli: a hand-drawn outer contour plus an inner circle drawn with
@@ -292,37 +366,61 @@ function sampleSubpaths(d: string): number[][] | null {
   return polys.length ? polys : null;
 }
 
-/** Outline → the two draw primitives of a stencil polygon fill: a fan from
-    the centroid over the outline (winding pass) and an inflated bounding
-    quad (color pass). No triangulation: the winding rule is evaluated per
-    pixel by the stencil buffer exactly like the SVG renderer does it, so
-    the hand-drawn outlines (which are neither star-shaped nor free of
-    self-overlap) fill identically to the DOM version. */
-function meshFor(polys: number[][]): { verts: number[]; fans: [number, number][]; cover: number } {
+/** Outline → the primitives of a stencil polygon fill. Pass 1 draws a fan
+    from the centroid over the outer contour; with INVERT on one stencil
+    bit every sample ends with the outline's parity — the SVG evenodd rule,
+    exact for the hand-drawn contours (neither star-shaped nor free of
+    self-overlap, which a plain triangulation got wrong). Pass 2 colours
+    where the bit is set: for a ring with a `hole` that is an ANNULUS from
+    the hole radius out to the bbox (the hole subpath itself is never
+    drawn — the interior it would cut is hidden under the next ring by
+    construction); a ring without a hole gets its bbox as two triangles.
+    No stencil write happens in pass 2, so shared edges cannot seam. */
+function meshFor(
+  polys: number[][],
+  hole: number,
+  cx: number,
+  cy: number,
+): { verts: number[]; fans: [number, number][]; cover: [number, number, number] } {
   const verts: number[] = [];
   const fans: [number, number][] = [];
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  for (const poly of polys) {
+  // the hole circle, when present, is the subpath whose points all sit at
+  // the hole radius from the ring's centre — skip it
+  const outline = hole > 0
+    ? polys.filter((poly) => {
+        for (let i = 0; i < poly.length; i += 2) {
+          if (Math.abs(Math.hypot(poly[i] - cx, poly[i + 1] - cy) - hole) > 2) return true;
+        }
+        return false;
+      })
+    : polys;
+  for (const poly of outline.length ? outline : polys) {
     const n = poly.length / 2;
-    let cx = 0, cy = 0;
+    let sx = 0, sy = 0;
     for (let i = 0; i < n; i++) {
       const x = poly[2 * i], y = poly[2 * i + 1];
-      cx += x; cy += y;
+      sx += x; sy += y;
       if (x < minX) minX = x; if (x > maxX) maxX = x;
       if (y < minY) minY = y; if (y > maxY) maxY = y;
     }
-    // fan: centroid + outline + closing repeat of the first vertex
     const start = verts.length / 2;
-    verts.push(cx / n, cy / n, ...poly, poly[0], poly[1]);
+    verts.push(sx / n, sy / n, ...poly, poly[0], poly[1]);
     fans.push([start, verts.length / 2 - start]);
   }
-  // color pass: ONE oversized triangle over the inflated bbox (a two-
-  // triangle quad would seam along its diagonal under the stencil reset)
-  const w = maxX - minX + 4;
-  const h = maxY - minY + 4;
-  const cover = verts.length / 2;
-  verts.push(minX - 2, minY - 2, minX - 2 + 2 * w, minY - 2, minX - 2, minY - 2 + 2 * h);
-  return { verts, fans, cover };
+  const first = verts.length / 2;
+  if (hole > 0 && outline.length) {
+    // annulus strip: inner ring ON the hole circle, outer ring past the bbox corners
+    const R = Math.hypot(Math.max(maxX - cx, cx - minX), Math.max(maxY - cy, cy - minY)) + 4;
+    for (let k = 0; k <= ANNULUS_SEGMENTS; k++) {
+      const a = (k / ANNULUS_SEGMENTS) * Math.PI * 2, c = Math.cos(a), s = Math.sin(a);
+      verts.push(cx + hole * c, cy + hole * s, cx + R * c, cy + R * s);
+    }
+    return { verts, fans, cover: [first, verts.length / 2 - first, WebGL2RenderingContext.TRIANGLE_STRIP] };
+  }
+  const x0 = minX - 2, y0 = minY - 2, x1 = maxX + 2, y1 = maxY + 2;
+  verts.push(x0, y0, x1, y0, x0, y1, x0, y1, x1, y0, x1, y1);
+  return { verts, fans, cover: [first, 6, WebGL2RenderingContext.TRIANGLES] };
 }
 
 function rgba(fill: string): [number, number, number, number] | null {
@@ -353,12 +451,16 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const art = canvas?.parentElement;
-    if (!canvas || !art) return;
+    const reactCanvas = canvasRef.current;
+    const art = reactCanvas?.parentElement;
+    if (!reactCanvas || !art) return;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
     const sel = SEL[variant];
+    const phone = matchMedia("(max-width: 767px)").matches;
+    const governed = !forceGL();
 
+    // the canvas in use: React's, or a fresh element after a context loss
+    let canvas: HTMLCanvasElement = reactCanvas;
     let gl: WebGL2RenderingContext | null = null;
     let prog: WebGLProgram | null = null;
     let uM: WebGLUniformLocation | null = null;
@@ -371,25 +473,34 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
     let scissor: [number, number, number, number] | null = null;
     let dpr = 1;
     let raf = 0;
-    let onStage = true;
-    let live = false;
+    let near = false; // within the observer margin → the loop runs
+    let live = false; // [data-lp-gl] is on: the canvas is the render
     let disposed = false;
     let lost = false;
+    let off = false; // this instance is on the artboard for good
     let popT0 = 0;
     // Phase clock anchored at THIS art's first drawn frame: cycle 0 == the
     // static artboard the DOM shows until the handoff, so the swap is
     // continuous even when it happens on screen (fast fling), and the two
     // CTA slivers — booting in the same frame — keep their −7.3s offset.
-    // Sections are never co-visible, so a page-wide lock buys nothing.
     let t0 = 0;
     let builtW = 0;
     let builtH = 0;
     let resizeTimer = 0;
-    const phone = matchMedia("(max-width: 767px)").matches;
+    let shrinkTimer = 0;
+    let recoverTimer = 0;
+    let recoverAttempt = 0;
+    let lastDraw = 0;
+    // governor window (see header, 5)
+    let bootAt = 0;
+    let winStart = 0;
+    let winFrames = 0;
+    let winLong = 0;
+    let strikes = 0;
 
     const dropMeshes = () => {
       const g = gl;
-      if (g) {
+      if (g && !g.isContextLost()) {
         meshes.forEach((m) => {
           g.deleteVertexArray(m.vao);
           g.deleteBuffer(m.vbuf);
@@ -406,26 +517,29 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
         depth: false,
         premultipliedAlpha: true,
         stencil: true,
-        powerPreference: "low-power",
-        // a software GL (llvmpipe / SwiftShader / blocklisted driver) is
-        // worse than the static artboard — let the DOM fallback stand
+        powerPreference: "default",
+        // honoured by Blink (a SwiftShader GL is worse than the artboard);
+        // a no-op in Gecko — the renderer-string check below covers it
         failIfMajorPerformanceCaveat: true,
       });
       if (!gl || gl.isContextLost()) return false;
-      art.removeAttribute("data-lp-gl-off");
+      if (governed) {
+        const dbg = gl.getExtension("WEBGL_debug_renderer_info");
+        const renderer = String(dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+        if (SOFTWARE_GL.test(renderer)) return false;
+      }
       const sh = (type: number, src: string) => {
         const h = gl!.createShader(type)!;
         gl!.shaderSource(h, src);
         gl!.compileShader(h);
-        return gl!.getShaderParameter(h, gl!.COMPILE_STATUS) ? h : null;
+        return h;
       };
-      const vs = sh(gl.VERTEX_SHADER, VS);
-      const fs = sh(gl.FRAGMENT_SHADER, FS);
-      if (!vs || !fs) return false;
       prog = gl.createProgram()!;
-      gl.attachShader(prog, vs);
-      gl.attachShader(prog, fs);
+      gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS));
+      gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS));
       gl.linkProgram(prog);
+      // one synchronous status query (a link failure covers compile
+      // failures) — in Gecko every value-returning GL call is a sync IPC
       if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return false;
       gl.useProgram(prog);
       uM = gl.getUniformLocation(prog, "m");
@@ -433,8 +547,8 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
       gl.enable(gl.BLEND);
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       gl.enable(gl.STENCIL_TEST);
-      gl.stencilMask(0xff);
       gl.disable(gl.CULL_FACE);
+      art.removeAttribute("data-lp-gl-off");
       return true;
     };
 
@@ -485,12 +599,14 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
       if (!(cw > 0 && ch > 0)) return false;
 
       dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
-      canvas.width = Math.round(cw * dpr);
-      canvas.height = Math.round(ch * dpr);
-      gl.viewport(0, 0, canvas.width, canvas.height);
+      const bw = Math.round(cw * dpr);
+      const bh = Math.round(ch * dpr);
+      if (canvas.width !== bw) canvas.width = bw;
+      if (canvas.height !== bh) canvas.height = bh;
+      gl.viewport(0, 0, bw, bh);
 
       // device px → clip space, then art-space (CSS px) → device px
-      const proj = new DOMMatrix([2 / canvas.width, 0, 0, -2 / canvas.height, -1, 1]);
+      const proj = new DOMMatrix([2 / bw, 0, 0, -2 / bh, -1, 1]);
       base = proj.multiply(new DOMMatrix().scale(dpr)).multiply(new DOMMatrix().translate(-vx, -vy)).multiply(fit);
 
       // the Figma group clip as a scissor rect when the fit matrix is
@@ -501,9 +617,9 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
       if (axisAligned) {
         const sx = Math.max(0, Math.floor((bx0 - vx) * dpr));
         const sy = Math.max(0, Math.floor((by0 - vy) * dpr));
-        const ex = Math.min(canvas.width, Math.ceil((bx1 - vx) * dpr));
-        const ey = Math.min(canvas.height, Math.ceil((by1 - vy) * dpr));
-        scissor = [sx, canvas.height - ey, Math.max(0, ex - sx), Math.max(0, ey - sy)];
+        const ex = Math.min(bw, Math.ceil((bx1 - vx) * dpr));
+        const ey = Math.min(bh, Math.ceil((by1 - vy) * dpr));
+        scissor = [sx, bh - ey, Math.max(0, ex - sx), Math.max(0, ey - sy)];
       } else {
         scissor = null;
       }
@@ -525,7 +641,8 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
         if (!mesh) {
           const polys = flatten(d);
           if (!polys) return false;
-          const m = meshFor(polys);
+          const hole = parseFloat(pathEl.getAttribute("data-lp-hole") || "") || 0;
+          const m = meshFor(polys, hole, vb.width / 2, vb.height / 2);
           const vao = gl.createVertexArray();
           const vbuf = gl.createBuffer();
           if (!vao || !vbuf) return false;
@@ -538,16 +655,15 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
           mesh = { vao, vbuf, fans: m.fans, cover: m.cover };
           meshes.set(d, mesh);
         }
-        const evenOdd = getComputedStyle(pathEl).fillRule === "evenodd";
         const spinCs = getComputedStyle(spin);
-
         const isPop = svg.classList.contains("lp-anim-pop");
         const scs = getComputedStyle(svg);
         if (isPop) {
-          // continue the CSS entrance settle from wherever it is (desktop:
-          // it plays on the DOM ring until the handoff). Phones keep the
-          // DOM pop off (anim.css) — there the first build plays it from
-          // now, like LpArcCanvas did; any later rebuild is settled.
+          // continue the CSS entrance settle from wherever it is when a DOM
+          // pop is running (none at any width since 2026-09-02 — Gecko
+          // reflowed and re-rasterised a 2400px ring on every frame of it);
+          // otherwise the first build plays it from now, later rebuilds are
+          // settled
           const a = typeof svg.getAnimations === "function"
             ? svg.getAnimations().find((k) => (k as CSSAnimation).animationName === "lp-anim-pop")
             : undefined;
@@ -568,7 +684,6 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
           delayMs:
             (parseFloat(spinCs.getPropertyValue("--lp-phase")) || parseFloat(spinCs.animationDelay) || 0) * 1000,
           mesh,
-          evenOdd,
           color,
           viewW: vb.width,
           viewH: vb.height,
@@ -589,13 +704,19 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
 
     const frame = () => {
       raf = 0;
-      if (disposed || lost || !onStage || document.hidden || !gl) return;
+      if (disposed || lost || off || !near || document.hidden || !gl) return;
       if (!rings.length && !build()) {
         raf = requestAnimationFrame(frame); // LpFitVars not there yet — retry
         return;
       }
       const now = performance.now();
+      // ≤ 60 draws/s (see header, 2); the phase clock keeps running
+      if (lastDraw && now - lastDraw < MIN_FRAME_MS) {
+        raf = requestAnimationFrame(frame);
+        return;
+      }
       if (!t0) t0 = now;
+      if (!bootAt) bootAt = now;
       // test hook: freeze the clock at a cycle fraction (gates only);
       // designed delays still apply, so hook 0 == the static artboard incl.
       // the CTA-left ±131.4° de-mirror
@@ -603,6 +724,7 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
       const elapsed = typeof hook === "number" ? hook * LOOP_MS : now - t0;
       const popP = typeof hook === "number" ? 1 : Math.min(1, (now - popT0) / POP_MS);
 
+      gl.stencilMask(0xff);
       gl.clearColor(0, 0, 0, 0);
       gl.disable(gl.SCISSOR_TEST);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
@@ -610,7 +732,8 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
         gl.enable(gl.SCISSOR_TEST);
         gl.scissor(scissor[0], scissor[1], scissor[2], scissor[3]);
       }
-      for (const r of rings) {
+      for (let k = 0; k < rings.length; k++) {
+        const r = rings[k];
         const cycle = ((((elapsed - r.delayMs) % LOOP_MS) + LOOP_MS) % LOOP_MS) / LOOP_MS;
         let w = r.fillW;
         let h = r.fillH;
@@ -631,38 +754,75 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
         gl.uniformMatrix3fv(uM, false, [m.a, m.b, 0, m.c, m.d, 0, m.e, m.f, 1]);
         gl.uniform4fv(uC, r.color);
         gl.bindVertexArray(r.mesh.vao);
-        // pass 1 — winding numbers into the stencil (no color)
-        gl.colorMask(false, false, false, false);
-        gl.stencilFunc(gl.ALWAYS, 0, 0xff);
-        if (r.evenOdd) {
-          gl.stencilOp(gl.KEEP, gl.KEEP, gl.INVERT);
-        } else {
-          gl.stencilOpSeparate(gl.FRONT, gl.KEEP, gl.KEEP, gl.INCR_WRAP);
-          gl.stencilOpSeparate(gl.BACK, gl.KEEP, gl.KEEP, gl.DECR_WRAP);
+        // one stencil bit per ring (see header, 1); an eighth+ ring — never
+        // built, six is the max — would restart on a cleared buffer
+        if (k && k % 8 === 0) {
+          gl.stencilMask(0xff);
+          gl.clear(gl.STENCIL_BUFFER_BIT);
         }
+        const bit = 1 << k % 8;
+        // pass 1 — the outline's parity into this ring's bit (no colour)
+        gl.colorMask(false, false, false, false);
+        gl.stencilMask(bit);
+        gl.stencilFunc(gl.ALWAYS, 0, 0xff);
+        gl.stencilOp(gl.KEEP, gl.KEEP, gl.INVERT);
         for (const [start, count] of r.mesh.fans) gl.drawArrays(gl.TRIANGLE_FAN, start, count);
-        // pass 2 — color where the winding is non-zero, resetting the stencil
+        // pass 2 — colour where the bit is set, writing no stencil
         gl.colorMask(true, true, true, true);
-        gl.stencilFunc(gl.NOTEQUAL, 0, 0xff);
-        gl.stencilOp(gl.ZERO, gl.ZERO, gl.ZERO);
-        gl.drawArrays(gl.TRIANGLES, r.mesh.cover, 3);
+        gl.stencilMask(0);
+        gl.stencilFunc(gl.NOTEQUAL, 0, bit);
+        gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
+        gl.drawArrays(r.mesh.cover[2], r.mesh.cover[0], r.mesh.cover[1]);
       }
       gl.bindVertexArray(null);
       if (!live) {
         live = true;
         art.setAttribute("data-lp-gl", ""); // first frame drew — swap
       }
+      // governor (see header, 5): a loop that cannot keep 12 fps for two
+      // consecutive windows means the GPU (or its readback) is the
+      // bottleneck — every art goes static for the session
+      if (governed && lastDraw) {
+        const d = now - lastDraw;
+        winFrames++;
+        if (d > GOVERNOR_LONG_MS) winLong++;
+        if (now - winStart >= GOVERNOR_WINDOW_MS) {
+          if (now - bootAt > GOVERNOR_WARMUP_MS + GOVERNOR_WINDOW_MS && winFrames < GOVERNOR_MIN_FRAMES && winLong / winFrames > GOVERNOR_LONG_RATIO) {
+            strikes++;
+          } else {
+            strikes = 0;
+          }
+          winStart = now;
+          winFrames = 0;
+          winLong = 0;
+          if (strikes >= GOVERNOR_STRIKES) {
+            lastDraw = now;
+            declareOff();
+            return;
+          }
+        }
+      }
+      lastDraw = now;
       raf = requestAnimationFrame(frame);
     };
 
     const start = () => {
-      if (raf || disposed || lost || !gl) return;
-      if (reduced.matches || !onStage || document.hidden) return;
+      if (raf || disposed || lost || off) return;
+      if (reduced.matches || !near || document.hidden) return;
+      if (!gl && !initGL()) {
+        // no usable WebGL2 — the static artboard stays, for every art
+        declareOff();
+        return;
+      }
       if (live && canvas.width === 1) {
-        // back on stage: restore the drawing buffer (was shrunk off-stage);
+        // back on stage: restore the drawing buffer (was released off-stage);
         // the meshes stay — the rebuild is DOM reads only
         rings = [];
       }
+      lastDraw = 0;
+      winStart = performance.now();
+      winFrames = 0;
+      winLong = 0;
       raf = requestAnimationFrame(frame);
     };
     const stop = () => {
@@ -675,38 +835,44 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
       art.removeAttribute("data-lp-gl");
       art.setAttribute("data-lp-gl-off", ""); // the artboard shows (anim.css)
     };
-
-    if (reduced.matches) {
-      // reduced motion never boots (the artboard shows); a later flip does
-      art.setAttribute("data-lp-gl-off", "");
-    } else if (killSwitch() || !initGL()) {
-      // no usable WebGL2 — the static DOM artboard stays; the attribute
-      // tells LpArcCanvas to take the phone hero right away
-      art.setAttribute("data-lp-gl-off", "");
-      return;
-    }
+    const goOff = () => {
+      // this session's verdict (or a permanent loss): artboard, buffers freed
+      off = true;
+      clearTimeout(shrinkTimer);
+      clearTimeout(recoverTimer);
+      restoreDom();
+      dropMeshes();
+      if (canvas.width !== 1) {
+        canvas.width = 1;
+        canvas.height = 1;
+      }
+    };
 
     const io = new IntersectionObserver(
       (entries) => {
-        onStage = entries.some((e) => e.isIntersecting);
-        if (onStage) start();
+        near = entries.some((e) => e.isIntersecting);
+        clearTimeout(shrinkTimer);
+        if (near) start();
         else {
           stop();
-          // release the (MSAA) drawing buffer while far away; the DOM stays
-          // hidden — nothing is visible off-stage anyway
-          if (gl && live) {
-            canvas.width = 1;
-            canvas.height = 1;
-          }
+          // release the (MSAA) drawing buffer once the art has really gone
+          // — not on a scroll bounce across the margin (see header, 4)
+          shrinkTimer = window.setTimeout(() => {
+            if (near || disposed) return;
+            if (gl && live && canvas.width !== 1) {
+              canvas.width = 1;
+              canvas.height = 1;
+            }
+          }, SHRINK_DELAY_MS);
         }
       },
-      // phones: the same 0.75-viewport slack LpAnimFreeze proved — a fling
-      // at ~100px/frame must not reach a released canvas (ring-less art for
-      // a frame or two: the 2026-08-31 "missing CTA band" look). Desktop
-      // keeps the tighter margin (bigger buffers, more co-residency).
+      // observed: the CANVAS (the hero's visible band; the CTA's box ∩
+      // card), not the art. Phones keep the 0.75-viewport slack LpAnimFreeze
+      // proved — a fling at ~100px/frame must not reach a released canvas
+      // (ring-less art for a frame or two: the 2026-08-31 "missing CTA band"
+      // look). Desktop keeps the tighter margin (bigger buffers).
       { rootMargin: phone ? "75% 0%" : "25% 0%" },
     );
-    io.observe(art);
     // relayout → rebuild, but only when the art actually changed size (the
     // observer also fires once on observe, and on every off-stage/on-stage
     // visibility flip in some engines), and settled — a live drag resize
@@ -720,7 +886,6 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
       }, 120);
     };
     const ro = new ResizeObserver(relayout);
-    ro.observe(art);
     // zoom / monitor change: the buffer scale follows devicePixelRatio
     let dprMq = matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
     const onDpr = () => {
@@ -730,47 +895,116 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
       rings = [];
       start();
     };
-    dprMq.addEventListener("change", onDpr);
     const onMedia = () => {
-      if (!reduced.matches) {
-        if (!gl && !initGL()) return;
-        start();
-      } else restoreDom();
+      if (!reduced.matches) start();
+      else restoreDom();
     };
     const onVisibility = () => (document.hidden ? stop() : start());
+
+    // Context loss (see header, 6): the artboard shows at once; the same
+    // context may come back (webglcontextrestored) — if it does not, a
+    // fresh canvas element gets a fresh context, with backoff
     const onLost = (e: Event) => {
       e.preventDefault();
       lost = true;
       meshes = new Map(); // GPU objects died with the context
       rings = [];
       restoreDom();
+      scheduleRecover();
     };
     const onRestored = () => {
+      if (disposed || !lost) return;
+      clearTimeout(recoverTimer);
       lost = false;
+      gl = null;
       if (initGL()) start();
+      else scheduleRecover();
     };
+    const listen = (c: HTMLCanvasElement) => {
+      c.addEventListener("webglcontextlost", onLost);
+      c.addEventListener("webglcontextrestored", onRestored);
+      io.observe(c);
+    };
+    const unlisten = (c: HTMLCanvasElement) => {
+      c.removeEventListener("webglcontextlost", onLost);
+      c.removeEventListener("webglcontextrestored", onRestored);
+      io.unobserve(c);
+    };
+    const scheduleRecover = () => {
+      clearTimeout(recoverTimer);
+      const delay = RECOVER_DELAYS_MS[recoverAttempt];
+      if (delay == null) {
+        goOff(); // this art stays on the artboard; the others are unaffected
+        return;
+      }
+      recoverTimer = window.setTimeout(() => {
+        if (disposed || !lost) return;
+        recoverAttempt++;
+        // a Gecko canvas whose context is lost for good never gets another
+        // one — a new element does
+        const fresh = document.createElement("canvas");
+        fresh.className = canvas.className;
+        fresh.setAttribute("aria-hidden", "true");
+        fresh.style.cssText = canvas.style.cssText;
+        unlisten(canvas);
+        canvas.insertAdjacentElement("afterend", fresh);
+        if (canvas === reactCanvas) reactCanvas.style.display = "none";
+        else canvas.remove();
+        canvas = fresh;
+        listen(fresh);
+        gl = null;
+        lost = false;
+        if (initGL()) start();
+        else {
+          lost = true;
+          scheduleRecover();
+        }
+      }, delay);
+    };
+
+    const onOff = () => goOff();
+    offHandlers.add(onOff);
+
+    if (reduced.matches) {
+      // reduced motion never boots (the artboard shows); a later flip does
+      art.setAttribute("data-lp-gl-off", "");
+    } else if (killSwitch() || (governed && readVerdict() === "off")) {
+      // no WebGL for this page / session — the static DOM artboard stays;
+      // the attribute tells LpArcCanvas to take the phone hero right away
+      // (`?lp-gl=force` ignores a stored verdict as well as the governor)
+      art.setAttribute("data-lp-gl-off", "");
+      off = true;
+    }
+    // the context is created lazily, when the canvas first comes within
+    // the observer margin (the hero: on the first delivery after mount)
+    listen(canvas);
+    ro.observe(art);
+    dprMq.addEventListener("change", onDpr);
     reduced.addEventListener("change", onMedia);
     document.addEventListener("visibilitychange", onVisibility);
-    canvas.addEventListener("webglcontextlost", onLost);
-    canvas.addEventListener("webglcontextrestored", onRestored);
-    start();
 
     return () => {
       disposed = true;
+      offHandlers.delete(onOff);
       restoreDom();
       art.removeAttribute("data-lp-gl-off"); // a remount decides afresh
       clearTimeout(resizeTimer);
+      clearTimeout(shrinkTimer);
+      clearTimeout(recoverTimer);
       io.disconnect();
       ro.disconnect();
       dprMq.removeEventListener("change", onDpr);
       reduced.removeEventListener("change", onMedia);
       document.removeEventListener("visibilitychange", onVisibility);
-      canvas.removeEventListener("webglcontextlost", onLost);
-      canvas.removeEventListener("webglcontextrestored", onRestored);
+      unlisten(canvas);
       // GPU buffers go; the context itself is left to die with the canvas.
       // Forcing loseContext() here poisoned React's dev double-mount: the
       // second effect run got the same, now-lost, context back and bailed.
       dropMeshes();
+      if (canvas !== reactCanvas) {
+        canvas.remove();
+        reactCanvas.style.display = "";
+      }
     };
   }, [variant]);
 

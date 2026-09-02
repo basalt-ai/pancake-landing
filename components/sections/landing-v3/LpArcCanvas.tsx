@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Mobile hero-arc renderer — brings the rainbow's 20s rotation back to
@@ -60,6 +60,15 @@ interface Ring {
 
 export function LpArcCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // flips when the viewport crosses the phone breakpoint → the effect
+  // re-runs and boots (or tears down) the renderer
+  const [phoneKey, setPhoneKey] = useState(0);
+  useEffect(() => {
+    const phone = matchMedia("(max-width: 767px)");
+    const onChange = () => setPhoneKey((k) => k + 1);
+    phone.addEventListener("change", onChange);
+    return () => phone.removeEventListener("change", onChange);
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -67,6 +76,12 @@ export function LpArcCanvas() {
     if (!canvas || !art) return;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
     const phone = matchMedia("(max-width: 767px)");
+    // Phone-only renderer: on desktop the canvas is display:none (anim.css)
+    // and this loop can never draw — creating a 2D context (a canvas IPC
+    // channel in Gecko), three observers and the 1.5s verdict timer there
+    // was pure hydration cost. A viewport that later shrinks to a phone
+    // re-runs the effect through the `phoneKey` state below.
+    if (!phone.matches) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -310,7 +325,7 @@ export function LpArcCanvas() {
       reduced.removeEventListener("change", onMedia);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, []);
+  }, [phoneKey]);
 
   return <canvas ref={canvasRef} className="lp-arc-canvas" aria-hidden="true" />;
 }

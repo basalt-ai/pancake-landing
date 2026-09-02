@@ -13,7 +13,7 @@ import { useEffect } from "react";
  *
  * Mechanism: observe each animation-owning section root; further than 1.5
  * viewports from the screen it gets data-lp-offstage, and anim.css drops the
- * members' animation-name (plus the big tracks' will-change) so WebKit
+ * members' animation-name (plus the marquee members' will-change) so WebKit
  * decomposes the layers and frees the memory. The frozen pose is the static
  * artboard — the exact reduced-motion contract. On re-entry each member
  * restarts with animation-delay = designed-delay − (elapsed mod duration) on
@@ -39,9 +39,12 @@ const STAGES = [
   ".lp-tst-strip",
 ].join(", ");
 
-/** Animated members inside a stage (mirror of the anim.css offstage block). */
+/** Animated members inside a stage (mirror of the anim.css offstage block).
+    The marquees animate per card / per copy, never the track: Gecko refuses
+    to composite a transform animation on a frame wider than its 4096-device-px
+    prerender cap (testimonials.css / marquee.css). */
 const MEMBERS =
-  ".lp-anim-spin--cw, .lp-anim-spin--ccw, .lp-anim-bubble, .lp-feat-ringfx i, .lp-tst-track, .lp-marquee__track";
+  ".lp-anim-spin--cw, .lp-anim-spin--ccw, .lp-anim-bubble, .lp-feat-ringfx i, .lp-tst-track .lp-tst-card, .lp-marquee__seq";
 
 export function LpAnimFreeze() {
   useEffect(() => {
@@ -57,7 +60,8 @@ export function LpAnimFreeze() {
     // Designed timing per member, captured from computed style before the
     // first freeze ever overrides animation-delay inline. Only the phone
     // mechanism needs it (name:none restarts the animation on thaw; desktop
-    // resumes the paused clock exactly where it stopped).
+    // resumes the paused clock exactly where it stopped), so only the phone
+    // path captures it.
     const timing = new WeakMap<Element, { delay: number; duration: number }>();
 
     const thaw = (stage: HTMLElement) => {
@@ -79,14 +83,20 @@ export function LpAnimFreeze() {
           if (entry.isIntersecting) {
             thaw(stage);
           } else {
-            stage.querySelectorAll<HTMLElement>(MEMBERS).forEach((m) => {
-              if (timing.has(m)) return;
-              const cs = getComputedStyle(m);
-              timing.set(m, {
-                delay: parseFloat(cs.animationDelay) || 0,
-                duration: parseFloat(cs.animationDuration) || 0,
+            // Phone-only: desktop pauses in place and never reads `timing`,
+            // and each getComputedStyle here forces style inside a
+            // content-visibility:auto subtree (Gecko pays that during
+            // hydration).
+            if (phone.matches) {
+              stage.querySelectorAll<HTMLElement>(MEMBERS).forEach((m) => {
+                if (timing.has(m)) return;
+                const cs = getComputedStyle(m);
+                timing.set(m, {
+                  delay: parseFloat(cs.animationDelay) || 0,
+                  duration: parseFloat(cs.animationDuration) || 0,
+                });
               });
-            });
+            }
             stage.setAttribute("data-lp-offstage", "");
           }
         }

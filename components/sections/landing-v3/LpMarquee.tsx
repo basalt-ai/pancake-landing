@@ -8,7 +8,7 @@
  * <img> paints them black; marquee.css greys them to the old strip's tone
  * (mix-blend multiply ×0.43 on the track). The 8-logo sequence renders
  * COPY_COUNT times and CSS scrolls the track left by exactly one sequence
- * (translateX(-100% / COPY_COUNT)) — every copy is the same width, so the
+ * (translateX(-100%) of each copy (marquee.css: per-copy animations — Gecko will not composite a transform animation on a track wider than 4096 device px)) — every copy is the same width, so the
  * wrap is pixel-identical and seamless. Static under prefers-reduced-motion.
  * Decorative: empty alts + aria-hidden track.
  */
@@ -37,7 +37,7 @@ const LOGOS: StripLogo[] = [
 /**
  * Copies of the sequence. 4 × 1581px ≈ 6324px of track: coverage holds up to
  * ~4743px-wide viewports (track − one sequence ≥ viewport), comfortably past
- * the 2560px requirement. Keep in sync with the -100%/4 in marquee.css.
+ * the 2560px requirement. Keep in sync with the per-copy -100% keyframe in marquee.css.
  */
 const COPY_COUNT = 4;
 
