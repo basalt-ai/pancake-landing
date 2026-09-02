@@ -35,7 +35,7 @@ const STEPS: Step[] = [
     body: "Pancake turns your website into a living plan.\nWho buys from you, what to say to them, and where to show up. Always up to date.",
     video: "/how/brain-research-loop.mp4",
     poster: "/how/brain-research-loop-poster.jpg",
-    posterAt: 7.5,
+    posterAt: 13.3,
     alt: "Animation: a website address is typed and researched; from the Studio Pelican node a knowledge graph blooms — purple, green, pink, orange and blue branches — then a market profile fills in: Company, Offering, Ideal clients.",
   },
   {
