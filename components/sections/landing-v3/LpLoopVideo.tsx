@@ -3,43 +3,40 @@
 import { useEffect, useRef } from "react";
 
 /**
- * v3 port of components/sections/landing/LoopVideo.tsx (lp scope — don't import
- * the v2 one, different css namespace). Same three behaviors:
+ * Step animation: plays ONCE, when its card comes into view, and then holds
+ * its last frame as the still (founder 2026-09-02: "les animations démarrent
+ * quand l'écran est focalisé sur l'animation … l'image statique demeure à la
+ * fin" — the brain, the Agents view, the filled calendar). Scrolled away
+ * before the end → paused, resumed on return; once ended it never restarts.
+ *
  * - raw-HTML tag so the `muted` attribute survives SSR (facebook/react#10389);
- * - IntersectionObserver plays it in view and pauses it offscreen (three
- *   1080x1080 loops decoding for the whole visit is real battery on mobile);
- * - prefers-reduced-motion holds it on a still, and a flip of the preference
- *   mid-visit is honored.
+ * - IntersectionObserver at 60 % visibility decides "focused on it";
+ * - prefers-reduced-motion shows the final still (seek to the end, no motion),
+ *   and a flip of the preference mid-visit is honored.
  * The host div is the media card itself (className comes from the caller);
  * the inner video is absolutely positioned so it can never change the card box.
  *
- * Never a play button (founder 2026-09-02, iPhone: "pourquoi les motions ont
- * un bouton play?? pas bien"). In Low Power Mode (and under aggressive
- * thermal mitigation) iOS denies every play() outside a user gesture AND
- * paints its own start-playback glyph — but only on a video carrying the
- * `autoplay` content attribute (HTMLMediaElement::shouldForceControlsDisplay;
- * the ::-webkit-media-controls CSS hides are a no-op on modern iOS). So:
- * no `autoplay` attribute (the observer starts playback anyway), a poster —
- * a "full" frame of the loop, the still the card shows whenever it is not
- * playing — and one retry of play() on the first gesture anywhere, for
- * every denied loop at once: WebKit lifts the restriction per element for
- * good when play() runs inside that gesture, so the observer keeps working
- * afterwards. Playback starts from the poster's own instant, so the still
- * and the motion are one continuous frame.
+ * Never a play button (founder 2026-09-02, iPhone). In Low Power Mode (and
+ * under aggressive thermal mitigation) iOS denies every play() outside a user
+ * gesture AND paints its own start-playback glyph — but only on a video
+ * carrying the `autoplay` content attribute (HTMLMediaElement::
+ * shouldForceControlsDisplay; the ::-webkit-media-controls CSS hides are a
+ * no-op on modern iOS). So: no `autoplay` attribute (the observer starts
+ * playback), a poster = the animation's first frame (the still the card
+ * shows before it starts), and one retry of play() on the first gesture
+ * anywhere for every denied video at once: WebKit lifts the restriction per
+ * element for good when play() runs inside that gesture.
  */
 
-/** every mounted loop → its "play inside a gesture" routine. Once one loop
-    is denied, the first gesture runs it for ALL of them — including the
-    ones still below the fold, which would otherwise be denied in their turn
-    and need a second tap (the restriction is per element). */
-const loops = new Map<HTMLVideoElement, () => void>();
+/** every mounted video → its "play inside a gesture" routine (see header) */
+const videos = new Map<HTMLVideoElement, () => void>();
 let unlockArmed = false;
 // activation-triggering events (scroll is not a gesture)
 const GESTURES = ["touchend", "pointerup", "click", "keydown"] as const;
 const onGesture = () => {
   unlockArmed = false;
   for (const g of GESTURES) document.removeEventListener(g, onGesture, true);
-  loops.forEach((resume) => resume());
+  videos.forEach((resume) => resume());
 };
 const armUnlock = () => {
   if (unlockArmed) return;
@@ -52,15 +49,12 @@ export function LpLoopVideo({
   alt,
   className,
   poster,
-  posterAt = 0,
 }: {
   src: string;
   alt: string;
   className?: string;
-  /** still shown while not playing (see header) */
+  /** the animation's first frame — shown until it starts */
   poster?: string;
-  /** seconds into the loop the poster was taken — playback starts there */
-  posterAt?: number;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
 
@@ -74,25 +68,28 @@ export function LpLoopVideo({
     video.playsInline = true;
     const motionMq = matchMedia("(prefers-reduced-motion: reduce)");
     let inView = false;
-    let seeked = false;
+    let done = false;
 
-    // one seek to the poster's instant, as soon as the timeline exists
-    const seekToPoster = () => {
-      if (seeked || !(posterAt > 0) || video.readyState < 1) return;
-      seeked = true;
+    // reduced motion: the final still, no motion at all
+    const showEnd = () => {
+      if (video.readyState < 1 || !isFinite(video.duration)) return;
+      video.pause();
       try {
-        video.currentTime = posterAt;
+        video.currentTime = Math.max(0, video.duration - 0.05);
       } catch {
-        /* not seekable yet — the poster still stands */
+        /* not seekable yet — the poster stands */
       }
     };
 
     const sync = () => {
-      if (motionMq.matches || !inView) {
-        video.pause();
+      if (motionMq.matches) {
+        showEnd();
         return;
       }
-      seekToPoster();
+      if (!inView || done) {
+        if (!done) video.pause();
+        return;
+      }
       const p = video.play();
       if (!p) return;
       p.then(
@@ -111,9 +108,8 @@ export function LpLoopVideo({
     };
     // inside a gesture: play() lifts this element's restriction for good;
     // then the observer contract applies (off-screen → paused)
-    loops.set(video, () => {
-      if (motionMq.matches) return;
-      seekToPoster();
+    videos.set(video, () => {
+      if (motionMq.matches || done) return;
       void video.play().then(
         () => {
           host.dataset.lpVideo = "playing";
@@ -122,29 +118,43 @@ export function LpLoopVideo({
         () => {},
       );
     });
+    const onEnded = () => {
+      done = true;
+      host.dataset.lpVideo = "done";
+    };
     const onMotion = () => {
-      if (motionMq.matches && seeked) video.currentTime = posterAt;
+      if (!motionMq.matches && !done) {
+        // preference lifted mid-visit: start over from the beginning if in view
+        try {
+          video.currentTime = 0;
+        } catch {
+          /* noop */
+        }
+      }
       sync();
     };
 
-    video.addEventListener("loadedmetadata", seekToPoster);
-    seekToPoster();
+    video.addEventListener("ended", onEnded);
+    video.addEventListener("loadedmetadata", () => {
+      if (motionMq.matches) showEnd();
+    });
+    if (motionMq.matches) showEnd();
     const io = new IntersectionObserver(
       (entries) => {
         inView = entries.some((e) => e.isIntersecting);
         sync();
       },
-      { threshold: 0.25 },
+      { threshold: 0.6 },
     );
     io.observe(video);
     motionMq.addEventListener("change", onMotion);
     return () => {
       io.disconnect();
-      loops.delete(video);
-      video.removeEventListener("loadedmetadata", seekToPoster);
+      videos.delete(video);
+      video.removeEventListener("ended", onEnded);
       motionMq.removeEventListener("change", onMotion);
     };
-  }, [posterAt]);
+  }, []);
 
   const posterAttr = poster ? ` poster="${poster}"` : "";
   return (
@@ -154,8 +164,8 @@ export function LpLoopVideo({
       role="img"
       aria-label={alt}
       dangerouslySetInnerHTML={{
-        // no `autoplay` — see header; muted stays a content attribute (SSR)
-        __html: `<video class="lp-loop-video" src="${src}"${posterAttr} muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback></video>`,
+        // no `autoplay`, no `loop` — see header; muted stays a content attribute (SSR)
+        __html: `<video class="lp-loop-video" src="${src}"${posterAttr} muted playsinline preload="auto" disablepictureinpicture disableremoteplayback></video>`,
       }}
     />
   );
