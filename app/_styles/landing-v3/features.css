@@ -110,10 +110,23 @@
   left: 80px;
 }
 
-/* the zone hosts the animation: the video is absolute inset 0 (steps.css
-   .lp-loop-video), same 560/621 aspect as the master → cover crops nothing */
+/* The zone hosts the animation: the video is absolute inset 0 (steps.css
+   .lp-loop-video), same 560/621 aspect as the master → cover crops nothing. */
 .lp-feat-mockzone {
   overflow: hidden;
+}
+
+/* Figma node 4389:863 lets feature-1's annotation paint 21px beyond the
+   560px frame. Its dedicated 581×621 render captures that overflow while the
+   layout box stays 560×621, so the instance itself remains at x31 exactly. */
+.lp-feat-mockzone--signals {
+  overflow: visible;
+}
+.lp-feat-mockzone--signals .lp-loop-video {
+  left: -3.75%;
+  max-width: none;
+  right: auto;
+  width: 103.75%;
 }
 
 /* ── responsive ── */

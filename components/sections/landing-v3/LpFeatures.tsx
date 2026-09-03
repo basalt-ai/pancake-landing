@@ -6,10 +6,9 @@ import { LpLoopVideo } from "@/components/sections/landing-v3/LpLoopVideo";
  * separators. Each card's mock UI is an animation now (founder 2026-09-02:
  * "animate the four buckets, fully derived from the designer's picture, the
  * picture is the final screen"): rendered in pancake-studio shorts/feat-*-anim
- * from the very mock markup/CSS this file used to carry, 1120×1242 = the
- * 560×621 media zone at 2×. LpLoopVideo plays it once when the card comes
- * into view and holds the designer's picture as the last frame; the poster
- * is the animation's first frame.
+ * from the very mock markup/CSS this file used to carry. LpLoopVideo plays it
+ * once when the card comes into view and holds the designer's picture as the
+ * last frame; the poster is the animation's first frame.
  */
 
 function FeatureText({ title, body, tag }: { title: string; body: string; tag?: string }) {
@@ -30,6 +29,7 @@ type Feature = {
   video: string;
   poster: string;
   alt: string;
+  mockClassName?: string;
 };
 
 const FEATURES: Feature[] = [
@@ -40,6 +40,7 @@ const FEATURES: Feature[] = [
     body: "Choose the keywords, competitors, influencers, hiring activity, and tech stacks that matter. Pancake finds matching buyers and keeps the source attached.",
     video: "/lp/feat-signals.mp4",
     poster: "/lp/feat-signals-poster.jpg",
+    mockClassName: "lp-feat-mockzone--signals",
     alt: "Animation: a Signals panel where keyword mentions, competitor engagement, companies hiring and technologies used switch on one by one (4 active), then a Roles panel where Sales, Marketing and Customer success get checked (3 selected).",
   },
   {
@@ -73,7 +74,12 @@ function FeatureCard({ f }: { f: Feature }) {
     <>
       <article className="lp-feat-card" data-side={f.side}>
         <FeatureText tag={f.tag} title={f.title} body={f.body} />
-        <LpLoopVideo className="lp-feat-mockzone" src={f.video} poster={f.poster} alt={f.alt} />
+        <LpLoopVideo
+          className={`lp-feat-mockzone${f.mockClassName ? ` ${f.mockClassName}` : ""}`}
+          src={f.video}
+          poster={f.poster}
+          alt={f.alt}
+        />
       </article>
       <hr className="lp-feat-sep" />
     </>
