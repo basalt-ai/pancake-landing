@@ -330,6 +330,13 @@ body:has(main.lp) {
   position: absolute;
   z-index: -1;
 }
+/* Gecko may composite the animated flood separately and skip its ancestor's
+   custom-path clip. Self-clip that layer without changing other engines' AA. */
+@supports (-moz-appearance: none) {
+  .lp-btn-fx {
+    clip-path: inherit;
+  }
+}
 .lp-btn-fx .c {
   border-radius: 50%;
   position: absolute;
