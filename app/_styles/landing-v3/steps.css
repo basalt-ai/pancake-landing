@@ -1,4 +1,4 @@
-/* ── Steps — "Pancake Sells it" (Figma 4257:4926, 1654×1773) ──────────────
+/* ── Steps — "Pancake Sells it" (Figma 4636:3164 — 2026-09-02 revision, 1622×1741 org) ──────────────
    Wrapper p-16 → org: flex col, gap 66, py-128 px-392, overflow clip; rows
    (656 text + 16 + 464 media = 1136) center in the viewport. Checkerboard via
    row-reverse on even rows. The flexible spacer inside the text card pushes
@@ -90,7 +90,10 @@
 .lp-steps__body {
   color: var(--lp-text);
   font-size: var(--lp-text-md);
-  line-height: 1.2;
+  /* 4636:3164 sets the body at 150% (the 2026-08 artboard had 120%) — with
+     the spacer pushing title+body to the card floor, this is also what puts
+     the title where the artboard has it. */
+  line-height: 1.5;
   white-space: pre-line;
 }
 .lp-steps__media {
@@ -102,10 +105,23 @@
   position: relative;
   width: 464px;
 }
-/* Studio loop fills the card. Absolute so it can never change the card box
-   (no layout shift, desktop or the aspect-ratio responsive card); cover +
-   center crops the 1080×1080 cream canvas to 464×426 seamlessly. inherit'd
-   radius doubles the overflow clip for Safari video corners. */
+/* The illustration IS the card: a 464×426 SVG exported from the Figma media
+   card (cream canvas, radius baked in) — absolute so it can never change the
+   card box (no layout shift), contain so the responsive card (same 464/426
+   aspect at every width, see below) never crops a single pixel of it. */
+.lp-steps__art {
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  inset: 0;
+  object-fit: contain;
+  object-position: center;
+  position: absolute;
+  width: 100%;
+}
+/* Studio loop in the card (step 01 since 2026-09-02, the storyboard loops replace
+   the illustrations one by one as the founder approves them). 1080×1080 master
+   composed with a 464/426 safe band: cover crops only the cream margins. */
 .lp-loop-video {
   border-radius: inherit;
   display: block;
@@ -116,10 +132,9 @@
   position: absolute;
   width: 100%;
 }
-/* iOS paints its own start-playback glyph over any inline video it refuses
-   to autoplay (Low Power Mode, Reduce Motion) — founder 2026-09-02: "pourquoi
-   les motions ont un bouton play". The poster is the still; no native chrome
-   ever (LpLoopVideo retries play() on the first gesture). */
+/* iOS paints its own start-playback glyph over any inline video it refuses to
+   autoplay (Low Power Mode, Reduce Motion) — founder 2026-09-02: no play button
+   ever. The poster is the still; LpLoopVideo retries play() on the first gesture. */
 .lp-loop-video::-webkit-media-controls,
 .lp-loop-video::-webkit-media-controls-panel,
 .lp-loop-video::-webkit-media-controls-start-playback-button {
@@ -164,9 +179,10 @@
 /* Mobile — Figma artboard 4389:8164, frame 4389:8215 "Frame 186" (its overlap
    twin 4389:8187 is a byte-identical duplicate). Org: pad 16, gap 48, text-only
    step cards 370 wide — the artboard's 370×240 media area is an EMPTY
-   rgba(0,0,0,.04) placeholder; since PR #254 the studio loops DO render on
-   phones in that slot (poster still + observer-driven playback, see
-   LpLoopVideo.tsx — the placeholder tone only shows before the poster). Kicker
+   rgba(0,0,0,.04) placeholder; the illustrations render in that slot at the
+   desktop card's 464/426 aspect (370×340) so nothing is cropped (founder
+   2026-09-02: "make sure the frames in the mobile version are not cropping
+   the visuals"). Kicker
    falls back to the base 24px/32px — exactly the artboard values. Numeral keeps
    the desktop 57.336/1.2 (Figma: 120% → 69px box) and per-step colors. Figma
    keeps a 1px spacer between numeral and title (16+1+16 = 33px visual gap) —
@@ -195,10 +211,9 @@
   .lp-steps__list {
     gap: 48px;
   }
-  /* Artboard step = ONE cream card (r30): 370×240 media slot on top, text
-     below (QA 2026-08-31: the grey slots in the artboard are media
-     placeholders — they host the studio loops, per the founder's standing
-     directive that the loop trio lives in the step cards). */
+  /* Artboard step = ONE cream card (r30): media slot on top, text below
+     (QA 2026-08-31: the grey slots in the artboard are media placeholders —
+     they host the step illustrations, full-bleed and uncropped). */
   .lp-steps__row,
   .lp-steps__row:nth-child(even) {
     background: var(--lp-card-cream);
@@ -228,14 +243,23 @@
      copy string's "\n" after "living plan." is a desktop-only break, so let
      pre-line collapse to normal here without touching the copy. Titles keep
      pre-line: their explicit breaks match the artboard's 3-line stacks. */
+  /* Step 03's founder line break ("…the meeting. / You close it.") leaves a
+     one-word middle line ("meeting.") on phones — wrap it naturally there.
+     Step 01 keeps its break: the phone artboard shows exactly that shape. */
+  .lp-steps__row:nth-child(3) .lp-steps__step-title {
+    white-space: normal;
+  }
   .lp-steps__body {
+    /* the phone artboard (4389:8215) keeps the body at 120% — measured 19px
+       line pitch — while the desktop revision moved to 150% */
+    line-height: 1.2;
     white-space: normal;
   }
   .lp-steps__media {
-    /* artboard placeholder tone shows until the video's first paint;
-       flex:none beats ≤1360's basis-0 (zero height in the column) */
-    aspect-ratio: 370 / 240;
-    background: rgba(0, 0, 0, 0.04);
+    /* the illustration carries its own cream canvas; the placeholder tone is
+       only ever visible before the SVG has decoded */
+    aspect-ratio: 464 / 426;
+    background: var(--lp-card-cream);
     border-radius: 0;
     display: block;
     flex: none;
