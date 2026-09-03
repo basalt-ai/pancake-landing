@@ -98,9 +98,14 @@ back during a fidelity pass:
 - Testimonials: two counter-scrolling marquees (~28.75 px/s), 48px between
   rows (Figma had 96), 8 distinct fictional authors/tweets; phones keep the
   old single stacked column (row 2 hidden there).
-- Signals card: fixed "clay alternatives" sticker (bubble+text share one
-  rotated box) + 5 popping quips (`.lp-feat-f1-quip`, one at a time, hidden
-  under reduced motion).
+- "How Pancake finds customers": the four mock UIs are animations now
+  (pancake-studio `shorts/feat-{signals,warm-message,ai-search,learns}-anim`,
+  1120×1242 = the 560×621 zone at 2×, rendered from the mock markup/CSS this
+  repo used to carry). `LpLoopVideo` plays each once when its card is in view
+  and holds the designer's picture as the last frame; the zone keeps the
+  560/621 aspect at every width (`/public/lp/feat-*.mp4` + first-frame
+  posters). The CSS choreography, ring-flow effect and `LpRingFlow` left with
+  them (2026-09-02).
 - Footer content sits 48px closer to the pricing rings (height 467, brand
   top 56.43, cols top 76.75; Figma: 515/104.43/124.75).
 - /careers runs on this design system (`app/careers/page.tsx` +

@@ -34,8 +34,6 @@ import { useEffect } from "react";
 const STAGES = [
   ".lp-banner__card",
   ".lp-marquee",
-  ".lp-feat-f2",
-  ".lp-feat-f4",
   ".lp-tst-strip",
 ].join(", ");
 
@@ -44,7 +42,7 @@ const STAGES = [
     to composite a transform animation on a frame wider than its 4096-device-px
     prerender cap (testimonials.css / marquee.css). */
 const MEMBERS =
-  ".lp-anim-spin--cw, .lp-anim-spin--ccw, .lp-anim-bubble, .lp-feat-ringfx i, .lp-tst-track .lp-tst-card, .lp-marquee__seq";
+  ".lp-anim-spin--cw, .lp-anim-spin--ccw, .lp-anim-bubble, .lp-tst-track .lp-tst-card, .lp-marquee__seq";
 
 export function LpAnimFreeze() {
   useEffect(() => {
