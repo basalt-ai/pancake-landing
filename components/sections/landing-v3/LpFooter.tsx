@@ -4,6 +4,9 @@
  * x1011/1203/1395). Internal targets use relative hrefs (same tab); external
  * targets open in a new tab. mailto:hey@pancake.ai is VERBATIM from Figma
  * (flagged in the PR — probably should be hey@getpancake.ai).
+ * "Affiliate program" is a founder addition (2026-09-03: "Affiliate should
+ * appear in the footer of the landing page") — the artboard's Company column
+ * has four links; don't drop it to match Figma.
  */
 
 type FootLink = { label: string; href: string; external?: boolean };
@@ -24,6 +27,7 @@ const COLUMNS: { id: string; title: string; links: FootLink[] }[] = [
     links: [
       { label: "About", href: "/#why" },
       { label: "Careers", href: "/careers" },
+      { label: "Affiliate program", href: "https://partners.dub.co/pancake-ai", external: true },
       { label: "Book a call", href: "https://zcal.co/i/ZEHl48rv", external: true },
       { label: "Contact", href: "mailto:hey@pancake.ai" },
     ],

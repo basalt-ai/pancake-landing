@@ -19,6 +19,15 @@ export interface PostMeta extends PostFrontmatter {
 
 const POSTS_DIR = path.join(process.cwd(), "content/blog");
 
+/** "September 3, 2026" — the one date format the blog surfaces show. */
+export function formatPostDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
 export function getAllPosts(): PostMeta[] {
   if (!fs.existsSync(POSTS_DIR)) return [];
   const files = fs.readdirSync(POSTS_DIR).filter((f) => f.endsWith(".mdx"));

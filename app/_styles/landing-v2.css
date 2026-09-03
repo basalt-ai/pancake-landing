@@ -1707,7 +1707,8 @@ body.menu-open:has(main.lv2) {
 .lv2-footer-cols {
   flex: 1 1 auto;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* 3 since 2026-09-03 — the "Compare" column left LandingFooter.tsx */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 2rem;
 }
 @media (max-width: 767px) {

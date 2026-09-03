@@ -14,7 +14,11 @@ import Link from "next/link";
 type FooterLink = { href: string; label: string; external?: boolean };
 
 // Primary v2 destinations plus the editorial routes founders still need to
-// discover from every page.
+// discover from every page. The "Compare" column (Gojiberry / Lemlist /
+// Origami vs Pancake) left on 2026-09-03: those pages carry the previous
+// positioning and the founder wants them out of the site's link tree
+// ("you're finding again some pages like pancake vs viktor…"). The routes
+// still exist; only the links went.
 const COLUMNS: { title: string; links: FooterLink[] }[] = [
   {
     title: "Product",
@@ -34,14 +38,6 @@ const COLUMNS: { title: string; links: FooterLink[] }[] = [
       { href: "https://zcal.co/i/ZEHl48rv", label: "Book a call", external: true },
       { href: "mailto:hey@pancake.ai", label: "Contact" },
       { href: "/support", label: "Support" },
-    ],
-  },
-  {
-    title: "Compare",
-    links: [
-      { href: "/gojiberry-vs-pancake", label: "Gojiberry vs Pancake" },
-      { href: "/lemlist-vs-pancake", label: "Lemlist vs Pancake" },
-      { href: "/origami-vs-pancake", label: "Origami vs Pancake" },
     ],
   },
   {

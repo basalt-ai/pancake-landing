@@ -1,114 +1,346 @@
-/* Blog post prose styles — scoped to .blog-prose */
-.blog-prose {
-  font-size: var(--font-scale-0);
-  line-height: 1.75;
-  color: var(--text);
-}
+/* ── Landing v3 · Blog (/blog, /blog/[slug]) ──────────────────────────────
+   Subpage in the Figma design language, no artboard of its own (same footing
+   as careers.css): page bg #fbf6f1 via .lp, Aeonik Condensed display
+   headings, Fono body, cream cards on the 1296 content grid, left-justified
+   copy (founder rule). NOT in the landing-v3.css manifest — imported by the
+   two blog routes only, so the homepage bundle doesn't carry it.
 
-.blog-prose p {
-  margin: 1.25rem 0;
-}
+   2026-09-03: the blog left the v1 chrome (HomeNav + the shared Footer, whose
+   link tree still surfaced the roadmap, a beta sign-in and the seven
+   comparison pages of the previous positioning) for the v3 nav + footer, so
+   every page one click from the homepage shows the same link set (founder:
+   "the structure of the links is a bit sketchy"). */
 
-.blog-prose h2 {
-  font-family: var(--font-display);
-  font-size: var(--font-scale-2);
+/* ── hero band: index title / post header ── */
+.lp-blog-hero {
+  padding: 96px 16px 24px;
+}
+.lp-blog-hero__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.lp-blog-hero__title {
+  margin: 0;
+  max-width: 880px;
+}
+.lp-blog-lede {
+  color: var(--lp-ink-tr-70);
+  font-size: var(--lp-text-lg);
+  line-height: 1.5;
+  max-width: 640px;
+}
+.lp-blog-meta {
+  align-items: center;
+  color: var(--lp-subtle-text);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: var(--lp-text-sm);
+  gap: 4px 12px;
+  line-height: 1.5;
+}
+.lp-blog-meta__pin {
+  color: var(--lp-interactive-text);
+  font-size: var(--lp-text-xsm);
   font-weight: 600;
-  margin: 2.5rem 0 1rem;
-  color: var(--text);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.lp .lp-blog-back {
+  color: var(--lp-interactive-text);
+  font-size: var(--lp-text-sm);
+  line-height: 1.5;
+  width: fit-content;
+}
+.lp .lp-blog-back:hover {
+  text-decoration: underline;
+}
+
+/* ── index: one cream card per post ── */
+.lp-blog-list {
+  padding: 40px 16px 96px;
+}
+.lp-blog-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  max-width: 880px;
+  padding: 0;
+}
+.lp-blog-card {
+  background: var(--lp-card-cream);
+  border-radius: var(--lp-r-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 32px 40px;
+}
+.lp-blog-card__title {
+  font-size: var(--lp-text-2xlg);
+  letter-spacing: -0.8294px;
+  line-height: 1.2;
+  margin: 4px 0 0;
+}
+.lp-blog-card__desc {
+  color: var(--lp-ink-tr-70);
+  font-size: var(--lp-text-md);
+  line-height: 1.5;
+}
+/* Feedback = underline, never a dim (design rule). */
+.lp a.lp-blog-card:hover .lp-blog-card__title {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.lp-blog-empty {
+  background: var(--lp-card-cream);
+  border-radius: var(--lp-r-lg);
+  font-size: var(--lp-text-lg);
+  line-height: 1.5;
+  max-width: 880px;
+  padding: 40px 48px;
+}
+
+/* ── post ── */
+.lp-blog-post__title {
+  font-size: var(--lp-text-5xlg);
+  letter-spacing: -1.4335px;
+  line-height: 1.1;
+  margin: 0;
+  max-width: 880px;
+}
+.lp-blog-post__lede {
+  max-width: 760px;
+}
+.lp-blog-article {
+  padding: 40px 16px 96px;
+}
+.lp-blog-article__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  max-width: 760px;
+}
+
+/* ── markdown body — scoped under .lp-blog-prose; the `.lp .x` prefix where
+   a rule must outrank foundation's `.lp a` / `.lp p` (both 0,1,1) ── */
+.lp-blog-prose {
+  font-size: var(--lp-text-md);
+  line-height: 1.7;
+}
+.lp-blog-prose > :first-child {
+  margin-top: 0;
+}
+.lp .lp-blog-prose p {
+  margin: 20px 0;
+}
+.lp-blog-prose h2,
+.lp-blog-prose h3 {
+  font-family: var(--lp-font-cond);
+  font-weight: 600;
   line-height: 1.2;
 }
-
-.blog-prose h3 {
-  font-family: var(--font-display);
-  font-size: var(--font-scale-1);
+.lp-blog-prose h2 {
+  font-size: var(--lp-text-3xlg);
+  letter-spacing: -0.9954px;
+  margin: 48px 0 16px;
+}
+.lp-blog-prose h3 {
+  font-size: var(--lp-text-2xlg);
+  letter-spacing: -0.8294px;
+  margin: 36px 0 12px;
+}
+.lp-blog-prose h4 {
+  font-size: var(--lp-text-lg);
   font-weight: 600;
-  margin: 2rem 0 0.75rem;
-  color: var(--text);
+  line-height: 1.4;
+  margin: 28px 0 8px;
 }
-
-.blog-prose ul,
-.blog-prose ol {
-  margin: 1rem 0;
-  padding-left: 1.5rem;
+.lp-blog-prose ul,
+.lp-blog-prose ol {
+  margin: 20px 0;
+  padding-left: 24px;
 }
-
-.blog-prose li {
-  margin: 0.4rem 0;
+.lp-blog-prose li {
+  margin: 6px 0;
 }
-
-.blog-prose strong {
+.lp .lp-blog-prose li > p {
+  margin: 0;
+}
+.lp-blog-prose strong {
   font-weight: 600;
-  color: var(--text);
 }
-
-.blog-prose a {
-  color: var(--text);
+.lp .lp-blog-prose a {
+  color: var(--lp-interactive-text);
+  text-decoration: underline;
   text-underline-offset: 3px;
-  transition: opacity 0.15s;
 }
-
-.blog-prose a:hover {
-  opacity: 0.7;
+.lp-blog-prose hr {
+  border: 0;
+  border-top: 1px solid var(--lp-stroke);
+  margin: 40px 0;
 }
-
-.blog-prose hr {
-  border: none;
-  border-top: 1px solid var(--stroke);
-  margin: 2.5rem 0;
+.lp-blog-prose blockquote {
+  border-left: 3px solid var(--lp-stroke);
+  color: var(--lp-ink-tr-70);
+  margin: 24px 0;
+  padding-left: 20px;
 }
-
-.blog-prose blockquote {
-  border-left: 3px solid var(--stroke);
-  padding-left: 1rem;
-  color: var(--subtle-text);
-  margin: 1.5rem 0;
-}
-
-.blog-prose code {
-  font-family: var(--font-body);
+.lp-blog-prose code {
+  background: var(--lp-ink-30);
+  border-radius: var(--lp-r-2xsm);
+  font-family: var(--lp-font-fono);
   font-size: 0.9em;
-  background: var(--inverted-surface);
-  color: var(--text-on-inverted-surface);
-  padding: 0.15em 0.35em;
-  border-radius: 4px;
+  padding: 0.15em 0.4em;
 }
-
-.blog-prose pre {
-  background: var(--inverted-surface);
-  color: var(--text-on-inverted-surface);
-  padding: 1.25rem;
-  border-radius: 8px;
+.lp-blog-prose pre {
+  background: var(--lp-inverted-surface);
+  border-radius: var(--lp-r-sm);
+  color: var(--lp-text-on-inverted);
+  margin: 24px 0;
   overflow-x: auto;
-  margin: 1.5rem 0;
+  padding: 20px 24px;
 }
-
-.blog-prose pre code {
+.lp-blog-prose pre code {
   background: transparent;
+  color: inherit;
+  font-size: var(--lp-text-sm);
   padding: 0;
-  font-size: var(--font-scale-min-1);
 }
-
-/* Comparison tables */
-.blog-prose table {
-  width: 100%;
+.lp-blog-prose img {
+  border-radius: var(--lp-r-m);
+  height: auto;
+  max-width: 100%;
+}
+/* Comparison tables: the post page wraps each <table> in .lp-blog-tablewrap
+   so a wide one scrolls in its own box instead of pushing the page sideways. */
+.lp-blog-tablewrap {
+  margin: 24px 0;
+  overflow-x: auto;
+}
+.lp-blog-prose table {
   border-collapse: collapse;
-  margin: 1.5rem 0;
-  font-size: var(--font-scale-min-1);
+  font-size: var(--lp-text-sm);
+  line-height: 1.5;
+  width: 100%;
 }
-
-.blog-prose th {
+.lp-blog-prose th,
+.lp-blog-prose td {
+  padding: 10px 12px;
   text-align: left;
+  vertical-align: top;
+}
+.lp-blog-prose th {
+  border-bottom: 2px solid var(--lp-stroke);
   font-weight: 600;
-  padding: 0.6rem 0.75rem;
-  border-bottom: 2px solid var(--stroke);
+}
+.lp-blog-prose td {
+  border-bottom: 1px solid var(--lp-subtle-stroke);
+  color: var(--lp-ink-tr-80);
+}
+.lp-blog-prose tr:last-child td {
+  border-bottom: 0;
 }
 
-.blog-prose td {
-  padding: 0.6rem 0.75rem;
-  border-bottom: 1px solid var(--subtle-stroke);
-  color: var(--subtle-text);
+/* ── FAQ (frontmatter) — cream cards, like the careers roles ── */
+.lp-blog-faq {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.lp-blog-faq__title {
+  font-family: var(--lp-font-cond);
+  font-size: var(--lp-text-3xlg);
+  font-weight: 600;
+  letter-spacing: -0.9954px;
+  line-height: 1.2;
+  margin: 0;
+}
+.lp-blog-faq__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+}
+.lp-blog-faq__item {
+  background: var(--lp-card-cream);
+  border-radius: var(--lp-r-lg);
+  padding: 24px 32px;
+}
+.lp-blog-faq__q {
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+.lp-blog-faq__a {
+  color: var(--lp-ink-tr-70);
+  line-height: 1.6;
+  margin: 0;
 }
 
-.blog-prose tr:last-child td {
-  border-bottom: none;
+/* ── responsive (careers.css breakpoints) ── */
+@media (max-width: 1024px) {
+  .lp-blog-hero {
+    padding: 72px 16px 16px;
+  }
+}
+
+@media (max-width: 767px) {
+  .lp-blog-hero {
+    padding: 40px 16px 8px;
+  }
+  .lp-blog-hero__inner {
+    gap: 20px;
+  }
+  .lp-blog-hero__title {
+    font-size: var(--lp-text-4xlg);
+    letter-spacing: -1.1945px; /* −3% of the 39.816 mobile size */
+  }
+  .lp-blog-post__title {
+    font-size: var(--lp-text-3xlg);
+    letter-spacing: -0.9954px;
+  }
+  .lp-blog-lede {
+    font-size: var(--lp-text-md);
+  }
+  .lp-blog-list,
+  .lp-blog-article {
+    padding: 32px 16px 64px;
+  }
+  .lp-blog-article__inner {
+    gap: 40px;
+  }
+  .lp-blog-card {
+    padding: 24px;
+  }
+  .lp-blog-card__title {
+    font-size: var(--lp-text-xlg);
+    letter-spacing: -0.4608px;
+  }
+  .lp-blog-empty {
+    font-size: var(--lp-text-md);
+    padding: 28px 24px;
+  }
+  .lp-blog-prose h2 {
+    font-size: var(--lp-text-2xlg);
+    letter-spacing: -0.8294px;
+    margin-top: 40px;
+  }
+  .lp-blog-prose h3 {
+    font-size: var(--lp-text-xlg);
+    letter-spacing: -0.4608px;
+  }
+  .lp-blog-faq__title {
+    font-size: var(--lp-text-2xlg);
+    letter-spacing: -0.8294px;
+  }
+  .lp-blog-faq__item {
+    padding: 20px 24px;
+  }
+  /* Phone tap target: the back link is a 20px line — pad to 44px without
+     moving the text (careers.css pattern). */
+  .lp .lp-blog-back {
+    margin-block: -12px;
+    padding-block: 12px;
+  }
 }
