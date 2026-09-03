@@ -91,7 +91,7 @@ export const metadata: Metadata = {
     title: "Pancake: The AI employee that does the work for you",
     description:
       "Pancake’s AI agents monitor buying signals, find warm leads, grow your AI search visibility, and learn from every interaction.",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Pancake, the AI coworker" }],
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "You run your company. We bring you customers." }],
     siteName: "Pancake",
   },
   twitter: {
