@@ -48,7 +48,7 @@ const FEATURES: Feature[] = [
     body: "Pancake visits their profile, likes a recent post, and connects before following up. Every message starts from their activity and sounds like you.",
     video: "/lp/feat-warm-message.mp4",
     poster: "/lp/feat-warm-message-poster.jpg",
-    alt: "Animation: a LinkedIn post by Sarah Velasquez about a third no-show this week gets liked, then a draft reply is written inside a rainbow ring — Hey Anna, saw your post on no-shows. Pelican sends reminders patients actually open. Worth a quick look Thursday? — with a Send button.",
+    alt: "Animation: a LinkedIn post by Sarah Velasquez announcing a Product Hunt launch in 21 days gets liked, then a draft reply is written inside a rainbow ring — Hey Anna, saw you're launching on Product Hunt in 21 days. We make SaaS launch videos people understand in seconds. Want an idea for yours? — with a Send button.",
   },
   {
     side: "left",
@@ -56,7 +56,7 @@ const FEATURES: Feature[] = [
     body: "Pancake finds the questions where Google and AI miss you. It drafts the article, waits for your review, and publishes it to your CMS.",
     video: "/lp/feat-ai-search.mp4",
     poster: "/lp/feat-ai-search-poster.jpg",
-    alt: "Animation: in an AI chat, the question best online booking tool for a small clinic gets an answer that recommends DeRox, while the ChatGPT, Claude and Gemini logos appear around the chat.",
+    alt: "Animation: in an AI chat, the question best studio for a SaaS launch video in Stockholm gets an answer recommending Studio Pelican, while the ChatGPT, Claude and Gemini logos appear around the chat.",
   },
   {
     side: "right",
@@ -64,7 +64,7 @@ const FEATURES: Feature[] = [
     body: "Pancake compares reply rates and remembers which opening, message length, and ask worked. The next campaign starts there.",
     video: "/lp/feat-learns.mp4",
     poster: "/lp/feat-learns-poster.jpg",
-    alt: "Animation: a reply-rate chart grows week by week to 56% up versus last period, a What worked card lists Lead with no-shows, Shorter intros and Ask for Thursdays, and a Brain updated card confirms the winning playbook is ready for the next campaign.",
+    alt: "Animation: a chart grows week by week to a reply rate 56% up versus last period, a What worked card lists Lead with launch timing, Shorter intros and Offer one idea, and a Brain updated card confirms the winning patterns are saved for the next campaign.",
   },
 ];
 
