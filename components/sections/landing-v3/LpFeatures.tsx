@@ -11,10 +11,9 @@ import { LpLoopVideo } from "@/components/sections/landing-v3/LpLoopVideo";
  * last frame; the poster is the animation's first frame.
  */
 
-function FeatureText({ title, body, tag }: { title: string; body: string; tag?: string }) {
+function FeatureText({ title, body }: { title: string; body: string }) {
   return (
     <div className="lp-feat-text">
-      {tag ? <p className="lp-feat-tag">{tag}</p> : null}
       <h3 className="lp-title-card lp-feat-h">{title}</h3>
       <p className="lp-feat-body">{body}</p>
     </div>
@@ -23,7 +22,6 @@ function FeatureText({ title, body, tag }: { title: string; body: string; tag?: 
 
 type Feature = {
   side: "left" | "right";
-  tag?: string;
   title: string;
   body: string;
   video: string;
@@ -35,7 +33,6 @@ type Feature = {
 const FEATURES: Feature[] = [
   {
     side: "left",
-    tag: "AGENT Y",
     title: "Tell Pancake \nwhat to watch",
     body: "Choose the keywords, competitors, influencers, hiring activity, and tech stacks that matter. Pancake finds matching prospects and shows the signal behind every match.",
     video: "/lp/feat-signals.mp4",
@@ -73,7 +70,7 @@ function FeatureCard({ f }: { f: Feature }) {
   return (
     <>
       <article className="lp-feat-card" data-side={f.side}>
-        <FeatureText tag={f.tag} title={f.title} body={f.body} />
+        <FeatureText title={f.title} body={f.body} />
         <LpLoopVideo
           className={`lp-feat-mockzone${f.mockClassName ? ` ${f.mockClassName}` : ""}`}
           src={f.video}

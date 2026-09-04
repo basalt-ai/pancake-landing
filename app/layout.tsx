@@ -7,7 +7,6 @@ import "./_styles/home-ugc.css";
 import { AnalyticsEvents } from "@/components/analytics/AnalyticsEvents";
 import { MetaPixelEvents } from "@/components/analytics/MetaPixelEvents";
 import { PostHogAttribution } from "@/components/analytics/PostHogAttribution";
-import { ProductHuntBadge } from "@/components/shared/ProductHuntBadge";
 import {
   META_BROWSER_PIXEL_ID,
   PANCAKE_ANALYTICS_INGEST_ORIGIN,
@@ -238,7 +237,6 @@ fbq('track', 'PageView');})();`,
         </a>
         {children}
         <AnalyticsEvents />
-        <ProductHuntBadge />
       </body>
     </html>
   );

@@ -12,10 +12,6 @@
  * next/font variables (DM Sans / DM Mono) applied on the wrapper element.
  */
 
-/* Hide the global floating Product Hunt badge on this page only — it isn't part
-   of the lead-magnet design (the trust bar already states the Product Hunt rank). */
-body:has(#get-started-page) .product-hunt-badge { display: none !important; }
-
 /* ══════════════════════════════════════════════
    PANCAKE DESIGN TOKENS + body styling (was :root + html, body)
    ══════════════════════════════════════════════ */

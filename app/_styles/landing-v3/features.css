@@ -79,20 +79,6 @@
   color: var(--lp-text);
   white-space: pre-line;
 }
-/* rev2: pink tag above the f1 title (Figma 4526:3450 — 75×24, r6, Fono
-   Medium 13.33 / +4% tracking) */
-.lp-feat-tag {
-  align-self: flex-start;
-  background: var(--lp-pink-30);
-  border-radius: 6px;
-  color: var(--lp-ink-100);
-  font-size: 13.33px;
-  font-weight: 500;
-  letter-spacing: 0.533px;
-  line-height: 1.5;
-  padding: 2px 8px;
-  white-space: nowrap;
-}
 .lp-feat-body {
   font-size: var(--lp-text-md);
   line-height: 1.5;

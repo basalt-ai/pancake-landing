@@ -20,11 +20,6 @@
 body:has(main.lv2) {
   background: var(--elevated-surface);
 }
-/* The layout's fixed Product Hunt badge collides with the hero CTAs; the
-   static landing never showed it — keep the port faithful. */
-body:has(main.lv2) .product-hunt-badge {
-  display: none;
-}
 /* Scoped to this page so a leaked class can never scroll-lock another route
    (LandingModals also removes it on unmount — belt and braces). */
 body.modal-open:has(main.lv2) {
