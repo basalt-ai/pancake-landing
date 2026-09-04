@@ -11,12 +11,20 @@ import { LpNavScroll } from "@/components/sections/landing-v3/LpNavScroll";
  * hero's order, on every surface — the artboard bar drew one pill.
  * ≤767px (Figma mobile node 4389:8182): logo + burger only — links and the
  * pill move into LpNavMenu's sheet; the pill keeps its app_nav id there.
+ * `inverted` (the /agents negative): the cream wordmark instead of the plum
+ * one — the footer's export IS the nav lockup scaled ×2.0849 (same path,
+ * fill ink-20), so no new asset. Everything else recolors through tokens.
  */
-export function LpNav() {
+export function LpNav({ inverted = false }: { inverted?: boolean }) {
   return (
     <header className="lp-nav">
       <a className="lp-nav-logo" href="/" aria-label="Pancake home">
-        <img alt="" src="/lp/lp-nav-logo.svg" width={114.956} height={56} />
+        <img
+          alt=""
+          src={inverted ? "/lp/lp-footer-logo.svg" : "/lp/lp-nav-logo.svg"}
+          width={114.956}
+          height={56}
+        />
       </a>
       <nav className="lp-nav-links" aria-label="Primary">
         <a href="/#how-it-works">Product</a>

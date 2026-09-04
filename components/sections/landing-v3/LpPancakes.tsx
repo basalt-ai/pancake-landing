@@ -48,6 +48,14 @@ interface RingAsset {
   /** static-pose shear magnitude (fitted per color) */
   s: number;
   fill: string;
+  /**
+   * The page-colored disc (cream on the homepage): its fill is the page's
+   * own --lp-page-bg via CSS (anim.css .lp-anim-ring--page) instead of the
+   * baked attribute, so the inverted /agents page gets a plum disc. Both
+   * canvas renderers read the attribute first and fall back to the computed
+   * style, which is why the attribute is left off for this ring only.
+   */
+  page?: boolean;
   /** the ring path (== public/lp file content), inlined so the browser renders
       the vector through the full transform chain (path-exact edge AA — a
       bitmap <img> gets resampled under the mirror/shear and measurably blurs
@@ -103,6 +111,7 @@ const RING = {
     ih: 2331.05,
     s: 0.008254,
     fill: "#FBF6F1",
+    page: true,
     d: "M1111.61 0.032579C1353.59 0.032579 1731.04 -6.75961 1963.89 175.801C2248.32 398.802 2390.57 763.988 2390.57 1090.26C2390.57 1732.16 1908.86 2331.05 1274.27 2331.05C984.518 2331.05 654.317 2254.18 441.595 2084.15C188.433 1881.8 -3.48967 1613.34 0.048125 1184.71C5.77109 491.579 379.372 0.032579 1111.61 0.032579Z",
   },
 } satisfies Record<string, RingAsset>;
@@ -204,7 +213,7 @@ export function LpPancakes({ variant }: { variant: Variant }) {
   return (
     <div aria-hidden="true" className={`lp-anim-box ${BOX_CLASS[variant]}`}>
       {ARCS[variant].map((arc) => {
-        const ring = RING[arc.ring];
+        const ring: RingAsset = RING[arc.ring];
         return (
           <div
             key={arc.ring}
@@ -232,7 +241,8 @@ export function LpPancakes({ variant }: { variant: Variant }) {
                     /* the hole radius, for LpRainbowGL: the GL fill skips
                        the hole subpath and colours an annulus instead */
                     data-lp-hole={arc.hole}
-                    fill={ring.fill}
+                    className={ring.page ? "lp-anim-ring--page" : undefined}
+                    fill={ring.page ? undefined : ring.fill}
                     fillRule="evenodd"
                   />
                 </svg>

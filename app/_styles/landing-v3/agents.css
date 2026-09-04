@@ -1,0 +1,66 @@
+/* ── Landing v3 · /agents — the hero in negative (founder 2026-09-04) ────────
+   Groundwork for the For humans / For agents split: the same nav, hero and
+   copy as the homepage with the cream and the plum swapped. Only the
+   SEMANTIC layer moves — the brand ramps and the rainbow bands keep their
+   colors, and every recipe that already reads the semantic tokens (nav
+   links, hero type, pills, the audience toggle, the phone menu sheet)
+   recolors on its own. Imported by app/agents/page.tsx only, like
+   careers.css — the homepage stylesheet is untouched. */
+
+.lp.lp--inverted {
+  --lp-page-bg: var(--lp-ink-100);
+  --lp-text: var(--lp-ink-20);
+  --lp-subtle-text: var(--lp-ink-50);
+  --lp-muted-text: var(--lp-ink-60);
+  --lp-disabled-text: var(--lp-ink-70);
+  --lp-stroke: var(--lp-ink-90);
+  --lp-subtle-stroke: var(--lp-ink-90);
+  /* pills: cream ground, plum label — the phone menu sheet's pair already */
+  --lp-inverted-surface: var(--lp-ink-20);
+  --lp-text-on-inverted: var(--lp-ink-100);
+}
+/* iOS paints the status-bar / Dynamic-Island band and the overscroll area
+   with the BODY/HTML background (foundation.css) — the var lives on .lp, out
+   of their reach, so the literal is --lp-ink-100 here. */
+html:has(main.lp--inverted),
+body:has(main.lp--inverted) {
+  background-color: #2c002a;
+}
+
+/* Tinted pill ("Book a demo"): the cream page's pale-cream fill (#f5e5d6, a
+   step off the ground) becomes the same step off the plum ground. The label
+   already follows --lp-text. */
+.lp.lp--inverted .lp-btn--tinted,
+.lp.lp--inverted a.lp-btn--tinted {
+  background: color-mix(in srgb, var(--lp-ink-20) 10%, var(--lp-ink-100));
+}
+/* The pill FX's arriving label only ever sits on the pastel flood — plum
+   there on both pages (foundation.css keys it to --lp-text, cream here). */
+.lp.lp--inverted .lp-btn-label .l2 {
+  color: var(--lp-ink-100);
+}
+
+/* Phone sticky bar (nav.css): the scrolled chrome is plum here, not cream. */
+@media (max-width: 767px) {
+  .lp.lp--inverted .lp-nav.is-scrolled {
+    background-color: rgba(44, 0, 42, 0.96);
+    box-shadow:
+      0 1px 0 rgba(255, 247, 236, 0.08),
+      0 -120px 0 rgba(44, 0, 42, 0.96);
+  }
+}
+
+/* The booking dialog keeps its homepage look (cream sheet, plum scrim and
+   type): modal.css derives everything from --lp-text / --lp-page-bg, which
+   the page flips — re-pin them on the scrim. #fbf6f1 = the cream page
+   ground (foundation.css). */
+.lp.lp--inverted .lp-scrim {
+  --lp-text: var(--lp-ink-100);
+  --lp-page-bg: #fbf6f1;
+}
+
+/* One empty screen under the hero — the slot for the agent perspective's
+   first section (founder: "une 100vh en dessous vide pour le moment"). */
+.lp-agents-blank {
+  min-height: 100vh;
+}

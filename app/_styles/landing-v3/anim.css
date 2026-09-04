@@ -224,6 +224,13 @@
   max-width: none;
   width: 100%;
 }
+/* The page-colored disc (LpPancakes RING.cream, page: true) follows the
+   page token — cream on the homepage (identical to the baked #FBF6F1),
+   plum on the inverted /agents page. The canvas renderers read this
+   computed fill (no attribute on that path). */
+.lp-anim-ring--page {
+  fill: var(--lp-page-bg, #fbf6f1);
+}
 .lp-anim-fill.lp-anim-pop {
   /* Entrance settle, played ONCE: Figma's export marks the size track
      `repeat: Infinity` like the rest of the 20s cohort, but replaying it

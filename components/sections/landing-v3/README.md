@@ -151,3 +151,28 @@ back during a fidelity pass:
 - /careers runs on this design system (`app/careers/page.tsx` +
   `app/_styles/landing-v3/careers.css`, imported by the page only — not in
   the landing-v3.css manifest).
+
+## Audience toggle + `/agents` (groundwork, 2026-09-04)
+
+Founder direction: "un toggle en haut à droite du hero" that flips to a page
+holding just the hero "avec les mêmes couleurs mais en négatif" — the
+groundwork for a For humans / For agents split. Same copy on both sides for
+now; the agents page is the hero + one empty 100vh screen.
+
+- `LpAudienceToggle.tsx` — two real links (`/` humans, `/agents` agents),
+  `aria-current` on the active one; no client JS, the page is the state.
+  Rendered first inside `.lp-hero` (tab order right after the nav), absolute
+  top-right on the nav CTAs' margin (hero.css, `.lp-audience`).
+- `app/agents/page.tsx` — `main.lp.lp--inverted`: `LpNav inverted` (cream
+  wordmark = the footer export, same path ×2.0849), `LpHero audience="agents"`,
+  `.lp-agents-blank`, `LpModals`. `robots: noindex` and no sitemap entry
+  while it is a placeholder — flip both when it has content.
+- `agents.css` (page-only import, like careers.css) — remaps the SEMANTIC
+  tokens on `.lp--inverted` (page bg → ink-100, text → ink-20, pills
+  cream/plum), html/body ground, the tinted pill, the pill FX's plum
+  arriving label, the phone sticky bar, the booking dialog re-pinned to its
+  cream look, and the blank screen. Brand ramps and the rainbow untouched.
+- The page-colored ring (LpPancakes `RING.cream`, `page: true`) now takes its
+  fill from `--lp-page-bg` via CSS (anim.css `.lp-anim-ring--page`) instead
+  of the baked attribute — identical cream on the homepage, plum on /agents;
+  both canvas renderers read the computed fill for it.

@@ -285,3 +285,58 @@
     }
   }
 }
+
+/* ── Audience toggle (founder 2026-09-04: "un toggle en haut à droite du
+   hero") — LpAudienceToggle.tsx. Right-anchored on the nav CTAs' margin
+   (max(32px, 50% − 648px) = 179 at 1654) so the two right-hand clusters
+   share one edge, 24px under the nav band. Not on the artboard: a two-
+   segment control with the sm pill's metrics (38 tall, Fono 600 13.333, r9
+   segments in an r12 track). Skinned as the inverted surface — a plum track
+   with a cream active segment on the cream page, the reverse on /agents —
+   so it previews the flip it triggers, and stays whole where the rainbow's
+   outer band sweeps under it (the arcs' apex sits ~20px below the nav, so
+   nothing 38px tall fits between the bar and the art at these x's for the
+   whole 20s loop — the opaque track is the deliberate answer). Semantic
+   tokens only. z-index 2: above .lp-hero-inner (inset 0, z 1) so it stays
+   clickable; first in the section for tab order. */
+.lp-audience {
+  background: var(--lp-inverted-surface);
+  border-radius: 12px;
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  position: absolute;
+  right: max(32px, calc(50% - 648px));
+  top: 24px;
+  z-index: 2;
+}
+.lp .lp-audience__opt {
+  align-items: center;
+  border-radius: 9px;
+  color: var(--lp-text-on-inverted);
+  display: inline-flex;
+  font-family: var(--lp-font-fono);
+  font-size: var(--lp-text-sm);
+  font-weight: 600;
+  height: 32px;
+  line-height: 1.5;
+  padding: 0 12px;
+  white-space: nowrap;
+}
+.lp .lp-audience__opt[aria-current="page"] {
+  background: var(--lp-text-on-inverted);
+  color: var(--lp-inverted-surface);
+}
+.lp .lp-audience__opt:focus-visible {
+  outline: 2px solid var(--lp-purple-30);
+  outline-offset: -2px;
+}
+/* Phones: the hero's own 32px gutter (the text block's), 16px under the
+   104px bar — the top-right corner is cream on the mobile artboard too
+   (the mirrored arcs' center sits at (201, 579), radius ~474). */
+@media (max-width: 767px) {
+  .lp-audience {
+    right: 32px;
+    top: 16px;
+  }
+}
