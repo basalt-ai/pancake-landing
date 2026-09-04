@@ -37,7 +37,7 @@ const FEATURES: Feature[] = [
     side: "left",
     tag: "AGENT Y",
     title: "Tell Pancake \nwhat to watch",
-    body: "Choose the keywords, competitors, influencers, hiring activity, and tech stacks that matter. Pancake finds matching buyers and keeps the source attached.",
+    body: "Choose the keywords, competitors, influencers, hiring activity, and tech stacks that matter. Pancake finds matching prospects and shows the signal behind every match.",
     video: "/lp/feat-signals.mp4",
     poster: "/lp/feat-signals-poster.jpg",
     mockClassName: "lp-feat-mockzone--signals",

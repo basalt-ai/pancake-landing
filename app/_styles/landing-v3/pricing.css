@@ -88,10 +88,14 @@
     margin-bottom: -35.5px;
   }
 }
+/* Inline "/month" after the $99 (founder copy 2026-09-03) — same face and
+   size as the artboard's "per month, flat" line, baseline-aligned, without
+   the display line's −4.3px tracking. */
 .lp-price-per {
   font-family: var(--lp-font-cond);
   font-size: 32px;
   font-weight: 400;
+  letter-spacing: 0;
   line-height: 1.2;
 }
 .lp-price-list {

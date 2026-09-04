@@ -25,8 +25,13 @@ export function LpPricing() {
         <h2 className="lp-title-section lp-price-title">Simple, transparent pricing</h2>
         <div className="lp-price-body">
           <div className="lp-price-price">
-            <p className="lp-price-amount">99 USD</p>
-            <p className="lp-price-per">per month, flat</p>
+            {/* Founder copy (2026-09-03): "$99/month" replaces the artboard's
+                "99 USD" + "per month, flat" — the number keeps the display
+                size, "/month" rides the old per-line style inline. */}
+            <p className="lp-price-amount">
+              $99
+              <span className="lp-price-per">/month</span>
+            </p>
           </div>
           <ul className="lp-price-list">
             {CHECKLIST.map((item) => (

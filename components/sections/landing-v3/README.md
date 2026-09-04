@@ -85,6 +85,12 @@ back during a fidelity pass:
 
 - Casing: no capitals on common nouns mid-sentence ("Pancake sells it",
   "While you run your business,", "GTM brain").
+- Copy pass (founder, 2026-09-03), verbatim: steps heading "Pancake fills
+  your pipeline." (was "Pancake sells it"); step 01 body "From your website,
+  Pancake learns who buys from you, what to say, and where to show up. Always
+  up to date."; signals card body "…Pancake finds matching prospects and shows
+  the signal behind every match."; pricing "$99/month" (display "$99" + inline
+  "/month" in the per-line style) instead of "99 USD" / "per month, flat".
 - Steps media cards are the designer's vector illustrations (Figma 4636:3164,
   2026-09-02: knowledge graph / pipeline checklist / calendar week), exported
   as 464×426 SVGs with outlined text (`/public/how/step-*.svg`), contain-fit

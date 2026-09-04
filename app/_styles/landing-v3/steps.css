@@ -239,10 +239,10 @@
     letter-spacing: -1.0668px;
     line-height: 41px;
   }
-  /* The artboard's step-1 body flows continuously (4 lines at 306px) — the
-     copy string's "\n" after "living plan." is a desktop-only break, so let
-     pre-line collapse to normal here without touching the copy. Titles keep
-     pre-line: their explicit breaks match the artboard's 3-line stacks. */
+  /* Bodies flow continuously on the phone artboard (4 lines at 306px) — any
+     "\n" in a body string is a desktop-only break, so let pre-line collapse
+     to normal here without touching the copy. Titles keep pre-line: their
+     explicit breaks match the artboard's 3-line stacks. */
   /* Step 03's founder line break ("…the meeting. / You close it.") leaves a
      one-word middle line ("meeting.") on phones — wrap it naturally there.
      Step 01 keeps its break: the phone artboard shows exactly that shape. */
