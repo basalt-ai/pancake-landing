@@ -9,6 +9,7 @@ Scope reset by Tristan on September 4, 2026: keep the existing landing, add a to
 - Agent mode keeps the original navigation, hero headline, description, buttons, layout and rainbow motion. Cream and plum exchange roles; each of the five rainbow bands uses its exact RGB negative.
 - Only an empty `100vh` section follows the agent hero. There is no agent demo, setup block, pricing, testimonial section or footer in this view.
 - `/?audience=agents` opens the inverse hero directly. The toggle updates the URL without remounting the hero; refresh and browser history retain the selected view.
+- Audience changes use a quick 240ms crossfade across the whole viewport, including the rainbow. Native View Transitions capture the updated canvas palette while keeping the original renderers running. Reduced motion and browsers without this API switch immediately; there is no entrance animation on initial loading.
 - Hidden original sections remain mounted so their fit and motion observers survive the return to human mode.
 - Both canvas renderers follow all six rings’ new colors without restarting the animation clock. Reduced motion uses the same palette through the original static SVG.
 - Original signup, scheduling and analytics contracts are unchanged. No packages installed.
@@ -21,7 +22,8 @@ Scope reset by Tristan on September 4, 2026: keep the existing landing, add a to
 - Agent mode exposes only the hero and a blank section measuring exactly the viewport height.
 - Direct agent URL, keyboard switching, back/forward, reduced motion, inverse mobile menu and the existing booking dialog were checked. The live WebGL renderer and forced phone Canvas fallback both retained the correct palette through audience changes.
 - Independent code review confirmed the reduced scope and original component parity.
+- The crossfade was measured at 240ms in both directions on desktop and phone. Heading geometry, scroll position and canvas instances remained unchanged. Three rapid toggles, Back/Forward and reduced-motion switching passed without errors.
 
-Preview: https://pancake-5rai1atqu-getpancake.vercel.app
+Preview: https://pancake-so1qelt0n-getpancake.vercel.app
 
 The research screenshots and product evidence retained beside this document are historical research from the earlier, broader concept. They do not describe the implemented scope above.

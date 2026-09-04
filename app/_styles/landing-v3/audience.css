@@ -1,4 +1,16 @@
 /* Audience foundation: the original landing and its inverse hero. */
+:root { --lp-audience-fade-duration: 240ms; }
+
+/* One short crossfade includes the live artwork, navigation and page palette.
+   Only snapshots animate; the original page geometry and clocks stay intact. */
+html:has(.lp-audience-page)::view-transition { pointer-events: none; }
+html:has(.lp-audience-page)::view-transition-group(root) { animation: none; }
+html:has(.lp-audience-page)::view-transition-old(root),
+html:has(.lp-audience-page)::view-transition-new(root) {
+  animation-duration: var(--lp-audience-fade-duration);
+  animation-timing-function: ease-out;
+}
+
 .lp {
   --lp-space-1: 4px;
   --lp-space-2: 8px;
@@ -54,5 +66,7 @@ body:has(.lp-audience-page[data-audience="agents"]) { background-color: var(--lp
   [data-audience="agents"] .lp-nav.is-scrolled { background: var(--lp-ink-100); box-shadow: 0 var(--lp-line) 0 var(--lp-ink-90), 0 -120px 0 var(--lp-ink-100); }
 }
 @media (prefers-reduced-motion: reduce) {
+  html:has(.lp-audience-page)::view-transition-old(root),
+  html:has(.lp-audience-page)::view-transition-new(root) { animation: none; }
   .lp-audience-switch__track, .lp-audience-switch__thumb { transition: none; }
 }
