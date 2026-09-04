@@ -41,7 +41,6 @@ html:has(.lp-audience-page)::view-transition-new(lp-audience-switch) { animation
 [data-audience="agents"] .lp-hero-col--human { display: none; }
 [data-audience="agents"] .lp-hero-col--agent { display: block; top: var(--lp-hero-title-top); bottom: auto; }
 .lp-agent-start { width: calc(var(--lp-space-8) * 16); max-width: 100%; color: var(--lp-text); }
-.lp-agent-start__title { margin: 0 0 var(--lp-space-4); font: inherit; font-size: var(--lp-text-md); line-height: 1.5; letter-spacing: normal; }
 .lp-agent-terminal { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--lp-space-3); align-items: center; padding: var(--lp-space-4); border: var(--lp-line) solid color-mix(in srgb, var(--lp-page-bg) 16%, transparent); border-radius: var(--lp-r-m); background: var(--lp-terminal-bg); }
 .lp-agent-terminal__prompt { color: var(--lp-green-20); font: inherit; align-self: start; line-height: 1.6; }
 .lp-agent-terminal__code { display: block; font-family: var(--lp-font-fono); font-size: var(--lp-text-md); line-height: 1.6; color: var(--lp-page-bg); overflow-wrap: anywhere; text-wrap: balance; user-select: text; }
@@ -53,10 +52,11 @@ html:has(.lp-audience-page)::view-transition-new(lp-audience-switch) { animation
 .lp-agent-terminal__copy svg { width: calc(var(--lp-space-4) + var(--lp-space-1)); height: calc(var(--lp-space-4) + var(--lp-space-1)); }
 .lp-agent-terminal[data-copy-state="copied"] .lp-agent-terminal__copy { color: var(--lp-green-20); }
 .lp-agent-terminal[data-copy-state="copied"] svg { animation: lp-agent-copy-check .18s var(--lp-audience-ease); }
-.lp-agent-friends { display: flex; flex-wrap: wrap; align-items: center; gap: var(--lp-space-4); padding-top: var(--lp-space-3); font-size: var(--lp-text-sm); line-height: 1.5; color: var(--lp-ink-60); }
+.lp-agent-friends { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: var(--lp-space-4); margin-bottom: var(--lp-space-4); font-size: var(--lp-text-sm); line-height: 1.5; color: var(--lp-ink-60); }
 .lp-agent-friends ul { display: flex; align-items: center; gap: var(--lp-space-4); margin: 0; padding: 0; list-style: none; color: var(--lp-ink-0); }
 .lp-agent-friends li { display: grid; place-items: center; }
-.lp-agent-friends svg { display: block; width: calc(var(--lp-space-3) * 2); height: calc(var(--lp-space-3) * 2); }
+.lp-agent-friends :is(svg, img) { display: block; width: calc(var(--lp-space-3) * 2); height: calc(var(--lp-space-3) * 2); }
+.lp-agent-friends__hermes { object-fit: contain; filter: grayscale(1) invert(1); mix-blend-mode: screen; clip-path: inset(1%); }
 .lp-agent-start__error { padding-top: var(--lp-space-3); font-size: var(--lp-text-sm); line-height: 1.5; color: var(--lp-ink-60); }
 @keyframes lp-agent-copy-check { from { opacity: 0; transform: scale(.8); } to { opacity: 1; transform: scale(1); } }
 @media (max-width: 1024px) {
@@ -66,6 +66,8 @@ html:has(.lp-audience-page)::view-transition-new(lp-audience-switch) { animation
 }
 @media (max-width: 767px) {
   .lp-agent-terminal { gap: var(--lp-space-2); padding: var(--lp-space-3); }
+  .lp-agent-friends, .lp-agent-friends ul { gap: var(--lp-space-3); }
+  .lp-agent-friends :is(svg, img) { width: calc(var(--lp-space-4) + var(--lp-space-1)); height: calc(var(--lp-space-4) + var(--lp-space-1)); }
 }
 @media (prefers-reduced-motion: reduce) {
   .lp-agent-terminal__copy { transition: none; }
