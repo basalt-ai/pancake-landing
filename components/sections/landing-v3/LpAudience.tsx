@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 
 import { useSearchParams } from "next/navigation";
 
@@ -38,7 +38,36 @@ export function LpAudience({ initialAudience, children }: { initialAudience: Aud
 export function AudienceSelector() {
   const { audience, setAudience } = useAudience();
   const refs = useRef<(HTMLAnchorElement | null)[]>([]);
-  return <div className="lp-audience-selector" role="group" aria-label="Choose your perspective">
+  const selectorRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const selector = selectorRef.current;
+    const placement = selector?.parentElement;
+    const inner = placement?.closest<HTMLElement>(".lp-hero-inner");
+    const heading = inner?.querySelector<HTMLElement>(".lp-hero-title");
+    if (!selector || !placement || !inner || !heading) return;
+    // Anchor to the original headline without changing its markup or flow.
+    // Divide out the hero's existing short-window scale so both stay aligned.
+    const position = () => {
+      const box = inner.getBoundingClientRect();
+      const title = heading.getBoundingClientRect();
+      const scale = box.width / inner.offsetWidth || 1;
+      const gutter = parseFloat(getComputedStyle(inner).getPropertyValue("--lp-space-8"));
+      const gap = parseFloat(getComputedStyle(inner).getPropertyValue("--lp-space-4"));
+      const half = selector.offsetWidth / 2;
+      const edge = Math.min(gutter, Math.max(0, inner.offsetWidth / 2 - half));
+      const center = Math.max(half + edge, Math.min((title.right - box.left) / scale - gap, inner.offsetWidth - half - edge));
+      placement.style.setProperty("--lp-audience-center", `${center}px`);
+      placement.style.setProperty("--lp-audience-top", `${(title.top - box.top) / scale}px`);
+      placement.dataset.ready = "true";
+    };
+    const observer = new ResizeObserver(position);
+    observer.observe(inner);
+    observer.observe(heading);
+    observer.observe(selector);
+    position();
+    return () => observer.disconnect();
+  }, []);
+  return <div ref={selectorRef} className="lp-audience-selector" role="group" aria-label="Choose your perspective">
     <span className="lp-audience-selector__track" aria-hidden="true" />
     {(["humans", "agents"] as const).map((mode, index) => <a
       key={mode}

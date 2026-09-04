@@ -10,7 +10,7 @@
 
 ## Human / agent toggle foundation — September 4, 2026
 
-Scope: original human landing plus a top-right hero selector. Agent mode uses the identical hero and inverse cream/plum colors, followed by one empty `100vh` section.
+Scope: original human landing plus a selector above the headline’s right edge. Agent mode uses the identical hero and inverse cream/plum colors, followed by one empty `100vh` section.
 
 - [x] Restore original v3 copy and section components.
 - [x] Keep human layout unchanged apart from the selector.

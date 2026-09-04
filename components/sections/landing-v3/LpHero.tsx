@@ -16,7 +16,6 @@ export function LpHero() {
   return (
     <section className="lp-hero" aria-labelledby="lp-hero-title">
       <LpViewportVar />
-      <div className="lp-perspective"><AudienceSelector /></div>
       <div className="lp-hero-art" aria-hidden="true">
         <div className="lp-anim-canvas lp-anim-canvas--hero">
           <LpPancakes variant="hero" />
@@ -29,6 +28,7 @@ export function LpHero() {
         <LpRainbowGL variant="hero" />
       </div>
       <div className="lp-hero-inner">
+        <div className="lp-perspective"><AudienceSelector /></div>
         <h1 id="lp-hero-title" className="lp-hero-title lp-display">
           You run your company
           <br />

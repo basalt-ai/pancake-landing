@@ -1,6 +1,6 @@
 # Human / agent toggle foundation
 
-Scope reset by Tristan on September 4, 2026: keep the existing landing, add a toggle at the hero’s top right, and prepare an agent page containing the same hero in inverse colors with one empty viewport below. Copy and product demonstrations are deferred.
+Scope reset by Tristan on September 4, 2026: keep the existing landing, add a toggle above the headline’s right edge, and prepare an agent page containing the same hero in inverse colors with one empty viewport below. Copy and product demonstrations are deferred.
 
 ## Implemented
 
