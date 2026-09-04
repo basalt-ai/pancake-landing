@@ -140,11 +140,11 @@ export function LpNavMenu() {
         <div className="lp-nav-menu-ctas">
           <LpFxLink
             href="https://app.getpancake.ai"
-            className="lp-nav-menu-app"
+            className="lp-btn--trial lp-nav-menu-app"
             data-analytics-id="app_nav"
             onClick={close}
           >
-            Get started
+            Start free trial
           </LpFxLink>
           {/* target/rel mirror the site-wide trigger contract: LpModals'
               document listener preventDefaults this into the dialog on pages
@@ -152,14 +152,14 @@ export function LpNavMenu() {
               navigating the site away. */}
           <LpFxLink
             href="https://zcal.co/i/ZEHl48rv"
-            className="lp-btn--outline lp-nav-menu-call"
+            className="lp-btn--outline lp-btn--demo lp-nav-menu-call"
             target="_blank"
             rel="noopener noreferrer"
             data-lv2-open="call"
             data-analytics-id="call_nav"
             onClick={close}
           >
-            Book a call
+            Book a demo
           </LpFxLink>
         </div>
       </div>

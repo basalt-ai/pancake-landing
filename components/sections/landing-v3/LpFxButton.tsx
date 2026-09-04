@@ -22,7 +22,7 @@ const FILLS = [
 ];
 
 /**
- * The fill a pill starts on is keyed to its label, so every "Get started"
+ * The fill a pill starts on is keyed to its label, so every "Start free trial"
  * runs the same yellow → purple → green cycle wherever it sits on the page.
  * The v2 port seeded by mount order instead (siblings on different fills),
  * which in production hydration order made the nav, hero and CTA "Get
@@ -31,7 +31,12 @@ const FILLS = [
  * (2026-09-03: "the pricing Get started animation is not the good one, it
  * should be like for other buttons"). Same label, same sequence, now.
  */
+/** The two site-wide CTAs get fixed, different starts (their hashes happen
+ *  to collide); any other label hashes into the palette. */
+const FILL_START: Record<string, number> = { "Start free trial": 0, "Book a demo": 1 };
+
 function fillIndexFor(label: string): number {
+  if (label in FILL_START) return FILL_START[label]!;
   let h = 0;
   for (let i = 0; i < label.length; i++) h = (h * 31 + label.charCodeAt(i)) >>> 0;
   return h % FILLS.length;

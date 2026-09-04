@@ -85,6 +85,14 @@ back during a fidelity pass:
 
 - Casing: no capitals on common nouns mid-sentence ("Pancake sells it",
   "While you run your business,", "GTM brain").
+- CTAs (founder, 2026-09-03): primary "Start free trial" (app.getpancake.ai)
+  and secondary "Book a demo" (zcal sheet) on every surface — nav bar, hero,
+  final CTA, pricing — always in that order; the phone bar keeps the primary
+  only (the sheet carries both), the final CTA shows both on phones too.
+  Pill widths follow the labels (`.lp-btn--trial` 139/171/256,
+  `.lp-btn--demo` 115/142/213 at sm/md/lg, corner paths regenerated); the
+  artboard's 110/136/203 stay for other labels. The v2 chrome (pricing,
+  support, privacy, terms) carries the same labels and order.
 - Copy pass (founder, 2026-09-03), verbatim: steps heading "Pancake fills
   your pipeline." (was "Pancake sells it"); step 01 body "From your website,
   Pancake learns who buys from you, what to say, and where to show up. Always

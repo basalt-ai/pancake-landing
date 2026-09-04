@@ -28,7 +28,7 @@ const COLUMNS: { id: string; title: string; links: FootLink[] }[] = [
       { label: "About", href: "/#why" },
       { label: "Careers", href: "/careers" },
       { label: "Affiliate program", href: "https://partners.dub.co/pancake-ai", external: true },
-      { label: "Book a call", href: "https://zcal.co/i/ZEHl48rv", external: true },
+      { label: "Book a demo", href: "https://zcal.co/i/ZEHl48rv", external: true },
       { label: "Contact", href: "mailto:hey@pancake.ai" },
     ],
   },

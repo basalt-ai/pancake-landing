@@ -118,7 +118,12 @@
 .lp-price-item img {
   flex: none;
 }
-.lp-price-cta {
+/* CTA pair (founder 2026-09-03): Start free trial + Book a demo, hero order,
+   on the artboard's single-pill slot — 256 + 16 + 213 = 485px inside the
+   528px price block. */
+.lp-price-ctas {
+  display: flex;
+  gap: 16px;
   left: max(32px, calc(50% - 568px));
   position: absolute;
   top: 462.99px;
@@ -149,7 +154,7 @@
   .lp-price-title,
   .lp-price-price,
   .lp-price-list,
-  .lp-price-cta,
+  .lp-price-ctas,
   .lp-price-note {
     left: auto;
     position: static;
@@ -172,7 +177,7 @@
     margin-top: 16px;
     max-width: 560px;
   }
-  .lp-price-cta {
+  .lp-price-ctas {
     margin-top: 48px;
   }
   /* 0,2,0 — outranks foundation's `.lp p { margin: 0 }` (0,1,1), which
@@ -218,6 +223,10 @@
   }
   .lp-price-list {
     margin-top: 0;
+  }
+  .lp-price-ctas {
+    flex-direction: column;
+    gap: 12px;
   }
   .lp-price-cta.lp-btn[data-size="lg"] {
     border-radius: 14px;

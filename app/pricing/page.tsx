@@ -60,8 +60,8 @@ export default function PricingPage() {
         {/* Same composition as the homepage pricing fold — brand band, card,
             pancake-stack mascot — so "See full pricing" doesn't land on a
             barer page than the teaser it came from (mobile QA 2026-08-26).
-            CTA pair runs Book a call → Get started like the nav and the
-            closing band: parallel frames applies to CTA pairs too. */}
+            CTA pair runs Start free trial → Book a demo like the nav
+            (founder 2026-09-03: primary first, everywhere). */}
         <section
           className="lv2s lv2s--brand lv2-pricing-page"
           aria-labelledby="lv2-pricing-page-title"
@@ -86,16 +86,16 @@ export default function PricingPage() {
                 <p className="lv2-price-sub">{pricingV2.access}</p>
                 <PriceGroups />
                 <div className="lv2-button-group">
+                  <FxPillLink href="https://app.getpancake.ai" data-analytics-id="app_pricing_page">
+                    Start free trial
+                  </FxPillLink>
                   <FxPill
                     variant="outline"
                     data-lv2-open="call"
                     data-analytics-id="call_pricing_page"
                   >
-                    Book a call
+                    Book a demo
                   </FxPill>
-                  <FxPillLink href="https://app.getpancake.ai" data-analytics-id="app_pricing_page">
-                    Get started
-                  </FxPillLink>
                 </div>
                 <p className="lv2-price-fine">{pricingV2.fine}</p>
               </div>

@@ -141,7 +141,7 @@ export function LandingNavMenu() {
             data-analytics-id="call_nav"
             onClick={close}
           >
-            Book a call
+            Book a demo
           </a>
         </nav>
       </div>

@@ -7,6 +7,8 @@ import { LpNavScroll } from "@/components/sections/landing-v3/LpNavScroll";
  * Logo left edge 179px, links dead-center, dark CTA right-anchored at the
  * same 179px margin (= the 1296 content grid's side margin at 1654).
  * Link targets are provisional (not specified in Figma) — flagged in the PR.
+ * CTA pair (founder 2026-09-03): "Start free trial" then "Book a demo", the
+ * hero's order, on every surface — the artboard bar drew one pill.
  * ≤767px (Figma mobile node 4389:8182): logo + burger only — links and the
  * pill move into LpNavMenu's sheet; the pill keeps its app_nav id there.
  */
@@ -21,9 +23,31 @@ export function LpNav() {
         <a href="/#why">Company</a>
         <a href="/blog">Blog</a>
       </nav>
-      <LpFxLink href="https://app.getpancake.ai" size="sm" className="lp-nav-cta" data-analytics-id="app_nav">
-        Get started
-      </LpFxLink>
+      <div className="lp-nav-ctas">
+        <LpFxLink
+          href="https://app.getpancake.ai"
+          size="sm"
+          className="lp-btn--trial"
+          data-analytics-id="app_nav"
+        >
+          Start free trial
+        </LpFxLink>
+        {/* Same trigger contract as the sheet's pill: LpModals' document
+            listener turns the zcal href into the dialog on pages that mount
+            it; elsewhere it opens zcal in a new tab. Hidden ≤767 (nav.css) —
+            the bar has room for one pill, the sheet carries both. */}
+        <LpFxLink
+          href="https://zcal.co/i/ZEHl48rv"
+          size="sm"
+          className="lp-btn--tinted lp-btn--demo"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-lv2-open="call"
+          data-analytics-id="call_nav"
+        >
+          Book a demo
+        </LpFxLink>
+      </div>
       <LpNavMenu />
       <LpNavScroll />
     </header>
