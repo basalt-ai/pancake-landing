@@ -339,10 +339,12 @@ body:has(main.lp) {
 /* Phones keep the pre-2026-09-03 pill widths too (founder: "garde les
    tailles d'avant sur mobile aussi"). The ≤767 recompose never fixed a
    width — the pills hugged their 11-char labels: "Get started" 79.31/95.19
-   + padding → 109/135, "Book a call" 93.25 + 40 → 133. Pinned here so the
-   shorter/longer labels don't move them; the lg pricing pill keeps its own
-   100% rule (pricing.css, 0,3,0). "Book a demo" trades 5px of side padding
-   for the room, as on desktop. */
+   + padding → 109/135. Pinned here so the shorter/longer labels don't move
+   them; the lg pricing pill keeps its own 100% rule (pricing.css, 0,3,0).
+   The secondary takes the primary's 135 too — the founder wants the pair
+   the same size wherever the two sit side by side ("Book a call" used to
+   hug 2px narrower); "Book a demo" trades 5px of side padding for the
+   room, as on desktop. */
 @media (max-width: 767px) {
   .lp-btn {
     width: 135px;
@@ -352,7 +354,6 @@ body:has(main.lp) {
   }
   .lp-btn--demo {
     padding-inline: 15px;
-    width: 133px;
   }
 }
 /* No hover darken — the pill's feedback is the circle-fill + label FX below
