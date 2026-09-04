@@ -192,7 +192,7 @@ export function LpModals() {
           &#10005;
         </button>
         <h3 id="lp-call-title" className="lp-call-title">
-          Book a call
+          Book a demo
         </h3>
         <div ref={zcalWrapRef} className="lp-zcal-wrap">
           {/* the calendar iframe exists only while the dialog is open */}

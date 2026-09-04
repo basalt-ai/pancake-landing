@@ -21,15 +21,37 @@ const FILLS = [
   "var(--lp-green-20)",
 ];
 
-/** Module-level seed so sibling buttons start on different fills, like v2. */
-let fxSeed = 0;
+/**
+ * The fill a pill starts on is keyed to its label, so every "Start free"
+ * runs the same yellow → purple → green cycle wherever it sits on the page.
+ * The v2 port seeded by mount order instead (siblings on different fills),
+ * which in production hydration order made the nav, hero and CTA "Get
+ * started" flood yellow and the pricing one purple — one step off on every
+ * hover after that too. The founder read it as a different animation
+ * (2026-09-03: "the pricing Get started animation is not the good one, it
+ * should be like for other buttons"). Same label, same sequence, now.
+ */
+/** The two site-wide CTAs get fixed, different starts (their hashes happen
+ *  to collide); any other label hashes into the palette. */
+const FILL_START: Record<string, number> = { "Start free": 0, "Book a demo": 1 };
 
-function useFxCircle(hostRef: RefObject<HTMLElement>, circleRef: RefObject<HTMLSpanElement>) {
+function fillIndexFor(label: string): number {
+  if (label in FILL_START) return FILL_START[label]!;
+  let h = 0;
+  for (let i = 0; i < label.length; i++) h = (h * 31 + label.charCodeAt(i)) >>> 0;
+  return h % FILLS.length;
+}
+
+function useFxCircle(
+  hostRef: RefObject<HTMLElement>,
+  circleRef: RefObject<HTMLSpanElement>,
+  label: string,
+) {
   useEffect(() => {
     const host = hostRef.current;
     const c = circleRef.current;
     if (!host || !c) return;
-    let count = fxSeed++;
+    let count = fillIndexFor(label);
 
     const place = (e: PointerEvent) => {
       const r = host.getBoundingClientRect();
@@ -71,7 +93,7 @@ function useFxCircle(hostRef: RefObject<HTMLElement>, circleRef: RefObject<HTMLS
       host.removeEventListener("pointerenter", onEnter);
       host.removeEventListener("pointerleave", onLeave);
     };
-  }, [hostRef, circleRef]);
+  }, [hostRef, circleRef, label]);
 }
 
 export function LpFxLink({
@@ -88,7 +110,7 @@ export function LpFxLink({
 }) {
   const linkRef = useRef<HTMLAnchorElement>(null);
   const circleRef = useRef<HTMLSpanElement>(null);
-  useFxCircle(linkRef, circleRef);
+  useFxCircle(linkRef, circleRef, children);
 
   // Same funnel wiring as v2's FxPillLink: app links emit the allow-listed
   // app_cta_clicked event (GTM/PostHog read it from dataLayer).
@@ -131,7 +153,7 @@ export function LpFxPill({
 }) {
   const btnRef = useRef<HTMLButtonElement>(null);
   const circleRef = useRef<HTMLSpanElement>(null);
-  useFxCircle(btnRef, circleRef);
+  useFxCircle(btnRef, circleRef, children);
 
   return (
     <button

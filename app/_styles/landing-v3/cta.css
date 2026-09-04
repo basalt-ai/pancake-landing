@@ -62,7 +62,8 @@
   font-size: var(--lp-text-md);
   line-height: 1.5;
 }
-/* Book a call (outline) + Get started, side by side — v2's final-CTA pairing */
+/* Start free + Book a demo, side by side — primary first, the hero's order
+   on every surface (founder 2026-09-03) */
 .lp-cta__btns {
   align-items: center;
   display: flex;
@@ -147,10 +148,7 @@
   .lp-cta__btns {
     flex-direction: column;
   }
-  /* Artboard mobile CTA (4389:8372) shows a single centered "Get started" —
-     Book a call lives in the hero + nav menu on phones. (The button wears
-     .lp-btn--tinted since 2026-09-01, matching the hero.) */
-  .lp-cta__btns .lp-btn--tinted {
-    display: none;
-  }
+  /* Both pills on phones too, stacked (founder 2026-09-03: the secondary
+     CTA on every surface) — the artboard's single centered pill (4389:8372)
+     is overridden. */
 }

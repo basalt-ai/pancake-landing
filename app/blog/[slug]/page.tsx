@@ -1,11 +1,24 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
-import ReactMarkdown from "react-markdown";
+import type { ComponentPropsWithoutRef } from "react";
+import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { getAllPosts, getPostBySlug } from "@/lib/posts";
+
+import { LpFooter } from "@/components/sections/landing-v3/LpFooter";
+import { LpNav } from "@/components/sections/landing-v3/LpNav";
+import { formatPostDate, getAllPosts, getPostBySlug } from "@/lib/posts";
+import "@/app/_styles/landing-v3.css";
 import "../blog.css";
-import { HomeNav } from "@/components/sections/home/HomeNav";
-import { Footer } from "@/components/shared/Footer";
+
+/**
+ * Blog post on the landing-v3 system (2026-09-03) — see app/blog/page.tsx for
+ * the why. Header band (date / title / description / byline) on the 1296
+ * grid, the markdown body on a 760px measure, the frontmatter FAQ as cream
+ * cards. Article + FAQPage JSON-LD unchanged.
+ */
+
+/* Status-bar zone matches the lp cream (Dynamic Island fix, 2026-08-31) */
+export const viewport: Viewport = { themeColor: "#fbf6f1" };
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -40,6 +53,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
   };
 }
+
+/* ReactMarkdown emits a bare <table>; the comparison tables in the posts are
+   wider than the 760px measure on phones, so each one gets a scrolling box.
+   `node` (the hast node react-markdown passes) must not reach the DOM. */
+type TableProps = ComponentPropsWithoutRef<"table"> & { node?: unknown };
+const markdownComponents: Components = {
+  table: ({ node: _node, ...props }: TableProps) => (
+    <div className="lp-blog-tablewrap">
+      <table {...props} />
+    </div>
+  ),
+};
 
 export default async function BlogPost({ params }: Props) {
   const { slug } = await params;
@@ -89,7 +114,7 @@ export default async function BlogPost({ params }: Props) {
       : null;
 
   return (
-    <main id="main-content" className="flex min-h-screen flex-col" style={{ backgroundColor: "var(--surface)", color: "var(--text)" }}>
+    <main id="main-content" className="lp">
       {/* JSON-LD structured data */}
       <script
         type="application/ld+json"
@@ -102,73 +127,58 @@ export default async function BlogPost({ params }: Props) {
         />
       )}
 
-      <HomeNav />
+      <LpNav />
 
-      <article className="mx-auto w-full max-w-3xl flex-1 px-6 py-24">
-        {/* Header */}
-        <header className="mb-12">
-          <time
-            dateTime={meta.date}
-            style={{ fontSize: "var(--font-scale-min-1)", color: "var(--subtle-text)" }}
-          >
-            {new Date(meta.date).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </time>
-          <h1
-            className="mt-2 mb-4"
-            style={{ fontFamily: "var(--font-display)", fontSize: "var(--font-scale-4)", fontWeight: 700, lineHeight: 1.15 }}
-          >
-            {meta.title}
-          </h1>
-          <p style={{ color: "var(--subtle-text)", fontSize: "var(--font-scale-1)" }}>
-            {meta.description}
-          </p>
-          <div
-            className="mt-4 flex items-center gap-3"
-            style={{ fontSize: "var(--font-scale-min-1)", color: "var(--subtle-text)" }}
-          >
-            <span>By {meta.author}</span>
-            <span aria-hidden>·</span>
-            <span>
-              Last updated:{" "}
-              {new Date(meta.last_updated || meta.date).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </span>
+      <article>
+        <header className="lp-blog-hero">
+          <div className="lp-content lp-blog-hero__inner">
+            <a className="lp-blog-back" href="/blog">
+              &larr; All posts
+            </a>
+            <p className="lp-blog-meta">
+              <time dateTime={meta.date}>{formatPostDate(meta.date)}</time>
+            </p>
+            <h1 className="lp-blog-post__title lp-display">{meta.title}</h1>
+            <p className="lp-blog-lede lp-blog-post__lede">{meta.description}</p>
+            <p className="lp-blog-meta">
+              <span>By {meta.author}</span>
+              <span aria-hidden="true">&middot;</span>
+              <span>Last updated {formatPostDate(meta.last_updated || meta.date)}</span>
+            </p>
           </div>
         </header>
 
-        {/* Post body */}
-        <div className="blog-prose">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
-        </div>
+        <div className="lp-blog-article">
+          <div className="lp-content">
+            <div className="lp-blog-article__inner">
+              <div className="lp-blog-prose">
+                <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+                  {content}
+                </ReactMarkdown>
+              </div>
 
-        {/* FAQ section rendered from frontmatter */}
-        {meta.faq && meta.faq.length > 0 && (
-          <section className="mt-16">
-            <h2
-              style={{ fontFamily: "var(--font-display)", fontSize: "var(--font-scale-2)", fontWeight: 600, marginBottom: "1.5rem" }}
-            >
-              Frequently asked questions
-            </h2>
-            <dl className="flex flex-col gap-8">
-              {meta.faq.map((item, i) => (
-                <div key={i}>
-                  <dt style={{ fontWeight: 600, marginBottom: "0.5rem" }}>{item.question}</dt>
-                  <dd style={{ color: "var(--subtle-text)" }}>{item.answer}</dd>
-                </div>
-              ))}
-            </dl>
-          </section>
-        )}
+              {/* FAQ section rendered from frontmatter */}
+              {meta.faq && meta.faq.length > 0 && (
+                <section className="lp-blog-faq" aria-labelledby="blog-faq-heading">
+                  <h2 id="blog-faq-heading" className="lp-blog-faq__title">
+                    Frequently asked questions
+                  </h2>
+                  <dl className="lp-blog-faq__list">
+                    {meta.faq.map((item) => (
+                      <div key={item.question} className="lp-blog-faq__item">
+                        <dt className="lp-blog-faq__q">{item.question}</dt>
+                        <dd className="lp-blog-faq__a">{item.answer}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </section>
+              )}
+            </div>
+          </div>
+        </div>
       </article>
 
-      <Footer />
+      <LpFooter />
     </main>
   );
 }

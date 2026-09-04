@@ -1921,11 +1921,6 @@
   color: var(--subtle-text);
 }
 
-/* The global Product Hunt badge fights the funnel's focal points. */
-body:has(.rpt) .product-hunt-badge {
-  display: none !important;
-}
-
 /* ── Keyframes ── */
 
 @keyframes rpt-fade-up {

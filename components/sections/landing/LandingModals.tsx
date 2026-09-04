@@ -204,7 +204,7 @@ export function LandingModals() {
           &#10005;
         </button>
         <h3 id="lv2-call-title" className="lv2-call-title">
-          Book a call
+          Book a demo
         </h3>
         <div ref={zcalWrapRef} className="lv2-zcal-wrap">
           {/* the calendar iframe exists only while the dialog is open */}

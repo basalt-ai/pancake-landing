@@ -25,8 +25,13 @@ export function LpPricing() {
         <h2 className="lp-title-section lp-price-title">Simple, transparent pricing</h2>
         <div className="lp-price-body">
           <div className="lp-price-price">
-            <p className="lp-price-amount">99 USD</p>
-            <p className="lp-price-per">per month, flat</p>
+            {/* Founder copy (2026-09-03): "$99/month" replaces the artboard's
+                "99 USD" + "per month, flat" — the number keeps the display
+                size, "/month" rides the old per-line style inline. */}
+            <p className="lp-price-amount">
+              $99
+              <span className="lp-price-per">/month</span>
+            </p>
           </div>
           <ul className="lp-price-list">
             {CHECKLIST.map((item) => (
@@ -37,9 +42,18 @@ export function LpPricing() {
             ))}
           </ul>
         </div>
-        <LpFxLink href="https://app.getpancake.ai" size="lg" className="lp-price-cta" data-analytics-id="app_pricing_card">
-          Get started
-        </LpFxLink>
+        {/* Pricing keeps the primary only (founder 2026-09-03, "enlève Book a
+            demo du pricing") — the one surface without the secondary pill. */}
+        <div className="lp-price-ctas">
+          <LpFxLink
+            href="https://app.getpancake.ai"
+            size="lg"
+            className="lp-price-cta"
+            data-analytics-id="app_pricing_card"
+          >
+            Start free
+          </LpFxLink>
+        </div>
         <p className="lp-price-note">No credit card needed</p>
       </div>
       {/* Animated pancakes group: 1654×1039 canvas where the old composite img

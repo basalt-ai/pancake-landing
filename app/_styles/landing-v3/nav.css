@@ -82,10 +82,13 @@
   padding-block: 10px; /* 40px tap target, no visual change */
 }
 
-/* CTA: typography/skin from .lp-btn[data-size="sm"]; centered in the bar —
-   calc(50% − 19px) == the artboard's top 41 at 120 tall, and keeps the pill
-   centered when the scrolled bar compresses to 72. */
-.lp-nav-cta {
+/* CTAs: the primary + secondary pair (founder 2026-09-03, hero order), sm
+   skins from .lp-btn[data-size="sm"]; right-anchored and centered in the
+   bar — calc(50% − 19px) == the artboard's top 41 at 120 tall, and keeps
+   the pills centered when the scrolled bar compresses to 72. */
+.lp-nav-ctas {
+  display: flex;
+  gap: 8px;
   position: absolute;
   right: max(32px, calc(50% - 648px));
   top: calc(50% - 19px);
@@ -123,10 +126,14 @@
      bouton Get started dans ce bandeau") — the mobile artboard drew only
      logo + burger; founder override. Same sm pill + app_nav id as desktop;
      the burger-sheet copy stays for the menu path. */
-  .lp-nav-cta {
+  .lp-nav-ctas {
     display: inline-flex;
     margin-left: auto;
     position: static;
+  }
+  /* one pill fits next to the burger — the secondary lives in the sheet */
+  .lp-nav-ctas .lp-btn--demo {
+    display: none;
   }
   /* compact .is-scrolled rules live in the mobile-only sticky block up top */
 }

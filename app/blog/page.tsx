@@ -1,9 +1,22 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { getAllPosts } from "@/lib/posts";
+import type { Metadata, Viewport } from "next";
+
+import { LpFooter } from "@/components/sections/landing-v3/LpFooter";
+import { LpNav } from "@/components/sections/landing-v3/LpNav";
+import { formatPostDate, getAllPosts } from "@/lib/posts";
+import "@/app/_styles/landing-v3.css";
 import "./blog.css";
-import { HomeNav } from "@/components/sections/home/HomeNav";
-import { Footer } from "@/components/shared/Footer";
+
+/**
+ * Blog index on the landing-v3 system (2026-09-03). Until now the blog kept
+ * the v1 chrome (HomeNav + the shared Footer), so one click from the homepage
+ * exposed the retired link tree — roadmap, beta sign-in, the seven comparison
+ * pages of the previous positioning. Same footing as /careers: no Figma
+ * artboard, the design language only. landing-v3.css is the homepage manifest
+ * (the nav + footer rules live there); blog.css is page-only.
+ */
+
+/* Status-bar zone matches the lp cream (Dynamic Island fix, 2026-08-31) */
+export const viewport: Viewport = { themeColor: "#fbf6f1" };
 
 export const metadata: Metadata = {
   title: "Blog · Pancake",
@@ -22,73 +35,45 @@ export default function BlogIndex() {
   const posts = getAllPosts();
 
   return (
-    <main id="main-content" className="flex min-h-screen flex-col" style={{ backgroundColor: "var(--surface)", color: "var(--text)" }}>
-      <HomeNav />
+    <main id="main-content" className="lp">
+      <LpNav />
 
-      <section className="mx-auto w-full max-w-3xl flex-1 px-6 py-24">
-        <h1
-          className="mb-4"
-          style={{ fontFamily: "var(--font-display)", fontSize: "var(--font-scale-4)", fontWeight: 700 }}
-        >
-          Blog
-        </h1>
-        <p className="mb-16" style={{ color: "var(--subtle-text)", fontSize: "var(--font-scale-1)" }}>
-          We are Pancake and we help small teams achieve great things with AI. This is where we share our recipes, come cook with us!
-        </p>
-
-        {posts.length === 0 ? (
-          <p style={{ color: "var(--subtle-text)" }}>No posts yet. Check back soon.</p>
-        ) : (
-          <ul className="flex flex-col gap-12" style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            {posts.map((post) => (
-              <li key={post.slug}>
-                <Link
-                  href={`/blog/${post.slug}`}
-                  className="group block no-underline"
-                  prefetch={false}
-                >
-                  <div className="flex items-center gap-2">
-                    <time
-                      dateTime={post.date}
-                      style={{ fontSize: "var(--font-scale-min-1)", color: "var(--subtle-text)" }}
-                    >
-                      {new Date(post.date).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </time>
-                    {post.pinned && (
-                      <span
-                        style={{
-                          fontSize: "var(--font-scale-min-1)",
-                          color: "var(--accent, var(--subtle-text))",
-                          textTransform: "uppercase",
-                          letterSpacing: "0.06em",
-                          fontWeight: 600,
-                        }}
-                      >
-                        · Pinned
-                      </span>
-                    )}
-                  </div>
-                  <h2
-                    className="mt-1 mb-2 transition-opacity group-hover:opacity-70"
-                    style={{ fontFamily: "var(--font-display)", fontSize: "var(--font-scale-2)", fontWeight: 600 }}
-                  >
-                    {post.title}
-                  </h2>
-                  <p style={{ color: "var(--subtle-text)", fontSize: "var(--font-scale-0)" }}>
-                    {post.description}
-                  </p>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
+      <section className="lp-blog-hero" aria-labelledby="blog-heading">
+        <div className="lp-content lp-blog-hero__inner">
+          <h1 id="blog-heading" className="lp-blog-hero__title lp-title-section">
+            Blog
+          </h1>
+          <p className="lp-blog-lede">
+            We are Pancake and we help small teams achieve great things with AI. This is where we
+            share our recipes, come cook with us!
+          </p>
+        </div>
       </section>
 
-      <Footer />
+      <section className="lp-blog-list" aria-label="All posts">
+        <div className="lp-content">
+          {posts.length === 0 ? (
+            <p className="lp-blog-empty">No posts yet. Check back soon.</p>
+          ) : (
+            <ul className="lp-blog-cards">
+              {posts.map((post) => (
+                <li key={post.slug}>
+                  <a className="lp-blog-card" href={`/blog/${post.slug}`}>
+                    <p className="lp-blog-meta">
+                      <time dateTime={post.date}>{formatPostDate(post.date)}</time>
+                      {post.pinned && <span className="lp-blog-meta__pin">Pinned</span>}
+                    </p>
+                    <h2 className="lp-blog-card__title lp-display">{post.title}</h2>
+                    <p className="lp-blog-card__desc">{post.description}</p>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
+
+      <LpFooter />
     </main>
   );
 }

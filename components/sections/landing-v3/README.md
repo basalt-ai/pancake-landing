@@ -85,6 +85,22 @@ back during a fidelity pass:
 
 - Casing: no capitals on common nouns mid-sentence ("Pancake sells it",
   "While you run your business,", "GTM brain").
+- CTAs (founder, 2026-09-03): primary "Start free" (app.getpancake.ai)
+  and secondary "Book a demo" (zcal sheet) on the nav bar, hero and final
+  CTA, always in that order; pricing keeps the primary only (founder, same
+  day: "enlève Book a demo du pricing"); the phone bar keeps the primary
+  only (the sheet carries both), the final CTA shows both on phones too.
+  Pills keep the artboard widths (110/136/203 — founder: "button keep same
+  sizes"; "Start free trial" had widened them, hence the shorter label);
+  "Book a demo" fits by trading side padding (`.lp-btn--demo`). The v2
+  chrome (pricing, support, privacy, terms) carries the same labels and
+  order.
+- Copy pass (founder, 2026-09-03), verbatim: steps heading "Pancake fills
+  your pipeline." (was "Pancake sells it"); step 01 body "From your website,
+  Pancake learns who buys from you, what to say, and where to show up. Always
+  up to date."; signals card body "…Pancake finds matching prospects and shows
+  the signal behind every match."; pricing "$99/month" (display "$99" + inline
+  "/month" in the per-line style) instead of "99 USD" / "per month, flat".
 - Steps media cards are the designer's vector illustrations (Figma 4636:3164,
   2026-09-02: knowledge graph / pipeline checklist / calendar week), exported
   as 464×426 SVGs with outlined text (`/public/how/step-*.svg`), contain-fit
@@ -98,14 +114,38 @@ back during a fidelity pass:
 - Testimonials: two counter-scrolling marquees (~28.75 px/s), 48px between
   rows (Figma had 96), 8 distinct fictional authors/tweets; phones keep the
   old single stacked column (row 2 hidden there).
-- "How Pancake finds customers": the four mock UIs are animations now
-  (pancake-studio `shorts/feat-{signals,warm-message,ai-search,learns}-anim`,
-  1120×1242 = the 560×621 zone at 2×, rendered from the mock markup/CSS this
-  repo used to carry). `LpLoopVideo` plays each once when its card is in view
-  and holds the designer's picture as the last frame; the zone keeps the
-  560/621 aspect at every width (`/public/lp/feat-*.mp4` + first-frame
-  posters). The CSS choreography, ring-flow effect and `LpRingFlow` left with
-  them (2026-09-02).
+- "How Pancake finds customers": the four mock UIs are IN-PAGE animations
+  (DOM + CSS + GSAP) since 2026-09-03 — founder: no 500 KB–1 MB video
+  downloads, vector-crisp at every DPR. `LpFeatAnim.tsx` drives them with the
+  contract the mp4s had (plays once at 60 % in view, pauses off-screen, holds
+  the last frame = the designer's picture, reduced motion = that picture,
+  stage hidden until armed so hydration never flashes the end state);
+  `LpFeatMocks.tsx` is the mocks' markup, `features.css` their Figma-exact
+  geometry, `lp-feat-timelines.ts` the four timelines ported tween for tween
+  from the pancake-studio compositions (`shorts/feat-*-anim`, the storyboards
+  the mp4s were rendered from), `lp-feat-art.ts` the inline SVG art extracted
+  from them by script (never hand-edit the path data). The 560×621 stage
+  scales AS PIXELS with the zone (`--lp-fit`, ResizeObserver + trig fallback —
+  never `zoom`, iOS relayouts zoomed text); the zone keeps the 560/621 aspect
+  at every width and does not clip (f1's clay note paints 21px left of the
+  frame, f3's Gemini star 36px right of it, as in Figma). QA hook:
+  `window.__lpFeat[f1..f4]` = the timelines (seek + screenshot, compare with
+  the composition renders). f1 is the founder's Figma-parity cut (instance at
+  31/97, no row hairlines, Companies hiring highlighted at rest, one sticker).
+  Founder changes of 2026-09-03 that exist ONLY here (the studio compositions
+  are behind on them): f3 types the question in the composer bar — which
+  grows like a real chat input — then sends it up into the blue bubble; f2's
+  draft card has NO Send button ("ressortir l'esprit que c'est autonome"): it
+  is the message and its status — DRAFT READY (yellow-40) lands once the draft
+  is written and flips to MESSAGE SENT (green-30), the picture that holds. The
+  card hugs the five-line copy at Figma's own 28.985 line pitch (the artboard's
+  255.22 card = 4 lines + paddings + button) and the ring is cut to follow
+  (`F2_RING`: the pill's straight middle rescaled); the draft opens "Hey
+  Sarah" (the post's author). Typing in f2 reveals the REAL text run with a
+  clip-path staircase + a caret riding the glyph edges (measured at build):
+  a per-character span layer lost kerning across the spans in WebKit and the
+  text visibly tightened at the hand-over (founder: "le texte rétrécit d'un
+  coup"). The mp4s + posters are gone.
 - Footer content sits 48px closer to the pricing rings (height 467, brand
   top 56.43, cols top 76.75; Figma: 515/104.43/124.75).
 - /careers runs on this design system (`app/careers/page.tsx` +

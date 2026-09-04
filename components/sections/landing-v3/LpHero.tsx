@@ -39,18 +39,18 @@ export function LpHero() {
           </p>
           <div className="lp-hero-btns">
             <LpFxLink href="https://app.getpancake.ai" data-analytics-id="app_hero">
-              Get started
+              Start free
             </LpFxLink>
             {/* Opens the zcal booking sheet via LpModals' data-lv2-open
                 contract; analytics fire there off the allow-listed call_hero
                 id. All widths (founder 2026-09-01) — the desktop artboard
                 draws one CTA, deliberately overridden. */}
             <LpFxPill
-              className="lp-btn--tinted lp-hero-call"
+              className="lp-btn--tinted lp-btn--demo lp-hero-call"
               data-lv2-open="call"
               data-analytics-id="call_hero"
             >
-              Book a call
+              Book a demo
             </LpFxPill>
           </div>
         </div>

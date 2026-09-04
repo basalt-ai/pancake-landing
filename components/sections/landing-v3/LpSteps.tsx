@@ -1,11 +1,14 @@
-// Steps — "Pancake sells it" (Figma 4636:3164, 1622×1741 — the 2026-09-02
+// Steps — "Pancake fills your pipeline." (Figma 4636:3164, 1622×1741 — the 2026-09-02
 // revision: the designer's vector illustrations, each replaced by its storyboard
 // loop as the founder approves it — step 01 first). Heading block + 3 checkerboard rows: 656px text card +
 // 464×426 media card. Copy follows the artboard except casing: founder rule
 // (2026-08-28) — no capitals on common nouns mid-sentence ("sells it", "your
 // business", "GTM brain") — and step 03, whose artboard copy the founder
 // overrode in the brief (2026-09-02): "Pancake gets you the meeting. / You
-// close it." + the follow-up body.
+// close it." + the follow-up body. Founder copy pass (2026-09-03): the
+// section heading ("Pancake fills your pipeline.", was "Pancake sells it")
+// and the step 01 body ("From your website, Pancake learns…") are his words
+// verbatim — not the artboard's.
 
 import { LpLoopVideo } from "./LpLoopVideo";
 
@@ -32,7 +35,7 @@ const STEPS: Step[] = [
   {
     num: "01",
     title: "Add your website.\nPancake builds your GTM brain.",
-    body: "Pancake turns your website into a living plan.\nWho buys from you, what to say to them, and where to show up. Always up to date.",
+    body: "From your website, Pancake learns who buys from you, what to say, and where to show up. Always up to date.",
     video: "/how/brain-research-loop.mp4",
     poster: "/how/brain-research-loop-poster.jpg",
     alt: "Animation: a website address is typed and researched; from the Studio Pelican node a knowledge graph blooms — purple, green, pink, orange and blue branches — then a market profile fills in: Company, Offering, Ideal clients.",
@@ -61,7 +64,7 @@ export function LpSteps() {
       <div className="lp-steps__org">
         <header className="lp-steps__head">
           <p className="lp-steps__kicker">While you run your business,</p>
-          <h2 className="lp-steps__title lp-title-section">Pancake sells it</h2>
+          <h2 className="lp-steps__title lp-title-section">Pancake fills your pipeline.</h2>
         </header>
         <div className="lp-steps__list">
           {STEPS.map((step) => (

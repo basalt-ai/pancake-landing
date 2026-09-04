@@ -36,6 +36,11 @@ export function LandingNav() {
               ),
             )}
           </nav>
+          {/* Primary first, secondary second — the founder's site-wide CTA
+              order (2026-09-03), same labels as the v3 chrome. */}
+          <FxPillLink href="https://app.getpancake.ai" data-analytics-id="app_nav">
+            Start free
+          </FxPillLink>
           <FxPillLink
             variant="outline"
             href="https://zcal.co/i/ZEHl48rv"
@@ -45,10 +50,7 @@ export function LandingNav() {
             data-lv2-open="call"
             data-analytics-id="call_nav"
           >
-            Book a call
-          </FxPillLink>
-          <FxPillLink href="https://app.getpancake.ai" data-analytics-id="app_nav">
-            Get started
+            Book a demo
           </FxPillLink>
           <LandingNavMenu />
         </div>

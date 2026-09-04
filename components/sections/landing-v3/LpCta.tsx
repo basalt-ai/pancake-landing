@@ -38,21 +38,23 @@ export function LpCta() {
             </p>
           </div>
           <div className="lp-cta__btns">
+            {/* Primary first, secondary second — the hero's order on every
+                surface (founder 2026-09-03). */}
+            <LpFxLink href="https://app.getpancake.ai" data-analytics-id="app_final">
+              Start free
+            </LpFxLink>
             {/* opens the zcal booking sheet (LpModals) via the data-lv2-open
                 contract; scheduler analytics fire in the modal off call_final.
-                Tinted skin — same as the hero's Book a call (founder
+                Tinted skin — same as the hero's Book a demo (founder
                 2026-09-01: "bouton book a call différent que dans hero");
                 the outline variant is retired here. */}
             <LpFxPill
-              className="lp-btn--tinted"
+              className="lp-btn--tinted lp-btn--demo"
               data-lv2-open="call"
               data-analytics-id="call_final"
             >
-              Book a call
+              Book a demo
             </LpFxPill>
-            <LpFxLink href="https://app.getpancake.ai" data-analytics-id="app_final">
-              Get started
-            </LpFxLink>
           </div>
         </div>
       </div>
