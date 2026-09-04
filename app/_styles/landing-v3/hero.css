@@ -156,8 +156,8 @@
 /* Button row (Figma mobile 4389:8177: horizontal, gap 8). "Book a call"
    shows at EVERY width (founder 2026-09-01: it was hidden ≥768 for desktop-
    artboard fidelity — the desktop frame draws one CTA — and he wants it
-   back). 171 + 8 + 142 = 321px (Start free trial + Book a demo,
-   2026-09-03) sits inside the 368px column. */
+   back). 136 + 8 + 136 = 280px (Start free + Book a demo, 2026-09-03,
+   artboard pill widths kept) sits inside the 368px column. */
 .lp-hero-btns {
   display: flex;
   gap: 8px;

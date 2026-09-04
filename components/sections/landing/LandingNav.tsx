@@ -39,7 +39,7 @@ export function LandingNav() {
           {/* Primary first, secondary second — the founder's site-wide CTA
               order (2026-09-03), same labels as the v3 chrome. */}
           <FxPillLink href="https://app.getpancake.ai" data-analytics-id="app_nav">
-            Start free trial
+            Start free
           </FxPillLink>
           <FxPillLink
             variant="outline"

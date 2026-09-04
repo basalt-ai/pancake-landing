@@ -140,11 +140,11 @@ export function LpNavMenu() {
         <div className="lp-nav-menu-ctas">
           <LpFxLink
             href="https://app.getpancake.ai"
-            className="lp-btn--trial lp-nav-menu-app"
+            className="lp-nav-menu-app"
             data-analytics-id="app_nav"
             onClick={close}
           >
-            Start free trial
+            Start free
           </LpFxLink>
           {/* target/rel mirror the site-wide trigger contract: LpModals'
               document listener preventDefaults this into the dialog on pages

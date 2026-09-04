@@ -40,8 +40,8 @@ export function LpCta() {
           <div className="lp-cta__btns">
             {/* Primary first, secondary second — the hero's order on every
                 surface (founder 2026-09-03). */}
-            <LpFxLink href="https://app.getpancake.ai" className="lp-btn--trial" data-analytics-id="app_final">
-              Start free trial
+            <LpFxLink href="https://app.getpancake.ai" data-analytics-id="app_final">
+              Start free
             </LpFxLink>
             {/* opens the zcal booking sheet (LpModals) via the data-lv2-open
                 contract; scheduler analytics fire in the modal off call_final.

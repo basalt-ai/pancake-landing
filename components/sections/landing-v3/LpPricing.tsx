@@ -48,10 +48,10 @@ export function LpPricing() {
           <LpFxLink
             href="https://app.getpancake.ai"
             size="lg"
-            className="lp-price-cta lp-btn--trial"
+            className="lp-price-cta"
             data-analytics-id="app_pricing_card"
           >
-            Start free trial
+            Start free
           </LpFxLink>
         </div>
         <p className="lp-price-note">No credit card needed</p>

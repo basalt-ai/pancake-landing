@@ -118,10 +118,10 @@
 .lp-price-item img {
   flex: none;
 }
-/* CTA slot (founder 2026-09-03): "Start free trial" alone — pricing is the
-   one surface without the secondary pill ("enlève Book a demo du pricing").
-   The flex wrapper stays so a second pill would drop in without layout work
-   (256 + 16 + 213 = 485px would fit the 528px price block). */
+/* CTA slot (founder 2026-09-03): "Start free" alone — pricing is the one
+   surface without the secondary pill ("enlève Book a demo du pricing"). The
+   flex wrapper stays so a second pill would drop in without layout work
+   (203 + 16 + 203 = 422px would fit the 528px price block). */
 .lp-price-ctas {
   display: flex;
   gap: 16px;

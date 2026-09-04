@@ -38,8 +38,8 @@ export function LpHero() {
             your AI search visibility, and learn from every interaction.
           </p>
           <div className="lp-hero-btns">
-            <LpFxLink href="https://app.getpancake.ai" className="lp-btn--trial" data-analytics-id="app_hero">
-              Start free trial
+            <LpFxLink href="https://app.getpancake.ai" data-analytics-id="app_hero">
+              Start free
             </LpFxLink>
             {/* Opens the zcal booking sheet via LpModals' data-lv2-open
                 contract; analytics fire there off the allow-listed call_hero

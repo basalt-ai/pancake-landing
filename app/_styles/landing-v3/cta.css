@@ -62,8 +62,8 @@
   font-size: var(--lp-text-md);
   line-height: 1.5;
 }
-/* Start free trial + Book a demo, side by side — primary first, the hero's
-   order on every surface (founder 2026-09-03) */
+/* Start free + Book a demo, side by side — primary first, the hero's order
+   on every surface (founder 2026-09-03) */
 .lp-cta__btns {
   align-items: center;
   display: flex;

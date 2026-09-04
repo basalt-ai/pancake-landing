@@ -60,7 +60,7 @@ export default function PricingPage() {
         {/* Same composition as the homepage pricing fold — brand band, card,
             pancake-stack mascot — so "See full pricing" doesn't land on a
             barer page than the teaser it came from (mobile QA 2026-08-26).
-            CTA pair runs Start free trial → Book a demo like the nav
+            CTA pair runs Start free → Book a demo like the nav
             (founder 2026-09-03: primary first, everywhere). */}
         <section
           className="lv2s lv2s--brand lv2-pricing-page"
@@ -87,7 +87,7 @@ export default function PricingPage() {
                 <PriceGroups />
                 <div className="lv2-button-group">
                   <FxPillLink href="https://app.getpancake.ai" data-analytics-id="app_pricing_page">
-                    Start free trial
+                    Start free
                   </FxPillLink>
                   <FxPill
                     variant="outline"
