@@ -11,6 +11,7 @@
 // verbatim — not the artboard's.
 
 import { LpLoopVideo } from "./LpLoopVideo";
+import { AudienceCopy } from "./LpAudience";
 
 type Step = {
   num: string;
@@ -58,22 +59,28 @@ const STEPS: Step[] = [
   },
 ];
 
+const AGENT_STEPS = [
+  { title: "Start with the company.\nPancake builds the GTM brain.", body: "From the company’s website, Pancake learns who buys, what to say, and where to show up. Read that context through your connection." },
+  { title: "Pancake’s agents get to work.", body: "Pancake reaches people ready to buy and helps the company get found on Google and ChatGPT. Read the leads and SEO calendar to plan the next move." },
+  { title: "Pancake gets the meeting.\nYour human closes it.", body: "Pancake handles the follow-up and keeps warm conversations moving. Your human gets a qualified meeting and the context to walk into it." },
+];
+
 export function LpSteps() {
   return (
     <section className="lp-steps" id="how-it-works">
       <div className="lp-steps__org">
         <header className="lp-steps__head">
-          <p className="lp-steps__kicker">While you run your business,</p>
-          <h2 className="lp-steps__title lp-title-section">Pancake fills your pipeline.</h2>
+          <p className="lp-steps__kicker"><AudienceCopy human="While you run your business," agent="While your human runs the business," /></p>
+          <h2 className="lp-steps__title lp-title-section"><AudienceCopy human="Pancake fills your pipeline." agent="Pancake fills their pipeline." /></h2>
         </header>
         <div className="lp-steps__list">
-          {STEPS.map((step) => (
+          {STEPS.map((step, index) => (
             <div className="lp-steps__row" key={step.num}>
               <div className="lp-steps__text">
                 <p className="lp-steps__num lp-display">{step.num}</p>
                 <span className="lp-steps__spacer" aria-hidden="true" />
-                <h3 className="lp-steps__step-title lp-display">{step.title}</h3>
-                <p className="lp-steps__body">{step.body}</p>
+                <h3 className="lp-steps__step-title lp-display"><AudienceCopy human={step.title} agent={AGENT_STEPS[index]!.title} /></h3>
+                <p className="lp-steps__body"><AudienceCopy human={step.body} agent={AGENT_STEPS[index]!.body} /></p>
               </div>
               {step.video ? (
                 <LpLoopVideo

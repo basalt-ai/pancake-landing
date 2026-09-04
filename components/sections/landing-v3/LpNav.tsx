@@ -12,15 +12,15 @@ import { LpNavScroll } from "@/components/sections/landing-v3/LpNavScroll";
  * ≤767px (Figma mobile node 4389:8182): logo + burger only — links and the
  * pill move into LpNavMenu's sheet; the pill keeps its app_nav id there.
  */
-export function LpNav() {
+export function LpNav({ homepage = false }: { homepage?: boolean }) {
   return (
     <header className="lp-nav">
       <a className="lp-nav-logo" href="/" aria-label="Pancake home">
         <img alt="" src="/lp/lp-nav-logo.svg" width={114.956} height={56} />
       </a>
       <nav className="lp-nav-links" aria-label="Primary">
-        <a href="/#how-it-works">Product</a>
-        <a href="/#why">Company</a>
+        <a href={homepage ? "#how-it-works" : "/#how-it-works"}>Product</a>
+        <a href={homepage ? "#why" : "/#why"}>Company</a>
         <a href="/blog">Blog</a>
       </nav>
       <div className="lp-nav-ctas">
@@ -47,7 +47,7 @@ export function LpNav() {
           Book a demo
         </LpFxLink>
       </div>
-      <LpNavMenu />
+      <LpNavMenu homepage={homepage} />
       <LpNavScroll />
     </header>
   );

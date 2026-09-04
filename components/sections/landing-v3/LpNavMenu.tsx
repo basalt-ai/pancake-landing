@@ -17,7 +17,7 @@ import { LpFxLink } from "@/components/sections/landing-v3/LpFxButton";
  * data-lv2-open="call" trigger with the zcal URL as href fallback — on
  * /careers (no LpModals mounted) it degrades to a plain new-tab link.
  */
-export function LpNavMenu() {
+export function LpNavMenu({ homepage = false }: { homepage?: boolean }) {
   const [open, setOpen] = useState(false);
   const openBtnRef = useRef<HTMLButtonElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
@@ -127,10 +127,10 @@ export function LpNavMenu() {
         </div>
         {/* Same labels/hrefs as the desktop bar (LpNav) — one source of nav truth. */}
         <nav aria-label="Menu">
-          <a href="/#how-it-works" onClick={close}>
+          <a href={homepage ? "#how-it-works" : "/#how-it-works"} onClick={close}>
             Product
           </a>
-          <a href="/#why" onClick={close}>
+          <a href={homepage ? "#why" : "/#why"} onClick={close}>
             Company
           </a>
           <a href="/blog" onClick={close}>

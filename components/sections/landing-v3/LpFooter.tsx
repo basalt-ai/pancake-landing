@@ -17,6 +17,8 @@ const COLUMNS: { id: string; title: string; links: FootLink[] }[] = [
     title: "Product",
     links: [
       { label: "How it works", href: "/#how-it-works" },
+      { label: "For agents", href: "/?audience=agents#agent-setup" },
+      { label: "Agent guide", href: "/agents" },
       { label: "Pricing", href: "/pricing" },
       { label: "Open the app", href: "https://app.getpancake.ai", external: true },
     ],
@@ -46,7 +48,7 @@ const COLUMNS: { id: string; title: string; links: FootLink[] }[] = [
   },
 ];
 
-export function LpFooter() {
+export function LpFooter({ homepage = false }: { homepage?: boolean }) {
   return (
     <footer className="lp-foot">
       <div className="lp-foot-frame">
@@ -78,7 +80,7 @@ export function LpFooter() {
                       {link.label}
                     </a>
                   ) : (
-                    <a key={link.label} href={link.href}>
+                    <a key={link.label} href={homepage && link.href.startsWith("/#") ? link.href.slice(1) : link.href}>
                       {link.label}
                     </a>
                   ),

@@ -1,4 +1,5 @@
 import { LpBottleneck } from "@/components/sections/landing-v3/LpBottleneck";
+import { AudienceCopy } from "./LpAudience";
 
 /**
  * Section 5 — Banner "Building got 10x easier / Selling didn't"
@@ -26,9 +27,8 @@ export function LpBanner() {
           Selling didn’t.
         </p>
         <p className="lp-banner__body">
-          Your brain sets the watchlist: the phrases buyers type when they’re
-          ready, your competitors’ pages, the voices your market follows. Live
-          conversations, not a stale database.
+          <AudienceCopy human="Your brain sets the watchlist: the phrases buyers type when they’re ready, your competitors’ pages, the voices your market follows. Live conversations, not a stale database."
+            agent="Pancake’s GTM brain sets the watchlist: buying phrases, competitor pages, and the voices the market follows. Every lead gives you a reason to start a conversation." />
         </p>
       </div>
     </section>

@@ -1,0 +1,5 @@
+artifacts/
+.agents/
+.DS_Store
+docs/images/
+docs/human-agent-product-evidence.md
