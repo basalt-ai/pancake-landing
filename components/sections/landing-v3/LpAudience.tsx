@@ -13,6 +13,18 @@ const AudienceContext = createContext<{ audience: Audience; setAudience: (value:
 });
 export const useAudience = () => useContext(AudienceContext);
 
+export function AudienceHeadline() {
+  const { audience } = useAudience();
+  return <>
+    <span className="lp-hero-title__copy" aria-hidden={audience === "agents"}>
+      You run your company<br />We bring you customers
+    </span>
+    <span className="lp-hero-title__copy" aria-hidden={audience === "humans"}>
+      Give your human<br />GTM superpowers
+    </span>
+  </>;
+}
+
 /** A real URL for sharing/back/forward, without navigation or remounting art. */
 export function LpAudience({ initialAudience, children }: { initialAudience: Audience; children: ReactNode }) {
   const searchParams = useSearchParams();

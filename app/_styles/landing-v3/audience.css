@@ -28,6 +28,11 @@ html:has(.lp-audience-page)::view-transition-new(lp-audience-switch) { animation
 .lp-sr-only { position: absolute; width: var(--lp-line); height: var(--lp-line); overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .lp-perspective { position: absolute; top: calc(var(--lp-audience-top) - var(--lp-space-4)); left: var(--lp-audience-center); transform: translate(-50%, -100%); visibility: hidden; z-index: 2; }
 .lp-perspective[data-ready="true"] { visibility: visible; }
+/* Share the original headline box so shorter agent copy never moves the
+   selector or changes the font size. Only the active copy is accessible. */
+.lp-audience-page .lp-hero-title { display: grid; }
+.lp-hero-title__copy { grid-area: 1 / 1; font: inherit; letter-spacing: inherit; }
+.lp-hero-title__copy[aria-hidden="true"] { visibility: hidden; }
 .lp-audience-selector { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--lp-space-2); color: var(--lp-text); font-size: var(--lp-text-sm); white-space: nowrap; }
 .lp-audience-selector__label { opacity: .65; }
 .lp-audience-selector__label:first-child { text-align: right; }

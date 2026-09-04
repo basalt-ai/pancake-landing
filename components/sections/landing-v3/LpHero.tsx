@@ -1,4 +1,4 @@
-import { AudienceSelector } from "./LpAudience";
+import { AudienceHeadline, AudienceSelector } from "./LpAudience";
 import { LpArcCanvas } from "@/components/sections/landing-v3/LpArcCanvas";
 import { LpFxLink, LpFxPill } from "@/components/sections/landing-v3/LpFxButton";
 import { LpPancakes } from "@/components/sections/landing-v3/LpPancakes";
@@ -30,9 +30,7 @@ export function LpHero() {
       <div className="lp-hero-inner">
         <div className="lp-perspective"><AudienceSelector /></div>
         <h1 id="lp-hero-title" className="lp-hero-title lp-display">
-          You run your company
-          <br />
-          We bring you customers
+          <AudienceHeadline />
         </h1>
         <div className="lp-hero-col">
           <p className="lp-hero-lede">
