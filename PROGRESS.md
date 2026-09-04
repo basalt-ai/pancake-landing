@@ -20,7 +20,7 @@
 - [x] Pass TypeScript, lint, and production build.
 - [x] Complete final preview verification and attach deployment link.
 
-Preview: https://pancake-9evtxo9t3-getpancake.vercel.app
+Preview: https://pancake-j6hdg104o-getpancake.vercel.app
 Draft PR: https://github.com/get-pancake/website/pull/275
 
 Design and paired copy: [human-agent-design.md](docs/human-agent-design.md).
