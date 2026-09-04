@@ -1,4 +1,5 @@
 import { AudienceHeadline, AudienceSelector } from "./LpAudience";
+import { LpAgentStart } from "./LpAgentStart";
 import { LpArcCanvas } from "@/components/sections/landing-v3/LpArcCanvas";
 import { LpFxLink, LpFxPill } from "@/components/sections/landing-v3/LpFxButton";
 import { LpPancakes } from "@/components/sections/landing-v3/LpPancakes";
@@ -32,7 +33,7 @@ export function LpHero() {
         <h1 id="lp-hero-title" className="lp-hero-title lp-display">
           <AudienceHeadline />
         </h1>
-        <div className="lp-hero-col">
+        <div className="lp-hero-col lp-hero-col--human">
           <p className="lp-hero-lede">
             Pancake’s AI agents monitor buying signals, find warm leads, grow
             your AI search visibility, and learn from every interaction.
@@ -54,6 +55,7 @@ export function LpHero() {
             </LpFxPill>
           </div>
         </div>
+        <div className="lp-hero-col lp-hero-col--agent"><LpAgentStart /></div>
       </div>
     </section>
   );

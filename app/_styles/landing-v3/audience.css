@@ -33,6 +33,42 @@ html:has(.lp-audience-page)::view-transition-new(lp-audience-switch) { animation
 .lp-audience-page .lp-hero-title { display: grid; }
 .lp-hero-title__copy { grid-area: 1 / 1; font: inherit; letter-spacing: inherit; }
 .lp-hero-title__copy[aria-hidden="true"] { visibility: hidden; }
+
+/* The agent's next step occupies the existing right-hand hero column.
+   The original human content keeps its own untouched layout. */
+.lp-hero-col--agent { display: none; }
+.lp-hero-inner:not([data-title-ready="true"]) .lp-hero-col--agent { visibility: hidden; }
+[data-audience="agents"] .lp-hero-col--human { display: none; }
+[data-audience="agents"] .lp-hero-col--agent { display: block; top: var(--lp-hero-title-top); bottom: auto; }
+.lp-agent-start { width: calc(var(--lp-space-8) * 16); max-width: 100%; color: var(--lp-text); }
+.lp-agent-start__title { margin: 0 0 var(--lp-space-4); font-size: var(--lp-text-3xlg); line-height: 1.2; letter-spacing: -.03em; }
+.lp-agent-terminal { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--lp-space-3); align-items: center; padding: var(--lp-space-4); border: var(--lp-line) solid color-mix(in srgb, var(--lp-page-bg) 16%, transparent); border-radius: var(--lp-r-m); background: color-mix(in srgb, var(--lp-page-bg) 5%, var(--lp-ink-100)); }
+.lp-agent-terminal__prompt { color: var(--lp-green-20); font: inherit; align-self: start; line-height: 1.6; }
+.lp-agent-terminal__code { display: block; font-family: var(--lp-font-fono); font-size: var(--lp-text-md); line-height: 1.6; color: var(--lp-page-bg); overflow-wrap: anywhere; text-wrap: balance; user-select: text; }
+.lp-agent-terminal__segment { font: inherit; white-space: nowrap; }
+.lp-agent-terminal__copy { display: grid; place-items: center; width: calc(var(--lp-space-12) - var(--lp-space-1)); height: calc(var(--lp-space-12) - var(--lp-space-1)); padding: 0; border: 0; border-radius: var(--lp-r-xsm); background: color-mix(in srgb, var(--lp-page-bg) 8%, transparent); color: var(--lp-ink-50); cursor: pointer; touch-action: manipulation; transition: background-color .16s ease-out, color .16s ease-out, transform .16s ease-out; }
+.lp-agent-terminal__copy:hover { background: color-mix(in srgb, var(--lp-page-bg) 14%, transparent); color: var(--lp-page-bg); }
+.lp-agent-terminal__copy:active { transform: scale(.94); }
+.lp-agent-terminal__copy:focus-visible { outline: calc(2 * var(--lp-line)) solid var(--lp-green-20); outline-offset: var(--lp-space-1); }
+.lp-agent-terminal__copy svg { width: calc(var(--lp-space-4) + var(--lp-space-1)); height: calc(var(--lp-space-4) + var(--lp-space-1)); }
+.lp-agent-terminal[data-copy-state="copied"] .lp-agent-terminal__copy { color: var(--lp-green-20); }
+.lp-agent-terminal[data-copy-state="copied"] svg { animation: lp-agent-copy-check .18s var(--lp-audience-ease); }
+.lp-agent-start__hint { padding-top: var(--lp-space-3); min-height: calc(var(--lp-space-3) + 1.5em); font-size: var(--lp-text-sm); line-height: 1.5; color: var(--lp-ink-60); }
+@keyframes lp-agent-copy-check { from { opacity: 0; transform: scale(.8); } to { opacity: 1; transform: scale(1); } }
+@media (max-width: 1024px) {
+  [data-audience="agents"] .lp-hero-inner { width: 100%; min-width: 0; }
+  .lp-hero-col--agent { width: 100%; min-width: 0; max-width: 100%; }
+  .lp-agent-start { width: 100%; max-width: calc(var(--lp-space-8) * 16); }
+}
+@media (max-width: 767px) {
+  .lp-agent-start__title { font-size: var(--lp-text-2xlg); }
+  .lp-agent-terminal { gap: var(--lp-space-2); padding: var(--lp-space-3); }
+  .lp-agent-start__hint { min-height: calc(var(--lp-space-3) + 3em); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-agent-terminal__copy { transition: none; }
+  .lp-agent-terminal[data-copy-state="copied"] svg { animation: none; }
+}
 .lp-audience-selector { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--lp-space-2); color: var(--lp-text); font-size: var(--lp-text-sm); white-space: nowrap; }
 .lp-audience-selector__label { opacity: .65; }
 .lp-audience-selector__label:first-child { text-align: right; }

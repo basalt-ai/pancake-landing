@@ -126,6 +126,8 @@ export function AudienceSelector() {
       const center = Math.max(half + edge, Math.min((title.right - box.left) / scale - gap, inner.offsetWidth - half - edge));
       placement.style.setProperty("--lp-audience-center", `${center}px`);
       placement.style.setProperty("--lp-audience-top", `${(title.top - box.top) / scale}px`);
+      inner.style.setProperty("--lp-hero-title-top", `${(title.top - box.top) / scale}px`);
+      inner.dataset.titleReady = "true";
       placement.dataset.ready = "true";
     };
     const observer = new ResizeObserver(position);
