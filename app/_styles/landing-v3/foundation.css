@@ -57,6 +57,14 @@
   --lp-ink-tr-10: rgba(44, 0, 42, 0.1);
   --lp-ink-tr-5: rgba(44, 0, 42, 0.05);
 
+  /* Agent hero: exact RGB negatives (255 − each channel) of the five
+     original rainbow tokens, kept explicit for every canvas/browser engine. */
+  --lp-yellow-30-negative: #004285;
+  --lp-pink-30-negative: #00855f;
+  --lp-purple-30-negative: #457400;
+  --lp-blue-40-negative: #b99f18;
+  --lp-green-20-negative: #973158;
+
   /* semantic (collection "colors") */
   --lp-text: var(--lp-ink-100);
   --lp-subtle-text: var(--lp-ink-80);

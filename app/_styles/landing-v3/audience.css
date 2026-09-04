@@ -27,9 +27,14 @@
 .lp-audience-page[data-audience="agents"] > .lp-foot { display: none; }
 .lp-audience-page[data-audience="agents"] > .lp-agent-placeholder { display: block; height: 100vh; position: relative; z-index: 1; background: var(--lp-ink-100); }
 
-/* Negative within the existing palette: cream and plum exchange roles.
-   The rainbow keeps its original colors, geometry, and running clock. */
+/* Cream and plum exchange roles; every colored rainbow band gets its RGB
+   negative, derived from the original token. Geometry and clocks stay intact. */
 .lp-audience-page[data-audience="agents"] > :is(.lp-nav, .lp-hero) { --lp-text: var(--lp-page-bg); }
+[data-audience="agents"] .lp-hero [data-lp-ring="yellow"] path { fill: var(--lp-yellow-30-negative); }
+[data-audience="agents"] .lp-hero [data-lp-ring="pink"] path { fill: var(--lp-pink-30-negative); }
+[data-audience="agents"] .lp-hero [data-lp-ring="purple"] path { fill: var(--lp-purple-30-negative); }
+[data-audience="agents"] .lp-hero [data-lp-ring="blue"] path { fill: var(--lp-blue-40-negative); }
+[data-audience="agents"] .lp-hero [data-lp-ring="green"] path { fill: var(--lp-green-20-negative); }
 [data-audience="agents"] .lp-hero-art .lp-anim-pop path { fill: var(--lp-ink-100); }
 [data-audience="agents"] .lp-audience-selector { background: var(--lp-ink-100); border-color: var(--lp-ink-80); }
 [data-audience="agents"] .lp-audience-selector__track { translate: 100% 0; background: var(--lp-page-bg); }

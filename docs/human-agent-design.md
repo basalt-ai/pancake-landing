@@ -5,11 +5,11 @@ Scope reset by Tristan on September 4, 2026: keep the existing landing, add a to
 ## Implemented
 
 - Human mode is the original v3 landing (baseline `14ad159`) with only the audience selector added.
-- Agent mode keeps the original navigation, hero headline, description, buttons, layout and rainbow motion. Cream and plum exchange roles; the five rainbow bands keep their existing colors.
+- Agent mode keeps the original navigation, hero headline, description, buttons, layout and rainbow motion. Cream and plum exchange roles; each of the five rainbow bands uses its exact RGB negative.
 - Only an empty `100vh` section follows the agent hero. There is no agent demo, setup block, pricing, testimonial section or footer in this view.
 - `/?audience=agents` opens the inverse hero directly. The toggle updates the URL without remounting the hero; refresh and browser history retain the selected view.
 - Hidden original sections remain mounted so their fit and motion observers survive the return to human mode.
-- Both canvas renderers follow the inner ring’s new color without restarting the animation clock. Reduced motion uses the same palette through the original static SVG.
+- Both canvas renderers follow all six rings’ new colors without restarting the animation clock. Reduced motion uses the same palette through the original static SVG.
 - Original signup, scheduling and analytics contracts are unchanged. No packages installed.
 
 ## Validation
