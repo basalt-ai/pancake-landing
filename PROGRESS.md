@@ -19,9 +19,9 @@ Scope: original human landing plus a top-right hero selector. Agent mode uses th
 - [x] Keep URL sharing, refresh, browser history and keyboard switching working.
 - [x] Compare desktop and phone human layouts against baseline `14ad159`.
 - [x] Independently review code and test booking and mobile menu behavior.
-- [ ] Complete build and updated Vercel preview verification.
+- [x] Complete production build and updated Vercel preview verification.
 
-Preview: pending deployment.
+Preview: https://pancake-6332ikw29-getpancake.vercel.app
 Draft PR: https://github.com/get-pancake/website/pull/275
 
 Implementation and validation: [human-agent-design.md](docs/human-agent-design.md).

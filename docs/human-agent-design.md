@@ -16,11 +16,11 @@ Scope reset by Tristan on September 4, 2026: keep the existing landing, add a to
 
 - Codex Browser found identical original human text/link records and desktop layout measurements at 1280×720.
 - Both perspectives have identical hero text and geometry.
-- Original human layout comparisons passed at 320×740 and 393×852; the selector stays inside the phone viewport.
+- Original human layout comparisons passed at 320×740, 393×852 and 768×1024; the selector stays inside the phone viewport.
 - Agent mode exposes only the hero and a blank section measuring exactly the viewport height.
 - Direct agent URL, keyboard switching, back/forward, reduced motion, inverse mobile menu and the existing booking dialog were checked. The live WebGL renderer and forced phone Canvas fallback both retained the correct palette through audience changes.
 - Independent code review confirmed the reduced scope and original component parity.
 
-Preview: pending deployment.
+Preview: https://pancake-6332ikw29-getpancake.vercel.app
 
 The research screenshots and product evidence retained beside this document are historical research from the earlier, broader concept. They do not describe the implemented scope above.
