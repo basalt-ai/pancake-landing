@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { SiClaude, SiOpenai } from "react-icons/si";
 
 // The public plugin repository contains the maintained client-specific setup.
 // This is an instruction for an agent, not a shell command.
@@ -47,8 +48,15 @@ export function LpAgentStart() {
           : <svg key="copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M15 4H6a2 2 0 0 0-2 2v9" /></svg>}
       </button>
     </div>
-    <p className="lp-agent-start__hint" role="status" aria-live="polite">
-      {status === "error" ? "Select the instruction and copy it." : status === "copied" ? "Copied. Paste into Codex or Claude Code." : "Paste into Codex or Claude Code."}
+    <div className="lp-agent-friends">
+      <span>Friends with</span>
+      <ul aria-label="Compatible agents">
+        <li title="Claude Code"><SiClaude role="img" aria-label="Claude Code" focusable="false" /></li>
+        <li title="Codex"><SiOpenai role="img" aria-label="Codex" focusable="false" /></li>
+      </ul>
+    </div>
+    <p className={status === "error" ? "lp-agent-start__error" : "lp-sr-only"} role="status" aria-live="polite">
+      {status === "error" ? "Select the instruction and copy it." : status === "copied" ? "Instruction copied." : ""}
     </p>
   </div>;
 }
