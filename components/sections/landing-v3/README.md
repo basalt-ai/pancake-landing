@@ -159,10 +159,12 @@ holding just the hero "avec les mêmes couleurs mais en négatif" — the
 groundwork for a For humans / For agents split. Same copy on both sides for
 now; the agents page is the hero + one empty 100vh screen.
 
-- `LpAudienceToggle.tsx` — the Figma switch (node 4389:781: green-20 pill
-  track, white round knob): one link with `role="switch"`, off on `/` (goes
-  to `/agents`), on on `/agents` (goes back), labelled "For agents"; no
-  client JS, the page is the state. First inside `.lp-hero-inner` (tab order
+- `LpAudienceToggle.tsx` — the Figma switch of the Signals card (node
+  4389:781 → row frame I4389:781;4389:707: 32×19.2 at the 0.8 mock scale, the
+  f1 mock's own recipe → 40×24 track, 20 knob, 2 inset, 16 travel at 1×; track
+  green-20 on the founder's word, Figma's on-state fill is green-30): one link
+  with `role="switch"`, off on `/` (goes to `/agents`), on on `/agents`
+  (goes back), labelled "For agents"; no client JS, the page is the state. First inside `.lp-hero-inner` (tab order
   right after the nav), centred 24px above the headline row as frame geometry
   (hero.css, `.lp-audience`); flows above the headline ≤1024.
 - `app/agents/page.tsx` — `main.lp.lp--inverted`: `LpNav inverted` (cream
