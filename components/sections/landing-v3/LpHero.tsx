@@ -2,7 +2,7 @@ import { LpArcCanvas } from "@/components/sections/landing-v3/LpArcCanvas";
 import { LpPancakes } from "@/components/sections/landing-v3/LpPancakes";
 import { LpRainbowGL } from "@/components/sections/landing-v3/LpRainbowGL";
 import { LpViewportVar } from "@/components/sections/landing-v3/LpViewportVar";
-import { AudienceCopy, AudienceSelector } from "./LpAudience";
+import { AudienceCopy, AudienceSelector, AudienceOnly } from "./LpAudience";
 import { LpHeroActions } from "./LpHeroActions";
 
 // Landing v3 — Hero (Figma node 4257:4906, 1654×758).
@@ -43,9 +43,11 @@ export function LpHero() {
             />
           </p>
           <LpHeroActions />
-          <div className="lp-hero-proof lp-hero-agent-note">
-            <a href="#agent-setup"><AudienceCopy human="Works with your agent. See how" agent="Get the context. Set up Pancake" /></a>
-          </div>
+          <AudienceOnly when="agents">
+            <div className="lp-hero-proof lp-hero-agent-note">
+              <a href="#agent-setup">Get the context. Set up Pancake</a>
+            </div>
+          </AudienceOnly>
         </div>
       </div>
     </section>

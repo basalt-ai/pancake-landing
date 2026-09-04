@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { LpFxLink } from "@/components/sections/landing-v3/LpFxButton";
+import { useAudience } from "./LpAudience";
 
 /**
  * Mobile nav menu — burger + plum sheet behind the ≤767px bar (Figma mobile
@@ -18,6 +19,7 @@ import { LpFxLink } from "@/components/sections/landing-v3/LpFxButton";
  * /careers (no LpModals mounted) it degrades to a plain new-tab link.
  */
 export function LpNavMenu({ homepage = false }: { homepage?: boolean }) {
+  const { audience } = useAudience();
   const [open, setOpen] = useState(false);
   const openBtnRef = useRef<HTMLButtonElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
@@ -127,10 +129,10 @@ export function LpNavMenu({ homepage = false }: { homepage?: boolean }) {
         </div>
         {/* Same labels/hrefs as the desktop bar (LpNav) — one source of nav truth. */}
         <nav aria-label="Menu">
-          <a href={homepage ? "#how-it-works" : "/#how-it-works"} onClick={close}>
+          <a href={homepage && audience === "agents" ? "#how-it-works" : "/#how-it-works"} onClick={close}>
             Product
           </a>
-          <a href={homepage ? "#why" : "/#why"} onClick={close}>
+          <a href={homepage && audience === "agents" ? "#why" : "/#why"} onClick={close}>
             Company
           </a>
           <a href="/blog" onClick={close}>

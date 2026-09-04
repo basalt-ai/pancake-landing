@@ -9,7 +9,9 @@
  * has four links; don't drop it to match Figma.
  */
 
-type FootLink = { label: string; href: string; external?: boolean };
+import { AudienceOnly, AudienceLink } from "./LpAudience";
+
+type FootLink = { label: string; href: string; external?: boolean; agentOnly?: boolean };
 
 const COLUMNS: { id: string; title: string; links: FootLink[] }[] = [
   {
@@ -17,8 +19,8 @@ const COLUMNS: { id: string; title: string; links: FootLink[] }[] = [
     title: "Product",
     links: [
       { label: "How it works", href: "/#how-it-works" },
-      { label: "For agents", href: "/?audience=agents#agent-setup" },
-      { label: "Agent guide", href: "/agents" },
+      { label: "For agents", href: "/?audience=agents#agent-setup", agentOnly: true },
+      { label: "Agent guide", href: "/agents", agentOnly: true },
       { label: "Pricing", href: "/pricing" },
       { label: "Open the app", href: "https://app.getpancake.ai", external: true },
     ],
@@ -75,14 +77,16 @@ export function LpFooter({ homepage = false }: { homepage?: boolean }) {
               <p className="lp-foot-head">{col.title}</p>
               <div className="lp-foot-links">
                 {col.links.map((link) =>
-                  link.external ? (
+                  link.agentOnly ? (
+                    <AudienceOnly key={link.label} when="agents"><a href={link.href}>{link.label}</a></AudienceOnly>
+                  ) : link.external ? (
                     <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer">
                       {link.label}
                     </a>
                   ) : (
-                    <a key={link.label} href={homepage && link.href.startsWith("/#") ? link.href.slice(1) : link.href}>
+                    <AudienceLink key={link.label} href={link.href} preserveAudience={homepage}>
                       {link.label}
-                    </a>
+                    </AudienceLink>
                   ),
                 )}
               </div>

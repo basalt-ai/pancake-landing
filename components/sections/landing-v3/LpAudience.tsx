@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode, type ComponentProps } from "react";
 
 export type Audience = "humans" | "agents";
 const AudienceContext = createContext<{ audience: Audience; setAudience: (value: Audience) => void }>({
@@ -16,7 +16,10 @@ export function LpAudience({ initialAudience, children }: { initialAudience: Aud
   const setAudience = useCallback((value: Audience) => {
     const url = new URL(window.location.href);
     if (value === "agents") url.searchParams.set("audience", "agents");
-    else url.searchParams.delete("audience");
+    else {
+      url.searchParams.delete("audience");
+      if (["#agent-setup", "#with-your-agent"].includes(url.hash)) url.hash = "";
+    }
     if (url.href !== window.location.href) window.history.pushState(window.history.state, "", url);
     updateAudience(value);
     setAnnouncement(value === "agents" ? "Agent perspective selected. You refers to the agent." : "Human perspective selected. You refers to the founder.");
@@ -36,13 +39,26 @@ export function LpAudience({ initialAudience, children }: { initialAudience: Aud
   );
 }
 
-/** Both copies occupy the same grid cell, reserving the taller variant's space. */
+/** Human mode keeps the original text nodes and layout, without a wrapper. */
 export function AudienceCopy({ human, agent, className = "" }: { human: ReactNode; agent: ReactNode; className?: string }) {
   const { audience } = useAudience();
+  if (audience === "humans") return <>{human}</>;
   return <span className={`lp-audience-copy ${className}`}>
-    <span className="lp-audience-copy__human" aria-hidden={audience !== "humans"}>{human}</span>
-    <span className="lp-audience-copy__agent" aria-hidden={audience !== "agents"}>{agent}</span>
+    <span className="lp-audience-copy__human" aria-hidden="true">{human}</span>
+    <span className="lp-audience-copy__agent" aria-hidden="false">{agent}</span>
   </span>;
+}
+
+/** No wrapper or hidden layout space is added to the other perspective. */
+export function AudienceOnly({ when, children }: { when: Audience; children: ReactNode }) {
+  const { audience } = useAudience();
+  return audience === when ? <>{children}</> : null;
+}
+
+/** Original human hrefs; agent hash links retain its shareable perspective. */
+export function AudienceLink({ href, preserveAudience = false, ...props }: ComponentProps<"a"> & { preserveAudience?: boolean }) {
+  const { audience } = useAudience();
+  return <a {...props} href={preserveAudience && audience === "agents" && href?.startsWith("/#") ? href.slice(1) : href} />;
 }
 
 export function AudienceSelector() {

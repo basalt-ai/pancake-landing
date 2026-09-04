@@ -25,3 +25,5 @@ Draft PR: https://github.com/get-pancake/website/pull/275
 
 Design and paired copy: [human-agent-design.md](docs/human-agent-design.md).
 Verified product scope: [human-agent-product-evidence.md](docs/human-agent-product-evidence.md).
+
+- [x] Restore the original human landing exactly (baseline `14ad159`), retaining only the audience selector. Compare desktop, phone, and tablet geometry, original copy/links, and mode round trips.

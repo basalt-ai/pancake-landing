@@ -12,7 +12,7 @@ Pancake brings customers. The founder runs the company; Pancake's GTM agents do 
 | Supporting copy | Pancake’s AI agents monitor buying signals, find warm leads, grow your AI search visibility, and learn from every interaction. | Pancake gives you the GTM brain, buying signals, and leads. Turn that context into your human’s next customer. |
 | Main action | Start free | Get setup |
 | Second action | Book a demo | Read guide |
-| Connection link | Works with your agent. See how | Get the context. Set up Pancake |
+| Connection link | — | Get the context. Set up Pancake |
 
 The parallel headline keeps “bring customers” as the payoff in both modes. Human copy explains Pancake's acquisition work. Agent copy names the context Pancake supplies and gives the addressed agent a useful next action. “Your human” makes the change of reader explicit. The two lines retain the same structure; the longer agent first line receives a modest optical size adjustment.
 
@@ -40,15 +40,15 @@ Reference captures from Codex Browser:
 
 The cream hero, Aeonik typography, pastel rainbow artwork, and existing live animations remain the visual foundation. The selector sits above the hero composition with two visible labels, human/agent glyphs, and a moving selected surface. Human is the default. `?audience=agents` provides a shareable agent view, with history handling and same-page navigation that preserve the selected perspective.
 
-Paired text shares a grid cell, reserving room for both versions. A short exit and entrance coordinates the copy change without remounting the artwork. Agent mode adds a plum surround to the new workflow demonstration, retaining readable cream and pastel cards inside it. This concentrates the contrast change where the agent relationship becomes tangible, preserving the established hero artwork and palette.
+Human mode renders the original text nodes without wrappers or reserved agent-copy space. Its copy, spacing, controls, sections, testimonials, and footer match the pre-change landing; the audience selector is the sole visible addition. Agent-only content is unmounted in human mode, and its geometry overrides are scoped to agent mode. Original artwork and legacy media stay mounted across perspective changes. Agent mode adds a plum surround to the new workflow demonstration, retaining readable cream and pastel cards inside it. This concentrates the contrast change where the agent relationship becomes tangible, preserving the established hero artwork and palette.
 
-The Studio Pelican example offers Outreach and Search workflows. Offer, buyer, and voice context appears first; a lead or content opportunity follows; the connected agent's draft becomes the result. The outreach result is a first message. The search result is an article brief. Both are labeled illustrative, and neither claims a send, publication, reply, or acquired customer.
+In agent mode, the Studio Pelican example offers Outreach and Search workflows. Offer, buyer, and voice context appears first; a lead or content opportunity follows; the connected agent's draft becomes the result. The outreach result is a first message. The search result is an article brief. Both are labeled illustrative, and neither claims a send, publication, reply, or acquired customer.
 
 The demonstration uses live HTML, CSS, and GSAP, matching the active landing's delivery approach. Text remains real text. The implementation includes pause/replay controls, viewport gating, a mobile wait before revealing the draft, and reduced-motion handling. Existing feature animations and newer live-rendering refinements remain in place.
 
-Setup offers Codex, Claude Code, and ChatGPT tabs. Codex exposes the documented commands. Other clients receive connection guidance and real app/support destinations. Inactive panels are inert while their shared layout reserves height. The HTML `/agents` guide, raw `/agents.md` source, and `llms.txt` provide readable capability and setup information independently of the visual selector. Browser-facing guide buttons open HTML; client-facing documentation keeps the Markdown endpoint.
+Agent mode setup offers Codex, Claude Code, and ChatGPT tabs. Codex exposes the documented commands. Other clients receive connection guidance and real app/support destinations. Inactive panels are inert while their shared layout reserves height. The HTML `/agents` guide, raw `/agents.md` source, and `llms.txt` provide readable capability and setup information independently of the visual selector. Browser-facing guide buttons open HTML; client-facing documentation keeps the Markdown endpoint.
 
-Lower-page edits are scoped to viewpoint: “your human,” “their pipeline,” and the difference between Pancake's own automation and what a connected agent can read and draft. The old testimonial component is no longer mounted: its fictional stories describe unrelated engineering, recruiting, finance, and support agents. Verified GTM customer stories can replace it later.
+Lower-page edits are scoped to viewpoint: “your human,” “their pipeline,” and the difference between Pancake's own automation and what a connected agent can read and draft. The original testimonial component remains unchanged in human mode and is hidden in agent mode. Its animation observer and shared clock stay mounted.
 
 ## Product dependencies
 
@@ -65,3 +65,7 @@ The [product evidence report](human-agent-product-evidence.md) records sources a
 - On the hosted preview, Copy commands, Copy URL, and Copy prompt were checked against the browser clipboard. No application console errors were observed.
 - The existing Vercel binding was verified as `getpancake/pancake`. Deployment uses the preview target; production promotion remains manual.
 - The final hosted HTML guide opens from Read guide and renders its capabilities, commands, and source links. The guide was also checked at phone width. Both final audience views loaded successfully, and the final deployment reported READY with a preview target.
+
+## Original human landing parity
+
+Baseline: commit `14ad159` (identical tree to the pre-task `a02033a`). Human mode retains every original section and link, with only the audience selector added. Codex Browser desktop comparison found identical records for all 180 original headings, paragraphs, controls, and links, and zero differences in the measured section, text, CTA, and footer geometry/styles. The same geometry comparison passed after a human → agent → human round trip. Responsive comparisons at 320×740, 393×852, and 768×1024 found no differences in the original geometry, typography, colors, spacing, text, or links after the navigation transition settled. Both documents had identical heights. The 393px and 768px raw geometry/style records also matched with strict equality. Both responsive frames used the same simulated reduced-motion preference for deterministic media.

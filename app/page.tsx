@@ -7,13 +7,14 @@ import { LpFeatures } from "@/components/sections/landing-v3/LpFeatures";
 import { LpFitVars } from "@/components/sections/landing-v3/LpFitVars";
 import { LpFooter } from "@/components/sections/landing-v3/LpFooter";
 import { LpHero } from "@/components/sections/landing-v3/LpHero";
-import { LpAudience } from "@/components/sections/landing-v3/LpAudience";
+import { LpAudience, AudienceOnly } from "@/components/sections/landing-v3/LpAudience";
 import { LpAgentDemo } from "@/components/sections/landing-v3/LpAgentDemo";
 import { LpAgentSetup } from "@/components/sections/landing-v3/LpAgentSetup";
 import { LpModals } from "@/components/sections/landing-v3/LpModals";
 import { LpNav } from "@/components/sections/landing-v3/LpNav";
 import { LpPricing } from "@/components/sections/landing-v3/LpPricing";
 import { LpSteps } from "@/components/sections/landing-v3/LpSteps";
+import { LpTestimonials } from "@/components/sections/landing-v3/LpTestimonials";
 import { pricingV2 } from "@/lib/copy";
 import "@/app/_styles/landing-v3.css";
 
@@ -107,8 +108,10 @@ export default function Home({ searchParams }: { searchParams: { audience?: stri
       <LpAnimFreeze />
       <LpNav homepage />
       <LpHero />
-      <LpAgentDemo />
-      <LpAgentSetup />
+      <AudienceOnly when="agents">
+        <LpAgentDemo />
+        <LpAgentSetup />
+      </AudienceOnly>
       {/* Logo strip stays unmounted: the V1 set reads as powered-by, not
           customers (founder 2026-08-31). LpMarquee + marquee.css + the V1
           wordmark wiring stay for the day real customer logos land. */}
@@ -116,8 +119,7 @@ export default function Home({ searchParams }: { searchParams: { audience?: stri
       <LpBanner />
       <LpFeatures />
       <LpCta />
-      {/* The archived v1 testimonials are fictional and describe unrelated
-          engineering/support agents. Await verified GTM customer stories. */}
+      <LpTestimonials />
       <LpPricing />
       <LpFooter homepage />
       <LpModals />

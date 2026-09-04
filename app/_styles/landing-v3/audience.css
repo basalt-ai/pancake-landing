@@ -1,4 +1,5 @@
 /* New audience compositions use the active Figma v3 tokens and spacing. */
+.lp-audience-page[data-audience="agents"] > .lp-tst { display: none; }
 .lp {
   --lp-space-1: 4px;
   --lp-space-2: 8px;
@@ -33,25 +34,25 @@
 .lp-audience-selector a:focus-visible, .lp-action:focus-visible, .lp-text-link:focus-visible { outline: calc(2 * var(--lp-line)) solid var(--lp-purple-40); outline-offset: var(--lp-space-1); }
 .lp-audience-glyph { display: inline-grid; place-items: center; width: 1.25em; height: 1.25em; }
 .lp-audience-glyph svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; }
-.lp-audience-page .lp-hero-title { width: 656px; }
+.lp-audience-page[data-audience="agents"] .lp-hero-title { width: 656px; }
 .lp-hero-title .lp-audience-copy__agent > span:first-child { font-size: .86em; letter-spacing: -.03em; }
 .lp-hero-agent-note { display: flex; align-items: center; gap: var(--lp-space-2); font-size: var(--lp-text-sm); color: var(--lp-ink-90); }
 .lp-hero-agent-note::before { content: ''; flex: none; width: var(--lp-space-2); height: var(--lp-space-2); border-radius: 50%; background: var(--lp-green-30); }
 .lp-hero-agent-note a { text-decoration: underline; text-underline-offset: .22em; }
-.lp-audience-page .lp-hero-col { gap: var(--lp-space-4); }
+.lp-audience-page[data-audience="agents"] .lp-hero-col { gap: var(--lp-space-4); }
 .lp-hero-proof { position: absolute; top: calc(100% + var(--lp-space-4)); left: 0; white-space: nowrap; }
 .lp .lp-action { display: inline-flex; align-items: center; justify-content: center; gap: var(--lp-space-2); background: var(--lp-ink-100); color: var(--lp-ink-10); padding: var(--lp-space-3) var(--lp-space-6); border: var(--lp-line) solid transparent; border-radius: var(--lp-r-sm); corner-shape: squircle; min-height: var(--lp-space-12); font: inherit; font-size: var(--lp-text-sm); font-weight: var(--lp-weight-medium); cursor: pointer; transition: background .2s, transform .2s; }
 .lp .lp-action:hover { background: var(--lp-ink-90); transform: translateY(calc(-1 * var(--lp-line))); }
 .lp .lp-action--light { background: var(--lp-purple-20); color: var(--lp-ink-100); }
 .lp .lp-action--light:hover { background: var(--lp-purple-10); }
 .lp .lp-text-link { display: inline-flex; align-items: center; gap: var(--lp-space-2); text-decoration: underline; text-underline-offset: .25em; font-size: var(--lp-text-sm); }
-@media (max-width: 1200px) { .lp-audience-page .lp-hero-title { width: auto; } }
+@media (max-width: 1200px) { .lp-audience-page[data-audience="agents"] .lp-hero-title { width: auto; } }
 @media (max-width: 1024px) { .lp-hero-proof { position: static; } .lp-perspective { top: var(--lp-space-2); } }
 @media (max-width: 767px) {
   .lp-perspective { top: 0; }
   .lp-audience-selector a { padding-inline: var(--lp-space-3); }
-  .lp-audience-page .lp-hero-inner { padding-bottom: var(--lp-space-12); }
-  .lp-audience-page .lp-hero-col { gap: var(--lp-space-6); width: 100%; }
+  .lp-audience-page[data-audience="agents"] .lp-hero-inner { padding-bottom: var(--lp-space-12); }
+  .lp-audience-page[data-audience="agents"] .lp-hero-col { gap: var(--lp-space-6); width: 100%; }
   .lp-hero-proof { white-space: normal; }
   .lp-hero-title .lp-audience-copy__agent > span:first-child { font-size: .82em; }
 }
@@ -83,13 +84,13 @@
 .lp-audience-page[data-audience="agents"] .lp-agent-demo { background: var(--lp-ink-100); }
 
 @media (max-width: 767px) {
-  .lp-audience-page .lp-hero-inner { min-width: 0; width: 100%; box-sizing: border-box; }
-  .lp-audience-page .lp-hero-title { width: 100%; min-width: 0; }
-  .lp-audience-page .lp-hero-title .lp-audience-copy { min-width: 0; }
+  .lp-audience-page[data-audience="agents"] .lp-hero-inner { min-width: 0; width: 100%; box-sizing: border-box; }
+  .lp-audience-page[data-audience="agents"] .lp-hero-title { width: 100%; min-width: 0; }
+  .lp-audience-page[data-audience="agents"] .lp-hero-title .lp-audience-copy { min-width: 0; }
   .lp-hero-title .lp-audience-copy__human { font-size: min(1em, calc((100vw - var(--lp-space-16)) / 9.55)); }
   .lp-hero-title .lp-audience-copy__agent { font-size: min(1em, calc((100vw - var(--lp-space-16)) / 10.2)); }
-  .lp-audience-page .lp-hero-btns { width: 100%; }
-  .lp-audience-page .lp-hero-btns .lp-btn { max-width: calc((100% - var(--lp-space-2)) / 2); padding-inline: var(--lp-space-2); }
+  .lp-audience-page[data-audience="agents"] .lp-hero-btns { width: 100%; }
+  .lp-audience-page[data-audience="agents"] .lp-hero-btns .lp-btn { max-width: calc((100% - var(--lp-space-2)) / 2); padding-inline: var(--lp-space-2); }
 }
 /* Nested paired text explicitly sets visibility, so hidden setup panels also
    suppress their entire paint subtree while retaining the shared grid size. */

@@ -1,6 +1,7 @@
 import { LpFxLink } from "@/components/sections/landing-v3/LpFxButton";
 import { LpNavMenu } from "@/components/sections/landing-v3/LpNavMenu";
 import { LpNavScroll } from "@/components/sections/landing-v3/LpNavScroll";
+import { AudienceLink } from "./LpAudience";
 
 /**
  * Landing v3 — Nav (Figma node 4257:4894, 1654×120).
@@ -19,8 +20,8 @@ export function LpNav({ homepage = false }: { homepage?: boolean }) {
         <img alt="" src="/lp/lp-nav-logo.svg" width={114.956} height={56} />
       </a>
       <nav className="lp-nav-links" aria-label="Primary">
-        <a href={homepage ? "#how-it-works" : "/#how-it-works"}>Product</a>
-        <a href={homepage ? "#why" : "/#why"}>Company</a>
+        <AudienceLink href="/#how-it-works" preserveAudience={homepage}>Product</AudienceLink>
+        <AudienceLink href="/#why" preserveAudience={homepage}>Company</AudienceLink>
         <a href="/blog">Blog</a>
       </nav>
       <div className="lp-nav-ctas">
