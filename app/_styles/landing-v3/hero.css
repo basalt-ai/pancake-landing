@@ -286,54 +286,67 @@
   }
 }
 
-/* ── Audience toggle (founder 2026-09-04, placed by his red box: centred
-   above the headline row; "reuse the one from Figma literally" = node
-   4389:781, still to be matched 1:1 once the file is readable) —
-   LpAudienceToggle.tsx. Lives INSIDE .lp-hero-inner, so it is frame
-   geometry like the H1 and the column: bottom-anchored 24px above the text
-   row (the H1 box top sits 68.65 + 160 from the hero bottom), the
-   short-window ladder scales it with the text, and it stays ~250px under
-   the rainbow's lowest band at every phase of the loop. Not on the
-   artboard: a two-segment control with the sm pill's metrics (38 tall,
-   Fono 600 13.333, r9 segments in an r12 track). The track is the
-   rainbow's green — green-20, the arc-3 band — on both pages ("the green
-   of the arc-en-ciel"); the active segment is the page ground with the
-   page's text color (cream/plum on /, plum/cream on /agents), the inactive
-   label plum on the green. First in the frame for tab order (nav → toggle
-   → headline). */
+/* ── Audience switch (founder 2026-09-04) — LpAudienceToggle.tsx. The
+   toggle is Figma node 4389:781: a green pill track with a round white
+   knob ("the green of the arc-en-ciel" = green-20, the arc-3 band). The
+   file is not readable from here, so the metrics are read off his export
+   of the node (track ≈ 5:3, knob inset ≈ 1/9 of the height): 60×36 track,
+   28 knob, 4px inset, 24px travel — to be re-measured 1:1 when it is.
+   Placed by his red box: centred above the headline row. Lives INSIDE
+   .lp-hero-inner, so it is frame geometry like the H1 and the column:
+   bottom-anchored 24px above the text row (the H1 box top sits 68.65 +
+   160 from the hero bottom), the short-window ladder scales it with the
+   text, and it stays ~250px under the rainbow's lowest band at every
+   phase. Off (knob left) on the humans page, on (knob right) on /agents;
+   the "For agents" label in the nav-link style, inheriting the page's
+   text color. First in the frame for tab order (nav → switch → headline).
+   No hover state (pill doctrine); focus ring on the track. */
 .lp-audience {
-  background: var(--lp-green-20);
-  border-radius: 12px;
+  align-items: center;
   bottom: calc(68.65px + 160px + 24px);
   display: inline-flex;
-  gap: 2px;
+  gap: 10px;
   left: 50%;
-  padding: 3px;
   position: absolute;
   transform: translateX(-50%);
 }
-.lp .lp-audience__opt {
-  align-items: center;
-  border-radius: 9px;
-  color: var(--lp-ink-100);
-  display: inline-flex;
+.lp-audience__track {
+  background: var(--lp-green-20);
+  border-radius: 18px;
+  display: block;
+  flex: none;
+  height: 36px;
+  position: relative;
+  width: 60px;
+}
+.lp-audience__knob {
+  background: var(--lp-ink-0);
+  border-radius: 50%;
+  height: 28px;
+  left: 4px;
+  position: absolute;
+  top: 4px;
+  width: 28px;
+}
+.lp-audience[aria-checked="true"] .lp-audience__knob {
+  translate: 24px 0;
+}
+.lp-audience__label {
   font-family: var(--lp-font-fono);
   font-size: var(--lp-text-sm);
-  font-weight: 600;
-  height: 32px;
+  font-weight: 500;
+  letter-spacing: 0.1333px;
   line-height: 1.5;
-  padding: 0 12px;
   white-space: nowrap;
 }
-.lp .lp-audience__opt[aria-current="page"] {
-  background: var(--lp-page-bg);
-  color: var(--lp-text);
+.lp-audience:focus-visible {
+  outline: none;
 }
-.lp .lp-audience__opt:focus-visible {
+.lp-audience:focus-visible .lp-audience__track {
   outline: 2px solid var(--lp-purple-30);
-  outline-offset: -2px;
+  outline-offset: 2px;
 }
-/* ≤1024 recompose: the frame is a flow column (above) — the toggle flows as
+/* ≤1024 recompose: the frame is a flow column (above) — the switch flows as
    its first item, left-aligned with the headline, the column's own gap
    (24, 23 on phones) under it. */
 @media (max-width: 1024px) {

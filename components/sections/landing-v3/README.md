@@ -159,10 +159,12 @@ holding just the hero "avec les mêmes couleurs mais en négatif" — the
 groundwork for a For humans / For agents split. Same copy on both sides for
 now; the agents page is the hero + one empty 100vh screen.
 
-- `LpAudienceToggle.tsx` — two real links (`/` humans, `/agents` agents),
-  `aria-current` on the active one; no client JS, the page is the state.
-  Rendered first inside `.lp-hero` (tab order right after the nav), absolute
-  top-right on the nav CTAs' margin (hero.css, `.lp-audience`).
+- `LpAudienceToggle.tsx` — the Figma switch (node 4389:781: green-20 pill
+  track, white round knob): one link with `role="switch"`, off on `/` (goes
+  to `/agents`), on on `/agents` (goes back), labelled "For agents"; no
+  client JS, the page is the state. First inside `.lp-hero-inner` (tab order
+  right after the nav), centred 24px above the headline row as frame geometry
+  (hero.css, `.lp-audience`); flows above the headline ≤1024.
 - `app/agents/page.tsx` — `main.lp.lp--inverted`: `LpNav inverted` (cream
   wordmark = the footer export, same path ×2.0849), `LpHero audience="agents"`,
   `.lp-agents-blank`, `LpModals`. `robots: noindex` and no sitemap entry
