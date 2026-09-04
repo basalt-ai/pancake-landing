@@ -291,16 +291,19 @@
    (max(32px, 50% − 648px) = 179 at 1654) so the two right-hand clusters
    share one edge, 24px under the nav band. Not on the artboard: a two-
    segment control with the sm pill's metrics (38 tall, Fono 600 13.333, r9
-   segments in an r12 track). Skinned as the inverted surface — a plum track
-   with a cream active segment on the cream page, the reverse on /agents —
-   so it previews the flip it triggers, and stays whole where the rainbow's
-   outer band sweeps under it (the arcs' apex sits ~20px below the nav, so
-   nothing 38px tall fits between the bar and the art at these x's for the
-   whole 20s loop — the opaque track is the deliberate answer). Semantic
-   tokens only. z-index 2: above .lp-hero-inner (inset 0, z 1) so it stays
-   clickable; first in the section for tab order. */
+   segments in an r12 track). The track is the rainbow's green — green-20,
+   the arc-3 band — on both pages (founder 2026-09-04: "the green of the
+   arc-en-ciel"; the toggle is Figma node 4389:781, still to be matched
+   1:1 once the file is readable); the active segment is the page ground
+   with the page's text color (cream/plum on /, plum/cream on /agents),
+   the inactive label plum on the green at every width. Opaque, so it
+   stays whole where the rainbow's outer band sweeps under it (the arcs'
+   apex sits ~20px below the nav — nothing 38px tall fits between the bar
+   and the art at these x's for the whole 20s loop). z-index 2: above
+   .lp-hero-inner (inset 0, z 1) so it stays clickable; first in the
+   section for tab order. */
 .lp-audience {
-  background: var(--lp-inverted-surface);
+  background: var(--lp-green-20);
   border-radius: 12px;
   display: inline-flex;
   gap: 2px;
@@ -313,7 +316,7 @@
 .lp .lp-audience__opt {
   align-items: center;
   border-radius: 9px;
-  color: var(--lp-text-on-inverted);
+  color: var(--lp-ink-100);
   display: inline-flex;
   font-family: var(--lp-font-fono);
   font-size: var(--lp-text-sm);
@@ -324,8 +327,8 @@
   white-space: nowrap;
 }
 .lp .lp-audience__opt[aria-current="page"] {
-  background: var(--lp-text-on-inverted);
-  color: var(--lp-inverted-surface);
+  background: var(--lp-page-bg);
+  color: var(--lp-text);
 }
 .lp .lp-audience__opt:focus-visible {
   outline: 2px solid var(--lp-purple-30);
