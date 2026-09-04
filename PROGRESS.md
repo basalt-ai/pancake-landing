@@ -21,7 +21,7 @@ Scope: original human landing plus a selector above the headline’s right edge.
 - [x] Independently review code and test booking and mobile menu behavior.
 - [x] Complete production build and updated Vercel preview verification.
 
-Preview: https://pancake-6332ikw29-getpancake.vercel.app
+Preview: https://pancake-pcwpldst8-getpancake.vercel.app
 Draft PR: https://github.com/get-pancake/website/pull/275
 
 Implementation and validation: [human-agent-design.md](docs/human-agent-design.md).

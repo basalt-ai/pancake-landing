@@ -21,6 +21,6 @@ Scope reset by Tristan on September 4, 2026: keep the existing landing, add a to
 - Direct agent URL, keyboard switching, back/forward, reduced motion, inverse mobile menu and the existing booking dialog were checked. The live WebGL renderer and forced phone Canvas fallback both retained the correct palette through audience changes.
 - Independent code review confirmed the reduced scope and original component parity.
 
-Preview: https://pancake-6332ikw29-getpancake.vercel.app
+Preview: https://pancake-pcwpldst8-getpancake.vercel.app
 
 The research screenshots and product evidence retained beside this document are historical research from the earlier, broader concept. They do not describe the implemented scope above.
