@@ -19,7 +19,7 @@
 /* The transparent hit area is larger than the exact Figma artwork. */
 .lp-audience-switch { display: grid; place-items: center; width: calc(var(--lp-space-12) - var(--lp-space-1)); height: calc(var(--lp-space-12) - var(--lp-space-1)); padding: 0; border: 0; background: transparent; border-radius: var(--lp-r-sm); cursor: pointer; touch-action: manipulation; }
 .lp-audience-switch:focus-visible { outline: calc(2 * var(--lp-line)) solid var(--lp-purple-30); outline-offset: var(--lp-space-1); }
-.lp-audience-switch__track { display: block; position: relative; width: var(--lp-switch-width); height: var(--lp-switch-height); border-radius: var(--lp-switch-radius); background: var(--lp-ink-50); transition: background-color .25s var(--lp-audience-ease); }
+.lp-audience-switch__track { display: block; position: relative; width: var(--lp-switch-width); height: var(--lp-switch-height); border-radius: var(--lp-switch-radius); background: var(--lp-blue-40); transition: background-color .25s var(--lp-audience-ease); }
 .lp-audience-switch__thumb { position: absolute; top: var(--lp-switch-inset); left: var(--lp-switch-inset); width: var(--lp-switch-thumb); height: var(--lp-switch-thumb); border-radius: var(--lp-switch-thumb-radius); background: var(--lp-ink-0); transition: transform .25s var(--lp-audience-ease); }
 .lp-audience-switch[aria-checked="true"] .lp-audience-switch__track { background: var(--lp-green-20); }
 .lp-audience-switch[aria-checked="true"] .lp-audience-switch__thumb { transform: translateX(calc(var(--lp-switch-width) - var(--lp-switch-thumb) - 2 * var(--lp-switch-inset))); }

@@ -14,7 +14,7 @@ Scope: original human landing plus a selector above the headline’s right edge.
 
 - [x] Restore original v3 copy and section components.
 - [x] Keep human layout unchanged apart from the selector.
-- [x] Match the Figma Signals switch, with the human rainbow’s green for its on state.
+- [x] Match the Figma Signals switch, with rainbow blue for humans and green for agents.
 - [x] Remove the earlier agent copy, demonstrations and setup surfaces.
 - [x] Add the inverse hero, preserving artwork and motion phase.
 - [x] Keep URL sharing, refresh, browser history and keyboard switching working.
@@ -22,7 +22,7 @@ Scope: original human landing plus a selector above the headline’s right edge.
 - [x] Independently review code and test booking and mobile menu behavior.
 - [x] Complete production build and updated Vercel preview verification.
 
-Preview: https://pancake-ms7d4eczo-getpancake.vercel.app
+Preview: https://pancake-5rai1atqu-getpancake.vercel.app
 Draft PR: https://github.com/get-pancake/website/pull/275
 
 Implementation and validation: [human-agent-design.md](docs/human-agent-design.md).
