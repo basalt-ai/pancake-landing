@@ -37,7 +37,6 @@ export function LpAudience({ initialAudience, children }: { initialAudience: Aud
 
 export function AudienceSelector() {
   const { audience, setAudience } = useAudience();
-  const refs = useRef<(HTMLAnchorElement | null)[]>([]);
   const selectorRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const selector = selectorRef.current;
@@ -67,26 +66,20 @@ export function AudienceSelector() {
     position();
     return () => observer.disconnect();
   }, []);
-  return <div ref={selectorRef} className="lp-audience-selector" role="group" aria-label="Choose your perspective">
-    <span className="lp-audience-selector__track" aria-hidden="true" />
-    {(["humans", "agents"] as const).map((mode, index) => <a
-      key={mode}
-      ref={node => { refs.current[index] = node; }}
-      href={mode === "agents" ? "/?audience=agents" : "/"}
-      aria-current={audience === mode ? "true" : undefined}
-      onClick={event => {
-        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-        event.preventDefault(); setAudience(mode);
-      }}
-      onKeyDown={event => {
-        if (!["ArrowLeft", "ArrowRight", "Home", "End", " "].includes(event.key)) return;
-        event.preventDefault();
-        const next = event.key === "Home" ? 0 : event.key === "End" ? 1 : event.key === " " ? index : 1 - index;
-        setAudience(next === 0 ? "humans" : "agents"); refs.current[next]?.focus();
-      }}
+  return <div ref={selectorRef} className="lp-audience-selector">
+    <span className="lp-audience-selector__label" data-active={audience === "humans"}>For humans</span>
+    <button
+      type="button"
+      className="lp-audience-switch"
+      role="switch"
+      aria-label="For agents"
+      aria-checked={audience === "agents"}
+      onClick={() => setAudience(audience === "agents" ? "humans" : "agents")}
     >
-      <span className={`lp-audience-glyph lp-audience-glyph--${mode}`} aria-hidden="true">{mode === "humans" ? <svg viewBox="0 0 20 20"><circle cx="10" cy="6" r="3" /><path d="M4 17v-2a6 6 0 0 1 12 0v2" /></svg> : <svg viewBox="0 0 20 20"><rect x="3" y="5" width="14" height="12" rx="4" /><path d="M10 2v3M7 10v2m6-2v2" /></svg>}</span>
-      For {mode}
-    </a>)}
+      <span className="lp-audience-switch__track" aria-hidden="true">
+        <span className="lp-audience-switch__thumb" />
+      </span>
+    </button>
+    <span className="lp-audience-selector__label" data-active={audience === "agents"}>For agents</span>
   </div>;
 }

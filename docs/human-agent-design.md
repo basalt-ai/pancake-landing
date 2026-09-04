@@ -5,6 +5,7 @@ Scope reset by Tristan on September 4, 2026: keep the existing landing, add a to
 ## Implemented
 
 - Human mode is the original v3 landing (baseline `14ad159`) with only the audience selector added.
+- The selector uses the [Figma Signals switch](https://www.figma.com/design/fr8NgOCTUxsEbrMEJA3YKu/Pancake-Design?node-id=4389-781): a 40×24 track, 20×20 white thumb and 2px inset. Per Tristan’s follow-up, its on state uses the human rainbow’s green (`--lp-green-20`); its off state uses Figma’s ink-50. The artwork sits within a 44×44 keyboard-accessible button.
 - Agent mode keeps the original navigation, hero headline, description, buttons, layout and rainbow motion. Cream and plum exchange roles; each of the five rainbow bands uses its exact RGB negative.
 - Only an empty `100vh` section follows the agent hero. There is no agent demo, setup block, pricing, testimonial section or footer in this view.
 - `/?audience=agents` opens the inverse hero directly. The toggle updates the URL without remounting the hero; refresh and browser history retain the selected view.
@@ -21,6 +22,6 @@ Scope reset by Tristan on September 4, 2026: keep the existing landing, add a to
 - Direct agent URL, keyboard switching, back/forward, reduced motion, inverse mobile menu and the existing booking dialog were checked. The live WebGL renderer and forced phone Canvas fallback both retained the correct palette through audience changes.
 - Independent code review confirmed the reduced scope and original component parity.
 
-Preview: https://pancake-pcwpldst8-getpancake.vercel.app
+Preview: https://pancake-ms7d4eczo-getpancake.vercel.app
 
 The research screenshots and product evidence retained beside this document are historical research from the earlier, broader concept. They do not describe the implemented scope above.
