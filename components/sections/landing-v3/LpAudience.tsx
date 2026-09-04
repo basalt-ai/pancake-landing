@@ -112,13 +112,18 @@ export function AudienceSelector() {
     const placement = selector?.parentElement;
     const inner = placement?.closest<HTMLElement>(".lp-hero-inner");
     const heading = inner?.querySelector<HTMLElement>(".lp-hero-title");
-    if (!selector || !placement || !inner || !heading) return;
+    const humanColumn = inner?.querySelector<HTMLElement>(".lp-hero-col--human");
+    if (!selector || !placement || !inner || !heading || !humanColumn) return;
     // Anchor to the original headline without changing its markup or flow.
     // Divide out the hero's existing short-window scale so both stay aligned.
     const position = () => {
       const box = inner.getBoundingClientRect();
       const title = heading.getBoundingClientRect();
+      const column = humanColumn.getBoundingClientRect();
       const scale = box.width / inner.offsetWidth || 1;
+      // offsetWidth rounds fractional mobile widths; retain that precision
+      // when mapping the original column's bounds into the overlay.
+      const columnScale = box.width / parseFloat(getComputedStyle(inner).width) || 1;
       const gutter = parseFloat(getComputedStyle(inner).getPropertyValue("--lp-space-8"));
       const gap = parseFloat(getComputedStyle(inner).getPropertyValue("--lp-space-4"));
       const half = selector.offsetWidth / 2;
@@ -126,13 +131,20 @@ export function AudienceSelector() {
       const center = Math.max(half + edge, Math.min((title.right - box.left) / scale - gap, inner.offsetWidth - half - edge));
       placement.style.setProperty("--lp-audience-center", `${center}px`);
       placement.style.setProperty("--lp-audience-top", `${(title.top - box.top) / scale}px`);
-      inner.style.setProperty("--lp-hero-title-top", `${(title.top - box.top) / scale}px`);
+      // Keep the agent CTA in the original description/buttons slot. The
+      // hidden human column still defines layout, so this also works for a
+      // direct agent URL and keeps the mobile headline fixed when toggling.
+      inner.style.setProperty("--lp-hero-col-top", `${(column.top - box.top) / columnScale}px`);
+      inner.style.setProperty("--lp-hero-col-left", `${(column.left - box.left) / columnScale}px`);
+      inner.style.setProperty("--lp-hero-col-width", `${column.width / columnScale}px`);
+      inner.style.setProperty("--lp-hero-col-height", `${column.height / columnScale}px`);
       inner.dataset.titleReady = "true";
       placement.dataset.ready = "true";
     };
     const observer = new ResizeObserver(position);
     observer.observe(inner);
     observer.observe(heading);
+    observer.observe(humanColumn);
     observer.observe(selector);
     position();
     return () => observer.disconnect();

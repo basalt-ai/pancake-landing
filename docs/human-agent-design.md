@@ -19,7 +19,7 @@ Scope reset by Tristan on September 4, 2026: keep the existing landing, add a to
 ## Validation
 
 - Codex Browser found identical original human text/link records and desktop layout measurements at 1280×720.
-- Both perspectives use identical H1 typography. The human hero text and desktop geometry remain identical to the prior preview; the agent setup block aligns with the H1 on desktop and flows below it on phones.
+- Both perspectives use identical H1 typography. The human hero text and desktop geometry remain identical to the prior preview; the agent setup block overlays the exact bounds of the original human description/buttons column, including on phones. The original column remains in layout but is hidden visually and from assistive technology in agent mode, keeping the headline fixed through the toggle.
 - Original human layout comparisons passed at 320×740, 393×852 and 768×1024; the selector stays inside the phone viewport.
 - Agent mode exposes only the hero and a blank section measuring exactly the viewport height.
 - Direct agent URL, keyboard switching, back/forward, reduced motion, inverse mobile menu and the existing booking dialog were checked. The live WebGL renderer and forced phone Canvas fallback both retained the correct palette through audience changes.
@@ -28,7 +28,7 @@ Scope reset by Tristan on September 4, 2026: keep the existing landing, add a to
 - The crossfade was measured at 240ms in both directions on desktop and phone. Heading geometry, scroll position and canvas instances remained unchanged. Three rapid toggles, Back/Forward and reduced-motion switching passed without errors.
 - Removing the capture wait reduced measured desktop click-to-fade onset from about 95–100ms to 20–30ms. Only the page snapshot fades; the named switch snapshot has no fade animation.
 
-Preview: https://pancake-rcp42v1m9-getpancake.vercel.app
+Preview: https://pancake-ee9m2jplv-getpancake.vercel.app
 
 The setup CTA borrows the single copyable instruction pattern from [Monid](https://monid.ai/), adapted to Pancake’s existing typography, colors and geometry. Other reference screenshots are historical research from the broader concept.
 
