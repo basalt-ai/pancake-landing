@@ -1,6 +1,6 @@
 # Pancake: one product, two perspectives
 
-Design review, September 4, 2026.
+Design review, September 4, 2026. [Working Vercel preview](https://pancake-9evtxo9t3-getpancake.vercel.app) · [Agent perspective](https://pancake-9evtxo9t3-getpancake.vercel.app/?audience=agents) · [Draft PR #275](https://github.com/get-pancake/website/pull/275).
 
 Pancake brings customers. The founder runs the company; Pancake's GTM agents do acquisition work, and the founder's own agent can use Pancake's workspace context. The audience selector changes who the page addresses while keeping that relationship intact.
 
@@ -16,6 +16,10 @@ Pancake brings customers. The founder runs the company; Pancake's GTM agents do 
 
 The parallel headline keeps “bring customers” as the payoff in both modes. Human copy explains Pancake's acquisition work. Agent copy names the context Pancake supplies and gives the addressed agent a useful next action. “Your human” makes the change of reader explicit. The two lines retain the same structure; the longer agent first line receives a modest optical size adjustment.
 
+![Human perspective in the final preview](images/human-agent/preview-humans.png)
+
+![Agent perspective in the final preview](images/human-agent/preview-agents.png)
+
 ## References that shaped the direction
 
 | Reference | Observed pattern | Pancake decision |
@@ -23,6 +27,14 @@ The parallel headline keeps “bring customers” as the payoff in both modes. H
 | [Loops](https://loops.so/) and [Loops for agents](https://loops.so/agents) · [screenshot](images/human-agent/loops-audience.png) | The homepage's workflow demonstration has a Human/Agent switch. Agent view pairs a natural-language prompt with the work it produces. This is a switch inside the demo; the separate agents URL is an audience page. | Make the audience choice explicit, then connect context, a request, and a concrete result. Pancake's selector changes the page's perspective rather than only the demonstration. |
 | [Resend for agents](https://resend.com/agents) and [Resend for Codex](https://resend.com/codex) · [screenshot](images/human-agent/resend-codex.png) | Dedicated capability and client pages connect a specific job to setup and documentation. These pages are destinations, not a visual audience switch. | Give agent mode setup and guide actions. Keep client-specific instructions separate from the shared product promise. |
 | [Firecrawl](https://www.firecrawl.dev/) · [screenshot](images/human-agent/firecrawl-setup.png) | The agent-oriented homepage offers a copyable setup prompt with visible copied feedback. That action copies instructions; it does not switch audience or complete a connection. | Name copy actions precisely: Copy prompt, Copy commands, Copy URL. Opening Pancake and approving access remain separate steps. |
+
+Reference captures from Codex Browser:
+
+![Loops: Human and Agent controls inside the workflow demonstration](images/human-agent/loops-audience.png)
+
+![Resend: client-specific Codex setup and capability page](images/human-agent/resend-codex.png)
+
+![Firecrawl: setup for agents is a copy action](images/human-agent/firecrawl-setup.png)
 
 ## Composition and interaction
 
@@ -52,4 +64,4 @@ The [product evidence report](human-agent-product-evidence.md) records sources a
 - Reduced motion was tested through a local harness that sets the preference before hydration and activates reduced-motion CSS branches. It displays the complete draft immediately; no browser errors were observed in that test.
 - On the hosted preview, Copy commands, Copy URL, and Copy prompt were checked against the browser clipboard. No application console errors were observed.
 - The existing Vercel binding was verified as `getpancake/pancake`. Deployment uses the preview target; production promotion remains manual.
-- Final HTML guide and redeployment verification: pending.
+- The final hosted HTML guide opens from Read guide and renders its capabilities, commands, and source links. The guide was also checked at phone width. Both final audience views loaded successfully, and the final deployment reported READY with a preview target.

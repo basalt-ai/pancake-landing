@@ -18,7 +18,10 @@
 - [x] Preserve existing hero art, live feature animations, booking flow, signup, and analytics.
 - [x] Independently review copy, capability claims, and accessibility; resolve findings.
 - [x] Pass TypeScript, lint, and production build.
-- [ ] Complete final preview verification and attach deployment link.
+- [x] Complete final preview verification and attach deployment link.
+
+Preview: https://pancake-9evtxo9t3-getpancake.vercel.app
+Draft PR: https://github.com/get-pancake/website/pull/275
 
 Design and paired copy: [human-agent-design.md](docs/human-agent-design.md).
 Verified product scope: [human-agent-product-evidence.md](docs/human-agent-product-evidence.md).
