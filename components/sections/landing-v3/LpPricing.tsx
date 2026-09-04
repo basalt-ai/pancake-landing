@@ -1,4 +1,4 @@
-import { LpFxLink, LpFxPill } from "@/components/sections/landing-v3/LpFxButton";
+import { LpFxLink } from "@/components/sections/landing-v3/LpFxButton";
 import { LpPancakes } from "@/components/sections/landing-v3/LpPancakes";
 import { LpRainbowGL } from "@/components/sections/landing-v3/LpRainbowGL";
 
@@ -42,10 +42,8 @@ export function LpPricing() {
             ))}
           </ul>
         </div>
-        {/* Primary + secondary in the hero's order (founder 2026-09-03) on
-            the artboard's single-pill slot. The secondary opens the zcal
-            sheet through LpModals' data-lv2-open contract; its analytics
-            fire there off the allow-listed call_pricing id. */}
+        {/* Pricing keeps the primary only (founder 2026-09-03, "enlève Book a
+            demo du pricing") — the one surface without the secondary pill. */}
         <div className="lp-price-ctas">
           <LpFxLink
             href="https://app.getpancake.ai"
@@ -55,14 +53,6 @@ export function LpPricing() {
           >
             Start free trial
           </LpFxLink>
-          <LpFxPill
-            size="lg"
-            className="lp-price-cta lp-btn--tinted lp-btn--demo"
-            data-lv2-open="call"
-            data-analytics-id="call_pricing"
-          >
-            Book a demo
-          </LpFxPill>
         </div>
         <p className="lp-price-note">No credit card needed</p>
       </div>

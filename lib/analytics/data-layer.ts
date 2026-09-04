@@ -19,7 +19,6 @@ export const CALL_CTA_IDS = [
   "call_nav",
   "call_hero",
   "call_final",
-  "call_pricing",
   "call_pricing_page",
   "call_careers",
 ] as const;
