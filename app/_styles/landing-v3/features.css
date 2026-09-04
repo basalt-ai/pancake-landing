@@ -2,10 +2,11 @@
    rev2 artboard 2026-08-31). Wrapper 1654×2969: flex col gap-32 p-16 —
    +32 vs rev1: a 4th separator closes the section. Heading pt-128 px-128,
    centered title. Cards 1296×621 (r48, no bg). Separators 1136w, 0.5px
-   ink-50. The four mock UIs are now storyboard-style animations rendered in
-   pancake-studio (shorts/feat-*-anim, 1120×1242 = the 560×621 zone at 2×):
-   each plays once when its card comes into view and holds the designer's
-   picture as its last frame (LpLoopVideo, same contract as the steps). */
+   ink-50. The four mock UIs are in-page animations (DOM + CSS + GSAP —
+   LpFeatAnim.tsx / LpFeatMocks.tsx / lp-feat-timelines.ts): the markup and
+   the values below are the pancake-studio compositions' (shorts/feat-*-anim,
+   the sources of the former mp4s), themselves the Figma-exact mocks this file
+   carried before the video pass. Rest state = the artboard. */
 
 .lp-feat {
   display: flex;
@@ -79,11 +80,37 @@
   color: var(--lp-text);
   white-space: pre-line;
 }
+/* rev2: pink tag above the f1 title (Figma 4526:3450 — 75×24, r6, Fono
+   Medium 13.33 / +4% tracking) */
+.lp-feat-tag {
+  align-self: flex-start;
+  background: var(--lp-pink-30);
+  border-radius: 6px;
+  color: var(--lp-ink-100);
+  font-size: 13.33px;
+  font-weight: 500;
+  letter-spacing: 0.533px;
+  line-height: 1.5;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
 .lp-feat-body {
   font-size: var(--lp-text-md);
   line-height: 1.5;
 }
+
+/* ── the media zone + its stage ──
+   The zone is the artboard's 560×621 media frame. The stage inside is that
+   frame at design size and scales AS PIXELS with the zone (transform, never
+   zoom — iOS relayouts zoomed text and the mocks burst their frames, audit
+   2026-08-31): --lp-fit = zone width / 560, set by LpFeatAnim's
+   ResizeObserver; the trig quotient is the pre-hydration fallback (iOS
+   mis-resolves it, LpFitVars.tsx — one wrong first frame, self-corrected).
+   No clipping: Figma's frame does not clip its content either — f1's clay
+   note paints 21px left of the frame, f3's Gemini star 36px right of it
+   (the page clips bleed). */
 .lp-feat-mockzone {
+  container-type: inline-size;
   height: 621px;
   position: absolute;
   top: 0.42px;
@@ -95,27 +122,994 @@
 .lp-feat-card[data-side="right"] .lp-feat-mockzone {
   left: 80px;
 }
-
-/* The zone hosts the animation: the video is absolute inset 0 (steps.css
-   .lp-loop-video), same 560/621 aspect as the master → cover crops nothing. */
-.lp-feat-mockzone {
-  overflow: hidden;
+.lp-feat-stage {
+  color: var(--lp-ink-100);
+  font-family: var(--lp-font-fono);
+  font-size: 16px;
+  height: 621px;
+  left: 0;
+  line-height: 1.5;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  transform: scale(var(--lp-fit, tan(atan2(100cqw, 560px))));
+  transform-origin: 0 0;
+  user-select: none;
+  -webkit-user-select: none;
+  /* hidden until LpFeatAnim has armed the timeline at frame 0 (cream only —
+     what the video's first-frame poster showed); "static" = the rest-state
+     picture as a still */
+  visibility: hidden;
+  width: 560px;
 }
-
-/* Figma node 4389:863 lets feature-1's annotation paint 21px beyond the
-   560px frame. Its dedicated 581×621 render captures that overflow while the
-   layout box stays 560×621, so the instance itself remains at x31 exactly. */
-.lp-feat-mockzone--signals {
-  overflow: visible;
+.lp-feat-mockzone[data-lp-anim] > .lp-feat-stage {
+  visibility: visible;
 }
-.lp-feat-mockzone--signals .lp-loop-video {
-  left: -3.75%;
+/* the kit's `* { font-family }` (style.css) outranks inheritance — every
+   mock element states its face; the per-element rules below override */
+.lp-feat-stage * {
+  font-family: var(--lp-font-fono);
+}
+.lp-feat-stage img,
+.lp-feat-stage svg {
+  display: block;
   max-width: none;
-  right: auto;
-  width: 103.75%;
+}
+/* (paragraph margins are already zero via foundation's `.lp p` — a rule of
+   (0,1,1) specificity: any mock paragraph that NEEDS a margin states it with
+   a compound selector, e.g. `.lp-feat-stage .lp-f3-answer`) */
+
+/* ══ f1 · Signals + Roles (feat-signals-anim, Figma-parity cut 2026-09-03:
+   exact instance geometry inside node 4389:863 — stage 516.8×428 at
+   (31, 97), no row hairlines, Companies hiring highlighted at rest) ══ */
+.lp-feat-f1 {
+  height: 428px;
+  left: 31px;
+  position: absolute;
+  top: 97px;
+  width: 516.8px;
+}
+.lp-f1-mockcard {
+  background: var(--lp-ink-0);
+  border: 0;
+  border-radius: 19.2px;
+  box-shadow: inset 0 0 0 0.4px var(--lp-ink-40);
+}
+.lp-f1-signals {
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6.4px;
+  left: 0;
+  padding: 6.4px;
+  position: absolute;
+  top: 0;
+  width: 326.4px;
+}
+.lp-f1-sighead {
+  align-items: baseline;
+  display: flex;
+  gap: 6.4px;
+  padding: 12.8px;
+  white-space: nowrap;
+  width: 100%;
+}
+.lp-f1-sigtitle {
+  color: var(--lp-ink-100);
+  font-family: var(--lp-font-cond);
+  font-size: 22.4px;
+  font-weight: 500;
+  letter-spacing: -0.224px;
+  line-height: 1.3;
+}
+.lp-f1-sigcount {
+  color: var(--lp-ink-70);
+  font-size: 12.8px;
+  line-height: 1.5;
+}
+.lp-f1-row {
+  align-items: center;
+  background-color: rgba(44, 0, 42, 0);
+  border-radius: 12.8px;
+  display: flex;
+  flex: none;
+  gap: 12.8px;
+  height: 54.4px;
+  padding: 0 12.8px;
+  position: relative;
+  width: 100%;
+}
+.lp-f1-tile {
+  align-items: center;
+  border-radius: 9.6px;
+  display: inline-flex;
+  flex: none;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
+}
+.lp-f1-tile--pink {
+  background: #ffd7d9;
+}
+.lp-f1-tile--amber {
+  background: rgba(220, 160, 76, 0.16);
+}
+.lp-f1-tile--blue {
+  background: #e1edff;
+}
+.lp-f1-tile--cream {
+  background: #ffe6c5;
+}
+.lp-f1-docicon {
+  height: 19.2px;
+  width: 19.2px;
+}
+.lp-f1-icon32 {
+  flex: none;
+  height: 32px;
+  width: 32px;
+}
+.lp-f1-avatar {
+  height: 38.4px;
+  left: 10px;
+  position: absolute;
+  top: 7.6px;
+  width: 38.4px;
+}
+.lp-f1-label {
+  color: var(--lp-ink-100);
+  flex: 1;
+  font-family: var(--lp-font-aeonik);
+  font-size: 12.8px;
+  font-weight: 500;
+  line-height: 1.5;
+  min-width: 0;
+  white-space: nowrap;
+}
+.lp-f1-toggle {
+  background: var(--lp-ink-50);
+  border-radius: 9.6px;
+  flex: none;
+  height: 19.2px;
+  position: relative;
+  width: 32px;
+}
+.lp-f1-knob {
+  /* on → x +12.8 (left 14.4), by the timeline */
+  background: var(--lp-ink-0);
+  border-radius: 50%;
+  display: block;
+  height: 16px;
+  left: 1.6px;
+  position: absolute;
+  top: 1.6px;
+  width: 16px;
+}
+.lp-f1-chev {
+  flex: none;
+  height: 12.8px;
+  margin-left: -6.4px;
+  width: 12.8px;
+}
+.lp-f1-chart {
+  display: block;
+  height: 19.2px;
+  position: relative;
+  width: 19.2px;
+}
+.lp-f1-chart i {
+  border-radius: 1.2px;
+  display: block;
+  position: absolute;
+  width: 3.2px;
+}
+.lp-f1-bar1 {
+  background: #b74a1c;
+  height: 3.84px;
+  left: 2.24px;
+  top: 12.95px;
+}
+.lp-f1-bar2 {
+  background: #dca04c;
+  height: 7.04px;
+  left: 8px;
+  top: 9.75px;
+}
+.lp-f1-bar3 {
+  background: var(--lp-ink-70);
+  height: 5.76px;
+  left: 13.76px;
+  top: 11.03px;
+}
+.lp-f1-chart b {
+  font-size: 6.4px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
+  position: absolute;
+  transform: translateX(-50%);
+}
+.lp-f1-d1 {
+  color: #dca04c;
+  left: 9.6px;
+  top: 0.79px;
+}
+.lp-f1-d2 {
+  color: var(--lp-ink-70);
+  left: 15.36px;
+  top: 2.07px;
+}
+.lp-f1-d3 {
+  color: #b74a1c;
+  left: 3.84px;
+  top: 3.99px;
+}
+.lp-f1-roles {
+  display: flex;
+  flex-direction: column;
+  gap: 6.4px;
+  height: 210.4px;
+  left: 333.6px;
+  overflow: clip;
+  padding: 9.6px;
+  position: absolute;
+  top: 176px;
+  width: 183.2px;
+}
+.lp-f1-roleshead {
+  align-items: baseline;
+  display: flex;
+  gap: 6.4px;
+  padding: 6.4px;
+  white-space: nowrap;
+  width: 100%;
+}
+.lp-f1-rolestitle {
+  color: var(--lp-ink-100);
+  font-family: var(--lp-font-aeonik);
+  font-size: 18.43px;
+  font-weight: 500;
+  letter-spacing: -0.1843px;
+  line-height: 1.3;
+}
+.lp-f1-role {
+  align-items: center;
+  border-radius: 12.8px;
+  display: flex;
+  gap: 12.8px;
+  padding: 6.4px;
+  width: 100%;
+}
+.lp-f1-checkimg {
+  flex: none;
+  height: 19.2px;
+  width: 19.2px;
+}
+.lp-f1-checkbox-off {
+  border: 0.8px solid var(--lp-ink-70);
+  border-radius: 4.8px;
+  display: block;
+  flex: none;
+  height: 19.2px;
+  width: 19.2px;
+}
+.lp-f1-checkwrap {
+  display: inline-flex;
+  flex: none;
+  height: 19.2px;
+  position: relative;
+  width: 19.2px;
+}
+/* the empty outline under a check: visible until its check lands, then
+   opacity 0 = the artboard */
+.lp-f1-checkwrap .lp-f1-checkbox-off {
+  inset: 0;
+  position: absolute;
+}
+.lp-f1-checkwrap .lp-f1-checkimg {
+  position: relative;
+}
+/* Figma annotation: bubble img + text share one box (75.63×42.85 at left
+   −48, top 45.6), rotated −13.36° about the shared center by the timeline */
+.lp-f1-sticker {
+  height: 42.85px;
+  left: -48px;
+  opacity: 0;
+  position: absolute;
+  top: 45.6px;
+  width: 75.63px;
+}
+.lp-f1-sticker-bg {
+  height: 42.85px;
+  inset: 0;
+  position: absolute;
+  width: 75.63px;
+}
+.lp-f1-sticker-text {
+  align-items: center;
+  color: var(--lp-ink-100);
+  display: flex;
+  font-size: 8.64px;
+  font-weight: 600;
+  height: 42.85px;
+  inset: 0;
+  justify-content: center;
+  line-height: 1.35;
+  padding: 0 4px 9.4px;
+  position: absolute;
+  text-align: center;
+  width: 75.63px;
+}
+/* counting headers: the in-flow digit is the artboard's ("4 active" / "3
+   selected"); the other digits are animation-only layers stacked on the same
+   glyph box (left 0 / top 0 of the block, same font + line box) */
+.lp-f1-cnt {
+  position: relative;
+}
+.lp-f1-cnt-cur {
+  display: inline-block;
+}
+.lp-f1-cnt-alt {
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
 }
 
-/* ── responsive ── */
+/* ══ f2 · LinkedIn post + the draft in its rainbow ring (feat-warm-message-
+   anim). Tight bounds 405 wide; the post copy runs two lines (founder's
+   Product Hunt string, 2026-09-03: the post card grew one 26px line) and the
+   draft runs five — one line more than Figma's four-line card, at Figma's
+   own line pitch (the artboard card is 255.22 = 4 × 28.985 + paddings, i.e.
+   the face's natural line height, not the 1.3 ratio the CSS approximated),
+   so the card keeps its 19.3 padding under Send and the ring keeps hugging
+   the card (founder 2026-09-03: "the Send is not pixel perfect"). The mock
+   grew 54.985 in all and rose to stay centred in the zone. ══ */
+.lp-feat-f2 {
+  height: 526.785px;
+  left: 78.85px;
+  position: absolute;
+  top: 48.598px;
+  width: 405px;
+}
+/* LinkedIn pastiche (Figma sets Inter — not loaded by the app; the stack
+   falls back to the system face, whose measured compensation the
+   letter-spacings carry). Palette = LinkedIn's, page-scoped literals. */
+.lp-f2-post {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 14.4px;
+  box-shadow: inset 0 0 0 0.9px #e8e6e3;
+  height: 196.4px;
+  left: 19.46px;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  width: 363.6px;
+}
+.lp-f2-post,
+.lp-f2-post * {
+  font-family: "Inter", "SF Pro Text", -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+.lp-f2-posticons {
+  height: 171px;
+  left: 0;
+  overflow: visible;
+  position: absolute;
+  top: 0;
+  width: 364px;
+}
+#lpf2-pi-globe,
+#lpf2-pi-like,
+#lpf2-pi-comment,
+#lpf2-pi-repost,
+#lpf2-pi-send,
+#lpf2-pi-bubbleLike,
+#lpf2-pi-bubbleHeart {
+  opacity: 0;
+}
+.lp-f2-avatar {
+  border-radius: 50%;
+  height: 43.2px;
+  left: 14.4px;
+  opacity: 0;
+  position: absolute;
+  top: 14.6px;
+  width: 43.2px;
+}
+.lp-f2-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8px;
+  left: 68.4px;
+  position: absolute;
+  top: 14.4px;
+  white-space: nowrap;
+}
+.lp-f2-meta p {
+  opacity: 0;
+}
+.lp-f2-name {
+  color: #191919;
+  font-size: 12.6px;
+  font-weight: 700;
+  letter-spacing: 0.27px;
+  line-height: 15px;
+}
+.lp-f2-degree {
+  color: #666666;
+  font-size: 10.8px;
+  font-weight: 400;
+  letter-spacing: 0;
+  margin-left: 3.6px;
+}
+.lp-f2-headline {
+  color: #666666;
+  font-size: 10.8px;
+  letter-spacing: 0.33px;
+  line-height: 13px;
+}
+.lp-f2-time {
+  color: #666666;
+  font-size: 9.9px;
+  line-height: 12px;
+}
+.lp-f2-body {
+  color: #191919;
+  font-size: 18.9px;
+  left: 14.4px;
+  letter-spacing: 0.31px;
+  line-height: 26px;
+  position: absolute;
+  top: 68.8px;
+  width: 334.8px;
+}
+.lp-f2-body--plain {
+  opacity: 0;
+}
+.lp-f2-skel {
+  display: flex;
+  gap: 7.2px;
+  left: 14.4px;
+  position: absolute;
+  top: 135.2px;
+}
+.lp-f2-skelgrp {
+  display: flex;
+  gap: 1.8px;
+}
+.lp-f2-skelgrp i {
+  background: rgba(10, 102, 194, 0.16);
+  border-radius: 2.7px;
+  display: block;
+  height: 14.4px;
+  opacity: 0;
+  overflow: hidden;
+  position: relative;
+}
+.lp-f2-skelgrp i b {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.85) 50%, rgba(255, 255, 255, 0) 100%);
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 90px;
+}
+.lp-f2-count {
+  color: #191919;
+  font-size: 10.8px;
+  font-weight: 700;
+  line-height: 13px;
+  opacity: 0;
+  position: absolute;
+  top: 168.31px;
+}
+.lp-f2-count .lp-f2-n {
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+}
+.lp-f2-count .lp-f2-n--final {
+  position: static; /* the site's own number is the in-flow text; earlier states stack over it */
+}
+.lp-f2-count .lp-f2-n--zero {
+  opacity: 1;
+}
+/* draft card in its rainbow ring: the ring SVG is the site's baked export
+   (white base + 4 outside-stroke squiggles), each squiggle behind its own
+   draw mask so it can trace the contour — lp-feat-art.ts */
+.lp-f2-draftgrp {
+  height: 312.985px;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  top: 213.8px;
+  width: 405px;
+}
+.lp-f2-ring {
+  height: 312.985px;
+  left: 0;
+  overflow: visible;
+  position: absolute;
+  top: 0;
+  width: 405px;
+}
+.lp-f2-draft {
+  background: var(--lp-ink-0);
+  border-radius: 25.2px;
+  display: flex;
+  flex-direction: column;
+  gap: 19.3px;
+  height: 284.205px; /* Figma's 255.22 + one 28.985 line */
+  left: 13.15px;
+  padding: 19.3px;
+  position: absolute;
+  top: 14.5px;
+  width: 376px;
+}
+.lp-f2-eyebrow {
+  color: var(--lp-green-30);
+  font-size: 10.72px;
+  font-weight: 500;
+  letter-spacing: 1.072px;
+  line-height: 1.5;
+  opacity: 0;
+  position: relative;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+/* MESSAGE SENT is the in-flow text (the picture that holds); DRAFT READY is
+   the animation-only layer on top until Pancake presses Send */
+.lp-f2-eyebrow-sent {
+  display: inline-block;
+  opacity: 0;
+}
+.lp-f2-eyebrow-draft {
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+.lp-f2-msgbox {
+  position: relative;
+}
+.lp-f2-msg {
+  color: var(--lp-ink-100);
+  font-family: var(--lp-font-cond);
+  font-size: 22.52px;
+  font-weight: 500;
+  letter-spacing: -0.2252px;
+  /* Figma's rendered pitch (auto line height = the face's natural 1.287em),
+     measured from the artboard card: 1.3 put Send 1.15px past the padding */
+  line-height: 28.985px;
+}
+.lp-f2-msg--typed {
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+.lp-f2-msg--plain {
+  opacity: 0;
+}
+.lp-f2-send {
+  align-items: center;
+  background: var(--lp-ink-100);
+  border-radius: 14.4px;
+  color: var(--lp-ink-20);
+  display: flex;
+  flex: none;
+  font-size: 14.4px;
+  font-weight: 600;
+  height: 46px;
+  justify-content: center;
+  line-height: 1.5;
+  margin-top: auto; /* pinned to the card's bottom padding */
+  opacity: 0;
+  width: 100%;
+}
+/* typing: one span per character (opacity only, so the line boxes never
+   move); the caret is the last visible character's ::after — zero-width and
+   out of flow, so it never shifts a glyph or a line break */
+.lp-f2-ch {
+  --caret: 0;
+  opacity: 0;
+  position: relative;
+}
+.lp-f2-ch::after {
+  background: currentColor;
+  bottom: 0;
+  content: "";
+  left: 100%;
+  margin-left: 1px;
+  opacity: var(--caret);
+  position: absolute;
+  top: 0;
+  width: 2px;
+}
+.lp-f2-ch0 {
+  opacity: 1; /* the zero-width holder the caret blinks on before the first character */
+}
+
+/* ══ f3 · AI-answers collage (feat-ai-search-anim, composer cut 2026-09-03).
+   Root = tight bounds of the collage in the zone: x20.92 (spiral left) →
+   596.08 (gemini right), y28.1 (claude top) → 538.7 (card bottom). ChatGPT
+   spiral BEHIND the chat card; Gemini star and Claude asterisk above it. ══ */
+.lp-feat-stage--f3 {
+  font-size: 12.8px;
+  line-height: 1.5;
+}
+.lp-feat-f3 {
+  height: 510.6px;
+  left: 20.92px;
+  position: absolute;
+  top: 28.1px;
+  width: 575.16px;
+}
+.lp-f3-chatgpt {
+  height: 140.81px;
+  left: 0;
+  position: absolute;
+  top: 225.8px;
+  width: 140.81px;
+}
+.lp-f3-card {
+  background: var(--lp-ink-0);
+  border-radius: 25.6px;
+  box-shadow: inset 0 0 0 0.4px var(--lp-ink-50);
+  height: 456px;
+  left: 101.08px;
+  position: absolute;
+  top: 54.6px;
+  width: 316px;
+}
+.lp-f3-gemini {
+  height: 240.5px;
+  left: 334.66px;
+  position: absolute;
+  top: 101.13px;
+  width: 240.5px;
+}
+.lp-f3-claude {
+  height: 109.21px;
+  left: 39.48px;
+  position: absolute;
+  top: 0;
+  width: 109.21px;
+}
+.lp-f3-bubble {
+  background: var(--lp-blue-40);
+  border-radius: 16px;
+  color: var(--lp-ink-0);
+  padding: 8px 12.8px;
+  position: absolute;
+  right: 32.4px;
+  top: 32.4px;
+  width: 190.88px;
+}
+.lp-f3-bubble p {
+  font-size: 12.8px;
+  line-height: 1.5;
+}
+.lp-f3-resp {
+  left: 32.4px;
+  position: absolute;
+  top: 137.6px;
+  width: 225.6px;
+}
+.lp-f3-thought {
+  color: var(--lp-ink-80);
+  font-size: 12.8px;
+  line-height: 1.5;
+  position: relative;
+  white-space: nowrap;
+}
+.lp-feat-stage .lp-f3-answer {
+  color: var(--lp-ink-100);
+  font-size: 12.8px;
+  line-height: 1.5;
+  margin-top: 6.4px; /* outranks foundation's `.lp p { margin: 0 }` */
+  white-space: pre-line;
+}
+.lp-f3-mark {
+  background: var(--lp-yellow-30);
+  border-radius: 6.4px;
+  font-weight: 700;
+  margin: -1.25px -3.6px;
+  padding: 1.25px 3.6px;
+  white-space: nowrap;
+}
+.lp-feat-stage .lp-f3-answer--anim {
+  left: 0;
+  margin-top: 0;
+  position: absolute;
+  top: 25.6px; /* 19.2 thought + 6.4 gap */
+  width: 225.6px;
+}
+/* the composer bar: 251.2×38.4 at (32.4, 385.2) at rest, anchored to the
+   card's bottom so it grows UPWARD while the question is typed in it — a
+   real chat input; its icon row (plus, caret, mic, voice) stays on the
+   bottom line, the placeholder on the first */
+.lp-f3-composer {
+  background: var(--lp-ink-20);
+  border-radius: 19.2px;
+  bottom: 32.4px;
+  box-shadow: inset 0 0 0 0.4px var(--lp-ink-50);
+  left: 32.4px;
+  min-height: 38.4px;
+  padding: 11.7px 60px 11.7px 38.4px;
+  position: absolute;
+  width: 251.2px;
+}
+.lp-f3-compicons {
+  bottom: 0;
+  height: 38.4px;
+  left: 0;
+  position: absolute;
+  width: 251.2px;
+}
+.lp-f3-ask {
+  color: var(--lp-ink-60);
+  font-size: 12.8px;
+  left: 38.4px;
+  line-height: 15px;
+  position: absolute;
+  top: 11.7px;
+  white-space: nowrap;
+}
+.lp-f3-ctyped {
+  color: var(--lp-ink-100);
+  font-size: 12.8px;
+  line-height: 15px;
+  min-height: 15px;
+  position: relative;
+}
+/* one span per typed character: display toggled by the timeline, so the bar
+   wraps and grows exactly like a text field; each carries the caret that
+   follows it */
+.lp-f3-ch {
+  display: none;
+  position: relative;
+}
+.lp-f3-ch0 {
+  display: inline; /* the zero-width holder the caret blinks on before the first character */
+}
+.lp-f3-crt {
+  background: var(--lp-blue-40);
+  border-radius: 1px;
+  bottom: -2.1px;
+  opacity: 0;
+  position: absolute;
+  right: -0.9px;
+  top: -2.1px;
+  width: 1.2px;
+}
+.lp-f3-ch0 .lp-f3-crt {
+  right: 0.2px; /* = the baked caret's spot (x 38.2) */
+}
+.lp-f3-w {
+  display: inline-block; /* one span per streamed word */
+}
+.lp-f3-shim {
+  background: linear-gradient(100deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.9) 50%, rgba(255, 255, 255, 0) 60%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  background-size: 300% 100%;
+  color: transparent;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+}
+.lp-f3-spk {
+  overflow: visible;
+  position: absolute;
+}
+
+/* ══ f4 · reply-rate chart, What worked, Brain updated (feat-learns-anim).
+   Tight bounds: x41.89 (ring left) → 516.89, y76.5 (graph top) → 559.5
+   (ring bottom). ══ */
+.lp-feat-f4 {
+  height: 483px;
+  left: 41.89px;
+  position: absolute;
+  top: 76.5px;
+  width: 475px;
+}
+.lp-f4-card {
+  background: var(--lp-ink-0);
+  border-radius: 21.6px;
+  position: absolute;
+}
+.lp-f4-hair {
+  box-shadow: inset 0 0 0 0.45px var(--lp-ink-40); /* 0.45px Figma hairline */
+}
+.lp-f4-graph {
+  height: 244.8px;
+  left: 12.91px;
+  top: 0;
+  width: 450px;
+}
+.lp-f4-stat {
+  align-items: flex-start;
+  display: flex;
+  gap: 7.2px;
+  left: 21.6px;
+  position: absolute;
+  top: 26.1px;
+}
+.lp-f4-pct {
+  color: var(--lp-green-30);
+  font-family: var(--lp-font-cond);
+  font-size: 41.47px;
+  font-weight: 500;
+  letter-spacing: -0.4147px;
+  line-height: 29px;
+  white-space: nowrap;
+}
+.lp-f4-arrow {
+  height: 16.89px;
+  width: 16.89px;
+}
+.lp-f4-vs {
+  color: var(--lp-ink-70);
+  font-size: 12px;
+  font-weight: 500;
+  left: 22.05px;
+  letter-spacing: 1.2px;
+  line-height: 1.5;
+  position: absolute;
+  text-transform: uppercase;
+  top: 67.05px;
+  white-space: nowrap;
+}
+.lp-f4-bars {
+  align-items: flex-end;
+  bottom: 38.05px;
+  display: flex;
+  justify-content: space-between;
+  left: 22.05px;
+  position: absolute;
+  width: 405.9px;
+}
+.lp-f4-bar {
+  border-radius: 3.6px;
+  flex: none;
+  width: 14.4px;
+}
+.lp-f4-bar:nth-child(-n + 3) {
+  background: var(--lp-yellow-30);
+}
+.lp-f4-bar:nth-child(n + 4):nth-child(-n + 6) {
+  background: var(--lp-pink-30);
+}
+.lp-f4-bar:nth-child(n + 7):nth-child(-n + 9) {
+  background: var(--lp-purple-30);
+}
+.lp-f4-bar:nth-child(n + 10) {
+  background: var(--lp-blue-40);
+}
+.lp-f4-bar:nth-child(1) {
+  height: 36px;
+}
+.lp-f4-bar:nth-child(2) {
+  height: 43.2px;
+}
+.lp-f4-bar:nth-child(3) {
+  height: 36px;
+}
+.lp-f4-bar:nth-child(4) {
+  height: 42.3px;
+}
+.lp-f4-bar:nth-child(5) {
+  height: 61.2px;
+}
+.lp-f4-bar:nth-child(6) {
+  height: 68.4px;
+}
+.lp-f4-bar:nth-child(7) {
+  height: 76.5px;
+}
+.lp-f4-bar:nth-child(8) {
+  height: 62.1px;
+}
+.lp-f4-bar:nth-child(9) {
+  height: 90.9px;
+}
+.lp-f4-bar:nth-child(10) {
+  height: 68.4px;
+}
+.lp-f4-bar:nth-child(11) {
+  height: 106.2px;
+}
+.lp-f4-bar:nth-child(12) {
+  height: 130.5px;
+}
+.lp-f4-weeks {
+  display: flex;
+  left: 22.05px;
+  position: absolute;
+  top: 217.55px;
+  width: 405.9px;
+}
+.lp-f4-weeks span {
+  color: var(--lp-ink-70);
+  flex: 1;
+  font-size: 10px;
+  line-height: 1.6;
+  text-align: center;
+  white-space: nowrap;
+}
+.lp-f4-worked {
+  height: 92.1px;
+  left: 12.91px;
+  padding: 14.85px;
+  top: 266.4px;
+  width: 450px;
+}
+.lp-f4-ctitle {
+  color: var(--lp-ink-100);
+  font-family: var(--lp-font-cond);
+  font-size: 22.52px;
+  font-weight: 500;
+  letter-spacing: -0.2252px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.lp-f4-chips {
+  display: flex;
+  gap: 7.2px;
+  margin-top: 7.2px;
+}
+.lp-f4-chip {
+  background: var(--lp-ink-tr-5);
+  border-radius: 7.2px;
+  box-shadow: inset 0 0 0 0.45px var(--lp-ink-50);
+  color: var(--lp-ink-100);
+  display: flex;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.6;
+  padding: 3.6px 7.2px;
+  white-space: nowrap;
+}
+/* "Brain updated" wrapped in the rainbow ring (ring box 475×105 at y378;
+   card at 12.01/16.2 inside it) */
+.lp-f4-brain {
+  height: 105px;
+  left: 0;
+  position: absolute;
+  top: 378px;
+  width: 475px;
+}
+.lp-f4-ring {
+  height: 105px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 475px;
+}
+.lp-f4-braincard {
+  height: 73.8px;
+  left: 12.01px;
+  padding: 12.9px 14.4px;
+  top: 16.2px;
+  width: 450.9px;
+}
+.lp-f4-brainsub {
+  color: var(--lp-ink-100);
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+/* ── responsive ──
+   ≤1360: trim heading side paddings. ≤1340 (1296 card + wrapper padding no
+   longer fits): recompose to a static two-column row; the zone keeps the
+   master's 560/621 aspect and shrinks with the column, the stage scales as
+   pixels inside it (never cropped, never rewrapped). ≤767: stack. */
 @media (max-width: 1360px) {
   .lp-feat-heading {
     padding: 96px 64px 0;
@@ -145,7 +1139,6 @@
     transform: none;
     width: auto;
   }
-  /* the zone keeps the master's aspect and shrinks with the column */
   .lp-feat-card[data-side="left"] .lp-feat-mockzone,
   .lp-feat-card[data-side="right"] .lp-feat-mockzone {
     aspect-ratio: 560 / 621;
@@ -157,24 +1150,29 @@
     width: min(560px, 100%);
   }
 }
+/* the tablet steps used to be `zoom: 0.85 / 0.75` on the zone — the same
+   rendered boxes (476×528 / 420×466), as widths now, so the stage scales as
+   pixels (zoom would relayout the mock text) */
 @media (max-width: 1180px) {
-  .lp-feat-mockzone {
-    zoom: 0.85;
+  .lp-feat-card[data-side="left"] .lp-feat-mockzone,
+  .lp-feat-card[data-side="right"] .lp-feat-mockzone {
+    width: min(476px, 100%);
   }
 }
 @media (max-width: 1024px) {
   .lp-feat-heading {
     padding: 64px 32px 0;
   }
-  .lp-feat-mockzone {
-    zoom: 0.75;
+  .lp-feat-card[data-side="left"] .lp-feat-mockzone,
+  .lp-feat-card[data-side="right"] .lp-feat-mockzone {
+    width: min(420px, 100%);
   }
 }
 @media (max-width: 767px) {
   /* Mobile artboard (Figma 4389:8164, section 4389:8287): section pad 24,
      gap 32; blocks 354w = text + 16 + the mock band (386 tall in the artboard;
-     the animation's 560/621 box at 354 wide is 393 — the same band, 7px
-     taller, with the whole picture in it). */
+     the 560/621 box at 354 wide is 393 — the same band, 7px taller, with the
+     whole picture in it). */
   .lp-feat {
     gap: 32px;
     padding: 0 24px 24px;
@@ -227,7 +1225,6 @@
     max-width: none;
     position: relative;
     width: 100%;
-    zoom: 1;
   }
   .lp-feat-sep {
     max-width: 100%;

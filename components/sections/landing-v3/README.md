@@ -114,14 +114,32 @@ back during a fidelity pass:
 - Testimonials: two counter-scrolling marquees (~28.75 px/s), 48px between
   rows (Figma had 96), 8 distinct fictional authors/tweets; phones keep the
   old single stacked column (row 2 hidden there).
-- "How Pancake finds customers": the four mock UIs are animations now
-  (pancake-studio `shorts/feat-{signals,warm-message,ai-search,learns}-anim`,
-  1120×1242 = the 560×621 zone at 2×, rendered from the mock markup/CSS this
-  repo used to carry). `LpLoopVideo` plays each once when its card is in view
-  and holds the designer's picture as the last frame; the zone keeps the
-  560/621 aspect at every width (`/public/lp/feat-*.mp4` + first-frame
-  posters). The CSS choreography, ring-flow effect and `LpRingFlow` left with
-  them (2026-09-02).
+- "How Pancake finds customers": the four mock UIs are IN-PAGE animations
+  (DOM + CSS + GSAP) since 2026-09-03 — founder: no 500 KB–1 MB video
+  downloads, vector-crisp at every DPR. `LpFeatAnim.tsx` drives them with the
+  contract the mp4s had (plays once at 60 % in view, pauses off-screen, holds
+  the last frame = the designer's picture, reduced motion = that picture,
+  stage hidden until armed so hydration never flashes the end state);
+  `LpFeatMocks.tsx` is the mocks' markup, `features.css` their Figma-exact
+  geometry, `lp-feat-timelines.ts` the four timelines ported tween for tween
+  from the pancake-studio compositions (`shorts/feat-*-anim`, the storyboards
+  the mp4s were rendered from), `lp-feat-art.ts` the inline SVG art extracted
+  from them by script (never hand-edit the path data). The 560×621 stage
+  scales AS PIXELS with the zone (`--lp-fit`, ResizeObserver + trig fallback —
+  never `zoom`, iOS relayouts zoomed text); the zone keeps the 560/621 aspect
+  at every width and does not clip (f1's clay note paints 21px left of the
+  frame, f3's Gemini star 36px right of it, as in Figma). QA hook:
+  `window.__lpFeat[f1..f4]` = the timelines (seek + screenshot, compare with
+  the composition renders). f1 is the founder's Figma-parity cut (instance at
+  31/97, no row hairlines, Companies hiring highlighted at rest, one sticker).
+  Founder changes of 2026-09-03 that exist ONLY here (the studio compositions
+  are behind on them): f3 types the question in the composer bar — which
+  grows like a real chat input — then sends it up into the blue bubble; f2's
+  draft card keeps Figma's 19.3 padding under Send (one extra 29.276px line
+  for the five-line copy; the ring's straight middle is stretched to follow —
+  `F2_RING`), Pancake presses Send itself and the eyebrow ends on MESSAGE SENT;
+  the draft opens "Hey Sarah" (the post's author). The mp4s + posters are no
+  longer referenced.
 - Footer content sits 48px closer to the pricing rings (height 467, brand
   top 56.43, cols top 76.75; Figma: 515/104.43/124.75).
 - /careers runs on this design system (`app/careers/page.tsx` +
