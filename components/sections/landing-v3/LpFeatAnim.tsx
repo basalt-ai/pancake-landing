@@ -63,6 +63,7 @@ export function LpFeatAnim({
     let done = false;
     let tl: gsap.core.Timeline | undefined;
     let cleanupDom: (() => void) | undefined;
+    let ctx: gsap.Context | undefined;
 
     const sync = () => {
       if (!tl) return;
@@ -82,27 +83,34 @@ export function LpFeatAnim({
       }
     };
 
-    const ctx = gsap.context(() => {
-      try {
-        const built = buildFeatTimeline(variant, stage);
-        tl = built.tl;
-        cleanupDom = built.cleanup;
-        tl.eventCallback("onComplete", () => {
-          done = true;
-          host.dataset.lpAnim = "done";
-        });
-        tl.pause(0); // frame 0 (the composition's first frame: cream only)
-        host.dataset.lpAnim = "armed";
-        // QA hook (like __lpArcPhase / __lpRingPhase): seek a card's timeline
-        // to any moment and compare with the composition's render
-        const w = window as unknown as { __lpFeat?: Record<string, gsap.core.Timeline> };
-        w.__lpFeat = { ...w.__lpFeat, [variant]: tl };
-      } catch (err) {
-        // never a blank card: the rest-state markup is the designer's picture
-        host.dataset.lpAnim = "static";
-        if (process.env.NODE_ENV !== "production") console.error(err);
-      }
-    }, stage);
+    // Built when the card first touches the viewport — laid out, so the f2
+    // builder can measure its glyphs (the section is content-visibility:auto;
+    // a skipped subtree has no geometry), and nothing is spent on cards the
+    // visitor never reaches. Until then the stage stays hidden (= cream).
+    const arm = () => {
+      if (ctx) return;
+      ctx = gsap.context(() => {
+        try {
+          const built = buildFeatTimeline(variant, stage);
+          tl = built.tl;
+          cleanupDom = built.cleanup;
+          tl.eventCallback("onComplete", () => {
+            done = true;
+            host.dataset.lpAnim = "done";
+          });
+          tl.pause(0); // frame 0 (the composition's first frame: cream only)
+          host.dataset.lpAnim = "armed";
+          // QA hook (like __lpArcPhase / __lpRingPhase): seek a card's timeline
+          // to any moment and compare with the composition's render
+          const w = window as unknown as { __lpFeat?: Record<string, gsap.core.Timeline> };
+          w.__lpFeat = { ...w.__lpFeat, [variant]: tl };
+        } catch (err) {
+          // never a blank card: the rest-state markup is the designer's picture
+          host.dataset.lpAnim = "static";
+          if (process.env.NODE_ENV !== "production") console.error(err);
+        }
+      }, stage);
+    };
 
     const onMotion = () => {
       if (!tl) return;
@@ -111,20 +119,22 @@ export function LpFeatAnim({
     };
     const io = new IntersectionObserver(
       (entries) => {
-        inView = entries.some((e) => e.isIntersecting);
+        const e = entries[entries.length - 1];
+        if (e.isIntersecting) arm();
+        // "focused on it" = 60 % visible (the video's threshold)
+        inView = e.isIntersecting && e.intersectionRatio >= 0.6 - 1e-3;
         sync();
       },
-      { threshold: 0.6 },
+      { threshold: [0, 0.6] },
     );
     io.observe(host);
     motionMq.addEventListener("change", onMotion);
-    sync();
 
     return () => {
       io.disconnect();
       ro.disconnect();
       motionMq.removeEventListener("change", onMotion);
-      ctx.revert();
+      ctx?.revert();
       cleanupDom?.();
       const w = window as unknown as { __lpFeat?: Record<string, gsap.core.Timeline> };
       if (w.__lpFeat) delete w.__lpFeat[variant];

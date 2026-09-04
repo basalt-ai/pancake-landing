@@ -460,17 +460,18 @@
 /* ══ f2 · LinkedIn post + the draft in its rainbow ring (feat-warm-message-
    anim). Tight bounds 405 wide; the post copy runs two lines (founder's
    Product Hunt string, 2026-09-03: the post card grew one 26px line) and the
-   draft runs five — one line more than Figma's four-line card, at Figma's
-   own line pitch (the artboard card is 255.22 = 4 × 28.985 + paddings, i.e.
-   the face's natural line height, not the 1.3 ratio the CSS approximated),
-   so the card keeps its 19.3 padding under Send and the ring keeps hugging
-   the card (founder 2026-09-03: "the Send is not pixel perfect"). The mock
-   grew 54.985 in all and rose to stay centred in the zone. ══ */
+   draft runs five, at Figma's own line pitch (the artboard card is 255.22 =
+   4 × 28.985 + paddings + the button, i.e. the face's natural line height,
+   not the 1.3 ratio the CSS approximated). No Send button (founder
+   2026-09-03: "ressortir l'esprit que c'est autonome"): the card is the
+   message and its status, so it hugs eyebrow + five lines (218.905) and the
+   ring is cut to follow (lp-feat-art.ts). The mock is 461.485 tall now and
+   keeps its centre in the zone. ══ */
 .lp-feat-f2 {
-  height: 526.785px;
+  height: 461.485px;
   left: 78.85px;
   position: absolute;
-  top: 48.598px;
+  top: 81.248px;
   width: 405px;
 }
 /* LinkedIn pastiche (Figma sets Inter — not loaded by the app; the stack
@@ -564,8 +565,17 @@
   top: 68.8px;
   width: 334.8px;
 }
-.lp-f2-body--plain {
+/* the typing caret rides the glyph edges of the run it lives in (2px, the
+   line's height; positioned by the timeline) */
+.lp-f2-caret {
+  background: currentColor;
+  display: block;
+  left: 0;
   opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 2px;
 }
 .lp-f2-skel {
   display: flex;
@@ -621,7 +631,7 @@
    (white base + 4 outside-stroke squiggles), each squiggle behind its own
    draw mask so it can trace the contour — lp-feat-art.ts */
 .lp-f2-draftgrp {
-  height: 312.985px;
+  height: 247.685px;
   left: 0;
   opacity: 0;
   position: absolute;
@@ -629,7 +639,7 @@
   width: 405px;
 }
 .lp-f2-ring {
-  height: 312.985px;
+  height: 247.685px;
   left: 0;
   overflow: visible;
   position: absolute;
@@ -642,37 +652,40 @@
   display: flex;
   flex-direction: column;
   gap: 19.3px;
-  height: 284.205px; /* Figma's 255.22 + one 28.985 line */
+  height: 218.905px; /* 19.3 + 16.08 + 19.3 + 5 × 28.985 + 19.3 */
   left: 13.15px;
   padding: 19.3px;
   position: absolute;
   top: 14.5px;
   width: 376px;
 }
+/* the status line: MESSAGE SENT (green) is the in-flow text — the picture
+   that holds; DRAFT READY (yellow) is the animation-only layer stacked on it,
+   landing once the draft is written and flipping to the sent state */
 .lp-f2-eyebrow {
   color: var(--lp-green-30);
   font-size: 10.72px;
   font-weight: 500;
   letter-spacing: 1.072px;
   line-height: 1.5;
-  opacity: 0;
   position: relative;
   text-transform: uppercase;
   white-space: nowrap;
 }
-/* MESSAGE SENT is the in-flow text (the picture that holds); DRAFT READY is
-   the animation-only layer on top until Pancake presses Send */
 .lp-f2-eyebrow-sent {
   display: inline-block;
   opacity: 0;
 }
 .lp-f2-eyebrow-draft {
+  color: var(--lp-yellow-40);
   left: 0;
+  opacity: 0;
   position: absolute;
   top: 0;
 }
-.lp-f2-msgbox {
-  position: relative;
+/* the static fallback (build failure) shows the rest picture: sent */
+.lp-feat-mockzone[data-lp-anim="static"] .lp-f2-eyebrow-sent {
+  opacity: 1;
 }
 .lp-f2-msg {
   color: var(--lp-ink-100);
@@ -681,55 +694,9 @@
   font-weight: 500;
   letter-spacing: -0.2252px;
   /* Figma's rendered pitch (auto line height = the face's natural 1.287em),
-     measured from the artboard card: 1.3 put Send 1.15px past the padding */
+     measured from the artboard card — not the 1.3 ratio */
   line-height: 28.985px;
-}
-.lp-f2-msg--typed {
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
-.lp-f2-msg--plain {
-  opacity: 0;
-}
-.lp-f2-send {
-  align-items: center;
-  background: var(--lp-ink-100);
-  border-radius: 14.4px;
-  color: var(--lp-ink-20);
-  display: flex;
-  flex: none;
-  font-size: 14.4px;
-  font-weight: 600;
-  height: 46px;
-  justify-content: center;
-  line-height: 1.5;
-  margin-top: auto; /* pinned to the card's bottom padding */
-  opacity: 0;
-  width: 100%;
-}
-/* typing: one span per character (opacity only, so the line boxes never
-   move); the caret is the last visible character's ::after — zero-width and
-   out of flow, so it never shifts a glyph or a line break */
-.lp-f2-ch {
-  --caret: 0;
-  opacity: 0;
-  position: relative;
-}
-.lp-f2-ch::after {
-  background: currentColor;
-  bottom: 0;
-  content: "";
-  left: 100%;
-  margin-left: 1px;
-  opacity: var(--caret);
-  position: absolute;
-  top: 0;
-  width: 2px;
-}
-.lp-f2-ch0 {
-  opacity: 1; /* the zero-width holder the caret blinks on before the first character */
+  position: relative; /* hosts its caret */
 }
 
 /* ══ f3 · AI-answers collage (feat-ai-search-anim, composer cut 2026-09-03).

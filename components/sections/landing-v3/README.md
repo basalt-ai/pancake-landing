@@ -135,11 +135,17 @@ back during a fidelity pass:
   Founder changes of 2026-09-03 that exist ONLY here (the studio compositions
   are behind on them): f3 types the question in the composer bar — which
   grows like a real chat input — then sends it up into the blue bubble; f2's
-  draft card keeps Figma's 19.3 padding under Send (one extra 29.276px line
-  for the five-line copy; the ring's straight middle is stretched to follow —
-  `F2_RING`), Pancake presses Send itself and the eyebrow ends on MESSAGE SENT;
-  the draft opens "Hey Sarah" (the post's author). The mp4s + posters are no
-  longer referenced.
+  draft card has NO Send button ("ressortir l'esprit que c'est autonome"): it
+  is the message and its status — DRAFT READY (yellow-40) lands once the draft
+  is written and flips to MESSAGE SENT (green-30), the picture that holds. The
+  card hugs the five-line copy at Figma's own 28.985 line pitch (the artboard's
+  255.22 card = 4 lines + paddings + button) and the ring is cut to follow
+  (`F2_RING`: the pill's straight middle rescaled); the draft opens "Hey
+  Sarah" (the post's author). Typing in f2 reveals the REAL text run with a
+  clip-path staircase + a caret riding the glyph edges (measured at build):
+  a per-character span layer lost kerning across the spans in WebKit and the
+  text visibly tightened at the hand-over (founder: "le texte rétrécit d'un
+  coup"). The mp4s + posters are gone.
 - Footer content sits 48px closer to the pricing rings (height 467, brand
   top 56.43, cols top 76.75; Figma: 515/104.43/124.75).
 - /careers runs on this design system (`app/careers/page.tsx` +

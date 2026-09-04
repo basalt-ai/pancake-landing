@@ -7,16 +7,19 @@ import { gsap } from "@/lib/gsap";
  * choreography of pancake-studio shorts/feat-{signals,warm-message,ai-search,
  * learns}-anim (the compositions the mp4s were rendered from), ported tween
  * for tween onto the same markup and CSS (LpFeatMocks.tsx / features.css).
- * Each timeline is built paused on its stage root; LpFeatAnim.tsx owns
- * playback (in view → play once → hold the last frame = the designer's
- * picture). Every builder is seek-safe: no callbacks, no randomness, no
- * measurement of text — the only geometry read is the rings' path length.
+ * Each timeline is built paused on its stage root when the card first
+ * touches the viewport (laid out — f2 measures its glyphs); LpFeatAnim.tsx
+ * owns playback (60 % in view → play once → hold the last frame = the
+ * designer's picture). Every builder is seek-safe: sets and tweens only, no
+ * callbacks, no randomness.
  *
  * Deviations from the compositions, both founder-requested 2026-09-03:
  * - f3: the question is typed in the composer bar and sent up into the
  *   blue bubble (was: typed inside the bubble; composer settled last).
- * - f2: the draft card keeps Figma's bottom padding under Send (one extra
- *   line of height for the five-line copy; the ring follows — F2_RING).
+ * - f2: no Send button — the card is the message and its status (DRAFT
+ *   READY in yellow, flipping to MESSAGE SENT in green); the card hugs the
+ *   five-line copy and the ring follows (F2_RING). Typing reveals the real
+ *   text run with a clip staircase (no span layer, no handover snap).
  */
 
 export type FeatVariant = "f1" | "f2" | "f3" | "f4";
@@ -159,38 +162,77 @@ function buildF1(root: HTMLElement): BuiltFeat {
 /* ── f2 · Every first message starts warm (feat-warm-message-anim) ──
    the post rises → its copy types → skeleton shimmers → action row + counts
    → Pancake likes it → the draft card slides up and the ring draws around it
-   → DRAFT READY, the message types, Send lands → hold. */
+   → the message types → DRAFT READY (yellow) lands → flips to MESSAGE SENT
+   (green) → hold. Founder 2026-09-03: no Send button — the card is the
+   message and its status; the status changing by itself is the point. */
+
+/** Typing on the REAL text run: the paragraph is revealed glyph by glyph with
+    a clip-path staircase (full lines above, the current line up to the glyph
+    just typed) and a caret that rides the glyph edges. No per-character span
+    layer: WebKit does not shape across inline boundaries, so a span layer ran
+    up to 2.4px/line wider than the run it handed over to and the text visibly
+    tightened at the swap (founder 2026-09-03: "le texte rétrécit d'un coup").
+    Glyph geometry is measured once at build (Range rects, in the element's own
+    unscaled px) — hence LpFeatAnim builds when the card first touches the
+    viewport, i.e. laid out. */
+type Glyph = { right: number; top: number; bottom: number };
+function measureGlyphs(el: HTMLElement): Glyph[] {
+  const box = el.getBoundingClientRect();
+  const s = el.offsetWidth ? box.width / el.offsetWidth : 1; // --lp-fit and any ancestor scale
+  const glyphs: Glyph[] = [];
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  let node: Node | null;
+  while ((node = walker.nextNode())) {
+    const text = (node as Text).data;
+    let i = 0;
+    for (const ch of text) {
+      const range = document.createRange();
+      range.setStart(node, i);
+      range.setEnd(node, i + ch.length);
+      const r = range.getBoundingClientRect();
+      i += ch.length;
+      if (r.width === 0 && glyphs.length) {
+        glyphs.push(glyphs[glyphs.length - 1]); // a collapsed space: nothing new shows
+        continue;
+      }
+      glyphs.push({
+        right: (r.right - box.left) / s,
+        top: (r.top - box.top) / s,
+        bottom: (r.bottom - box.top) / s,
+      });
+    }
+  }
+  return glyphs;
+}
+const HIDDEN_CLIP = "polygon(0 0, 0 0, 0 0, 0 0, 0 0, 0 0)";
+const clipTo = (g: Glyph) =>
+  `polygon(0 0, 100% 0, 100% ${g.top}px, ${g.right}px ${g.top}px, ${g.right}px ${g.bottom}px, 0 ${g.bottom}px)`;
+
 function buildF2(root: HTMLElement): BuiltFeat {
   const { $, $$ } = query(root);
-  const BODY = "We’re launching on Product Hunt in 21 days 🚀";
-  // "Hey Sarah" — the post's author (personalization fix, founder 2026-09-03)
-  const MSG =
-    "Hey Sarah, saw you’re launching on Product Hunt in 21 days. We make SaaS launch videos people understand in seconds. Want an idea for yours?";
   const SKEL_LEFT = [0, 16.2, 87.3, 103.5, 157.5, 173.7]; // bar x inside the skeleton row
   const SKEL_W = 310.5; // row width: 173.7 + 136.8
   const SHEEN_W = 90;
   const created: Node[] = [];
 
-  /* typed copies: one span per character + a zero-width caret holder in front; the plain runs beneath are the site's markup */
-  const mkTyped = (p: HTMLElement, text: string) => {
-    const c0 = document.createElement("span");
-    c0.className = "lp-f2-ch lp-f2-ch0";
-    c0.textContent = "​";
-    p.appendChild(c0);
-    created.push(c0);
-    const spans: HTMLElement[] = [];
-    for (const ch of text) {
-      const s = document.createElement("span");
-      s.className = "lp-f2-ch";
-      s.textContent = ch;
-      p.appendChild(s);
-      spans.push(s);
-      created.push(s);
-    }
-    return { c0, spans };
+  const body = $(".lp-f2-body");
+  const msg = $(".lp-f2-msg");
+  // carets: one per typed run, in the run's positioned PARENT (the run itself
+  // is clipped to the typed glyphs — a child caret would be clipped with it),
+  // offset by the run's layout position inside that parent
+  type Caret = { el: HTMLElement; ox: number; oy: number };
+  const mkCaret = (p: HTMLElement): Caret => {
+    const c = document.createElement("i");
+    c.className = "lp-f2-caret";
+    c.style.color = getComputedStyle(p).color;
+    (p.offsetParent ?? p.parentElement!).appendChild(c);
+    created.push(c);
+    return { el: c, ox: p.offsetLeft, oy: p.offsetTop };
   };
-  const body = mkTyped($(".lp-f2-body--typed"), BODY);
-  const msg = mkTyped($(".lp-f2-msg--typed"), MSG);
+  const bodyCaret = mkCaret(body);
+  const msgCaret = mkCaret(msg);
+  const bodyGlyphs = measureGlyphs(body);
+  const msgGlyphs = measureGlyphs(msg);
 
   /* counters: the final number is the in-flow text, the earlier states are stacked over it */
   const mkCounter = (el: HTMLElement, max: number) => {
@@ -225,26 +267,41 @@ function buildF2(root: HTMLElement): BuiltFeat {
 
   const tl = gsap.timeline({ paused: true });
 
-  // types `text` from t: the caret blinks on the holder, then rides the last visible character
+  /* frame 0: both runs fully clipped, carets off, eyebrow layers off */
+  gsap.set([body, msg], { clipPath: HIDDEN_CLIP });
+  gsap.set([bodyCaret.el, msgCaret.el], { opacity: 0 });
+  const eyebrowDraft = $(".lp-f2-eyebrow-draft");
+  const eyebrowSent = $(".lp-f2-eyebrow-sent");
+  gsap.set([eyebrowDraft, eyebrowSent], { opacity: 0 });
+
+  // types a run from t: the caret sits at the line start, then rides each glyph's right edge
   const typeIn = (
     t: number,
-    text: string,
-    spans: HTMLElement[],
-    c0: HTMLElement,
+    el: HTMLElement,
+    caret: Caret,
+    glyphs: Glyph[],
     base: number,
     pause: (c: string, n: string) => number,
   ) => {
-    tl.set(c0, { "--caret": 1 }, t - 0.25);
-    let prev = c0;
-    spans.forEach((s, i) => {
-      tl.set(s, { opacity: 1, "--caret": 1 }, t);
-      tl.set(prev, { "--caret": 0 }, t);
-      prev = s;
-      t += base + pause(text[i], text[i + 1] || "");
+    const text = el.textContent || "";
+    const chars = Array.from(text);
+    const first = glyphs[0];
+    tl.set(
+      caret.el,
+      { x: caret.ox, y: caret.oy + first.top, height: first.bottom - first.top, opacity: 1 },
+      t - 0.25,
+    );
+    glyphs.forEach((g, i) => {
+      tl.set(el, { clipPath: clipTo(g) }, t);
+      tl.set(caret.el, { x: caret.ox + g.right + 1, y: caret.oy + g.top, height: g.bottom - g.top }, t);
+      t += base + pause(chars[i] ?? "", chars[i + 1] ?? "");
     });
-    return t; // the moment after the last character; the caret still sits on it
+    return t; // the moment after the last glyph; the caret still sits on it
   };
-  const caretOff = (spans: HTMLElement[], t: number) => tl.set(spans[spans.length - 1], { "--caret": 0 }, t);
+  const typeDone = (el: HTMLElement, caret: Caret, t: number) => {
+    tl.set(caret.el, { opacity: 0 }, t + 0.4);
+    tl.set(el, { clipPath: "none" }, t + 0.45); // the run paints exactly like the static site
+  };
   // ticking counter: tick times on a quad-out curve (fast first, settling into the final number)
   const tick = (ns: HTMLElement[], from: number, to: number, t0: number, dur: number) => {
     for (let k = from + 1; k <= to; k++) {
@@ -260,8 +317,6 @@ function buildF2(root: HTMLElement): BuiltFeat {
   const headline = $(".lp-f2-headline");
   const time = $(".lp-f2-time");
   const globe = $("#lpf2-pi-globe");
-  const bodyTyped = $(".lp-f2-body--typed");
-  const bodyPlain = $(".lp-f2-body--plain");
 
   /* — Phase 1 · the post rises: card, avatar, name / headline / time (0 – 1.0 s) — */
   tl.fromTo(post, { y: 28, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.65, ease: "power3.out" }, 0);
@@ -285,10 +340,8 @@ function buildF2(root: HTMLElement): BuiltFeat {
   );
 
   /* — Phase 2 · the post text types in with a caret (0.75 – 2.6 s) — */
-  const tBody = typeIn(1.0, BODY, body.spans, body.c0, 0.036, (c) => (c === "." ? 0.07 : 0));
-  caretOff(body.spans, tBody + 0.4);
-  tl.set(bodyTyped, { autoAlpha: 0 }, tBody + 0.45); // hand over to the plain run (the site's markup)
-  tl.set(bodyPlain, { autoAlpha: 1 }, tBody + 0.45);
+  const tBody = typeIn(1.0, body, bodyCaret, bodyGlyphs, 0.036, (c) => (c === "." ? 0.07 : 0));
+  typeDone(body, bodyCaret, tBody);
 
   /* — Phase 3 · the skeleton lines grow in and shimmer once (2.0 – 3.5 s) — */
   const bars = $$(".lp-f2-skelgrp i");
@@ -352,44 +405,30 @@ function buildF2(root: HTMLElement): BuiltFeat {
   );
   drawPaths.forEach((p, i) => tl.to(p, { strokeDashoffset: 0, duration: 1.3, ease: "power2.inOut" }, 5.3 + i * 0.12));
 
-  /* — Phase 7 · DRAFT READY fades in, the message types, Send lands (5.95 – 8.9 s), then the picture holds — */
-  tl.fromTo(
-    $(".lp-f2-eyebrow"),
-    { y: 6, autoAlpha: 0 },
-    { y: 0, autoAlpha: 1, duration: 0.45, ease: "power3.out", immediateRender: false },
-    5.95,
-  );
-  const tMsg = typeIn(6.3, MSG, msg.spans, msg.c0, 0.017, (c, n) =>
+  /* — Phase 7 · the message types (6.3 – ~8.9 s) — */
+  const tMsg = typeIn(6.3, msg, msgCaret, msgGlyphs, 0.017, (c, n) =>
     c === "." && n === " " ? 0.09 : c === "," ? 0.05 : 0,
   );
-  const S = tMsg - 0.1;
-  const send = $(".lp-f2-send");
-  tl.fromTo(send, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.25, ease: "power2.out", immediateRender: false }, S);
-  tl.fromTo(
-    send,
-    { y: 16, scale: 0.94 },
-    { y: 0, scale: 1, duration: 0.55, ease: "back.out(1.6)", immediateRender: false },
-    S,
-  );
-  caretOff(msg.spans, tMsg + 0.4);
-  tl.set($(".lp-f2-msg--typed"), { autoAlpha: 0 }, tMsg + 0.45); // hand over to the plain run
-  tl.set($(".lp-f2-msg--plain"), { autoAlpha: 1 }, tMsg + 0.45);
+  typeDone(msg, msgCaret, tMsg);
 
-  /* — Phase 8 · Pancake sends it itself (founder 2026-09-03: "ressortir l'esprit que c'est autonome"):
-     the Send button gets pressed, and the eyebrow flips DRAFT READY → MESSAGE SENT — the sent state is
-     the picture that holds. — */
-  const T_PRESS = tMsg + 0.95;
-  tl.to(send, { scale: 0.96, duration: 0.12, ease: "power2.in" }, T_PRESS);
-  tl.to(send, { scale: 1, duration: 0.5, ease: "back.out(2)" }, T_PRESS + 0.12);
-  const T_SENT = T_PRESS + 0.16;
-  tl.to($(".lp-f2-eyebrow-draft"), { y: -6, opacity: 0, duration: 0.18, ease: "power2.in" }, T_SENT);
+  /* — Phase 8 · the status speaks for itself: DRAFT READY (yellow) lands once the draft is written,
+     then flips to MESSAGE SENT (green) — the sent picture holds — */
+  const T_READY = tMsg + 0.55;
   tl.fromTo(
-    $(".lp-f2-eyebrow-sent"),
+    eyebrowDraft,
+    { y: 6, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.32, ease: "back.out(1.6)", immediateRender: false },
+    T_READY,
+  );
+  const T_SENT = T_READY + 1.15;
+  tl.to(eyebrowDraft, { y: -6, opacity: 0, duration: 0.18, ease: "power2.in" }, T_SENT);
+  tl.fromTo(
+    eyebrowSent,
     { y: 6, opacity: 0 },
     { y: 0, opacity: 1, duration: 0.32, ease: "back.out(1.6)", immediateRender: false },
     T_SENT + 0.06,
   );
-  tl.to({}, { duration: 0.001 }, T_SENT + 1.2); // hold the sent picture
+  tl.to({}, { duration: 0.001 }, T_SENT + 1.3); // hold the sent picture
 
   return { tl, cleanup: () => created.forEach((n) => n.parentNode?.removeChild(n)) };
 }

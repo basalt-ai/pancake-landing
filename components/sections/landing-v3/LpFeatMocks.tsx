@@ -160,8 +160,8 @@ function F2Stage() {
             <p className="lp-f2-headline">Principal Design Engineer @ Shift | Ex-Apple Design</p>
             <p className="lp-f2-time">3h •</p>
           </div>
-          <p className="lp-f2-body lp-f2-body--plain">We’re launching on Product Hunt in 21 days 🚀</p>
-          <p className="lp-f2-body lp-f2-body--typed" />
+          {/* typed by revealing this very run (clip staircase + caret, lp-feat-timelines.ts) */}
+          <p className="lp-f2-body">We’re launching on Product Hunt in 21 days 🚀</p>
           <div className="lp-f2-skel">
             <span className="lp-f2-skelgrp">
               <Skel w="14.4px" />
@@ -191,21 +191,19 @@ function F2Stage() {
             xmlns="http://www.w3.org/2000/svg"
             dangerouslySetInnerHTML={{ __html: F2_RING }}
           />
+          {/* no Send button (founder 2026-09-03): the card is the message and its status —
+              DRAFT READY (yellow) lands once the draft is written, then flips to MESSAGE
+              SENT (green), the picture that holds. The in-flow eyebrow text is the sent
+              state; DRAFT READY is the animation-only layer stacked on it. */}
           <div className="lp-f2-draft">
-            {/* the in-flow text is the sent state (the picture that holds); DRAFT READY is
-                the animation-only layer stacked on it until Pancake presses Send */}
             <p className="lp-f2-eyebrow">
               <span className="lp-f2-eyebrow-sent">Message sent</span>
               <span className="lp-f2-eyebrow-draft">Draft ready</span>
             </p>
-            <div className="lp-f2-msgbox">
-              <p className="lp-f2-msg lp-f2-msg--plain">
-                Hey Sarah, saw you’re launching on Product Hunt in 21 days. We make SaaS launch videos people
-                understand in seconds. Want an idea for yours?
-              </p>
-              <p className="lp-f2-msg lp-f2-msg--typed" />
-            </div>
-            <span className="lp-f2-send">Send</span>
+            <p className="lp-f2-msg">
+              Hey Sarah, saw you’re launching on Product Hunt in 21 days. We make SaaS launch videos people
+              understand in seconds. Want an idea for yours?
+            </p>
           </div>
         </div>
       </div>
