@@ -9,9 +9,7 @@
  * has four links; don't drop it to match Figma.
  */
 
-import { AudienceOnly, AudienceLink } from "./LpAudience";
-
-type FootLink = { label: string; href: string; external?: boolean; agentOnly?: boolean };
+type FootLink = { label: string; href: string; external?: boolean };
 
 const COLUMNS: { id: string; title: string; links: FootLink[] }[] = [
   {
@@ -19,8 +17,6 @@ const COLUMNS: { id: string; title: string; links: FootLink[] }[] = [
     title: "Product",
     links: [
       { label: "How it works", href: "/#how-it-works" },
-      { label: "For agents", href: "/?audience=agents#agent-setup", agentOnly: true },
-      { label: "Agent guide", href: "/agents", agentOnly: true },
       { label: "Pricing", href: "/pricing" },
       { label: "Open the app", href: "https://app.getpancake.ai", external: true },
     ],
@@ -50,7 +46,7 @@ const COLUMNS: { id: string; title: string; links: FootLink[] }[] = [
   },
 ];
 
-export function LpFooter({ homepage = false }: { homepage?: boolean }) {
+export function LpFooter() {
   return (
     <footer className="lp-foot">
       <div className="lp-foot-frame">
@@ -77,16 +73,14 @@ export function LpFooter({ homepage = false }: { homepage?: boolean }) {
               <p className="lp-foot-head">{col.title}</p>
               <div className="lp-foot-links">
                 {col.links.map((link) =>
-                  link.agentOnly ? (
-                    <AudienceOnly key={link.label} when="agents"><a href={link.href}>{link.label}</a></AudienceOnly>
-                  ) : link.external ? (
+                  link.external ? (
                     <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer">
                       {link.label}
                     </a>
                   ) : (
-                    <AudienceLink key={link.label} href={link.href} preserveAudience={homepage}>
+                    <a key={link.label} href={link.href}>
                       {link.label}
-                    </AudienceLink>
+                    </a>
                   ),
                 )}
               </div>

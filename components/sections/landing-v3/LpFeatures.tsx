@@ -1,6 +1,5 @@
 import { LpFeatAnim } from "@/components/sections/landing-v3/LpFeatAnim";
 import type { FeatVariant } from "@/components/sections/landing-v3/lp-feat-timelines";
-import { AudienceCopy } from "./LpAudience";
 
 /**
  * Landing v3 — section 6 "How Pancake finds customers" (Figma 4257:4976,
@@ -15,11 +14,11 @@ import { AudienceCopy } from "./LpAudience";
  * designer's picture as the last frame.
  */
 
-function FeatureText({ title, body, agentTitle, agentBody }: { title: string; body: string; agentTitle: string; agentBody: string }) {
+function FeatureText({ title, body }: { title: string; body: string }) {
   return (
     <div className="lp-feat-text">
-      <h3 className="lp-title-card lp-feat-h"><AudienceCopy human={title} agent={agentTitle} /></h3>
-      <p className="lp-feat-body"><AudienceCopy human={body} agent={agentBody} /></p>
+      <h3 className="lp-title-card lp-feat-h">{title}</h3>
+      <p className="lp-feat-body">{body}</p>
     </div>
   );
 }
@@ -30,13 +29,6 @@ type Feature = {
   body: string;
   variant: FeatVariant;
   alt: string;
-};
-
-const AGENT_FEATURES: Record<FeatVariant, { title: string; body: string }> = {
-  f1: { title: "Know why\na lead fits", body: "Pancake watches keywords, competitors, hiring activity, and tech stacks. Read the lead and its signal to decide which conversation deserves your human’s attention." },
-  f2: { title: "Start from\na real reason", body: "Pancake’s outreach starts from a prospect’s activity. Use the same lead context to draft an opening in your human’s voice." },
-  f3: { title: "Know where\nbuyers search", body: "Pancake finds search gaps and drafts articles for your human to review. Read the SEO calendar to see what is planned and shape the next brief." },
-  f4: { title: "Start from\nwhat wins", body: "Pancake remembers which openings and asks worked. Read the GTM brain so your next draft starts with the company’s context." },
 };
 
 const FEATURES: Feature[] = [
@@ -74,7 +66,7 @@ function FeatureCard({ f }: { f: Feature }) {
   return (
     <>
       <article className="lp-feat-card" data-side={f.side}>
-        <FeatureText title={f.title} body={f.body} agentTitle={AGENT_FEATURES[f.variant].title} agentBody={AGENT_FEATURES[f.variant].body} />
+        <FeatureText title={f.title} body={f.body} />
         <LpFeatAnim className="lp-feat-mockzone" variant={f.variant} alt={f.alt} />
       </article>
       <hr className="lp-feat-sep" />

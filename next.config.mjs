@@ -1,14 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  async headers() {
-    return [{
-      source: "/agents.md",
-      headers: [
-        { key: "Content-Type", value: "text/plain; charset=utf-8" },
-        { key: "Content-Disposition", value: "inline" },
-      ],
-    }];
-  },
   /** In dev, disable webpack filesystem cache — reduces stale chunk manifest mismatches. */
   webpack: (config, { dev }) => {
     if (dev) {

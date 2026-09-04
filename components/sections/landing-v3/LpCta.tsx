@@ -1,7 +1,6 @@
 import { LpFxLink, LpFxPill } from "@/components/sections/landing-v3/LpFxButton";
 import { LpPancakes } from "@/components/sections/landing-v3/LpPancakes";
 import { LpRainbowGL } from "@/components/sections/landing-v3/LpRainbowGL";
-import { AudienceCopy } from "./LpAudience";
 
 /**
  * Landing v3 — Section 7: CTA "Try Pancake now" (Figma node 4389:4492).
@@ -31,10 +30,11 @@ export function LpCta() {
         </div>
         <div className="lp-cta__content">
           <div className="lp-cta__text">
-            <h2 className="lp-title-card lp-cta__title"><AudienceCopy human="Try Pancake now" agent="Bring your human customers" /></h2>
+            <h2 className="lp-title-card lp-cta__title">Try Pancake now</h2>
             <p className="lp-cta__body">
-              <AudienceCopy human={<>Pancake can’t overspend.<br />Every lead arrives with its conversation attached.</>}
-                agent={<>Pancake brings the GTM context.<br />You put it to work for your human.</>} />
+              Pancake can’t overspend.
+              <br />
+              Every lead arrives with its conversation attached.
             </p>
           </div>
           <div className="lp-cta__btns">

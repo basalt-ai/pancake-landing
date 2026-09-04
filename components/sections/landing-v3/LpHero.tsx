@@ -1,9 +1,9 @@
+import { AudienceSelector } from "./LpAudience";
 import { LpArcCanvas } from "@/components/sections/landing-v3/LpArcCanvas";
+import { LpFxLink, LpFxPill } from "@/components/sections/landing-v3/LpFxButton";
 import { LpPancakes } from "@/components/sections/landing-v3/LpPancakes";
 import { LpRainbowGL } from "@/components/sections/landing-v3/LpRainbowGL";
 import { LpViewportVar } from "@/components/sections/landing-v3/LpViewportVar";
-import { AudienceCopy, AudienceSelector, AudienceOnly } from "./LpAudience";
-import { LpHeroActions } from "./LpHeroActions";
 
 // Landing v3 — Hero (Figma node 4257:4906, 1654×758).
 // The rainbow art (animated per-arc pancakes group, anim.css) lives in a
@@ -30,24 +30,31 @@ export function LpHero() {
       </div>
       <div className="lp-hero-inner">
         <h1 id="lp-hero-title" className="lp-hero-title lp-display">
-          <AudienceCopy
-            human={<>You run your company<br />We bring you customers</>}
-            agent={<><span>Your human runs the company</span><br />You bring them customers</>}
-          />
+          You run your company
+          <br />
+          We bring you customers
         </h1>
         <div className="lp-hero-col">
           <p className="lp-hero-lede">
-            <AudienceCopy
-              human="Pancake’s AI agents monitor buying signals, find warm leads, grow your AI search visibility, and learn from every interaction."
-              agent="Pancake gives you the GTM brain, buying signals, and leads. Turn that context into your human’s next customer."
-            />
+            Pancake’s AI agents monitor buying signals, find warm leads, grow
+            your AI search visibility, and learn from every interaction.
           </p>
-          <LpHeroActions />
-          <AudienceOnly when="agents">
-            <div className="lp-hero-proof lp-hero-agent-note">
-              <a href="#agent-setup">Get the context. Set up Pancake</a>
-            </div>
-          </AudienceOnly>
+          <div className="lp-hero-btns">
+            <LpFxLink href="https://app.getpancake.ai" data-analytics-id="app_hero">
+              Start free
+            </LpFxLink>
+            {/* Opens the zcal booking sheet via LpModals' data-lv2-open
+                contract; analytics fire there off the allow-listed call_hero
+                id. All widths (founder 2026-09-01) — the desktop artboard
+                draws one CTA, deliberately overridden. */}
+            <LpFxPill
+              className="lp-btn--tinted lp-btn--demo lp-hero-call"
+              data-lv2-open="call"
+              data-analytics-id="call_hero"
+            >
+              Book a demo
+            </LpFxPill>
+          </div>
         </div>
       </div>
     </section>

@@ -126,7 +126,7 @@ export function LpArcCanvas() {
         const poseT = getComputedStyle(pose).transform;
         const vb = svg.viewBox.baseVal;
         const d = pathEl.getAttribute("d");
-        const fill = pathEl.getAttribute("fill") || getComputedStyle(pathEl).fill;
+        const fill = getComputedStyle(pathEl).fill;
         if (!poseT || poseT === "none" || !d || !vb || !(vb.width > 0)) return false;
 
         const isPop = svg.classList.contains("lp-anim-pop");
@@ -303,6 +303,15 @@ export function LpArcCanvas() {
         raf = 0;
       } else start();
     };
+    // The bitmap fallback uses the same palette as the static SVG and GL.
+    // Rebuilding the fills retains t0, so toggling never resets the rotation.
+    const paletteWatch = new MutationObserver(() => {
+      rings = [];
+      start();
+    });
+    const audienceRoot = art.closest("[data-audience]");
+    if (audienceRoot) paletteWatch.observe(audienceRoot, { attributes: true, attributeFilter: ["data-audience"] });
+
     // orientation / fold changes: geometry + backing sizes are stale
     const ro = new ResizeObserver(() => {
       rings = [];
@@ -319,6 +328,7 @@ export function LpArcCanvas() {
       stopAndRestore();
       clearTimeout(glWait);
       glWatch.disconnect();
+      paletteWatch.disconnect();
       io.disconnect();
       ro.disconnect();
       phone.removeEventListener("change", onMedia);

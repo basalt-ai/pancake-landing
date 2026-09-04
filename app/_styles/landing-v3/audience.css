@@ -1,99 +1,54 @@
-/* New audience compositions use the active Figma v3 tokens and spacing. */
-.lp-audience-page[data-audience="agents"] > .lp-tst { display: none; }
+/* Audience foundation: the original landing and its inverse hero. */
 .lp {
   --lp-space-1: 4px;
   --lp-space-2: 8px;
   --lp-space-3: 12px;
   --lp-space-4: 16px;
-  --lp-space-6: 24px;
   --lp-space-8: 32px;
   --lp-space-12: 48px;
-  --lp-space-16: 64px;
-  --lp-space-24: 96px;
-  --lp-weight-medium: 500;
-  --lp-weight-semibold: 600;
   --lp-line: 1px;
-  --lp-audience-ease: cubic-bezier(.22,1,.36,1);
+  --lp-audience-ease: cubic-bezier(.22, 1, .36, 1);
 }
 .lp-sr-only { position: absolute; width: var(--lp-line); height: var(--lp-line); overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.lp .lp-audience-copy, .lp .lp-audience-copy * { font-family: inherit; }
-.lp-audience-copy { display: grid; }
-.lp-audience-copy > span { grid-area: 1 / 1; transition: opacity .18s ease, translate .4s var(--lp-audience-ease), visibility 0s; }
-.lp-audience-copy__agent { opacity: 0; visibility: hidden; translate: 0 .18em; pointer-events: none; }
-[data-audience="agents"] .lp-audience-copy__human { opacity: 0; visibility: hidden; translate: 0 -.18em; pointer-events: none; }
-[data-audience="agents"] .lp-audience-copy__agent { opacity: 1; visibility: visible; translate: 0 0; pointer-events: auto; }
-.lp-audience-copy > [aria-hidden="false"] { transition-delay: .12s, .12s, 0s; }
-.lp-audience-copy > [aria-hidden="true"] { transition-duration: .1s, .3s, .1s; }
-.lp-perspective { position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 2; }
-.lp-audience-selector { display: grid; grid-template-columns: repeat(2, 1fr); position: relative; isolation: isolate; background: var(--lp-ink-10); border: var(--lp-line) solid var(--lp-ink-tr-20); padding: var(--lp-space-1); border-radius: var(--lp-r-m); corner-shape: squircle; box-shadow: 0 var(--lp-space-2) var(--lp-space-6) var(--lp-ink-tr-5); }
-.lp-audience-selector__track { position: absolute; z-index: -1; top: var(--lp-space-1); bottom: var(--lp-space-1); left: var(--lp-space-1); width: calc(50% - var(--lp-space-1)); background: var(--lp-ink-100); border-radius: var(--lp-r-sm); corner-shape: squircle; transition: translate .5s var(--lp-audience-ease), background .4s ease; }
-[data-audience="agents"] .lp-audience-selector__track { translate: 100% 0; background: var(--lp-purple-20); }
-.lp .lp-audience-selector a { align-items: center; justify-content: center; display: flex; gap: var(--lp-space-2); padding: var(--lp-space-3) var(--lp-space-4); min-height: calc(var(--lp-space-12) - var(--lp-space-1)); font-size: var(--lp-text-sm); font-weight: var(--lp-weight-medium); color: var(--lp-ink-100); border-radius: var(--lp-r-sm); transition: color .3s ease; white-space: nowrap; }
-.lp-audience-selector a[aria-current="true"] { color: var(--lp-ink-10); }
-[data-audience="agents"] .lp-audience-selector a[aria-current="true"] { color: var(--lp-ink-100); }
-.lp-audience-selector a:focus-visible, .lp-action:focus-visible, .lp-text-link:focus-visible { outline: calc(2 * var(--lp-line)) solid var(--lp-purple-40); outline-offset: var(--lp-space-1); }
+.lp-perspective { position: absolute; top: 0; right: max(var(--lp-space-8), calc(50% - 648px)); z-index: 2; }
+.lp-audience-selector { display: grid; grid-template-columns: repeat(2, 1fr); position: relative; isolation: isolate; padding: var(--lp-space-1); background: var(--lp-page-bg); border: var(--lp-line) solid var(--lp-ink-tr-20); border-radius: var(--lp-r-m); corner-shape: squircle; }
+.lp-audience-selector__track { position: absolute; z-index: -1; inset-block: var(--lp-space-1); left: var(--lp-space-1); width: calc(50% - var(--lp-space-1)); background: var(--lp-ink-100); border-radius: var(--lp-r-sm); corner-shape: squircle; transition: translate .4s var(--lp-audience-ease); }
+.lp .lp-audience-selector a { display: flex; align-items: center; justify-content: center; gap: var(--lp-space-2); padding: var(--lp-space-3) var(--lp-space-4); min-height: calc(var(--lp-space-12) - var(--lp-space-1)); font-size: var(--lp-text-sm); color: var(--lp-ink-100); border-radius: var(--lp-r-sm); white-space: nowrap; }
+.lp .lp-audience-selector a[aria-current="true"] { color: var(--lp-page-bg); }
+.lp-audience-selector a:focus-visible { outline: calc(2 * var(--lp-line)) solid var(--lp-purple-30); outline-offset: var(--lp-space-1); }
 .lp-audience-glyph { display: inline-grid; place-items: center; width: 1.25em; height: 1.25em; }
 .lp-audience-glyph svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; }
-.lp-audience-page[data-audience="agents"] .lp-hero-title { width: 656px; }
-.lp-hero-title .lp-audience-copy__agent > span:first-child { font-size: .86em; letter-spacing: -.03em; }
-.lp-hero-agent-note { display: flex; align-items: center; gap: var(--lp-space-2); font-size: var(--lp-text-sm); color: var(--lp-ink-90); }
-.lp-hero-agent-note::before { content: ''; flex: none; width: var(--lp-space-2); height: var(--lp-space-2); border-radius: 50%; background: var(--lp-green-30); }
-.lp-hero-agent-note a { text-decoration: underline; text-underline-offset: .22em; }
-.lp-audience-page[data-audience="agents"] .lp-hero-col { gap: var(--lp-space-4); }
-.lp-hero-proof { position: absolute; top: calc(100% + var(--lp-space-4)); left: 0; white-space: nowrap; }
-.lp .lp-action { display: inline-flex; align-items: center; justify-content: center; gap: var(--lp-space-2); background: var(--lp-ink-100); color: var(--lp-ink-10); padding: var(--lp-space-3) var(--lp-space-6); border: var(--lp-line) solid transparent; border-radius: var(--lp-r-sm); corner-shape: squircle; min-height: var(--lp-space-12); font: inherit; font-size: var(--lp-text-sm); font-weight: var(--lp-weight-medium); cursor: pointer; transition: background .2s, transform .2s; }
-.lp .lp-action:hover { background: var(--lp-ink-90); transform: translateY(calc(-1 * var(--lp-line))); }
-.lp .lp-action--light { background: var(--lp-purple-20); color: var(--lp-ink-100); }
-.lp .lp-action--light:hover { background: var(--lp-purple-10); }
-.lp .lp-text-link { display: inline-flex; align-items: center; gap: var(--lp-space-2); text-decoration: underline; text-underline-offset: .25em; font-size: var(--lp-text-sm); }
-@media (max-width: 1200px) { .lp-audience-page[data-audience="agents"] .lp-hero-title { width: auto; } }
-@media (max-width: 1024px) { .lp-hero-proof { position: static; } .lp-perspective { top: var(--lp-space-2); } }
+
+/* Keep all original sections mounted so their motion and fit observers survive
+   a return to humans. Hidden sections take no space and expose no controls. */
+.lp-agent-placeholder { display: none; }
+.lp-audience-page[data-audience="agents"] { background: var(--lp-ink-100); }
+.lp-audience-page[data-audience="agents"] > section:not(.lp-hero):not(.lp-agent-placeholder),
+.lp-audience-page[data-audience="agents"] > .lp-foot { display: none; }
+.lp-audience-page[data-audience="agents"] > .lp-agent-placeholder { display: block; height: 100vh; position: relative; z-index: 1; background: var(--lp-ink-100); }
+
+/* Negative within the existing palette: cream and plum exchange roles.
+   The rainbow keeps its original colors, geometry, and running clock. */
+.lp-audience-page[data-audience="agents"] > :is(.lp-nav, .lp-hero) { --lp-text: var(--lp-page-bg); }
+[data-audience="agents"] .lp-hero-art .lp-anim-pop path { fill: var(--lp-ink-100); }
+[data-audience="agents"] .lp-audience-selector { background: var(--lp-ink-100); border-color: var(--lp-ink-80); }
+[data-audience="agents"] .lp-audience-selector__track { translate: 100% 0; background: var(--lp-page-bg); }
+[data-audience="agents"] .lp-audience-selector a { color: var(--lp-page-bg); }
+[data-audience="agents"] .lp-audience-selector a[aria-current="true"] { color: var(--lp-ink-100); }
+[data-audience="agents"] :is(.lp-hero, .lp-nav) .lp-btn { background: var(--lp-page-bg); color: var(--lp-ink-100); }
+[data-audience="agents"] :is(.lp-hero, .lp-nav) .lp-btn--tinted { background: color-mix(in srgb, var(--lp-page-bg) 12%, var(--lp-ink-100)); color: var(--lp-page-bg); }
+[data-audience="agents"] :is(.lp-hero, .lp-nav) .lp-btn-label .l2 { color: var(--lp-ink-100); }
+[data-audience="agents"] .lp-nav-logo { background: var(--lp-page-bg); mask: url('/lp/lp-nav-logo.svg') center / contain no-repeat; }
+[data-audience="agents"] .lp-nav-logo img { opacity: 0; }
+[data-audience="agents"] .lp-nav-menu { --lp-text: var(--lp-ink-100); }
+html:has(.lp-audience-page[data-audience="agents"]),
+body:has(.lp-audience-page[data-audience="agents"]) { background-color: var(--lp-brand-plum); }
+
 @media (max-width: 767px) {
-  .lp-perspective { top: 0; }
+  .lp-perspective { right: var(--lp-space-8); }
   .lp-audience-selector a { padding-inline: var(--lp-space-3); }
-  .lp-audience-page[data-audience="agents"] .lp-hero-inner { padding-bottom: var(--lp-space-12); }
-  .lp-audience-page[data-audience="agents"] .lp-hero-col { gap: var(--lp-space-6); width: 100%; }
-  .lp-hero-proof { white-space: normal; }
-  .lp-hero-title .lp-audience-copy__agent > span:first-child { font-size: .82em; }
+  [data-audience="agents"] .lp-nav.is-scrolled { background: var(--lp-ink-100); box-shadow: 0 var(--lp-line) 0 var(--lp-ink-90), 0 -120px 0 var(--lp-ink-100); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .lp-audience-copy > span, .lp-audience-selector__track, .lp-audience-selector a, .lp .lp-action { transition: none; translate: none; }
-  [data-audience="agents"] .lp-audience-selector__track { translate: 100% 0; }
+  .lp-audience-selector__track { transition: none; }
 }
-
-/* The agent handoff is the contrast moment. Cream art and brand rings keep
-   their original color/renderer; the new workflow gains a plum surround. */
-.lp-audience-page .lp-agent-demo {
-  max-width: none;
-  margin-inline: var(--lp-space-4);
-  padding-inline: max(var(--lp-space-8), calc((100% - 71rem) / 2));
-  border-radius: var(--lp-r-2xlg);
-  corner-shape: squircle;
-  transition: background-color .65s var(--lp-audience-ease), color .5s ease;
-}
-.lp-audience-page[data-audience="agents"] .lp-agent-demo { background: var(--lp-ink-100); color: var(--lp-ink-10); }
-.lp-audience-page[data-audience="agents"] .lp-agent-demo__heading .lp-title-section { color: var(--lp-ink-10); }
-.lp-audience-page[data-audience="agents"] .lp-agent-demo__eyebrow { color: var(--lp-purple-20); }
-.lp-audience-page[data-audience="agents"] .lp-agent-demo__caption { color: var(--lp-ink-50); }
-.lp-audience-page .lp-agent-demo__board { corner-shape: squircle; }
-@media (max-width: 767px) {
-  .lp-audience-page .lp-agent-demo { margin-inline: var(--lp-space-2); padding-inline: var(--lp-space-6); border-radius: var(--lp-r-lg); }
-}
-@media (prefers-reduced-motion: reduce) { .lp-audience-page .lp-agent-demo { transition: none; } }
-.lp-audience-page .lp-agent-demo { position: relative; z-index: 1; background: var(--lp-page-bg); }
-.lp-audience-page[data-audience="agents"] .lp-agent-demo { background: var(--lp-ink-100); }
-
-@media (max-width: 767px) {
-  .lp-audience-page[data-audience="agents"] .lp-hero-inner { min-width: 0; width: 100%; box-sizing: border-box; }
-  .lp-audience-page[data-audience="agents"] .lp-hero-title { width: 100%; min-width: 0; }
-  .lp-audience-page[data-audience="agents"] .lp-hero-title .lp-audience-copy { min-width: 0; }
-  .lp-hero-title .lp-audience-copy__human { font-size: min(1em, calc((100vw - var(--lp-space-16)) / 9.55)); }
-  .lp-hero-title .lp-audience-copy__agent { font-size: min(1em, calc((100vw - var(--lp-space-16)) / 10.2)); }
-  .lp-audience-page[data-audience="agents"] .lp-hero-btns { width: 100%; }
-  .lp-audience-page[data-audience="agents"] .lp-hero-btns .lp-btn { max-width: calc((100% - var(--lp-space-2)) / 2); padding-inline: var(--lp-space-2); }
-}
-/* Nested paired text explicitly sets visibility, so hidden setup panels also
-   suppress their entire paint subtree while retaining the shared grid size. */
-.lp-agent-setup__panel { opacity: 0; }
-.lp-agent-setup__panel[data-active="true"] { opacity: 1; }
-@media (max-width: 767px) { .lp-agent-setup, .lp-agent-demo { scroll-margin-top: var(--lp-space-24); } }

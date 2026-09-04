@@ -4,6 +4,9 @@
    artboard. Values that differ from app/_styles/tokens.css are page-scoped
    here on purpose (AGENTS.md: Figma is the only source of truth). */
 
+/* Shared with the browser chrome of the inverse hero. */
+:root { --lp-brand-plum: #2c002a; }
+
 .lp {
   /* core tokens / brand-colors */
   --lp-pink-10: #ffd9da;
@@ -44,7 +47,7 @@
   --lp-ink-70: #9a818f;
   --lp-ink-80: #85687c;
   --lp-ink-90: #6c4b65;
-  --lp-ink-100: #2c002a;
+  --lp-ink-100: var(--lp-brand-plum);
   --lp-ink-tr-80: rgba(44, 0, 42, 0.8);
   --lp-ink-tr-70: rgba(44, 0, 42, 0.7);
   --lp-ink-tr-60: rgba(44, 0, 42, 0.6);

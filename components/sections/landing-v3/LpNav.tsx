@@ -1,7 +1,6 @@
 import { LpFxLink } from "@/components/sections/landing-v3/LpFxButton";
 import { LpNavMenu } from "@/components/sections/landing-v3/LpNavMenu";
 import { LpNavScroll } from "@/components/sections/landing-v3/LpNavScroll";
-import { AudienceLink } from "./LpAudience";
 
 /**
  * Landing v3 — Nav (Figma node 4257:4894, 1654×120).
@@ -13,15 +12,15 @@ import { AudienceLink } from "./LpAudience";
  * ≤767px (Figma mobile node 4389:8182): logo + burger only — links and the
  * pill move into LpNavMenu's sheet; the pill keeps its app_nav id there.
  */
-export function LpNav({ homepage = false }: { homepage?: boolean }) {
+export function LpNav() {
   return (
     <header className="lp-nav">
       <a className="lp-nav-logo" href="/" aria-label="Pancake home">
         <img alt="" src="/lp/lp-nav-logo.svg" width={114.956} height={56} />
       </a>
       <nav className="lp-nav-links" aria-label="Primary">
-        <AudienceLink href="/#how-it-works" preserveAudience={homepage}>Product</AudienceLink>
-        <AudienceLink href="/#why" preserveAudience={homepage}>Company</AudienceLink>
+        <a href="/#how-it-works">Product</a>
+        <a href="/#why">Company</a>
         <a href="/blog">Blog</a>
       </nav>
       <div className="lp-nav-ctas">
@@ -48,7 +47,7 @@ export function LpNav({ homepage = false }: { homepage?: boolean }) {
           Book a demo
         </LpFxLink>
       </div>
-      <LpNavMenu homepage={homepage} />
+      <LpNavMenu />
       <LpNavScroll />
     </header>
   );

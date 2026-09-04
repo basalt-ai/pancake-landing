@@ -1,7 +1,5 @@
 # Pancake
 
-Last updated: 2026-09-04.
-
 > Pancake is an AI GTM team for small companies. Its agents monitor buying signals, find warm leads, run personalized outreach, publish content for Google and AI search, and learn from every result through one shared GTM Brain. Pancake costs $99 per month, with every GTM agent included.
 
 ## What Pancake does
@@ -12,14 +10,6 @@ Pancake builds a GTM Brain from a company's positioning, ideal customers, offers
 
 Pancake is for solo founders and small companies that have a product to sell and need repeatable customer acquisition without assembling a full GTM team or a collection of disconnected point tools.
 
-## Working with your agent
-
-Pancake works with the founder's own agent as well as its own GTM agents. ChatGPT, Codex, and Claude connections are supported, including Claude Code. The documented MCP read capabilities include a workspace's GTM Brain, existing leads, and SEO calendar. An agent can use that context to prioritize opportunities and draft a first message for its human.
-
-The MCP endpoint is `https://app.getpancake.ai/api/mcp`. Connections use OAuth and are limited to one approved workspace. See the [agent guide](https://getpancake.ai/agents.md) for Codex CLI setup, authentication, a first prompt, and capability boundaries. Confirm or revoke access in Pancake under Settings → MCP → Connected clients.
-
-Pancake product automation and client-accessible tools are distinct. Do not infer an MCP operation to find new leads, send messages, publish content, edit the Brain, or export article bodies from a general product claim. Discover the tools available through the authenticated connection and follow their schemas.
-
 ## Product boundaries
 
 Pancake v2 focuses on GTM. It is not positioned as a general AI co-founder, a Slack-native coworker, an OpenClaw hosting service, or a platform that runs engineering, finance, support, and company operations. Earlier articles retain their original URLs and category topics for search continuity, but each was reviewed on August 27, 2026 and now identifies the current v2 scope.
@@ -27,11 +17,6 @@ Pancake v2 focuses on GTM. It is not positioned as a general AI co-founder, a Sl
 ## Key pages
 
 - [Homepage](https://getpancake.ai/) — current product, agents, workflow, and pricing
-- [Agent guide](https://getpancake.ai/agents.md) — MCP endpoint, verified read capabilities, connection setup, and a first request
-- [Agent guide in the browser](https://getpancake.ai/agents) — the same guide rendered as a readable web page
-- [Open Pancake](https://app.getpancake.ai) — sign in to or create a workspace
-- [Support](https://getpancake.ai/support) — ChatGPT, Codex, Claude, and MCP connection help
-- [Privacy](https://getpancake.ai/privacy) — workspace access, OAuth, and data handling
 - [Pricing](https://getpancake.ai/pricing) — $99 per month with every GTM agent included
 - [Blog](https://getpancake.ai/blog) — the complete article archive
 - [Viktor vs Pancake](https://getpancake.ai/viktor-vs-pancake) — broad AI employee vs focused AI GTM team
