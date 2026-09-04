@@ -307,7 +307,13 @@ export function LpArcCanvas() {
     // Rebuilding the fills retains t0, so toggling never resets the rotation.
     const paletteWatch = new MutationObserver(() => {
       rings = [];
-      start();
+      // An active fallback must also paint the new snapshot immediately.
+      // Keep the same clock and replace, rather than duplicate, its RAF.
+      if (raf && art.hasAttribute("data-lp-arc-canvas") && phone.matches && !reduced.matches) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+        frame();
+      } else start();
     });
     const audienceRoot = art.closest("[data-audience]");
     if (audienceRoot) paletteWatch.observe(audienceRoot, { attributes: true, attributeFilter: ["data-audience"] });

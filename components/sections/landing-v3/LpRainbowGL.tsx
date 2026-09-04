@@ -968,6 +968,14 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
     const audienceRoot = variant === "hero" ? art.closest("[data-audience]") : null;
     const paletteWatch = new MutationObserver(() => {
       for (const ring of rings) ring.color = rgba(getComputedStyle(ring.path).fill) || ring.color;
+      // Repaint before the new View Transition snapshot, without waiting for
+      // a display frame. Replace the pending RAF so there is still one loop.
+      if (raf && live && !reduced.matches) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+        lastDraw = 0;
+        frame();
+      }
     });
     if (audienceRoot) paletteWatch.observe(audienceRoot, { attributes: true, attributeFilter: ["data-audience"] });
 

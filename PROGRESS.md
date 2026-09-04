@@ -19,11 +19,12 @@ Scope: original human landing plus a selector above the headline’s right edge.
 - [x] Add the inverse hero, preserving artwork and motion phase.
 - [x] Keep URL sharing, refresh, browser history and keyboard switching working.
 - [x] Add a quick 240ms crossfade in both directions, respecting reduced motion.
+- [x] Remove the pre-fade wait and keep the switch’s standard slide outside the page crossfade.
 - [x] Compare desktop and phone human layouts against baseline `14ad159`.
 - [x] Independently review code and test booking and mobile menu behavior.
 - [x] Complete production build and updated Vercel preview verification.
 
-Preview: https://pancake-so1qelt0n-getpancake.vercel.app
+Preview: https://pancake-qfu2o6lbm-getpancake.vercel.app
 Draft PR: https://github.com/get-pancake/website/pull/275
 
 Implementation and validation: [human-agent-design.md](docs/human-agent-design.md).

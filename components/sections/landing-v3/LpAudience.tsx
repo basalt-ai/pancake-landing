@@ -73,17 +73,10 @@ export function LpAudience({ initialAudience, children }: { initialAudience: Aud
       commit();
       return;
     }
-    const transition = document.startViewTransition(async () => {
-      commit();
-      // Capture the new canvas palette after the existing renderers redraw.
-      // The timeout also releases this callback if the tab becomes hidden.
-      await new Promise<void>(resolve => {
-        let frame = 0;
-        const finish = () => { clearTimeout(timeout); cancelAnimationFrame(frame); resolve(); };
-        const timeout = window.setTimeout(finish, 80);
-        frame = requestAnimationFrame(() => { frame = requestAnimationFrame(finish); });
-      });
-    });
+    // Commit in the capture callback without waiting for animation frames.
+    // View Transitions suppress rendering during capture, so waiting for a
+    // redraw here postponed the response until the old 80ms timeout expired.
+    const transition = document.startViewTransition(commit);
     activeTransition.current = transition;
     const clear = () => { if (activeTransition.current === transition) activeTransition.current = null; };
     void transition.ready.catch(() => {}); // A rapid toggle may skip its predecessor.
