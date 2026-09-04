@@ -286,32 +286,31 @@
   }
 }
 
-/* ── Audience toggle (founder 2026-09-04: "un toggle en haut à droite du
-   hero") — LpAudienceToggle.tsx. Right-anchored on the nav CTAs' margin
-   (max(32px, 50% − 648px) = 179 at 1654) so the two right-hand clusters
-   share one edge, 24px under the nav band. Not on the artboard: a two-
-   segment control with the sm pill's metrics (38 tall, Fono 600 13.333, r9
-   segments in an r12 track). The track is the rainbow's green — green-20,
-   the arc-3 band — on both pages (founder 2026-09-04: "the green of the
-   arc-en-ciel"; the toggle is Figma node 4389:781, still to be matched
-   1:1 once the file is readable); the active segment is the page ground
-   with the page's text color (cream/plum on /, plum/cream on /agents),
-   the inactive label plum on the green at every width. Opaque, so it
-   stays whole where the rainbow's outer band sweeps under it (the arcs'
-   apex sits ~20px below the nav — nothing 38px tall fits between the bar
-   and the art at these x's for the whole 20s loop). z-index 2: above
-   .lp-hero-inner (inset 0, z 1) so it stays clickable; first in the
-   section for tab order. */
+/* ── Audience toggle (founder 2026-09-04, placed by his red box: centred
+   above the headline row; "reuse the one from Figma literally" = node
+   4389:781, still to be matched 1:1 once the file is readable) —
+   LpAudienceToggle.tsx. Lives INSIDE .lp-hero-inner, so it is frame
+   geometry like the H1 and the column: bottom-anchored 24px above the text
+   row (the H1 box top sits 68.65 + 160 from the hero bottom), the
+   short-window ladder scales it with the text, and it stays ~250px under
+   the rainbow's lowest band at every phase of the loop. Not on the
+   artboard: a two-segment control with the sm pill's metrics (38 tall,
+   Fono 600 13.333, r9 segments in an r12 track). The track is the
+   rainbow's green — green-20, the arc-3 band — on both pages ("the green
+   of the arc-en-ciel"); the active segment is the page ground with the
+   page's text color (cream/plum on /, plum/cream on /agents), the inactive
+   label plum on the green. First in the frame for tab order (nav → toggle
+   → headline). */
 .lp-audience {
   background: var(--lp-green-20);
   border-radius: 12px;
+  bottom: calc(68.65px + 160px + 24px);
   display: inline-flex;
   gap: 2px;
+  left: 50%;
   padding: 3px;
   position: absolute;
-  right: max(32px, calc(50% - 648px));
-  top: 24px;
-  z-index: 2;
+  transform: translateX(-50%);
 }
 .lp .lp-audience__opt {
   align-items: center;
@@ -334,12 +333,12 @@
   outline: 2px solid var(--lp-purple-30);
   outline-offset: -2px;
 }
-/* Phones: the hero's own 32px gutter (the text block's), 16px under the
-   104px bar — the top-right corner is cream on the mobile artboard too
-   (the mirrored arcs' center sits at (201, 579), radius ~474). */
-@media (max-width: 767px) {
+/* ≤1024 recompose: the frame is a flow column (above) — the toggle flows as
+   its first item, left-aligned with the headline, the column's own gap
+   (24, 23 on phones) under it. */
+@media (max-width: 1024px) {
   .lp-audience {
-    right: 32px;
-    top: 16px;
+    position: static;
+    transform: none;
   }
 }

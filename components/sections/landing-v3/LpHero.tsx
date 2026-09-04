@@ -12,14 +12,14 @@ import { LpViewportVar } from "@/components/sections/landing-v3/LpViewportVar";
 // container sits at (-435, -61.65) in that canvas (hero-frame center
 // (876, 557.35) per Figma node 4257:4907, +120px nav offset). hero.css keeps
 // sizing/clip on .lp-hero-art exactly as it did for the old <img>.
-// `audience` only drives the top-right toggle (founder 2026-09-04): the
-// homepage is the humans side, /agents the agents side — same hero, same
-// copy, the page's colors inverted there (app/agents/page.tsx).
+// `audience` only drives the toggle above the headline row (founder
+// 2026-09-04): the homepage is the humans side, /agents the agents side —
+// same hero, same copy, the page's colors inverted there
+// (app/agents/page.tsx).
 export function LpHero({ audience = "humans" }: { audience?: LpAudience }) {
   return (
     <section className="lp-hero" aria-labelledby="lp-hero-title">
       <LpViewportVar />
-      <LpAudienceToggle current={audience} />
       <div className="lp-hero-art" aria-hidden="true">
         <div className="lp-anim-canvas lp-anim-canvas--hero">
           <LpPancakes variant="hero" />
@@ -32,6 +32,9 @@ export function LpHero({ audience = "humans" }: { audience?: LpAudience }) {
         <LpRainbowGL variant="hero" />
       </div>
       <div className="lp-hero-inner">
+        {/* frame geometry like the H1 and the column: centred 24px above
+            the text row (hero.css .lp-audience), first for tab order */}
+        <LpAudienceToggle current={audience} />
         <h1 id="lp-hero-title" className="lp-hero-title lp-display">
           You run your company
           <br />
