@@ -7,7 +7,7 @@ Scope reset by Tristan on September 4, 2026: keep the existing landing, add a to
 - Human mode is the original v3 landing (baseline `14ad159`) with only the audience selector added.
 - The selector uses the [Figma Signals switch](https://www.figma.com/design/fr8NgOCTUxsEbrMEJA3YKu/Pancake-Design?node-id=4389-781): a 40×24 track, 20×20 white thumb and 2px inset. Per Tristan’s follow-up, human mode uses the human rainbow’s blue (`--lp-blue-40`) and agent mode its green (`--lp-green-20`). The artwork sits within a 44×44 keyboard-accessible button.
 - Agent mode reads “Give your human” / “GTM superpowers” in the original headline’s font, size, weight and spacing. Human mode retains “You run your company” / “We bring you customers”. Both layers share the original headline box so the toggle and adjacent content stay fixed. The inactive copy is hidden visually and from assistive technology.
-- Agent mode replaces the hero description and buttons with “Start here”, a copyable `set up https://github.com/get-pancake/agent-plugins` instruction, and “Paste into Codex or Claude Code.” The public repository contains the maintained installation guides for both clients. The terminal uses Fono, plum/cream tokens and a green prompt; its copy action confirms success and offers manual selection if clipboard access fails.
+- Agent mode replaces the hero description and buttons with “Start here”, a copyable `set up https://github.com/get-pancake/agent-plugins` instruction, and “Paste into Codex or Claude Code.” The public repository contains the maintained installation guides for both clients. “Start here” matches the human hero supporting copy (Fono, 16px/24px, regular). The terminal uses a pure black background, cream Fono text and a green prompt; its copy action confirms success and offers manual selection if clipboard access fails.
 - Agent mode keeps the original navigation, H1 typography and rainbow motion. Cream and plum exchange roles; each of the five rainbow bands uses its exact RGB negative.
 - Only an empty `100vh` section follows the agent hero. There is no content below the hero besides that empty section.
 - `/?audience=agents` opens the inverse hero directly. The toggle updates the URL without remounting the hero; refresh and browser history retain the selected view.
@@ -28,6 +28,6 @@ Scope reset by Tristan on September 4, 2026: keep the existing landing, add a to
 - The crossfade was measured at 240ms in both directions on desktop and phone. Heading geometry, scroll position and canvas instances remained unchanged. Three rapid toggles, Back/Forward and reduced-motion switching passed without errors.
 - Removing the capture wait reduced measured desktop click-to-fade onset from about 95–100ms to 20–30ms. Only the page snapshot fades; the named switch snapshot has no fade animation.
 
-Preview: https://pancake-qp9xierjb-getpancake.vercel.app
+Preview: https://pancake-b7s0tjcsu-getpancake.vercel.app
 
 The setup CTA borrows the single copyable instruction pattern from [Monid](https://monid.ai/), adapted to Pancake’s existing typography, colors and geometry. Other reference screenshots are historical research from the broader concept.

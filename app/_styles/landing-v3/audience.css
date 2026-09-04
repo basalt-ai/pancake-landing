@@ -41,8 +41,8 @@ html:has(.lp-audience-page)::view-transition-new(lp-audience-switch) { animation
 [data-audience="agents"] .lp-hero-col--human { display: none; }
 [data-audience="agents"] .lp-hero-col--agent { display: block; top: var(--lp-hero-title-top); bottom: auto; }
 .lp-agent-start { width: calc(var(--lp-space-8) * 16); max-width: 100%; color: var(--lp-text); }
-.lp-agent-start__title { margin: 0 0 var(--lp-space-4); font-size: var(--lp-text-3xlg); line-height: 1.2; letter-spacing: -.03em; }
-.lp-agent-terminal { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--lp-space-3); align-items: center; padding: var(--lp-space-4); border: var(--lp-line) solid color-mix(in srgb, var(--lp-page-bg) 16%, transparent); border-radius: var(--lp-r-m); background: color-mix(in srgb, var(--lp-page-bg) 5%, var(--lp-ink-100)); }
+.lp-agent-start__title { margin: 0 0 var(--lp-space-4); font: inherit; font-size: var(--lp-text-md); line-height: 1.5; letter-spacing: normal; }
+.lp-agent-terminal { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--lp-space-3); align-items: center; padding: var(--lp-space-4); border: var(--lp-line) solid color-mix(in srgb, var(--lp-page-bg) 16%, transparent); border-radius: var(--lp-r-m); background: var(--lp-terminal-bg); }
 .lp-agent-terminal__prompt { color: var(--lp-green-20); font: inherit; align-self: start; line-height: 1.6; }
 .lp-agent-terminal__code { display: block; font-family: var(--lp-font-fono); font-size: var(--lp-text-md); line-height: 1.6; color: var(--lp-page-bg); overflow-wrap: anywhere; text-wrap: balance; user-select: text; }
 .lp-agent-terminal__segment { font: inherit; white-space: nowrap; }
@@ -61,7 +61,6 @@ html:has(.lp-audience-page)::view-transition-new(lp-audience-switch) { animation
   .lp-agent-start { width: 100%; max-width: calc(var(--lp-space-8) * 16); }
 }
 @media (max-width: 767px) {
-  .lp-agent-start__title { font-size: var(--lp-text-2xlg); }
   .lp-agent-terminal { gap: var(--lp-space-2); padding: var(--lp-space-3); }
   .lp-agent-start__hint { min-height: calc(var(--lp-space-3) + 3em); }
 }

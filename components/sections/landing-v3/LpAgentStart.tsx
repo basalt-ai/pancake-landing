@@ -33,7 +33,7 @@ export function LpAgentStart() {
   };
 
   return <div className="lp-agent-start" aria-labelledby="lp-agent-start-title">
-    <h2 id="lp-agent-start-title" className="lp-agent-start__title lp-display">Start here</h2>
+    <h2 id="lp-agent-start-title" className="lp-agent-start__title">Start here</h2>
     <div className="lp-agent-terminal" data-copy-state={status}>
       <span className="lp-agent-terminal__prompt" aria-hidden="true">$</span>
       <code ref={code} className="lp-agent-terminal__code">set up https://github.com/<wbr /><span className="lp-agent-terminal__segment">get-pancake/</span><wbr /><span className="lp-agent-terminal__segment">agent-plugins</span></code>
