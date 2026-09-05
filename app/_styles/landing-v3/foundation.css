@@ -118,8 +118,6 @@
      downloaded 2026-08-28 at Tristan's direction — license to settle before
      production), loaded in app/layout.tsx as --font-aeonik-condensed. */
   --lp-font-fono: var(--font-aeonik-fono), ui-monospace, "SF Mono", monospace;
-  /* Agent headline: a true fixed-pitch terminal face, using local fonts. */
-  --lp-font-terminal: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --lp-font-aeonik: var(--font-aeonik), system-ui, -apple-system, sans-serif;
   --lp-font-cond: var(--font-aeonik-condensed), var(--font-aeonik), system-ui, -apple-system, sans-serif;
 }

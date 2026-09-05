@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { flushSync } from "react-dom";
 
 import { useSearchParams } from "next/navigation";
@@ -13,6 +13,13 @@ const AudienceContext = createContext<{ audience: Audience; setAudience: (value:
 });
 export const useAudience = () => useContext(AudienceContext);
 
+const agentHeadline = "Give your human GTM superpowers";
+// Preserve the three typing bursts while revealing each proportional glyph
+// at its actual width, so the cursor stays attached to Aeonik Fono's text.
+const glyphProgress = (index: number) => index < 16 ? (index + 1) * .48 / 16
+  : index < 19 ? .59 + (index - 15) * .12 / 3
+  : index === 19 ? .78 : .78 + (index - 19) * .22 / 11;
+
 export function AudienceHeadline() {
   const { audience } = useAudience();
   return <>
@@ -20,9 +27,11 @@ export function AudienceHeadline() {
       You run your company<br />We bring you customers
     </span>
     <span className="lp-hero-title__copy lp-hero-title__copy--agent" aria-hidden={audience === "humans"}>
-      <span className="lp-sr-only">Give your human GTM superpowers</span>
+      <span className="lp-sr-only">{agentHeadline}</span>
       <span className="lp-agent-headline" aria-hidden="true">
-        <span className="lp-agent-headline__text">Give your human GTM superpowers</span>
+        <span className="lp-agent-headline__text">{Array.from(agentHeadline, (letter, index) =>
+          <span key={index} className="lp-agent-headline__glyph" style={{ "--lp-glyph-progress": glyphProgress(index) } as CSSProperties}>{letter}</span>
+        )}</span>
         <span className="lp-agent-headline__cursor" />
       </span>
     </span>
