@@ -139,6 +139,7 @@ export function AudienceSelector() {
       const columnScale = box.width / parseFloat(getComputedStyle(inner).width) || 1;
       const gutter = parseFloat(getComputedStyle(inner).getPropertyValue("--lp-space-8"));
       const gap = parseFloat(getComputedStyle(inner).getPropertyValue("--lp-space-4"));
+      inner.style.setProperty("--lp-agent-headline-width", `${Math.max(0, (column.left - title.left) / columnScale - gutter)}px`);
       const half = selector.offsetWidth / 2;
       const edge = Math.min(gutter, Math.max(0, inner.offsetWidth / 2 - half));
       const center = Math.max(half + edge, Math.min((title.right - box.left) / scale - gap, inner.offsetWidth - half - edge));
