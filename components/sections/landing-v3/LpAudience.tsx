@@ -19,8 +19,12 @@ export function AudienceHeadline() {
     <span className="lp-hero-title__copy" aria-hidden={audience === "agents"}>
       You run your company<br />We bring you customers
     </span>
-    <span className="lp-hero-title__copy" aria-hidden={audience === "humans"}>
-      Give your human<br />GTM superpowers
+    <span className="lp-hero-title__copy lp-hero-title__copy--agent" aria-hidden={audience === "humans"}>
+      <span className="lp-sr-only">Give your human GTM superpowers</span>
+      <span className="lp-agent-headline" aria-hidden="true">
+        <span className="lp-agent-headline__text">Give your human GTM superpowers</span>
+        <span className="lp-agent-headline__cursor" />
+      </span>
     </span>
   </>;
 }

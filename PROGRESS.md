@@ -23,13 +23,14 @@ Scope: original human landing plus a selector above the headline’s right edge.
 - [x] Set the agent H1 to “Give your human” / “GTM superpowers”, preserving the original font, size and headline box.
 - [x] Add the agent-only “Start here” terminal CTA with verified public plugin setup URL and working copy feedback.
 - [x] Set the terminal background to pure black; remove “Start here” at the founder’s request.
+- [x] Add the single-line monospace agent headline, with a finite cursor typing reveal and immediate reduced-motion alternative.
 - [x] Align the agent setup block to the original human description/buttons bounds, preserving their position and width on desktop and mobile.
 - [x] Replace the paste hint with “Friends with” and white Claude / Codex / Cursor / Hermes / OpenClaw logos above the terminal at its right edge, preserving accessible copy feedback.
 - [x] Compare desktop and phone human layouts against baseline `14ad159`.
 - [x] Independently review code and test booking and mobile menu behavior.
 - [x] Complete production build and updated Vercel preview verification.
 
-Preview: https://pancake-ee9m2jplv-getpancake.vercel.app
+Preview: https://pancake-5bmjlv9i6-getpancake.vercel.app
 Draft PR: https://github.com/get-pancake/website/pull/275
 
 Implementation and validation: [human-agent-design.md](docs/human-agent-design.md).
