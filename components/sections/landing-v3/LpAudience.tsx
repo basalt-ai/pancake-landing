@@ -13,7 +13,7 @@ const AudienceContext = createContext<{ audience: Audience; setAudience: (value:
 });
 export const useAudience = () => useContext(AudienceContext);
 
-const agentHeadline = "Give your human GTM superpowers";
+const agentHeadline = "give your human gtm superpowers";
 // Preserve the three typing bursts while revealing each proportional glyph
 // at its actual width, so the cursor stays attached to Aeonik Fono's text.
 const glyphProgress = (index: number) => index < 16 ? (index + 1) * .48 / 16
@@ -27,9 +27,9 @@ export function AudienceHeadline() {
       You run your company<br />We bring you customers
     </span>
     <span className="lp-hero-title__copy lp-hero-title__copy--agent" aria-hidden={audience === "humans"}>
-      <span className="lp-sr-only">{agentHeadline}</span>
+      <span className="lp-sr-only">{`> ${agentHeadline}`}</span>
       <span className="lp-agent-headline" aria-hidden="true">
-        <span className="lp-agent-headline__text">{Array.from(agentHeadline, (letter, index) =>
+        <span className="lp-agent-headline__text"><span className="lp-agent-headline__prompt">{"> "}</span>{Array.from(agentHeadline, (letter, index) =>
           <span key={index} className="lp-agent-headline__glyph" style={{ "--lp-glyph-progress": glyphProgress(index) } as CSSProperties}>{letter}</span>
         )}</span>
         <span className="lp-agent-headline__cursor" />
