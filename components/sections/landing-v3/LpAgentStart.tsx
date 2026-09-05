@@ -4,9 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { SiClaude, SiOpenai } from "react-icons/si";
 import { CursorMark, HermesMark, OpenClawMark } from "./LpAgentMarks";
 
-// The public plugin repository contains the maintained client-specific setup.
-// This is an instruction for an agent, not a shell command.
-const instruction = "set up https://github.com/get-pancake/agent-plugins";
+// Copy the complete instruction for the agent, including its command.
+const instruction = "Run `curl -fsSL https://getpancake.ai/install.md`, then follow the instructions";
 
 export function LpAgentStart() {
   const [status, setStatus] = useState<"idle" | "copied" | "error">("idle");
@@ -46,8 +45,7 @@ export function LpAgentStart() {
       </ul>
     </div>
     <div className="lp-agent-terminal" data-copy-state={status}>
-      <span className="lp-agent-terminal__prompt" aria-hidden="true">$</span>
-      <code ref={code} className="lp-agent-terminal__code">set up https://github.com/<wbr /><span className="lp-agent-terminal__segment">get-pancake/</span><wbr /><span className="lp-agent-terminal__segment">agent-plugins</span></code>
+      <code ref={code} className="lp-agent-terminal__code">{instruction}</code>
       <button
         type="button"
         className="lp-agent-terminal__copy"
