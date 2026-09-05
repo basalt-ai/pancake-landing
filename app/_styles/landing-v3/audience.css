@@ -103,6 +103,24 @@ html:has(.lp-audience-page)::view-transition-new(lp-audience-switch) { animation
 /* Keep all original sections mounted so their motion and fit observers survive
    a return to humans. Hidden sections take no space and expose no controls. */
 .lp-audience-page[data-audience="agents"] { background: var(--lp-ink-100); }
+/* Navigation + agent hero fill the first screen, keeping the playground
+   below the fold. Retain the original short-window readability floors. */
+.lp-audience-page[data-audience="agents"] > .lp-hero {
+  --lp-agent-nav-height: calc(var(--lp-space-12) * 2 + var(--lp-space-3) * 2);
+  min-height: calc(var(--lp-svh, 100svh) - var(--lp-agent-nav-height));
+}
+@media (max-width: 1024px) {
+  .lp-audience-page[data-audience="agents"] > .lp-hero { display: flex; flex-direction: column; }
+  [data-audience="agents"] .lp-hero-inner { flex: 1; justify-content: flex-end; }
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+  [data-audience="agents"] .lp-hero-inner { width: 100%; }
+}
+@media (max-width: 767px) {
+  .lp-audience-page[data-audience="agents"] > .lp-hero {
+    --lp-agent-nav-height: calc(var(--lp-space-12) * 2 + var(--lp-space-2));
+  }
+}
 .lp-audience-page[data-audience="agents"] > section:not(.lp-hero):not(.lp-agent-lab),
 .lp-audience-page[data-audience="agents"] > .lp-foot { display: none; }
 

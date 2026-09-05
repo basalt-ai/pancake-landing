@@ -49,3 +49,5 @@ Implementation and validation: [human-agent-design.md](docs/human-agent-design.m
 - [x] Remove both terminal bars and their labels/dividers, extend the stream edge to edge, and keep pause in the CAPTCHA footer.
 
 - [x] Replace the hero terminal setup prompt with the founder’s install.md curl instruction, remove the dollar prefix, and copy the same complete text.
+
+- [x] Make the agent hero fill the first viewport including navigation, keeping the terminal playground below the fold until scrolling.
