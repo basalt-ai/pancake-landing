@@ -45,7 +45,7 @@ html:has(.lp-audience-page)::view-transition-new(lp-audience-switch) { animation
 .lp-agent-headline__glyph { display: block; flex: none; min-width: 0; max-width: 2em; overflow: hidden; font: inherit; }
 .lp-agent-headline__cursor { display: block; flex: none; width: calc(var(--lp-line) * 2); height: 1em; margin-left: .15ch; background: var(--lp-green-20); font: inherit; }
 [data-audience="agents"] .lp-agent-headline[data-font-ready="true"] .lp-agent-headline__glyph { animation: lp-agent-glyph 1ms steps(1, start) calc(var(--lp-audience-fade-duration) + var(--lp-type-duration) * var(--lp-glyph-progress)) both; }
-[data-audience="agents"] .lp-agent-headline[data-font-ready="true"] .lp-agent-headline__cursor { animation: lp-agent-cursor .7s steps(1, end) calc(var(--lp-type-duration) + var(--lp-audience-fade-duration)) 2; }
+[data-audience="agents"] .lp-agent-headline[data-font-ready="true"] .lp-agent-headline__cursor { animation: lp-agent-cursor .7s steps(1, end) calc(var(--lp-type-duration) + var(--lp-audience-fade-duration)) infinite; }
 @keyframes lp-agent-glyph { from { max-width: 0; } to { max-width: 2em; } }
 @keyframes lp-agent-cursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
