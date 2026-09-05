@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { FiCheck, FiInfo, FiPause, FiPlay, FiRotateCcw, FiTerminal } from "react-icons/fi";
+import { FiCheck, FiInfo, FiPause, FiPlay, FiRotateCcw } from "react-icons/fi";
 import { AGENT_PUZZLE_INITIAL, greenTiles, moveAgentPuzzle, pairedTile } from "@/lib/agent-puzzle";
 import { useAudience } from "./LpAudience";
 import { LpAgentTerminalStream } from "./LpAgentTerminalStream";
@@ -45,15 +45,6 @@ export function LpAgentLab() {
   };
 
   return <section className="lp-agent-lab" id="agent-playground" aria-label="Agent playground" aria-hidden={!active}>
-    <div className="lp-agent-lab__chrome">
-      <div className="lp-agent-lab__session"><FiTerminal aria-hidden="true" /><span>pancake / agent playground</span></div>
-      <div className="lp-agent-lab__controls">
-        <span className="lp-agent-lab__simulation">simulation</span>
-        <button className="lp-agent-lab__pause" onClick={() => setPaused(value => !value)} aria-pressed={paused} aria-label={paused ? "Resume terminal animation" : "Pause terminal animation"} type="button">
-          {paused ? <FiPlay aria-hidden="true" /> : <FiPause aria-hidden="true" />}
-        </button>
-      </div>
-    </div>
     <LpAgentTerminalStream active={active} paused={paused} />
     <div className="lp-agent-lab__stage">
       <div className="lp-agent-captcha" data-moves={moves}>
@@ -85,12 +76,14 @@ export function LpAgentLab() {
           <div className="lp-agent-captcha__tools">
             <button type="button" onClick={reset} aria-label="Reset puzzle" title="Reset puzzle"><FiRotateCcw aria-hidden="true" /></button>
             <button type="button" onClick={() => { setHint(value => !value); setMessage(hint ? "" : "No solution."); }} aria-label="About this puzzle" aria-pressed={hint} title="Every move flips two tiles. Nine green is impossible."><FiInfo aria-hidden="true" /></button>
+            <button className="lp-agent-captcha__pause" onClick={() => setPaused(value => !value)} aria-pressed={paused} aria-label={paused ? "Resume terminal animation" : "Pause terminal animation"} title={paused ? "Resume terminal animation" : "Pause terminal animation"} type="button">
+              {paused ? <FiPlay aria-hidden="true" /> : <FiPause aria-hidden="true" />}
+            </button>
           </div>
           <p className="lp-agent-captcha__feedback" role="status" aria-live="polite" aria-atomic="true">{message || <><span>{lit}</span><span aria-hidden="true"> / 9</span><span className="lp-sr-only"> of 9 green</span></>}</p>
           <button className="lp-agent-captcha__verify" type="button" onClick={() => { setHint(false); setAttempts(value => value + 1); setMessage(attempts === 0 ? "Human detected." : "Still human."); }}>Verify</button>
         </div>
       </div>
     </div>
-    <div className="lp-agent-lab__footer" aria-hidden="true"><span>context → intent → customers</span><span>humans may observe.</span></div>
   </section>;
 }

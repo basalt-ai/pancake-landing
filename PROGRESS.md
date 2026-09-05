@@ -32,7 +32,7 @@ Scope: original human landing plus a selector above the headline’s right edge.
 - [x] Independently review code and test booking and mobile menu behavior.
 - [x] Complete production build and updated Vercel preview verification.
 
-Preview: https://pancake-2fmvvv74m-getpancake.vercel.app
+Preview: https://pancake-1wdg9sbdo-getpancake.vercel.app
 Draft PR: https://github.com/get-pancake/website/pull/275
 
 Implementation and validation: [human-agent-design.md](docs/human-agent-design.md).
@@ -45,3 +45,5 @@ Implementation and validation: [human-agent-design.md](docs/human-agent-design.m
 - [x] Keep the title and instruction on separate single lines, each with uniform text size.
 - [x] Support keyboard interaction, live feedback, pause/resume, reduced motion and native touch scrolling.
 - [x] Exhaustively verify the puzzle’s parity invariant and independently review accessibility and human-mode isolation.
+
+- [x] Remove both terminal bars and their labels/dividers, extend the stream edge to edge, and keep pause in the CAPTCHA footer.
