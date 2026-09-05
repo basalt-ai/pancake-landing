@@ -22,13 +22,21 @@ const glyphProgress = (index: number) => index < 16 ? (index + 1) * .48 / 16
 
 export function AudienceHeadline() {
   const { audience } = useAudience();
+  const [fontReady, setFontReady] = useState(false);
+  useEffect(() => {
+    let mounted = true;
+    // Wait for the font metrics and their layout to settle before revealing
+    // the first glyph. The complete accessible heading is already present.
+    void document.fonts.ready.then(() => { if (mounted) setFontReady(true); });
+    return () => { mounted = false; };
+  }, []);
   return <>
     <span className="lp-hero-title__copy" aria-hidden={audience === "agents"}>
       You run your company<br />We bring you customers
     </span>
     <span className="lp-hero-title__copy lp-hero-title__copy--agent" aria-hidden={audience === "humans"}>
       <span className="lp-sr-only">{`> ${agentHeadline}`}</span>
-      <span className="lp-agent-headline" aria-hidden="true">
+      <span className="lp-agent-headline" data-font-ready={fontReady} aria-hidden="true">
         <span className="lp-agent-headline__text"><span className="lp-agent-headline__prompt">{"> "}</span>{Array.from(agentHeadline, (letter, index) =>
           <span key={index} className="lp-agent-headline__glyph" style={{ "--lp-glyph-progress": glyphProgress(index) } as CSSProperties}>{letter}</span>
         )}</span>
@@ -139,7 +147,6 @@ export function AudienceSelector() {
       const columnScale = box.width / parseFloat(getComputedStyle(inner).width) || 1;
       const gutter = parseFloat(getComputedStyle(inner).getPropertyValue("--lp-space-8"));
       const gap = parseFloat(getComputedStyle(inner).getPropertyValue("--lp-space-4"));
-      inner.style.setProperty("--lp-agent-headline-width", `${Math.max(0, (column.left - title.left) / columnScale - gutter)}px`);
       const half = selector.offsetWidth / 2;
       const edge = Math.min(gutter, Math.max(0, inner.offsetWidth / 2 - half));
       const center = Math.max(half + edge, Math.min((title.right - box.left) / scale - gap, inner.offsetWidth - half - edge));

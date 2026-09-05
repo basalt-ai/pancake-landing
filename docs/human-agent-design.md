@@ -28,12 +28,14 @@ Scope reset by Tristan on September 4, 2026: keep the existing landing, add a to
 - The crossfade was measured at 240ms in both directions on desktop and phone. Heading geometry, scroll position and canvas instances remained unchanged. Three rapid toggles, Back/Forward and reduced-motion switching passed without errors.
 - Removing the capture wait reduced measured desktop click-to-fade onset from about 95–100ms to 20–30ms. Only the page snapshot fades; the named switch snapshot has no fade animation.
 
-Preview: https://pancake-idbcch5yp-getpancake.vercel.app
+Preview: https://pancake-ptlvlj0ov-getpancake.vercel.app
 
 The setup CTA borrows the single copyable instruction pattern from [Monid](https://monid.ai/), adapted to Pancake’s existing typography, colors and geometry. Other reference screenshots are historical research from the broader concept.
 
 Logo sources: Claude and Codex use the existing React Icons marks; Cursor and OpenClaw match the SVG marks in the supplied Monid reference. Hermes uses the [official NousResearch portrait](https://github.com/NousResearch/hermes-agent/blob/main/website/static/img/logo.png), displayed white through CSS and served at icon size by Next Image. The five-logo row follows the founder’s explicit direction; adding a mark does not represent a new installation test.
 
-The agent headline borrows the insertion-cursor and character-step rhythm from [Hacker Typer](https://hackertyper.net/). It uses Pancake’s cream and rainbow green, with no extra terminal frame. The single line uses available space before the setup column on desktop and the original headline width on phones. Its desktop cap is the next v3 type token (39.816px), about 20% larger, while retaining clearance before the terminal. Codex Browser verified the stepped reveal, complete text, rapid mode changes, stable human geometry and immediate reduced-motion rendering at 320px.
+The agent headline borrows the insertion-cursor and character-step rhythm from [Hacker Typer](https://hackertyper.net/). It uses Pancake’s cream and rainbow green, with no extra terminal frame. The desktop headline uses a fixed 36.498px midpoint between the v3 33.18px and 39.816px tokens. Narrower layouts fit within the original headline width. The font size is known in CSS before hydration; typing starts only after font metrics settle, eliminating the initial size jump. Codex Browser verified the stepped reveal, complete text, rapid mode changes, stable human geometry and immediate reduced-motion rendering at 320px.
 
 The headline and setup terminal share `--lp-font-fono`. Each letter reveals at its natural width so the cursor follows Fono’s proportional spacing; all 31 characters, three typing bursts and reduced-motion behavior were verified in Codex Browser.
+
+Cold-load verification: the first visible frame through completion held exactly one font size and line height across 363 desktop frames (36.498px) and 363 phone frames (14.5332px at 320px). Human-mode geometry and reduced-motion rendering remained unchanged.
