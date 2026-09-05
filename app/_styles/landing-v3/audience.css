@@ -68,7 +68,8 @@ html:has(.lp-audience-page)::view-transition-new(lp-audience-switch) { animation
 .lp-agent-terminal__copy svg { width: calc(var(--lp-space-4) + var(--lp-space-1)); height: calc(var(--lp-space-4) + var(--lp-space-1)); }
 .lp-agent-terminal[data-copy-state="copied"] .lp-agent-terminal__copy { color: var(--lp-green-20); }
 .lp-agent-terminal[data-copy-state="copied"] svg { animation: lp-agent-copy-check .18s var(--lp-audience-ease); }
-.lp-agent-friends { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: var(--lp-space-4); margin-bottom: var(--lp-space-3); font-size: var(--lp-text-sm); line-height: 1.5; color: var(--lp-ink-60); }
+/* Align the marks with the terminal's inner edge, including its border. */
+.lp-agent-friends { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: var(--lp-space-4); padding-inline: calc(var(--lp-space-4) + var(--lp-line)); margin-bottom: var(--lp-space-3); font-size: var(--lp-text-sm); line-height: 1.5; color: var(--lp-ink-60); }
 .lp-agent-friends ul { display: flex; align-items: center; gap: var(--lp-space-4); margin: 0; padding: 0; list-style: none; color: var(--lp-ink-0); }
 .lp-agent-friends li { display: grid; place-items: center; }
 .lp-agent-friends :is(svg, img) { display: block; width: calc(var(--lp-space-3) * 2); height: calc(var(--lp-space-3) * 2); }
@@ -82,6 +83,7 @@ html:has(.lp-audience-page)::view-transition-new(lp-audience-switch) { animation
 @media (max-width: 767px) {
   .lp-agent-terminal { gap: var(--lp-space-2); padding: var(--lp-space-3); }
   .lp-agent-friends, .lp-agent-friends ul { gap: var(--lp-space-3); }
+  .lp-agent-friends { padding-inline: calc(var(--lp-space-3) + var(--lp-line)); }
   .lp-agent-friends :is(svg, img) { width: calc(var(--lp-space-4) + var(--lp-space-1)); height: calc(var(--lp-space-4) + var(--lp-space-1)); }
 }
 @media (prefers-reduced-motion: reduce) {
