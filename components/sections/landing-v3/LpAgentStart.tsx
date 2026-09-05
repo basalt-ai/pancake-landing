@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { SiClaude, SiOpenai } from "react-icons/si";
-import { CursorMark, OpenClawMark } from "./LpAgentMarks";
+import { CursorMark, HermesMark, OpenClawMark } from "./LpAgentMarks";
 
 // The public plugin repository contains the maintained client-specific setup.
 // This is an instruction for an agent, not a shell command.
@@ -37,12 +36,12 @@ export function LpAgentStart() {
 
   return <div className="lp-agent-start" role="group" aria-label="Set up Pancake">
     <div className="lp-agent-friends">
-      <span>Friends with</span>
+      <span>friends with</span>
       <ul aria-label="Agent logos">
         <li title="Claude Code"><SiClaude role="img" aria-label="Claude Code" focusable="false" /></li>
         <li title="Codex"><SiOpenai role="img" aria-label="Codex" focusable="false" /></li>
         <li title="Cursor"><CursorMark /></li>
-        <li title="Hermes"><Image src="/lp/agent-marks/hermes.png" alt="Hermes" width={24} height={24} sizes="24px" className="lp-agent-friends__hermes" /></li>
+        <li title="Hermes"><HermesMark /></li>
         <li title="OpenClaw"><OpenClawMark /></li>
       </ul>
     </div>

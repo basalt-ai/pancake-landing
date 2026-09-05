@@ -152,9 +152,10 @@ export function AudienceSelector() {
       const center = Math.max(half + edge, Math.min((title.right - box.left) / scale - gap, inner.offsetWidth - half - edge));
       placement.style.setProperty("--lp-audience-center", `${center}px`);
       placement.style.setProperty("--lp-audience-top", `${(title.top - box.top) / scale}px`);
-      // Keep the agent CTA in the original description/buttons slot. The
-      // hidden human column still defines layout, so this also works for a
-      // direct agent URL and keeps the mobile headline fixed when toggling.
+      // Preserve the original column's horizontal alignment. On desktop,
+      // center the terminal itself on the headline; phones keep the stacked
+      // column. The hidden human content continues to define page geometry.
+      inner.style.setProperty("--lp-agent-terminal-center", `${(title.top + title.height / 2 - box.top) / columnScale}px`);
       inner.style.setProperty("--lp-hero-col-top", `${(column.top - box.top) / columnScale}px`);
       inner.style.setProperty("--lp-hero-col-left", `${(column.left - box.left) / columnScale}px`);
       inner.style.setProperty("--lp-hero-col-width", `${column.width / columnScale}px`);

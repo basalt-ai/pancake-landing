@@ -52,13 +52,13 @@ html:has(.lp-audience-page)::view-transition-new(lp-audience-switch) { animation
   [data-audience="agents"] .lp-agent-headline[data-font-ready="true"] :is(.lp-agent-headline__glyph, .lp-agent-headline__cursor) { animation: none; }
 }
 
-/* The original human column remains the layout reference in both modes.
-   The agent block overlays its exact bounds, including on phones. */
+/* Keep the original human column's horizontal bounds. The terminal centers
+   on the headline on desktop, and stays below it on stacked layouts. */
 .lp-hero-col--agent { display: none; }
 .lp-hero-inner:not([data-title-ready="true"]) .lp-hero-col--agent { visibility: hidden; }
 [data-audience="agents"] .lp-hero-col--human { visibility: hidden; }
 [data-audience="agents"] .lp-hero-col--agent { display: block; position: absolute; top: var(--lp-hero-col-top); left: var(--lp-hero-col-left); right: auto; bottom: auto; width: var(--lp-hero-col-width); height: var(--lp-hero-col-height); transform: none; }
-.lp-agent-start { display: flex; flex-direction: column; justify-content: space-between; width: 100%; height: 100%; color: var(--lp-text); }
+.lp-agent-start { position: relative; display: flex; flex-direction: column; width: 100%; color: var(--lp-text); }
 .lp-agent-terminal { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--lp-space-3); align-items: center; padding: var(--lp-space-4); border: var(--lp-line) solid color-mix(in srgb, var(--lp-page-bg) 16%, transparent); border-radius: var(--lp-r-m); background: var(--lp-terminal-bg); }
 .lp-agent-terminal__prompt { color: var(--lp-green-20); font: inherit; align-self: start; line-height: 1.6; }
 .lp-agent-terminal__code { display: block; font-family: var(--lp-font-fono); font-size: var(--lp-text-md); line-height: 1.6; color: var(--lp-page-bg); overflow-wrap: anywhere; text-wrap: balance; user-select: text; }
@@ -70,12 +70,16 @@ html:has(.lp-audience-page)::view-transition-new(lp-audience-switch) { animation
 .lp-agent-terminal__copy svg { width: calc(var(--lp-space-4) + var(--lp-space-1)); height: calc(var(--lp-space-4) + var(--lp-space-1)); }
 .lp-agent-terminal[data-copy-state="copied"] .lp-agent-terminal__copy { color: var(--lp-green-20); }
 .lp-agent-terminal[data-copy-state="copied"] svg { animation: lp-agent-copy-check .18s var(--lp-audience-ease); }
-.lp-agent-friends { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: var(--lp-space-4); margin-bottom: var(--lp-space-4); font-size: var(--lp-text-sm); line-height: 1.5; color: var(--lp-ink-60); }
+.lp-agent-friends { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: var(--lp-space-4); margin-bottom: var(--lp-space-3); font-size: var(--lp-text-sm); line-height: 1.5; color: var(--lp-ink-60); }
 .lp-agent-friends ul { display: flex; align-items: center; gap: var(--lp-space-4); margin: 0; padding: 0; list-style: none; color: var(--lp-ink-0); }
 .lp-agent-friends li { display: grid; place-items: center; }
 .lp-agent-friends :is(svg, img) { display: block; width: calc(var(--lp-space-3) * 2); height: calc(var(--lp-space-3) * 2); }
-.lp-agent-friends__hermes { object-fit: contain; filter: grayscale(1) invert(1); mix-blend-mode: screen; clip-path: inset(1%); }
 .lp-agent-start__error { padding-top: var(--lp-space-3); font-size: var(--lp-text-sm); line-height: 1.5; color: var(--lp-ink-60); }
+@media (min-width: 1025px) {
+  [data-audience="agents"] .lp-hero-col--agent { top: var(--lp-agent-terminal-center); height: auto; transform: translateY(-50%); }
+  .lp-agent-friends { position: absolute; bottom: 100%; right: 0; width: 100%; }
+  .lp-agent-start__error { position: absolute; top: 100%; }
+}
 @keyframes lp-agent-copy-check { from { opacity: 0; transform: scale(.8); } to { opacity: 1; transform: scale(1); } }
 @media (max-width: 767px) {
   .lp-agent-terminal { gap: var(--lp-space-2); padding: var(--lp-space-3); }

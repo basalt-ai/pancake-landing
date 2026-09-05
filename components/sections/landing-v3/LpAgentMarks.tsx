@@ -1,7 +1,39 @@
+import { useId } from "react";
+import { getImageProps } from "next/image";
+
 // Monochrome brand marks, matching the founder's Monid reference.
 export function CursorMark() {
   return <svg viewBox="0 0 24 24" fill="currentColor" role="img" aria-label="Cursor" focusable="false">
     <path d="M11.503.131 1.891 5.678a.84.84 0 0 0-.42.726v11.188c0 .3.162.575.42.724l9.609 5.55a1 1 0 0 0 .998 0l9.61-5.55a.84.84 0 0 0 .42-.724V6.404a.84.84 0 0 0-.42-.726L12.497.131a1.01 1.01 0 0 0-.996 0M2.657 6.338h18.55c.263 0 .43.287.297.515L12.23 22.918c-.062.107-.229.064-.229-.06V12.335a.59.59 0 0 0-.295-.51l-9.11-5.257c-.109-.063-.064-.23.061-.23" />
+  </svg>;
+}
+
+// Preserve the official portrait's detail, remove its source-image frame, and
+// let the surrounding page show through the paper instead of blending a box.
+const hermesPortrait = getImageProps({
+  src: "/lp/agent-marks/hermes.png",
+  alt: "",
+  width: 256,
+  height: 260,
+  quality: 90,
+}).props.src;
+
+export function HermesMark() {
+  const id = useId();
+  const maskId = `${id}-hermes-mask`;
+  const filterId = `${id}-hermes-ink`;
+
+  return <svg viewBox="0 0 1772 1799" role="img" aria-label="Hermes" focusable="false">
+    <defs>
+      <filter id={filterId} colorInterpolationFilters="sRGB">
+        <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  -0.2126 -0.7152 -0.0722 0 1" />
+        <feComponentTransfer><feFuncA type="linear" slope="1.02" intercept="-0.02" /></feComponentTransfer>
+      </filter>
+      <mask id={maskId} maskUnits="userSpaceOnUse" x="16" y="19" width="1740" height="1762">
+        <image href={hermesPortrait} width="1772" height="1799" filter={`url(#${filterId})`} />
+      </mask>
+    </defs>
+    <rect width="1772" height="1799" fill="currentColor" mask={`url(#${maskId})`} />
   </svg>;
 }
 

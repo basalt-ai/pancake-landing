@@ -26,12 +26,13 @@ Scope: original human landing plus a selector above the headline’s right edge.
 - [x] Add the single-line `> give your human gtm superpowers` Aeonik Fono agent headline, with a finite cursor typing reveal and immediate reduced-motion alternative.
 - [x] Set a balanced agent headline size and remove the initial size jump; begin typing after fonts settle, preserving human layout and setup alignment.
 - [x] Align the agent setup block to the original human description/buttons bounds, preserving their position and width on desktop and mobile.
-- [x] Replace the paste hint with “Friends with” and white Claude / Codex / Cursor / Hermes / OpenClaw logos above the terminal at its right edge, preserving accessible copy feedback.
+- [x] Replace the paste hint with “friends with” and white Claude / Codex / Cursor / Hermes / OpenClaw logos above the terminal at its right edge, preserving accessible copy feedback.
+- [x] Center the desktop terminal on the H1, tighten the lowercase friends row to a 12px gap, and remove the Hermes portrait’s border and backing.
 - [x] Compare desktop and phone human layouts against baseline `14ad159`.
 - [x] Independently review code and test booking and mobile menu behavior.
 - [x] Complete production build and updated Vercel preview verification.
 
-Preview: https://pancake-ptlvlj0ov-getpancake.vercel.app
+Preview: https://pancake-lcvo0s8uw-getpancake.vercel.app
 Draft PR: https://github.com/get-pancake/website/pull/275
 
 Implementation and validation: [human-agent-design.md](docs/human-agent-design.md).
