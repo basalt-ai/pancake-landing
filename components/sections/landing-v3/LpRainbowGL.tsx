@@ -133,6 +133,7 @@ interface Ring {
   delayMs: number;
   mesh: Mesh;
   color: [number, number, number, number];
+  path: SVGPathElement;
   viewW: number;
   viewH: number;
   fillW: number;
@@ -633,7 +634,7 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
         if (!pose || !spin || !svg || !pathEl) return false;
         const poseT = getComputedStyle(pose).transform;
         const vb = svg.viewBox.baseVal;
-        const color = rgba(pathEl.getAttribute("fill") || getComputedStyle(pathEl).fill);
+        const color = rgba(getComputedStyle(pathEl).fill);
         if (!poseT || poseT === "none" || !vb || !(vb.width > 0) || !color) return false;
         const d = pathEl.getAttribute("d");
         if (!d) return false;
@@ -685,6 +686,7 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
             (parseFloat(spinCs.getPropertyValue("--lp-phase")) || parseFloat(spinCs.animationDelay) || 0) * 1000,
           mesh,
           color,
+          path: pathEl,
           viewW: vb.width,
           viewH: vb.height,
           fillW: isPop ? parseFloat(scs.width) : pose.offsetWidth,
@@ -962,6 +964,21 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
       }, delay);
     };
 
+    // Recolor the existing meshes without restarting the shared motion clock.
+    const audienceRoot = variant === "hero" ? art.closest("[data-audience]") : null;
+    const paletteWatch = new MutationObserver(() => {
+      for (const ring of rings) ring.color = rgba(getComputedStyle(ring.path).fill) || ring.color;
+      // Repaint before the new View Transition snapshot, without waiting for
+      // a display frame. Replace the pending RAF so there is still one loop.
+      if (raf && live && !reduced.matches) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+        lastDraw = 0;
+        frame();
+      }
+    });
+    if (audienceRoot) paletteWatch.observe(audienceRoot, { attributes: true, attributeFilter: ["data-audience"] });
+
     const onOff = () => goOff();
     offHandlers.add(onOff);
 
@@ -986,6 +1003,7 @@ export function LpRainbowGL({ variant }: { variant: Variant }) {
     return () => {
       disposed = true;
       offHandlers.delete(onOff);
+      paletteWatch.disconnect();
       restoreDom();
       art.removeAttribute("data-lp-gl-off"); // a remount decides afresh
       clearTimeout(resizeTimer);

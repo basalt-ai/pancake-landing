@@ -21,6 +21,7 @@
     "deploy:vercel": "npm run build && npx --yes --cache ./.npm-cache vercel deploy --prod --yes --scope basalt-ai"
   },
   "dependencies": {
+    "@chenglou/pretext": "0.0.8",
     "@gsap/react": "^2.1.2",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.45.4",

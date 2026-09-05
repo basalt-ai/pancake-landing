@@ -7,6 +7,8 @@ import { LpFeatures } from "@/components/sections/landing-v3/LpFeatures";
 import { LpFitVars } from "@/components/sections/landing-v3/LpFitVars";
 import { LpFooter } from "@/components/sections/landing-v3/LpFooter";
 import { LpHero } from "@/components/sections/landing-v3/LpHero";
+import { LpAudience } from "@/components/sections/landing-v3/LpAudience";
+import { LpAgentLab } from "@/components/sections/landing-v3/LpAgentLab";
 import { LpModals } from "@/components/sections/landing-v3/LpModals";
 import { LpNav } from "@/components/sections/landing-v3/LpNav";
 import { LpPricing } from "@/components/sections/landing-v3/LpPricing";
@@ -89,9 +91,9 @@ const softwareApplicationJsonLd = {
   },
 };
 
-export default function Home() {
+export default function Home({ searchParams }: { searchParams: { audience?: string } }) {
   return (
-    <main id="main-content" className="lp">
+    <LpAudience initialAudience={searchParams.audience === "agents" ? "agents" : "humans"}>
       {/* SoftwareApplication JSON-LD — homepage only */}
       <script
         type="application/ld+json"
@@ -105,6 +107,7 @@ export default function Home() {
       <LpAnimFreeze />
       <LpNav />
       <LpHero />
+      <LpAgentLab />
       {/* Logo strip stays unmounted: the V1 set reads as powered-by, not
           customers (founder 2026-08-31). LpMarquee + marquee.css + the V1
           wordmark wiring stay for the day real customer logos land. */}
@@ -116,6 +119,6 @@ export default function Home() {
       <LpPricing />
       <LpFooter />
       <LpModals />
-    </main>
+    </LpAudience>
   );
 }

@@ -208,6 +208,7 @@ export function LpPancakes({ variant }: { variant: Variant }) {
         return (
           <div
             key={arc.ring}
+            data-lp-ring={arc.ring}
             className="lp-anim-arc"
             style={{ height: arc.h, left: arc.x, top: arc.y, width: arc.w }}
           >
