@@ -1,6 +1,6 @@
 # Human / agent toggle foundation
 
-Scope reset by Tristan on September 4, 2026: keep the existing landing, add a toggle above the headline’s right edge, and prepare an agent page containing the hero in inverse colors with one empty viewport below. The agent headline and a terminal-style setup CTA were subsequently added at Tristan’s request; product demonstrations are deferred.
+Scope reset by Tristan on September 4, 2026: keep the existing landing, add a toggle above the headline’s right edge, and prepare an agent page containing the hero in inverse colors with one empty viewport below. The agent headline and terminal-style setup CTA were subsequently added at Tristan’s request. The formerly empty section now contains a simulated terminal and a deliberately impossible CAPTCHA playground.
 
 ## Implemented
 
@@ -9,26 +9,28 @@ Scope reset by Tristan on September 4, 2026: keep the existing landing, add a to
 - Agent mode reads “> give your human gtm superpowers” on one line in Aeonik Fono, matching the setup terminal. Cream text types from a green insertion bar in three bursts over 1.6 seconds, after the 240ms audience crossfade; the cursor then keeps blinking with a 700ms cycle, like a terminal. Human mode retains its original two-line Aeonik Condensed headline. Both layers share the original headline box so the toggle and adjacent content stay fixed. The complete active heading is always available to assistive technology; the animated duplicate is decorative. Reduced motion displays the full line and a solid cursor immediately.
 - Agent mode replaces the hero description and buttons with a copyable `set up https://github.com/get-pancake/agent-plugins` instruction, and a “friends with” row above the terminal, aligned to its right edge, showing clean white Claude, Codex, Cursor, Hermes and OpenClaw marks, matching the founder’s five-logo reference. The public repository contains maintained installation guides for Codex and Claude Code. The “Start here” label was removed at the founder’s request. The terminal itself is vertically centered on the H1 on desktop, while keeping the original CTA column’s horizontal alignment. The logo row sits 12px above the terminal (before the existing short-window scaling). The terminal uses a pure black background, cream Fono text and a green prompt; its copy button confirms success with a checkmark and a screen-reader announcement, and offers manual selection if clipboard access fails.
 - Agent mode keeps the original navigation and rainbow motion. Cream and plum exchange roles; each of the five rainbow bands uses its exact RGB negative.
-- Only an empty `100vh` section follows the agent hero. There is no content below the hero besides that empty section.
+- An agent-only playground follows the hero, filling at least one viewport. A black terminal continuously writes illustrative GTM pseudocode. A compact CAPTCHA overlays it: blue header, “Prove you’re not human” and “Turn every tile green.” each on one line, a square 3×3 tile grid, and a small reset/info/Verify footer. The title uses one uniform font size throughout.
+- Each move flips two tiles. Starting with six green tiles preserves even parity, so nine green is unreachable. Paired hover/focus outlines make the two-tile behavior visible; Verify responds “Human detected.” and Info reveals “No solution.” The puzzle does not gate any navigation or setup action.
+- The terminal uses Cheng Lou’s Pretext to lay text into available line segments around a circular pointer exclusion. Font measurements are cached; one canvas and a finite recycled source keep memory bounded. It pauses offscreen, in a hidden tab, in human mode, or through the visible pause control. Reduced motion renders a static frame with no cursor avoidance. Touch scrolling remains native.
 - `/?audience=agents` opens the inverse hero directly. The toggle updates the URL without remounting the hero; refresh and browser history retain the selected view.
 - Audience changes use a quick 240ms page crossfade, including the rainbow. The switch is excluded from that fade and keeps its ordinary thumb slide. Active canvas renderers repaint the new palette synchronously, eliminating the previous capture wait while preserving their clocks. Reduced motion and browsers without this API switch immediately; there is no entrance animation on initial loading.
 - Hidden original sections remain mounted so their fit and motion observers survive the return to human mode.
 - Both canvas renderers follow all six rings’ new colors without restarting the animation clock. Reduced motion uses the same palette through the original static SVG.
-- Original signup, scheduling and analytics contracts are unchanged. No packages installed.
+- Original signup, scheduling and analytics contracts are unchanged. Added `@chenglou/pretext` pinned to `0.0.8`, flagged before installation.
 
 ## Validation
 
 - Codex Browser found identical original human text/link records and desktop layout measurements at 1280×720.
 - Human hero typography, text and desktop geometry remain identical to the prior preview; the agent setup block preserves the original human description/buttons column’s horizontal bounds. Its terminal centers on the headline on desktop and remains stacked below it on phones. The original column remains in layout but is hidden visually and from assistive technology in agent mode, keeping the headline fixed through the toggle.
 - Original human layout comparisons passed at 320×740, 393×852 and 768×1024; the selector stays inside the phone viewport.
-- Agent mode exposes only the hero and a blank section measuring exactly the viewport height.
+- Agent mode exposes the hero and the terminal playground. Human mode hides the playground and preserves the original sections.
 - Direct agent URL, keyboard switching, back/forward, reduced motion, inverse mobile menu and the existing booking dialog were checked. The live WebGL renderer and forced phone Canvas fallback both retained the correct palette through audience changes.
 - Terminal CTA checked at 320×740, 393×852, 1025×768 and 1280×720. Clipboard copying and keyboard activation succeed; human hero text and desktop geometry match the previous preview.
 - Independent code review confirmed the reduced scope and original component parity.
 - The crossfade was measured at 240ms in both directions on desktop and phone. Heading geometry, scroll position and canvas instances remained unchanged. Three rapid toggles, Back/Forward and reduced-motion switching passed without errors.
 - Removing the capture wait reduced measured desktop click-to-fade onset from about 95–100ms to 20–30ms. Only the page snapshot fades; the named switch snapshot has no fade animation.
 
-Preview: https://pancake-8n95xe4ix-getpancake.vercel.app
+Preview: https://pancake-2fmvvv74m-getpancake.vercel.app
 
 The setup CTA borrows the single copyable instruction pattern from [Monid](https://monid.ai/), adapted to Pancake’s existing typography, colors and geometry. Other reference screenshots are historical research from the broader concept.
 
@@ -41,3 +43,14 @@ The headline and setup terminal share `--lp-font-fono`. Each letter reveals at i
 Cold-load verification: the first visible frame through completion held exactly one font size and line height across 363 desktop frames (36.498px) and 363 phone frames (14.5332px at 320px). Human-mode geometry and reduced-motion rendering remained unchanged.
 
 Alignment refinement: Codex Browser measured identical terminal/H1 vertical centers at 1280×720 and 1654×960, a 12px logo-row gap before scaling, and the unchanged human H1 bounds after switching back. Phone layout at 393×852 remains stacked with all five logos visible. The Hermes mark has no rectangular backing.
+
+## Playground validation
+
+- Exhaustive traversal of the puzzle finds 256 reachable boards, all with even green counts. Every move changes exactly two tiles and repeating it restores the board; nine green is unreachable.
+- Codex Browser verified real Pretext reflow around the pointer (eight split rows), pause/resume, keyboard tile activation, paired focus feedback, reset, and Verify.
+- At 320px, the card measures 288px wide; title and instruction each occupy one line, with no horizontal page overflow. Desktop placement and token-based colors remain consistent.
+- Independent review checked keyboard semantics, persistent live announcements and isolation from human mode.
+- Compiled-build checks confirmed the human H1’s original desktop bounds exactly, the playground hidden in human mode with its engine idle, and a static Pretext frame under reduced motion at 320px.
+- Local and Vercel production builds pass. The new preview loads Pretext successfully and Verify returns the intended playful feedback. Existing unrelated image-lint and report-hook warnings remain.
+
+The compact CAPTCHA follows the founder’s supplied classic CAPTCHA reference. The terminal uses the actual [Pretext library](https://github.com/chenglou/pretext), with readable HTML controls layered over a decorative canvas. The code is illustrative pseudocode, not advertised executable Pancake API methods.

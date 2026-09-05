@@ -10,7 +10,7 @@
 
 ## Human / agent toggle foundation — September 4, 2026
 
-Scope: original human landing plus a selector above the headline’s right edge. Agent mode keeps the hero layout and uses inverse cream/plum colors, followed by one empty `100vh` section.
+Scope: original human landing plus a selector above the headline’s right edge. Agent mode keeps the hero layout and uses inverse cream/plum colors, followed by the agent terminal playground requested in the subsequent iteration.
 
 - [x] Restore original v3 copy and section components.
 - [x] Keep human layout unchanged apart from the selector.
@@ -32,7 +32,16 @@ Scope: original human landing plus a selector above the headline’s right edge.
 - [x] Independently review code and test booking and mobile menu behavior.
 - [x] Complete production build and updated Vercel preview verification.
 
-Preview: https://pancake-8n95xe4ix-getpancake.vercel.app
+Preview: https://pancake-2fmvvv74m-getpancake.vercel.app
 Draft PR: https://github.com/get-pancake/website/pull/275
 
 Implementation and validation: [human-agent-design.md](docs/human-agent-design.md).
+
+## Agent terminal playground — September 4, 2026
+
+- [x] Replace the empty agent viewport with a continuously generated GTM pseudocode terminal.
+- [x] Use Pretext for actual line reflow around the pointer, with cached text metrics and bounded canvas rendering.
+- [x] Add a deliberately impossible paired-tile puzzle, then simplify its presentation to the founder’s classic CAPTCHA reference.
+- [x] Keep the title and instruction on separate single lines, each with uniform text size.
+- [x] Support keyboard interaction, live feedback, pause/resume, reduced motion and native touch scrolling.
+- [x] Exhaustively verify the puzzle’s parity invariant and independently review accessibility and human-mode isolation.

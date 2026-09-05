@@ -104,11 +104,9 @@ html:has(.lp-audience-page)::view-transition-new(lp-audience-switch) { animation
 
 /* Keep all original sections mounted so their motion and fit observers survive
    a return to humans. Hidden sections take no space and expose no controls. */
-.lp-agent-placeholder { display: none; }
 .lp-audience-page[data-audience="agents"] { background: var(--lp-ink-100); }
-.lp-audience-page[data-audience="agents"] > section:not(.lp-hero):not(.lp-agent-placeholder),
+.lp-audience-page[data-audience="agents"] > section:not(.lp-hero):not(.lp-agent-lab),
 .lp-audience-page[data-audience="agents"] > .lp-foot { display: none; }
-.lp-audience-page[data-audience="agents"] > .lp-agent-placeholder { display: block; height: 100vh; position: relative; z-index: 1; background: var(--lp-ink-100); }
 
 /* Cream and plum exchange roles; every colored rainbow band gets its RGB
    negative, derived from the original token. Geometry and clocks stay intact. */
