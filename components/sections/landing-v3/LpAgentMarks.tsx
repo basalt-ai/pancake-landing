@@ -29,7 +29,9 @@ export function HermesMark() {
         <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  -0.2126 -0.7152 -0.0722 0 1" />
         <feComponentTransfer><feFuncA type="linear" slope="1.02" intercept="-0.02" /></feComponentTransfer>
       </filter>
-      <mask id={maskId} maskUnits="userSpaceOnUse" x="16" y="19" width="1740" height="1762">
+      {/* Inset beyond the frame's resampled edge, which otherwise leaves a
+          white hairline when the optimized portrait is reduced to icon size. */}
+      <mask id={maskId} maskUnits="userSpaceOnUse" x="32" y="35" width="1708" height="1729" style={{ maskType: "alpha" }}>
         <image href={hermesPortrait} width="1772" height="1799" filter={`url(#${filterId})`} />
       </mask>
     </defs>
